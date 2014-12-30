@@ -12,7 +12,7 @@
 
 # <codecell>
 
-%matplotlib inline
+#%matplotlib inline
 import math
 import numpy as np
 import scipy
@@ -187,24 +187,24 @@ response =  np.array([1,1,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0])
 
 stratifiedPermutationTest(group, condition, response, iterations=1000)
 
-# <codecell>
-
-lec = pd.read_csv('./Lecturer/lecturer.csv')
-lec['gpaDiff'] = lec['BGPA'] - lec['AGPA']
-lec.columns
-group = lec['secb']
-condition = lec['seca']
-response = lec['BGPA']
-[pleft, pright, pboth, tst, dist] = stratifiedPermutationTest(group, condition, response, iterations=10000)
-
-# <codecell>
-
-pleft
-
-# <codecell>
-
-pright
-
-# <codecell>
+## <codecell>
+#
+#lec = pd.read_csv('./Lecturer/lecturer.csv')
+#lec['gpaDiff'] = lec['BGPA'] - lec['AGPA']
+#lec.columns
+#group = lec['secb']
+#condition = lec['seca']
+#response = lec['BGPA']
+#[pleft, pright, pboth, tst, dist] = stratifiedPermutationTest(group, condition, response, iterations=10000)
+#
+## <codecell>
+#
+#pleft
+#
+## <codecell>
+#
+#pright
+#
+## <codecell>
 
 
