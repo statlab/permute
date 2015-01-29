@@ -175,3 +175,10 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+gitwash:
+	$(PYTHON) ../tools/gitwash_dumper.py dev permute \
+	--project-url=https://github.com/pbstark/permute \
+	--repo-name=permute \
+	--github-user=pbstark \
+	--project-ml-url=http://groups.google.com/group/permute 
