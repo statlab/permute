@@ -123,8 +123,7 @@ Guidelines
 
 * All code should have tests (see `test coverage`_ below for more details).
 * All code should be documented, to the same
-  `standard
-<://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard>`_
+  `standard <http://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard>`__
   as NumPy and SciPy.
 * No changes are ever committed without review.  Ask on the
   `mailing list <http://groups.google.com/group/permute>`_ if

@@ -1,7 +1,5 @@
-Permutation tests and confidence intervals in Python's documentation!
-=====================================================================
-
-Contents:
+Permutation tests and confidence sets
+=====================================
 
 .. toctree::
    :maxdepth: 2
