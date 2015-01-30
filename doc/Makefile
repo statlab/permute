@@ -185,5 +185,6 @@ gitwash:
 	--project-ml-url=http://groups.google.com/group/permute 
 
 github: html
+	touch $(BUILDDIR)/html/.nojekyll
 	ghp-import $(BUILDDIR)/html
 	git push upstream gh-pages --force 
