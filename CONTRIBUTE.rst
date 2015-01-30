@@ -52,7 +52,7 @@ Here's the long and short of it:
 
 For a more detailed discussion, read these :doc:`detailed documents
 <dev/gitwash/index>` on how to use Git with ``permute``
-(`<http://pbstark.github.io/docs/dev/gitwash/index.html>`_).
+(`<http://pbstark.github.io/permute/dev/gitwash/index.html>`_).
 
 4. Review process:
 

@@ -45,6 +45,7 @@ help:
 	@echo "  pseudoxml  to make pseudoxml-XML files for display purposes"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  github     to upload the web site via gh-pages"
 
 clean:
 	rm -rf $(BUILDDIR)/*
@@ -182,3 +183,7 @@ gitwash:
 	--repo-name=permute \
 	--github-user=pbstark \
 	--project-ml-url=http://groups.google.com/group/permute 
+
+github: html
+	ghp-import $(BUILDDIR)/html
+	git push upstream gh-pages --force 

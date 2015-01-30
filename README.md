@@ -1,6 +1,6 @@
-# Permutation tests and confidence intervals in Python
+# Permutation tests and confidence sets
 
-Permutation tests and confidence intervals for a variety of nonparametric
+Permutation tests and confidence sets for a variety of nonparametric
 testing and estimation problems, for a variety of randomization designs.
 
 * Stratified and unstratified tests ...
