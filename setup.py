@@ -12,7 +12,7 @@ MAINTAINER_EMAIL    = 'permute@googlegroups.com'
 URL                 = 'http://github.com/permute/permute'
 LICENSE             = 'BSD'
 DOWNLOAD_URL        = 'http://github.com/permute/permute'
-VERSION             = '0.1'
+VERSION             = '0.1dev'
 PYTHON_VERSION      = (2, 7)
 
 from setuptools import setup
@@ -42,5 +42,6 @@ setup(
         'Operating System :: MacOS',
     ],
 
-    packages=['permute', 'permute.tests'],
+    packages=['permute', 'permute.data', 'permute.tests'],
+    package_data={ 'permute.data': ['*.csv'] }
 )

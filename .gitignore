@@ -1,5 +1,6 @@
 .DS_Store
 doc/_build/
+permute/old/Datasets_MATLAB_R_NPC/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
