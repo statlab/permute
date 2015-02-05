@@ -10,8 +10,6 @@ from scipy.stats import (binom,
                          ttest_ind)
 from scipy.optimize import brentq
 
-import pandas as pd
-
 
 def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     "Lower confidence level cl confidence interval for Binomial p, for x successes in n trials"
