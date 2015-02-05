@@ -1,36 +1,25 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
 
-# <markdowncell>
+from __future__ import division, print_function, absolute_import
 
-# _Last modified 26 December 2014 by PBS_
-#
-# ###This notebook implements a variety of permutation tests, including stratified permutation tests.
-# ###It also implements exact confidence intervals for binomial p and hypergeometric parameters, by inverting tests.
-#
-# <hr />
-
-# <codecell>
-
-#%matplotlib inline
 import math
-import numpy as np
-import scipy
-from scipy.stats import binom, hypergeom
-from scipy.optimize import brentq
-import pandas as pd
-import matplotlib.pyplot as plt
 
-# <codecell>
+import numpy as np
+from scipy.stats import (binom,
+                         hypergeom,
+                         ttest_ind)
+from scipy.optimize import brentq
+
+import pandas as pd
 
 
 def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     "Lower confidence level cl confidence interval for Binomial p, for x successes in n trials"
     if p is None:
-        p = float(x) / float(n)
+        p = x/n
     lo = 0.0
     if (x > 0):
-        f = lambda q: cl - scipy.stats.binom.cdf(x - 1, n, q)
+        f = lambda q: cl - binom.cdf(x - 1, n, q)
         lo = brentq(f, 0.0, p, xtol, rtol, maxiter)
     return lo
 
@@ -38,10 +27,10 @@ def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16,
 def binoUpperCL(n, x, cl=0.975, p=None,  xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     "Upper confidence level cl confidence interval for Binomial p, for x successes in n trials"
     if p is None:
-        p = float(x) / float(n)
+        p = x/n
     hi = 1.0
     if (x < n):
-        f = lambda q: scipy.stats.binom.cdf(x, n, q) - (1 - cl)
+        f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         hi = brentq(f, p, 1.0, xtol, rtol, maxiter)
     return hi
 
@@ -85,7 +74,7 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
     z = np.concatenate([x, y])   # pooled responses
     stats = dict(
         mean=lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
-        t=lambda u: scipy.stats.ttest_ind(
+        t=lambda u: ttest_ind(
             u[:len(y)], u[len(y):], equal_var=True)[0]
     )
     try:
@@ -104,17 +93,16 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
     hits = np.sum([(theStat(np.random.permutation(z)) >= ts)
                    for i in range(reps)])
     if CI == 'upper':
-        return float(hits) / float(reps), binoUpperCL(reps, hits, cl=CL), ts
+        return hits/reps, binoUpperCL(reps, hits, cl=CL), ts
     elif CI == 'lower':
-        return float(hits) / float(reps), binoLowerCL(reps, hits, cl=CL), ts
+        return hits/reps, binoLowerCL(reps, hits, cl=CL), ts
     elif CI == 'both':
-        return float(hits) / float(reps),  \
+        return hits/reps,  \
             (binoLowerCL(reps, hits, cl=1 - (1 - CL) / 2), binoUpperCL(reps, hits, cl=1 - (1 - CL) / 2)), \
             ts
     else:
-        return float(hits) / float(reps), ts
+        return hits/reps, ts
 
-# <codecell>
 
 
 def stratifiedPermutationTestMean(group, condition, response, groups, conditions):
@@ -182,38 +170,6 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
     # define the conditions, then map count_nonzero over them
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
         pLeft, pRight, pBoth = np.array(
-            map(np.count_nonzero, conds)) / float(iterations)
+            map(np.count_nonzero, conds)) / iterations
         return pLeft, pRight, pBoth, tst, dist
 
-# <codecell>
-
-group = np.array(
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])
-condition = np.array(
-    [1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3])
-response = np.array(
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0])
-
-# <codecell>
-
-stratifiedPermutationTest(group, condition, response, iterations=1000)
-
-# <codecell>
-#
-#lec = pd.read_csv('./Lecturer/lecturer.csv')
-#lec['gpaDiff'] = lec['BGPA'] - lec['AGPA']
-# lec.columns
-#group = lec['secb']
-#condition = lec['seca']
-#response = lec['BGPA']
-#[pleft, pright, pboth, tst, dist] = stratifiedPermutationTest(group, condition, response, iterations=10000)
-#
-# <codecell>
-#
-# pleft
-#
-# <codecell>
-#
-# pright
-#
-# <codecell>
