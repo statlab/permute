@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
 
-# <markdowncell>
-
-# _Last modified 26 December 2014 by PBS_
-#
-# ###This notebook implements a variety of permutation tests, including stratified permutation tests.
-# ###It also implements exact confidence intervals for binomial p and hypergeometric parameters, by inverting tests.
-#
-# <hr />
-
-# <codecell>
-
-#%matplotlib inline
 import math
 import numpy as np
 import scipy
@@ -21,7 +8,6 @@ from scipy.optimize import brentq
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# <codecell>
 
 
 def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
@@ -114,7 +100,6 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
     else:
         return float(hits) / float(reps), ts
 
-# <codecell>
 
 
 def stratifiedPermutationTestMean(group, condition, response, groups, conditions):
@@ -185,35 +170,3 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
             map(np.count_nonzero, conds)) / float(iterations)
         return pLeft, pRight, pBoth, tst, dist
 
-# <codecell>
-
-group = np.array(
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])
-condition = np.array(
-    [1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3])
-response = np.array(
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0])
-
-# <codecell>
-
-stratifiedPermutationTest(group, condition, response, iterations=1000)
-
-# <codecell>
-#
-#lec = pd.read_csv('./Lecturer/lecturer.csv')
-#lec['gpaDiff'] = lec['BGPA'] - lec['AGPA']
-# lec.columns
-#group = lec['secb']
-#condition = lec['seca']
-#response = lec['BGPA']
-#[pleft, pright, pboth, tst, dist] = stratifiedPermutationTest(group, condition, response, iterations=10000)
-#
-# <codecell>
-#
-# pleft
-#
-# <codecell>
-#
-# pright
-#
-# <codecell>
