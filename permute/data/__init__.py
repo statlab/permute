@@ -33,7 +33,7 @@ def load(f):
 
 def kenya():
     """The Kenya dataset contains 16 observations and two variables in total.
-    It concerns an anthropological study on the “Ol Molo” and “Kamba”
+    It concerns an anthropological study on the "Ol Molo" and "Kamba"
     populations
 
     """
