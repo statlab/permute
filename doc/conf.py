@@ -21,6 +21,7 @@ import sphinx_bootstrap_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
+sys.path.append(os.path.abspath('_sphinxext'))
 
 # -- General configuration ------------------------------------------------
 
@@ -34,7 +35,8 @@ extensions = [
     'sphinx.ext.pngmath',
     'sphinxcontrib.bibtex',
     'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive'
+    'IPython.sphinxext.ipython_directive',
+    'plot_directive',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -192,14 +194,21 @@ htmlhelp_basename = 'Permutationtestsandconfidencesets'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
-
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
-
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
+    
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
+    
+    # Additional stuff for the LaTeX preamble.
+#    'preamble': """
+#                \usepackage{amsmath}
+#                \usepackage{amssymb}
+#                \usepackage{amsfonts}
+#                \usepackage{amsthm}
+#                \usepackage{dsfont}
+#                \usepackage{mathtools}
+#                """,
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

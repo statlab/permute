@@ -6,13 +6,20 @@ in total.  It concerns an anthropological study on the "Ol Molo" and "Kamba"
 populations described above. Table 1 shows the sample frequencies of the 16
 phenotypic combinations in the samples selected from the two populations.
 
-.. ipython::
+Given :math:`X_1, X_2, \dots, X_n` and ...
 
-   In [1]: from permute.data import kenya
+.. ipython:: python
 
-   In [2]: kenya()
+   from permute.data import kenya
 
-   In [3]: kenya?
+   d = kenya()
+
+   d
+
+   import matplotlib.pyplot as plt
+
+   @savefig test.png
+   d.iloc[: ,1:].plot()
 
 .. rubric:: References
 
