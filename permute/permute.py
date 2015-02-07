@@ -35,7 +35,7 @@ def binoUpperCL(n, x, cl=0.975, p=None,  xtol=1e-12, rtol=4.4408920985006262e-16
 
 def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False, CL=0.95):
     """
-       One-sided or two-sided, two-sample permutation test for equality of two 
+       One-sided or two-sided, two-sample permutation test for equality of two
        means, with p-value estimated by simulated random sampling with reps replications.
 
        Tests the hypothesis that x and y are a random partition of x,y
@@ -47,7 +47,7 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
        If stat == 'mean', the test statistic is (mean(x) - mean(y))
        (equivalently, sum(x), since those are monotonically related)
 
-       If stat == 't', the test statistic is the two-sample t-statistic--but the p-value 
+       If stat == 't', the test statistic is the two-sample t-statistic--but the p-value
        is still estimated by the randomization, approximating the permutation distribution.
        The t-statistic is computed using scipy.stats.ttest_ind
 
@@ -109,7 +109,7 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
     If there are two treatment conditions, the test statistic is the difference in means,
     aggregated across groups.
     If there are more than two treatment conditions, the test statistic is the standard deviation of
-    the means, aggregated across groups. 
+    the means, aggregated across groups.
     '''
     tst = 0.0
     if (len(groups) < 2):
@@ -126,7 +126,7 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
 
 
 def permuteWithinGroups(group, condition, groups):
-    permuted = condition
+    permuted = condition.deepcopy()
     for g in groups:
         gg = group == g
         permuted[gg] = np.random.permutation(condition[gg])
@@ -146,7 +146,7 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
     There should be at least one group and at least two conditions.
     Under the null hypothesis, all assignments to the two conditions that preserve the number of
     cases assigned to the conditions are equally likely.
-    Groups in which all cases are assigned to the same condition are skipped; they do not contribute 
+    Groups in which all cases are assigned to the same condition are skipped; they do not contribute
     to the p-value since all randomizations give the same contribution to the difference in means.
 
     Dependencies: numpy (as np)

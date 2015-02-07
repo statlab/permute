@@ -8,17 +8,25 @@ testing and estimation problems, for a variety of randomization designs.
 * Methods of combining tests across strata ...
 * Nonparametric combinations of tests ...
 
-## Problems:
+## Problems/Methods:
 
 1. The 2-sample problem
 2. The _n_-sample problem
 3. Tests for the slope in linear regression
 4. Tests for quantiles
-5. Tests of independence ...
+5. Tests of independence and association: runs tests, permutation association,  ...
 6. Tests of exchangeability
-7. Tests of symmetry: reflection, spherical, ... 
+7. Tests of symmetry: reflection, spherical, ...
 8. Permutation ANOVA
-9. ...
+9. Goodness of fit tests
+10. ...
+
+### Confidence sets
+
+1. Constant shifts
+2. Proportional shifts
+3. Monotone shifts
+4. ...
 
 ## Links
 
