@@ -1,6 +1,6 @@
 """Standard test data.
 
-For more images, see
+For more information, see
 
  - http://www.wiley.com/legacy/wileychi/pesarin/material.html
 
@@ -14,7 +14,7 @@ from .. import data_dir
 
 
 __all__ = ['load',
-           'kenya']
+           'kenya',]
 
 def load(f):
     """Load a data file located in the data directory.
@@ -34,7 +34,7 @@ def load(f):
 def kenya():
     """The Kenya dataset contains 16 observations and two variables in total.
     It concerns an anthropological study on the "Ol Molo" and "Kamba"
-    populations
+    populations.
 
     """
-    return load("kenya.csv")
+    return load(_os.path.join("npc", "kenya.csv"))
