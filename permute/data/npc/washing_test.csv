@@ -1,0 +1,801 @@
+Product,Stain,Category,Reflectance
+1,Tea,Bleach,77.48
+1,Tea,Bleach,76.65
+1,Tea,Bleach,79.23
+1,Tea,Bleach,77.68
+2,Tea,Bleach,79.84
+2,Tea,Bleach,79.61
+2,Tea,Bleach,78.53
+2,Tea,Bleach,78.77
+3,Tea,Bleach,77.19
+3,Tea,Bleach,77.27
+3,Tea,Bleach,77.47
+3,Tea,Bleach,79.05
+4,Tea,Bleach,79.77
+4,Tea,Bleach,79.12
+4,Tea,Bleach,78.51
+4,Tea,Bleach,76.12
+5,Tea,Bleach,78.3
+5,Tea,Bleach,79.35
+5,Tea,Bleach,78.86
+5,Tea,Bleach,75.89
+6,Tea,Bleach,77.33
+6,Tea,Bleach,72.16
+6,Tea,Bleach,78.23
+6,Tea,Bleach,74.16
+7,Tea,Bleach,77.11
+7,Tea,Bleach,77.11
+7,Tea,Bleach,75.73
+7,Tea,Bleach,75.94
+8,Tea,Bleach,72.92
+8,Tea,Bleach,76.63
+8,Tea,Bleach,77.38
+8,Tea,Bleach,77.09
+1,Coffee,Bleach,81.04
+1,Coffee,Bleach,81.15
+1,Coffee,Bleach,81.67
+1,Coffee,Bleach,80.44
+2,Coffee,Bleach,82.42
+2,Coffee,Bleach,82.39
+2,Coffee,Bleach,83.03
+2,Coffee,Bleach,81.69
+3,Coffee,Bleach,81.59
+3,Coffee,Bleach,81.12
+3,Coffee,Bleach,82.28
+3,Coffee,Bleach,81.38
+4,Coffee,Bleach,81.88
+4,Coffee,Bleach,82.07
+4,Coffee,Bleach,81.23
+4,Coffee,Bleach,81.43
+5,Coffee,Bleach,81.76
+5,Coffee,Bleach,81.49
+5,Coffee,Bleach,81.92
+5,Coffee,Bleach,81.51
+6,Coffee,Bleach,80.67
+6,Coffee,Bleach,80.05
+6,Coffee,Bleach,80.34
+6,Coffee,Bleach,81.29
+7,Coffee,Bleach,80.71
+7,Coffee,Bleach,80.78
+7,Coffee,Bleach,81.62
+7,Coffee,Bleach,79.43
+8,Coffee,Bleach,80.23
+8,Coffee,Bleach,80.75
+8,Coffee,Bleach,81.86
+8,Coffee,Bleach,81.55
+1,Blueberry juice,Bleach,73.82
+1,Blueberry juice,Bleach,74.03
+1,Blueberry juice,Bleach,75.8
+1,Blueberry juice,Bleach,74
+2,Blueberry juice,Bleach,75.64
+2,Blueberry juice,Bleach,75.38
+2,Blueberry juice,Bleach,75.51
+2,Blueberry juice,Bleach,75.02
+3,Blueberry juice,Bleach,74.43
+3,Blueberry juice,Bleach,73.14
+3,Blueberry juice,Bleach,74.18
+3,Blueberry juice,Bleach,73.54
+4,Blueberry juice,Bleach,75
+4,Blueberry juice,Bleach,75.61
+4,Blueberry juice,Bleach,74.65
+4,Blueberry juice,Bleach,71.93
+5,Blueberry juice,Bleach,74.04
+5,Blueberry juice,Bleach,75.11
+5,Blueberry juice,Bleach,75.84
+5,Blueberry juice,Bleach,74.4
+6,Blueberry juice,Bleach,73.22
+6,Blueberry juice,Bleach,70.53
+6,Blueberry juice,Bleach,71.3
+6,Blueberry juice,Bleach,73.89
+7,Blueberry juice,Bleach,73.68
+7,Blueberry juice,Bleach,74.33
+7,Blueberry juice,Bleach,73.82
+7,Blueberry juice,Bleach,71.99
+8,Blueberry juice,Bleach,72.17
+8,Blueberry juice,Bleach,73.02
+8,Blueberry juice,Bleach,74.4
+8,Blueberry juice,Bleach,73.61
+1,Wine,Bleach,76.96
+1,Wine,Bleach,76.81
+1,Wine,Bleach,78.66
+1,Wine,Bleach,78.62
+2,Wine,Bleach,79.04
+2,Wine,Bleach,78.22
+2,Wine,Bleach,77.73
+2,Wine,Bleach,78.34
+3,Wine,Bleach,76.95
+3,Wine,Bleach,76.64
+3,Wine,Bleach,77.54
+3,Wine,Bleach,77.66
+4,Wine,Bleach,77.47
+4,Wine,Bleach,77.55
+4,Wine,Bleach,77.94
+4,Wine,Bleach,75.54
+5,Wine,Bleach,76
+5,Wine,Bleach,78.2
+5,Wine,Bleach,77.9
+5,Wine,Bleach,75.04
+6,Wine,Bleach,75.55
+6,Wine,Bleach,73.28
+6,Wine,Bleach,76.61
+6,Wine,Bleach,73.97
+7,Wine,Bleach,76.02
+7,Wine,Bleach,76.02
+7,Wine,Bleach,75.61
+7,Wine,Bleach,75.84
+8,Wine,Bleach,72.49
+8,Wine,Bleach,74.57
+8,Wine,Bleach,77.12
+8,Wine,Bleach,77.71
+1,Grass,Bleach,65.04
+1,Grass,Bleach,64.75
+1,Grass,Bleach,67.85
+1,Grass,Bleach,67.25
+2,Grass,Bleach,65.6
+2,Grass,Bleach,68.27
+2,Grass,Bleach,66.18
+2,Grass,Bleach,69.1
+3,Grass,Bleach,65.42
+3,Grass,Bleach,64.34
+3,Grass,Bleach,66.7
+3,Grass,Bleach,66.38
+4,Grass,Bleach,66.53
+4,Grass,Bleach,65.91
+4,Grass,Bleach,65.66
+4,Grass,Bleach,62.78
+5,Grass,Bleach,63.89
+5,Grass,Bleach,66.13
+5,Grass,Bleach,67.33
+5,Grass,Bleach,64.3
+6,Grass,Bleach,67
+6,Grass,Bleach,62.82
+6,Grass,Bleach,67.13
+6,Grass,Bleach,65.75
+7,Grass,Bleach,64.94
+7,Grass,Bleach,65.93
+7,Grass,Bleach,61.94
+7,Grass,Bleach,63.11
+8,Grass,Bleach,63.85
+8,Grass,Bleach,64.56
+8,Grass,Bleach,64.25
+8,Grass,Bleach,67.68
+1,Tomatoe,Bleach,70.4
+1,Tomatoe,Bleach,70.35
+1,Tomatoe,Bleach,71.79
+1,Tomatoe,Bleach,69.96
+2,Tomatoe,Bleach,70.47
+2,Tomatoe,Bleach,69.87
+2,Tomatoe,Bleach,71.79
+2,Tomatoe,Bleach,69.36
+3,Tomatoe,Bleach,69.55
+3,Tomatoe,Bleach,69.55
+3,Tomatoe,Bleach,72.28
+3,Tomatoe,Bleach,71.51
+4,Tomatoe,Bleach,69.3
+4,Tomatoe,Bleach,70.49
+4,Tomatoe,Bleach,70.46
+4,Tomatoe,Bleach,71.2
+5,Tomatoe,Bleach,70.03
+5,Tomatoe,Bleach,68.55
+5,Tomatoe,Bleach,71.49
+5,Tomatoe,Bleach,70.9
+6,Tomatoe,Bleach,68.79
+6,Tomatoe,Bleach,69.78
+6,Tomatoe,Bleach,70.06
+6,Tomatoe,Bleach,70.02
+7,Tomatoe,Bleach,68.72
+7,Tomatoe,Bleach,68.87
+7,Tomatoe,Bleach,71.61
+7,Tomatoe,Bleach,69.79
+8,Tomatoe,Bleach,69.83
+8,Tomatoe,Bleach,69.25
+8,Tomatoe,Bleach,70.01
+8,Tomatoe,Bleach,71.31
+1,Used Motor oil3,Detergency,24.46
+1,Used Motor oil3,Detergency,26.92
+1,Used Motor oil3,Detergency,26.39
+1,Used Motor oil3,Detergency,20.57
+2,Used Motor oil3,Detergency,23.85
+2,Used Motor oil3,Detergency,27.77
+2,Used Motor oil3,Detergency,27.8
+2,Used Motor oil3,Detergency,26.45
+3,Used Motor oil3,Detergency,24.78
+3,Used Motor oil3,Detergency,25.8
+3,Used Motor oil3,Detergency,26.53
+3,Used Motor oil3,Detergency,27.51
+4,Used Motor oil3,Detergency,23.56
+4,Used Motor oil3,Detergency,30.51
+4,Used Motor oil3,Detergency,25.71
+4,Used Motor oil3,Detergency,29.58
+5,Used Motor oil3,Detergency,19.17
+5,Used Motor oil3,Detergency,27.32
+5,Used Motor oil3,Detergency,22.53
+5,Used Motor oil3,Detergency,27.67
+6,Used Motor oil3,Detergency,21.66
+6,Used Motor oil3,Detergency,26.85
+6,Used Motor oil3,Detergency,20.96
+6,Used Motor oil3,Detergency,30.64
+7,Used Motor oil3,Detergency,25.62
+7,Used Motor oil3,Detergency,26.97
+7,Used Motor oil3,Detergency,28.03
+7,Used Motor oil3,Detergency,21.45
+8,Used Motor oil3,Detergency,22.11
+8,Used Motor oil3,Detergency,27.87
+8,Used Motor oil3,Detergency,21.07
+8,Used Motor oil3,Detergency,26.91
+1,Olive oil,Detergency,61.45
+1,Olive oil,Detergency,62.41
+1,Olive oil,Detergency,62.82
+1,Olive oil,Detergency,61.97
+2,Olive oil,Detergency,62.88
+2,Olive oil,Detergency,64.36
+2,Olive oil,Detergency,63.21
+2,Olive oil,Detergency,63.2
+3,Olive oil,Detergency,62.14
+3,Olive oil,Detergency,61.82
+3,Olive oil,Detergency,61.61
+3,Olive oil,Detergency,60.67
+4,Olive oil,Detergency,63.75
+4,Olive oil,Detergency,65.03
+4,Olive oil,Detergency,63.57
+4,Olive oil,Detergency,61
+5,Olive oil,Detergency,62.31
+5,Olive oil,Detergency,61.65
+5,Olive oil,Detergency,63.48
+5,Olive oil,Detergency,61.56
+6,Olive oil,Detergency,61.2
+6,Olive oil,Detergency,60.92
+6,Olive oil,Detergency,61.53
+6,Olive oil,Detergency,58.46
+7,Olive oil,Detergency,59.31
+7,Olive oil,Detergency,61.87
+7,Olive oil,Detergency,61.06
+7,Olive oil,Detergency,60.78
+8,Olive oil,Detergency,60.71
+8,Olive oil,Detergency,61.35
+8,Olive oil,Detergency,63.16
+8,Olive oil,Detergency,64.5
+1,Bacon grease,Detergency,51.23
+1,Bacon grease,Detergency,53.14
+1,Bacon grease,Detergency,55.07
+1,Bacon grease,Detergency,51.38
+2,Bacon grease,Detergency,51.6
+2,Bacon grease,Detergency,53.7
+2,Bacon grease,Detergency,56.16
+2,Bacon grease,Detergency,54.37
+3,Bacon grease,Detergency,51.05
+3,Bacon grease,Detergency,53.01
+3,Bacon grease,Detergency,53.63
+3,Bacon grease,Detergency,54.46
+4,Bacon grease,Detergency,53.03
+4,Bacon grease,Detergency,52.58
+4,Bacon grease,Detergency,54.14
+4,Bacon grease,Detergency,52.83
+5,Bacon grease,Detergency,47.01
+5,Bacon grease,Detergency,52.43
+5,Bacon grease,Detergency,55.05
+5,Bacon grease,Detergency,51.01
+6,Bacon grease,Detergency,50.54
+6,Bacon grease,Detergency,49.35
+6,Bacon grease,Detergency,51.3
+6,Bacon grease,Detergency,51.41
+7,Bacon grease,Detergency,49.06
+7,Bacon grease,Detergency,52.07
+7,Bacon grease,Detergency,46.12
+7,Bacon grease,Detergency,49.61
+8,Bacon grease,Detergency,47.01
+8,Bacon grease,Detergency,52.59
+8,Bacon grease,Detergency,54.37
+8,Bacon grease,Detergency,54.58
+1,Frying fat,Detergency,48.15
+1,Frying fat,Detergency,51.07
+1,Frying fat,Detergency,58.62
+1,Frying fat,Detergency,59.91
+2,Frying fat,Detergency,50.09
+2,Frying fat,Detergency,58.19
+2,Frying fat,Detergency,58.02
+2,Frying fat,Detergency,59.49
+3,Frying fat,Detergency,50.54
+3,Frying fat,Detergency,52.6
+3,Frying fat,Detergency,54.24
+3,Frying fat,Detergency,55.89
+4,Frying fat,Detergency,55.2
+4,Frying fat,Detergency,58.93
+4,Frying fat,Detergency,56.25
+4,Frying fat,Detergency,54.95
+5,Frying fat,Detergency,43.59
+5,Frying fat,Detergency,57.89
+5,Frying fat,Detergency,59.81
+5,Frying fat,Detergency,53.52
+6,Frying fat,Detergency,48.71
+6,Frying fat,Detergency,36.64
+6,Frying fat,Detergency,47.77
+6,Frying fat,Detergency,45.61
+7,Frying fat,Detergency,45.58
+7,Frying fat,Detergency,44.93
+7,Frying fat,Detergency,48.08
+7,Frying fat,Detergency,49.67
+8,Frying fat,Detergency,41.32
+8,Frying fat,Detergency,54.29
+8,Frying fat,Detergency,54.55
+8,Frying fat,Detergency,54.95
+1,Vegetable oil,Detergency,61
+1,Vegetable oil,Detergency,61.61
+1,Vegetable oil,Detergency,60.72
+1,Vegetable oil,Detergency,59.2
+2,Vegetable oil,Detergency,60.74
+2,Vegetable oil,Detergency,63.29
+2,Vegetable oil,Detergency,62.6
+2,Vegetable oil,Detergency,61.95
+3,Vegetable oil,Detergency,59.45
+3,Vegetable oil,Detergency,59.61
+3,Vegetable oil,Detergency,58.3
+3,Vegetable oil,Detergency,61.23
+4,Vegetable oil,Detergency,59.7
+4,Vegetable oil,Detergency,60.24
+4,Vegetable oil,Detergency,61.46
+4,Vegetable oil,Detergency,60.81
+5,Vegetable oil,Detergency,57.56
+5,Vegetable oil,Detergency,61.18
+5,Vegetable oil,Detergency,61.41
+5,Vegetable oil,Detergency,58.51
+6,Vegetable oil,Detergency,58.15
+6,Vegetable oil,Detergency,59.14
+6,Vegetable oil,Detergency,59.17
+6,Vegetable oil,Detergency,56.23
+7,Vegetable oil,Detergency,56.71
+7,Vegetable oil,Detergency,57.67
+7,Vegetable oil,Detergency,56.3
+7,Vegetable oil,Detergency,58.75
+8,Vegetable oil,Detergency,59.55
+8,Vegetable oil,Detergency,60.2
+8,Vegetable oil,Detergency,60.56
+8,Vegetable oil,Detergency,61.28
+1,Butter,Detergency,50.42
+1,Butter,Detergency,52.75
+1,Butter,Detergency,55.71
+1,Butter,Detergency,53.17
+2,Butter,Detergency,54.87
+2,Butter,Detergency,55.67
+2,Butter,Detergency,54.38
+2,Butter,Detergency,53.58
+3,Butter,Detergency,49.44
+3,Butter,Detergency,52.38
+3,Butter,Detergency,56.44
+3,Butter,Detergency,54.41
+4,Butter,Detergency,51.47
+4,Butter,Detergency,51.53
+4,Butter,Detergency,55.12
+4,Butter,Detergency,50.86
+5,Butter,Detergency,44.48
+5,Butter,Detergency,52.12
+5,Butter,Detergency,53.66
+5,Butter,Detergency,47.91
+6,Butter,Detergency,48.48
+6,Butter,Detergency,47.43
+6,Butter,Detergency,50.75
+6,Butter,Detergency,48.54
+7,Butter,Detergency,47.61
+7,Butter,Detergency,51.24
+7,Butter,Detergency,44.85
+7,Butter,Detergency,49.42
+8,Butter,Detergency,44.45
+8,Butter,Detergency,49.71
+8,Butter,Detergency,54.41
+8,Butter,Detergency,54.61
+1,Make-up2,Detergency,53.93
+1,Make-up2,Detergency,60.24
+1,Make-up2,Detergency,59.96
+1,Make-up2,Detergency,42.03
+2,Make-up2,Detergency,50.98
+2,Make-up2,Detergency,54.17
+2,Make-up2,Detergency,58.31
+2,Make-up2,Detergency,59.46
+3,Make-up2,Detergency,49.48
+3,Make-up2,Detergency,46.8
+3,Make-up2,Detergency,57.89
+3,Make-up2,Detergency,46.67
+4,Make-up2,Detergency,52.02
+4,Make-up2,Detergency,57.38
+4,Make-up2,Detergency,63.53
+4,Make-up2,Detergency,51.7
+5,Make-up2,Detergency,44.63
+5,Make-up2,Detergency,64.38
+5,Make-up2,Detergency,55.63
+5,Make-up2,Detergency,52.93
+6,Make-up2,Detergency,46.13
+6,Make-up2,Detergency,44.7
+6,Make-up2,Detergency,49.06
+6,Make-up2,Detergency,42.29
+7,Make-up2,Detergency,49.94
+7,Make-up2,Detergency,52.46
+7,Make-up2,Detergency,41.79
+7,Make-up2,Detergency,55.29
+8,Make-up2,Detergency,45.35
+8,Make-up2,Detergency,58.81
+8,Make-up2,Detergency,57.27
+8,Make-up2,Detergency,58.1
+1,Lipstick2,Detergency,33.52
+1,Lipstick2,Detergency,33.4
+1,Lipstick2,Detergency,33.98
+1,Lipstick2,Detergency,50
+2,Lipstick2,Detergency,35.14
+2,Lipstick2,Detergency,32.41
+2,Lipstick2,Detergency,40.28
+2,Lipstick2,Detergency,38.9
+3,Lipstick2,Detergency,33.68
+3,Lipstick2,Detergency,32.24
+3,Lipstick2,Detergency,40.36
+3,Lipstick2,Detergency,34.62
+4,Lipstick2,Detergency,36.07
+4,Lipstick2,Detergency,36.27
+4,Lipstick2,Detergency,41.52
+4,Lipstick2,Detergency,37.12
+5,Lipstick2,Detergency,30.92
+5,Lipstick2,Detergency,35.72
+5,Lipstick2,Detergency,39.26
+5,Lipstick2,Detergency,38.68
+6,Lipstick2,Detergency,35
+6,Lipstick2,Detergency,30.28
+6,Lipstick2,Detergency,37.61
+6,Lipstick2,Detergency,39.42
+7,Lipstick2,Detergency,37.33
+7,Lipstick2,Detergency,33.07
+7,Lipstick2,Detergency,29.05
+7,Lipstick2,Detergency,29.84
+8,Lipstick2,Detergency,33.61
+8,Lipstick2,Detergency,34.21
+8,Lipstick2,Detergency,35.69
+8,Lipstick2,Detergency,34.96
+1,Artificial sebum on cotton,Detergency,60.29
+1,Artificial sebum on cotton,Detergency,60.44
+1,Artificial sebum on cotton,Detergency,59.58
+1,Artificial sebum on cotton,Detergency,60.17
+2,Artificial sebum on cotton,Detergency,63.15
+2,Artificial sebum on cotton,Detergency,62.01
+2,Artificial sebum on cotton,Detergency,58.19
+2,Artificial sebum on cotton,Detergency,62.4
+3,Artificial sebum on cotton,Detergency,60.77
+3,Artificial sebum on cotton,Detergency,59.91
+3,Artificial sebum on cotton,Detergency,62.19
+3,Artificial sebum on cotton,Detergency,60.84
+4,Artificial sebum on cotton,Detergency,63.2
+4,Artificial sebum on cotton,Detergency,61.4
+4,Artificial sebum on cotton,Detergency,63.57
+4,Artificial sebum on cotton,Detergency,58.71
+5,Artificial sebum on cotton,Detergency,57.6
+5,Artificial sebum on cotton,Detergency,59.23
+5,Artificial sebum on cotton,Detergency,59
+5,Artificial sebum on cotton,Detergency,55.5
+6,Artificial sebum on cotton,Detergency,58.86
+6,Artificial sebum on cotton,Detergency,58.51
+6,Artificial sebum on cotton,Detergency,59.61
+6,Artificial sebum on cotton,Detergency,58.26
+7,Artificial sebum on cotton,Detergency,58.17
+7,Artificial sebum on cotton,Detergency,62.08
+7,Artificial sebum on cotton,Detergency,62.76
+7,Artificial sebum on cotton,Detergency,61.73
+8,Artificial sebum on cotton,Detergency,55.62
+8,Artificial sebum on cotton,Detergency,55.39
+8,Artificial sebum on cotton,Detergency,60.53
+8,Artificial sebum on cotton,Detergency,60.75
+1,Make-up1,Detergency,69.26
+1,Make-up1,Detergency,69.54
+1,Make-up1,Detergency,70
+1,Make-up1,Detergency,71.75
+2,Make-up1,Detergency,69.21
+2,Make-up1,Detergency,70.79
+2,Make-up1,Detergency,72.34
+2,Make-up1,Detergency,71.39
+3,Make-up1,Detergency,70.96
+3,Make-up1,Detergency,70.53
+3,Make-up1,Detergency,69.4
+3,Make-up1,Detergency,70.85
+4,Make-up1,Detergency,68.83
+4,Make-up1,Detergency,70.81
+4,Make-up1,Detergency,71.53
+4,Make-up1,Detergency,70.16
+5,Make-up1,Detergency,66.71
+5,Make-up1,Detergency,72.87
+5,Make-up1,Detergency,73.9
+5,Make-up1,Detergency,69.77
+6,Make-up1,Detergency,69.74
+6,Make-up1,Detergency,70.85
+6,Make-up1,Detergency,68.6
+6,Make-up1,Detergency,66.98
+7,Make-up1,Detergency,66.18
+7,Make-up1,Detergency,68.96
+7,Make-up1,Detergency,71.41
+7,Make-up1,Detergency,68.87
+8,Make-up1,Detergency,68.45
+8,Make-up1,Detergency,73.63
+8,Make-up1,Detergency,71.07
+8,Make-up1,Detergency,70.12
+1,Artifical sebum on PES/cot,Detergency,66.75
+1,Artifical sebum on PES/cot,Detergency,71.68
+1,Artifical sebum on PES/cot,Detergency,74.47
+1,Artifical sebum on PES/cot,Detergency,73.01
+2,Artifical sebum on PES/cot,Detergency,75.7
+2,Artifical sebum on PES/cot,Detergency,74.38
+2,Artifical sebum on PES/cot,Detergency,77.17
+2,Artifical sebum on PES/cot,Detergency,75.58
+3,Artifical sebum on PES/cot,Detergency,68.21
+3,Artifical sebum on PES/cot,Detergency,72.13
+3,Artifical sebum on PES/cot,Detergency,72.19
+3,Artifical sebum on PES/cot,Detergency,73.1
+4,Artifical sebum on PES/cot,Detergency,71.95
+4,Artifical sebum on PES/cot,Detergency,74.57
+4,Artifical sebum on PES/cot,Detergency,73.76
+4,Artifical sebum on PES/cot,Detergency,72.3
+5,Artifical sebum on PES/cot,Detergency,65.73
+5,Artifical sebum on PES/cot,Detergency,67.27
+5,Artifical sebum on PES/cot,Detergency,72.24
+5,Artifical sebum on PES/cot,Detergency,71.78
+6,Artifical sebum on PES/cot,Detergency,68.02
+6,Artifical sebum on PES/cot,Detergency,65.59
+6,Artifical sebum on PES/cot,Detergency,68.57
+6,Artifical sebum on PES/cot,Detergency,67.49
+7,Artifical sebum on PES/cot,Detergency,67.73
+7,Artifical sebum on PES/cot,Detergency,71.97
+7,Artifical sebum on PES/cot,Detergency,71.01
+7,Artifical sebum on PES/cot,Detergency,67.68
+8,Artifical sebum on PES/cot,Detergency,66.61
+8,Artifical sebum on PES/cot,Detergency,72.45
+8,Artifical sebum on PES/cot,Detergency,72.92
+8,Artifical sebum on PES/cot,Detergency,72.48
+1,Lipstick1,Detergency,39.64
+1,Lipstick1,Detergency,40.19
+1,Lipstick1,Detergency,40.72
+1,Lipstick1,Detergency,38.95
+2,Lipstick1,Detergency,39.35
+2,Lipstick1,Detergency,44.33
+2,Lipstick1,Detergency,41.43
+2,Lipstick1,Detergency,44
+3,Lipstick1,Detergency,41.04
+3,Lipstick1,Detergency,41.54
+3,Lipstick1,Detergency,41.55
+3,Lipstick1,Detergency,40.61
+4,Lipstick1,Detergency,41.69
+4,Lipstick1,Detergency,41.47
+4,Lipstick1,Detergency,38.64
+4,Lipstick1,Detergency,37.57
+5,Lipstick1,Detergency,39.65
+5,Lipstick1,Detergency,40.46
+5,Lipstick1,Detergency,43.31
+5,Lipstick1,Detergency,40.3
+6,Lipstick1,Detergency,40.81
+6,Lipstick1,Detergency,40.31
+6,Lipstick1,Detergency,42.66
+6,Lipstick1,Detergency,36.48
+7,Lipstick1,Detergency,42.07
+7,Lipstick1,Detergency,40.16
+7,Lipstick1,Detergency,38.13
+7,Lipstick1,Detergency,36.86
+8,Lipstick1,Detergency,41.31
+8,Lipstick1,Detergency,41.16
+8,Lipstick1,Detergency,40.02
+8,Lipstick1,Detergency,42.13
+1,Used Motor oil2,Detergency,40.12
+1,Used Motor oil2,Detergency,41.51
+1,Used Motor oil2,Detergency,39.2
+1,Used Motor oil2,Detergency,40.03
+2,Used Motor oil2,Detergency,38.65
+2,Used Motor oil2,Detergency,39.36
+2,Used Motor oil2,Detergency,40.54
+2,Used Motor oil2,Detergency,37.75
+3,Used Motor oil2,Detergency,39.34
+3,Used Motor oil2,Detergency,39.43
+3,Used Motor oil2,Detergency,41.36
+3,Used Motor oil2,Detergency,38.87
+4,Used Motor oil2,Detergency,38.73
+4,Used Motor oil2,Detergency,39.7
+4,Used Motor oil2,Detergency,40.3
+4,Used Motor oil2,Detergency,38.99
+5,Used Motor oil2,Detergency,38.57
+5,Used Motor oil2,Detergency,39.32
+5,Used Motor oil2,Detergency,41.74
+5,Used Motor oil2,Detergency,39.01
+6,Used Motor oil2,Detergency,37.91
+6,Used Motor oil2,Detergency,40.81
+6,Used Motor oil2,Detergency,38.91
+6,Used Motor oil2,Detergency,38.79
+7,Used Motor oil2,Detergency,38.56
+7,Used Motor oil2,Detergency,38.67
+7,Used Motor oil2,Detergency,40.68
+7,Used Motor oil2,Detergency,38.08
+8,Used Motor oil2,Detergency,39.22
+8,Used Motor oil2,Detergency,38.33
+8,Used Motor oil2,Detergency,39.51
+8,Used Motor oil2,Detergency,40.05
+1,Lanolin,Detergency,53.2
+1,Lanolin,Detergency,53.79
+1,Lanolin,Detergency,56.22
+1,Lanolin,Detergency,48.17
+2,Lanolin,Detergency,54.36
+2,Lanolin,Detergency,52.45
+2,Lanolin,Detergency,55.24
+2,Lanolin,Detergency,53.57
+3,Lanolin,Detergency,50.91
+3,Lanolin,Detergency,52.43
+3,Lanolin,Detergency,53.82
+3,Lanolin,Detergency,52.52
+4,Lanolin,Detergency,53.57
+4,Lanolin,Detergency,56.52
+4,Lanolin,Detergency,52.77
+4,Lanolin,Detergency,48.33
+5,Lanolin,Detergency,47.01
+5,Lanolin,Detergency,53.31
+5,Lanolin,Detergency,55.64
+5,Lanolin,Detergency,51
+6,Lanolin,Detergency,49.49
+6,Lanolin,Detergency,49.62
+6,Lanolin,Detergency,48.82
+6,Lanolin,Detergency,49.69
+7,Lanolin,Detergency,48.95
+7,Lanolin,Detergency,49.17
+7,Lanolin,Detergency,52.46
+7,Lanolin,Detergency,47.87
+8,Lanolin,Detergency,48.4
+8,Lanolin,Detergency,50.24
+8,Lanolin,Detergency,50.1
+8,Lanolin,Detergency,58.76
+1,Chocolate,Enzymatic,69.22
+1,Chocolate,Enzymatic,67.46
+1,Chocolate,Enzymatic,68.71
+1,Chocolate,Enzymatic,68.26
+2,Chocolate,Enzymatic,68.04
+2,Chocolate,Enzymatic,67.17
+2,Chocolate,Enzymatic,67.8
+2,Chocolate,Enzymatic,69.05
+3,Chocolate,Enzymatic,66.49
+3,Chocolate,Enzymatic,67.85
+3,Chocolate,Enzymatic,67.78
+3,Chocolate,Enzymatic,67.93
+4,Chocolate,Enzymatic,69.61
+4,Chocolate,Enzymatic,69.84
+4,Chocolate,Enzymatic,69.61
+4,Chocolate,Enzymatic,69.42
+5,Chocolate,Enzymatic,65.47
+5,Chocolate,Enzymatic,67.9
+5,Chocolate,Enzymatic,68.74
+5,Chocolate,Enzymatic,66.33
+6,Chocolate,Enzymatic,64.23
+6,Chocolate,Enzymatic,62.9
+6,Chocolate,Enzymatic,63.52
+6,Chocolate,Enzymatic,62.68
+7,Chocolate,Enzymatic,64.58
+7,Chocolate,Enzymatic,65.42
+7,Chocolate,Enzymatic,66.07
+7,Chocolate,Enzymatic,63.06
+8,Chocolate,Enzymatic,65.17
+8,Chocolate,Enzymatic,66.09
+8,Chocolate,Enzymatic,67.3
+8,Chocolate,Enzymatic,67.58
+1,Blood,Enzymatic,36.3
+1,Blood,Enzymatic,32.56
+1,Blood,Enzymatic,39.93
+1,Blood,Enzymatic,38.05
+2,Blood,Enzymatic,38.5
+2,Blood,Enzymatic,41.63
+2,Blood,Enzymatic,38.37
+2,Blood,Enzymatic,35.82
+3,Blood,Enzymatic,38.06
+3,Blood,Enzymatic,38.96
+3,Blood,Enzymatic,36.89
+3,Blood,Enzymatic,36.42
+4,Blood,Enzymatic,35.62
+4,Blood,Enzymatic,37.69
+4,Blood,Enzymatic,36.37
+4,Blood,Enzymatic,34.82
+5,Blood,Enzymatic,33.26
+5,Blood,Enzymatic,40.1
+5,Blood,Enzymatic,37.08
+5,Blood,Enzymatic,33.29
+6,Blood,Enzymatic,35.65
+6,Blood,Enzymatic,30.67
+6,Blood,Enzymatic,34.66
+6,Blood,Enzymatic,31.65
+7,Blood,Enzymatic,33.43
+7,Blood,Enzymatic,36.53
+7,Blood,Enzymatic,34.17
+7,Blood,Enzymatic,35.36
+8,Blood,Enzymatic,29.88
+8,Blood,Enzymatic,37.55
+8,Blood,Enzymatic,35.8
+8,Blood,Enzymatic,37.29
+1,Rice starch,Enzymatic,74.91
+1,Rice starch,Enzymatic,75.11
+1,Rice starch,Enzymatic,74.71
+1,Rice starch,Enzymatic,74.25
+2,Rice starch,Enzymatic,75.29
+2,Rice starch,Enzymatic,75.94
+2,Rice starch,Enzymatic,75.55
+2,Rice starch,Enzymatic,74.68
+3,Rice starch,Enzymatic,74.87
+3,Rice starch,Enzymatic,73.65
+3,Rice starch,Enzymatic,75.3
+3,Rice starch,Enzymatic,74.64
+4,Rice starch,Enzymatic,74.84
+4,Rice starch,Enzymatic,75.59
+4,Rice starch,Enzymatic,75.38
+4,Rice starch,Enzymatic,75.55
+5,Rice starch,Enzymatic,74.64
+5,Rice starch,Enzymatic,74.57
+5,Rice starch,Enzymatic,75.31
+5,Rice starch,Enzymatic,73.63
+6,Rice starch,Enzymatic,74.02
+6,Rice starch,Enzymatic,73.86
+6,Rice starch,Enzymatic,73.33
+6,Rice starch,Enzymatic,72.8
+7,Rice starch,Enzymatic,74.72
+7,Rice starch,Enzymatic,74.27
+7,Rice starch,Enzymatic,74.79
+7,Rice starch,Enzymatic,73.61
+8,Rice starch,Enzymatic,74.22
+8,Rice starch,Enzymatic,74.8
+8,Rice starch,Enzymatic,74.34
+8,Rice starch,Enzymatic,75.41
+1,Blood1,Enzymatic,75.05
+1,Blood1,Enzymatic,73.34
+1,Blood1,Enzymatic,79.15
+1,Blood1,Enzymatic,79.29
+2,Blood1,Enzymatic,79.67
+2,Blood1,Enzymatic,77.86
+2,Blood1,Enzymatic,80.26
+2,Blood1,Enzymatic,80.04
+3,Blood1,Enzymatic,78.23
+3,Blood1,Enzymatic,77.95
+3,Blood1,Enzymatic,75.48
+3,Blood1,Enzymatic,76
+4,Blood1,Enzymatic,75.45
+4,Blood1,Enzymatic,78.81
+4,Blood1,Enzymatic,77.09
+4,Blood1,Enzymatic,74.72
+5,Blood1,Enzymatic,70.84
+5,Blood1,Enzymatic,74.33
+5,Blood1,Enzymatic,76.75
+5,Blood1,Enzymatic,71.32
+6,Blood1,Enzymatic,76.11
+6,Blood1,Enzymatic,68.46
+6,Blood1,Enzymatic,74.16
+6,Blood1,Enzymatic,70.56
+7,Blood1,Enzymatic,68.99
+7,Blood1,Enzymatic,74.36
+7,Blood1,Enzymatic,70.68
+7,Blood1,Enzymatic,72.28
+8,Blood1,Enzymatic,65.6
+8,Blood1,Enzymatic,79.15
+8,Blood1,Enzymatic,79.34
+8,Blood1,Enzymatic,80.23
+1,Cocoa,Enzymatic,55.14
+1,Cocoa,Enzymatic,55.63
+1,Cocoa,Enzymatic,55.27
+1,Cocoa,Enzymatic,55.07
+2,Cocoa,Enzymatic,54.85
+2,Cocoa,Enzymatic,60.56
+2,Cocoa,Enzymatic,60.85
+2,Cocoa,Enzymatic,60.1
+3,Cocoa,Enzymatic,53.68
+3,Cocoa,Enzymatic,55.24
+3,Cocoa,Enzymatic,59.94
+3,Cocoa,Enzymatic,56.19
+4,Cocoa,Enzymatic,61.44
+4,Cocoa,Enzymatic,57.68
+4,Cocoa,Enzymatic,55.76
+4,Cocoa,Enzymatic,57.02
+5,Cocoa,Enzymatic,55.54
+5,Cocoa,Enzymatic,52.22
+5,Cocoa,Enzymatic,54.94
+5,Cocoa,Enzymatic,57.29
+6,Cocoa,Enzymatic,56.82
+6,Cocoa,Enzymatic,55.04
+6,Cocoa,Enzymatic,49.07
+6,Cocoa,Enzymatic,53.06
+7,Cocoa,Enzymatic,48.94
+7,Cocoa,Enzymatic,47.75
+7,Cocoa,Enzymatic,55.46
+7,Cocoa,Enzymatic,53.61
+8,Cocoa,Enzymatic,58.02
+8,Cocoa,Enzymatic,52.42
+8,Cocoa,Enzymatic,52.31
+8,Cocoa,Enzymatic,53.08
