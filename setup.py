@@ -43,5 +43,5 @@ setup(
     ],
 
     packages=['permute', 'permute.data', 'permute.tests'],
-    package_data={ 'permute.data': ['*.csv'] }
+    package_data={ 'permute.data': ['*.csv', '*/*.csv', '*/*/*.csv'] }
 )
