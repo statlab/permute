@@ -126,7 +126,7 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
 
 
 def permuteWithinGroups(group, condition, groups):
-    permuted = condition.deepcopy()
+    permuted = condition.copy()
     for g in groups:
         gg = group == g
         permuted[gg] = np.random.permutation(condition[gg])
