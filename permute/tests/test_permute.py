@@ -5,7 +5,6 @@ import numpy as np
 from numpy.testing import (assert_array_equal,
                            assert_almost_equal)
 
-from numpy.testing import dec
 
 def test_stratifiedPermutationTest():
     group = np.array(
