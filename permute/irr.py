@@ -18,6 +18,8 @@ def compute_ts(ratings):
     ----------
     ratings: array_like
              Input array of dimension [R, Ns]
+             Each row corresponds to the ratings given by a single rater;
+             columns correspond to items rated.
 
     Returns
     -------
@@ -32,8 +34,10 @@ def compute_ts(ratings):
 
 def permute_rows(ratings):
     """
-    Permute elements of each row in the ratings matrix except the top row.
-    Each row corresponds to the ratings given by a single rater; columns correspond to items rated.
+    Permute elements of each row in the ratings matrix.
+    Each row corresponds to the ratings given by a single rater; columns correspond
+    to items rated.
+
     Parameters
     ----------
     ratings: array_like
@@ -47,7 +51,7 @@ def permute_rows(ratings):
     ------
     Permutes the elements of each row of <ratings> in place; leaves the top row unchanged
     """
-    np.apply_along_axis(np.random.shuffle, axis=1, arr=ratings)
+    np.apply_along_axis(np.random.shuffle, axis=0, arr=ratings)
     return True
 
 def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
@@ -69,7 +73,8 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
               Input array of dimension [R, Ns]
 
     obs_ts : float
-             observed value of the test statistic for the original data
+             if None, obs_ts is calculated as the value of the test statistic for the
+             original data
 
     iter : integer
            number of random permutation of the elements of each row of ratings
@@ -82,7 +87,8 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     Returns
     -------
     out : {obs_ts, geq, iter, dist}
-    obs_ts : observed value of the test statistic, or the input value of obs_ts if given
+    obs_ts : observed value of the test statistic for the input data, or the input value
+             of obs_ts if obs_ts was given as input
     geq : number of iterations for which the test statistic was greater than or equal to
           obs_ts
     iter : iter
