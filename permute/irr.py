@@ -2,8 +2,10 @@
 
 from __future__ import division, print_function, absolute_import
 
+import numpy as np
+
 import scipy.misc
-import scipy.random
+
 
 def compute_ts(ratings):
     """
@@ -87,9 +89,12 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     dist : if <keep_dist>, the array of values of the irr test statistic from the iter
            iterations.  Otherwise, null.
     """
-    if obs_ts is None:
-        obs_ts = compute_ts(ratings)
     r = ratings.copy()
+
+    if obs_ts is None:
+        obs_ts = compute_ts(r)
+
+
     if keep_dist:
         dist = np.zeros(iter)
         dist = [compute_ts(permute_rows(r)) for i in range(iter)]
