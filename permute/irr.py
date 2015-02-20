@@ -67,7 +67,8 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
               Input array of dimension [R, Ns]
 
     obs_ts : float
-             observed value of the test statistic for the original data
+             if None, obs_ts is calculated as the value of the test statistic for the
+             original data
 
     iter : integer
            number of random permutation of the elements of each row of ratings
@@ -80,7 +81,8 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     Returns
     -------
     out : {obs_ts, geq, iter, dist}
-    obs_ts : observed value of the test statistic, or the input value of obs_ts if given
+    obs_ts : observed value of the test statistic for the input data, or the input value
+             of obs_ts if obs_ts was given as input
     geq : number of iterations for which the test statistic was greater than or equal to
           obs_ts
     iter : iter
