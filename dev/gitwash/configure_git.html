@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configure git &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../../index.html" />
+    <link rel="up" title="Git for development" href="git_development.html" />
+    <link rel="next" title="Development workflow" href="development_workflow.html" />
+    <link rel="prev" title="Set up your fork" href="set_up_fork.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../npc/index.html">Permutation Tests for Complex Data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer&#8217;s Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Configure git</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#in-detail">In detail</a><ul>
+<li><a class="reference internal" href="#user-name-and-user-email">user.name and user.email</a></li>
+<li><a class="reference internal" href="#aliases">Aliases</a></li>
+<li><a class="reference internal" href="#editor">Editor</a></li>
+<li><a class="reference internal" href="#merging">Merging</a></li>
+<li><a class="reference internal" href="#fancy-log-output">Fancy log output</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="set_up_fork.html" title="Previous Chapter: Set up your fork"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Set up your fork</span>
+    </a>
+  </li>
+  <li>
+    <a href="development_workflow.html" title="Next Chapter: Development workflow"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Development work... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="configure-git">
+<span id="id1"></span><h1>Configure git<a class="headerlink" href="#configure-git" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<span id="git-config-basic"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Your personal git configurations are saved in the <tt class="docutils literal"><span class="pre">.gitconfig</span></tt> file in
+your home directory.</p>
+<p>Here is an example <tt class="docutils literal"><span class="pre">.gitconfig</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre>[user]
+        name = Your Name
+        email = you@yourdomain.example.com
+
+[alias]
+        ci = commit -a
+        co = checkout
+        st = status
+        stat = status
+        br = branch
+        wdiff = diff --color-words
+
+[core]
+        editor = vim
+
+[merge]
+        summary = true
+</pre></div>
+</div>
+<p>You can edit this file directly or you can use the <tt class="docutils literal"><span class="pre">git</span> <span class="pre">config</span> <span class="pre">--global</span></tt>
+command:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global user.name &quot;Your Name&quot;
+git config --global user.email you@yourdomain.example.com
+git config --global alias.ci &quot;commit -a&quot;
+git config --global alias.co checkout
+git config --global alias.st &quot;status -a&quot;
+git config --global alias.stat &quot;status -a&quot;
+git config --global alias.br branch
+git config --global alias.wdiff &quot;diff --color-words&quot;
+git config --global core.editor vim
+git config --global merge.summary true
+</pre></div>
+</div>
+<p>To set up on another computer, you can copy your <tt class="docutils literal"><span class="pre">~/.gitconfig</span></tt> file,
+or run the commands above.</p>
+</div>
+<div class="section" id="in-detail">
+<h2>In detail<a class="headerlink" href="#in-detail" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="user-name-and-user-email">
+<h3>user.name and user.email<a class="headerlink" href="#user-name-and-user-email" title="Permalink to this headline">¶</a></h3>
+<p>It is good practice to tell <a class="reference external" href="http://git-scm.com/">git</a> who you are, for labeling any changes
+you make to the code.  The simplest way to do this is from the command
+line:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global user.name &quot;Your Name&quot;
+git config --global user.email you@yourdomain.example.com
+</pre></div>
+</div>
+<p>This will write the settings into your git configuration file,  which
+should now contain a user section with your name and email:</p>
+<div class="highlight-python"><div class="highlight"><pre>[user]
+      name = Your Name
+      email = you@yourdomain.example.com
+</pre></div>
+</div>
+<p>Of course you&#8217;ll need to replace <tt class="docutils literal"><span class="pre">Your</span> <span class="pre">Name</span></tt> and <tt class="docutils literal"><span class="pre">you&#64;yourdomain.example.com</span></tt>
+with your actual name and email address.</p>
+</div>
+<div class="section" id="aliases">
+<h3>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h3>
+<p>You might well benefit from some aliases to common commands.</p>
+<p>For example, you might well want to be able to shorten <tt class="docutils literal"><span class="pre">git</span> <span class="pre">checkout</span></tt>
+to <tt class="docutils literal"><span class="pre">git</span> <span class="pre">co</span></tt>.  Or you may want to alias <tt class="docutils literal"><span class="pre">git</span> <span class="pre">diff</span> <span class="pre">--color-words</span></tt>
+(which gives a nicely formatted output of the diff) to <tt class="docutils literal"><span class="pre">git</span> <span class="pre">wdiff</span></tt></p>
+<p>The following <tt class="docutils literal"><span class="pre">git</span> <span class="pre">config</span> <span class="pre">--global</span></tt> commands:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global alias.ci &quot;commit -a&quot;
+git config --global alias.co checkout
+git config --global alias.st &quot;status -a&quot;
+git config --global alias.stat &quot;status -a&quot;
+git config --global alias.br branch
+git config --global alias.wdiff &quot;diff --color-words&quot;
+</pre></div>
+</div>
+<p>will create an <tt class="docutils literal"><span class="pre">alias</span></tt> section in your <tt class="docutils literal"><span class="pre">.gitconfig</span></tt> file with contents
+like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>[alias]
+        ci = commit -a
+        co = checkout
+        st = status -a
+        stat = status -a
+        br = branch
+        wdiff = diff --color-words
+</pre></div>
+</div>
+</div>
+<div class="section" id="editor">
+<h3>Editor<a class="headerlink" href="#editor" title="Permalink to this headline">¶</a></h3>
+<p>You may also want to make sure that your editor of choice is used</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global core.editor vim
+</pre></div>
+</div>
+</div>
+<div class="section" id="merging">
+<h3>Merging<a class="headerlink" href="#merging" title="Permalink to this headline">¶</a></h3>
+<p>To enforce summaries when doing merges (<tt class="docutils literal"><span class="pre">~/.gitconfig</span></tt> file again):</p>
+<div class="highlight-python"><div class="highlight"><pre>[merge]
+   log = true
+</pre></div>
+</div>
+<p>Or from the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global merge.log true
+</pre></div>
+</div>
+</div>
+<div class="section" id="fancy-log-output">
+<span id="fancy-log"></span><h3>Fancy log output<a class="headerlink" href="#fancy-log-output" title="Permalink to this headline">¶</a></h3>
+<p>This is a very nice alias to get a fancy log output; it should go in the
+<tt class="docutils literal"><span class="pre">alias</span></tt> section of your <tt class="docutils literal"><span class="pre">.gitconfig</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre>lg = log --graph --pretty=format:&#39;%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)[%an]%Creset&#39; --abbrev-commit --date=relative
+</pre></div>
+</div>
+<p>You use the alias with:</p>
+<div class="highlight-python"><div class="highlight"><pre>git lg
+</pre></div>
+</div>
+<p>and it gives graph / text output something like this (but with color!):</p>
+<div class="highlight-python"><div class="highlight"><pre>* 6d8e1ee - (HEAD, origin/my-fancy-feature, my-fancy-feature) NF - a fancy file (45 minutes ago) [Matthew Brett]
+*   d304a73 - (origin/placeholder, placeholder) Merge pull request #48 from hhuuggoo/master (2 weeks ago) [Jonathan Terhorst]
+|\
+| * 4aff2a8 - fixed bug 35, and added a test in test_bugfixes (2 weeks ago) [Hugo]
+|/
+* a7ff2e5 - Added notes on discussion/proposal made during Data Array Summit. (2 weeks ago) [Corran Webster]
+* 68f6752 - Initial implimentation of AxisIndexer - uses &#39;index_by&#39; which needs to be changed to a call on an Axes object - this is all very sketchy right now. (2 weeks ago) [Corr
+*   376adbd - Merge pull request #46 from terhorst/master (2 weeks ago) [Jonathan Terhorst]
+|\
+| * b605216 - updated joshu example to current api (3 weeks ago) [Jonathan Terhorst]
+| * 2e991e8 - add testing for outer ufunc (3 weeks ago) [Jonathan Terhorst]
+| * 7beda5a - prevent axis from throwing an exception if testing equality with non-axis object (3 weeks ago) [Jonathan Terhorst]
+| * 65af65e - convert unit testing code to assertions (3 weeks ago) [Jonathan Terhorst]
+| *   956fbab - Merge remote-tracking branch &#39;upstream/master&#39; (3 weeks ago) [Jonathan Terhorst]
+| |\
+| |/
+</pre></div>
+</div>
+<p>Thanks to Yury V. Zaytsev for posting it.</p>
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

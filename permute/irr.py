@@ -49,8 +49,8 @@ def permute_rows(ratings):
     ------
     Permutes the elements of each row of <ratings> in place; leaves the top row unchanged
     """
-    np.apply_along_axis(np.random.shuffle, axis=0, arr=ratings)
-    return True
+    r = np.apply_along_axis(np.random.permutation, axis=0, arr=ratings)
+    return r
 
 def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     """
@@ -98,11 +98,11 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     r = ratings.copy()
     if keep_dist:
         dist = np.zeros(iter)
-        dist = [compute_ts(permute_rows(r)) for i in range(iter)]
+        dist = [compute_ts(np.apply_along_axis(np.random.permutation, axis=0, arr=r)) for i in range(iter)]
         geq = np.sum(dist >= obs_ts)
     else:
         dist = None
         geq = 0
         for i in range(iter):
-            geq += compute_ts(permute_rows(r)) >= obs_ts
+            geq += compute_ts(np.apply_along_axis(np.random.permutation, axis=0, arr=r)) >= obs_ts
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
