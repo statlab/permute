@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Kenya &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
+    <link rel="up" title="Permutation Tests for Complex Data" href="index.html" />
+    <link rel="next" title="Developer’s Guide" href="../dev/index.html" />
+    <link rel="prev" title="Permutation Tests for Complex Data" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Permutation Tests for Complex Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer&#8217;s Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Kenya</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: Permutation Tests for Complex Data"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Permutation Test...</span>
+    </a>
+  </li>
+  <li>
+    <a href="../dev/index.html" title="Next Chapter: Developer’s Guide"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Developer’s Guid... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="kenya">
+<h1>Kenya<a class="headerlink" href="#kenya" title="Permalink to this headline">¶</a></h1>
+<p>The Kenya dataset <a class="reference internal" href="#corrain" id="id1">[CM77]</a> contains 16 observations and two variables
+in total.  It concerns an anthropological study on the &#8220;Ol Molo&#8221; and &#8220;Kamba&#8221;
+populations described above. Table 1 shows the sample frequencies of the 16
+phenotypic combinations in the samples selected from the two populations.</p>
+<p>Given <img class="math" src="../_images/math/3e6e31e0452d9ce5c1cbf1a8e5d89df4e8ea9b30.png" alt="X_1, X_2, \dots, X_n"/> and ...</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">permute.data</span> <span class="kn">import</span> <span class="n">kenya</span>
+
+<span class="gp">In [2]: </span><span class="n">d</span> <span class="o">=</span> <span class="n">kenya</span><span class="p">()</span>
+
+<span class="gp">In [3]: </span><span class="n">d</span>
+<span class="gh">Out[3]: </span><span class="go"></span>
+<span class="go">    Classes  Ol_Molo  Kamba</span>
+<span class="go">0         1       12      0</span>
+<span class="go">1         2        1      0</span>
+<span class="go">2         3        8      6</span>
+<span class="go">3         4        2      1</span>
+<span class="go">4         5        0      0</span>
+<span class="go">5         6        1      0</span>
+<span class="go">6         7        1      0</span>
+<span class="go">7         8        0      0</span>
+<span class="go">8         9        0      0</span>
+<span class="go">9        10        2      0</span>
+<span class="go">10       11        8     15</span>
+<span class="go">11       12        6      0</span>
+<span class="go">12       13        0      0</span>
+<span class="go">13       14        0      0</span>
+<span class="go">14       15        3      1</span>
+<span class="go">15       16        1      0</span>
+
+<span class="gp">In [4]: </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="gp">In [5]: </span><span class="n">d</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="p">,</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="gh">Out[5]: </span><span class="go">&lt;matplotlib.axes.AxesSubplot at 0x7f3b9e6969d0&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/test.png" src="../_images/test.png" />
+<p class="rubric">References</p>
+<p id="bibtex-bibliography-npc/kenya-0"><table class="docutils citation" frame="void" id="corrain" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[CM77]</a></td><td>C&nbsp;Corrain and F&nbsp;Pesarin Mezzavilla. F. and scardellato, u.(1977). il valore discriminativo di alcuni fattori gm, tra le popolazioni pastorali del kenya. <em>Atti e Memorie dell’Accademia Patavina di Scienze, Lettere ed Arti, LXXXIX, Parte II: Classe di Scienze Matematiche e Naturali. University of Padua</em>, pages 55–63, 1977.</td></tr>
+</tbody>
+</table>
+</p>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

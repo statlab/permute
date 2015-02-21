@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Making your own copy (fork) of permute &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../../index.html" />
+    <link rel="up" title="Git for development" href="git_development.html" />
+    <link rel="next" title="Set up your fork" href="set_up_fork.html" />
+    <link rel="prev" title="Git for development" href="git_development.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../npc/index.html">Permutation Tests for Complex Data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer&#8217;s Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Making your own copy (fork) of permute</a><ul>
+<li><a class="reference internal" href="#set-up-and-configure-a-github-account">Set up and configure a github account</a></li>
+<li><a class="reference internal" href="#create-your-own-forked-copy-of-permute">Create your own forked copy of permute</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="git_development.html" title="Previous Chapter: Git for development"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Git for developm...</span>
+    </a>
+  </li>
+  <li>
+    <a href="set_up_fork.html" title="Next Chapter: Set up your fork"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Set up your fork &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="making-your-own-copy-fork-of-permute">
+<span id="forking"></span><h1>Making your own copy (fork) of permute<a class="headerlink" href="#making-your-own-copy-fork-of-permute" title="Permalink to this headline">¶</a></h1>
+<p>You need to do this only once.  The instructions here are very similar
+to the instructions at <a class="reference external" href="http://help.github.com/forking/">http://help.github.com/forking/</a> — please see
+that page for more detail.  We&#8217;re repeating some of it here just to give the
+specifics for the <a class="reference external" href="https://github.com/pbstark/permute">permute</a> project, and to suggest some default names.</p>
+<div class="section" id="set-up-and-configure-a-github-account">
+<h2>Set up and configure a github account<a class="headerlink" href="#set-up-and-configure-a-github-account" title="Permalink to this headline">¶</a></h2>
+<p>If you don&#8217;t have a github account, go to the github page, and make one.</p>
+<p>You then need to configure your account to allow write access — see
+the <tt class="docutils literal"><span class="pre">Generating</span> <span class="pre">SSH</span> <span class="pre">keys</span></tt> help on <a class="reference external" href="http://help.github.com">github help</a>.</p>
+</div>
+<div class="section" id="create-your-own-forked-copy-of-permute">
+<h2>Create your own forked copy of <a class="reference external" href="https://github.com/pbstark/permute">permute</a><a class="headerlink" href="#create-your-own-forked-copy-of-permute" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Log into your github account.</p>
+</li>
+<li><p class="first">Go to the <a class="reference external" href="https://github.com/pbstark/permute">permute</a> github home at <a class="reference external" href="http://github.com/pbstark/permute">permute github</a>.</p>
+</li>
+<li><p class="first">Click on the <em>fork</em> button:</p>
+<img alt="../../_images/forking_button.png" src="../../_images/forking_button.png" />
+<p>Now, after a short pause and some &#8216;Hardcore forking action&#8217;, you
+should find yourself at the home page for your own forked copy of <a class="reference external" href="https://github.com/pbstark/permute">permute</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
