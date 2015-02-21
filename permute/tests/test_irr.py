@@ -1,9 +1,10 @@
 from ..irr import compute_ts, simulate_ts_dist
-from nose.tools import assert_almost_equal
+#from nose.tools import assert_almost_equal
 
 import numpy as np
-#from numpy.testing import (assert_array_equal,
-#                           assert_almost_equal)
+from numpy.testing import (assert_equal,
+                           assert_array_equal,
+                           assert_almost_equal)
 
 
 R = 10
@@ -21,6 +22,10 @@ def test_irr():
     #assert_almost_equal(res[3], res1[3])
 
 def test_simulate_ts_dist():
-    x = simulate_ts_dist(res)
-    print x
+    expected_res1 = {'dist': None,
+                    'geq': 615,
+                    'obs_ts': 0.51936507936507936,
+                    'iter': 10000}
+    res1 = simulate_ts_dist(res)
+    assert_equal(res1, expected_res1)
     
