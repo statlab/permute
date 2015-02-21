@@ -3,7 +3,7 @@
 from __future__ import division, print_function, absolute_import
 
 import scipy.misc
-import scipy.random
+import numpy as np
 
 def compute_ts(ratings):
     """
@@ -30,27 +30,6 @@ def compute_ts(ratings):
     rho_s = counts.sum()/(Ns*scipy.misc.comb(R, 2))
     return rho_s
 
-def permute_rows(ratings):
-    """
-    Permute elements of each row in the ratings matrix.
-    Each row corresponds to the ratings given by a single rater; columns correspond
-    to items rated.
-
-    Parameters
-    ----------
-    ratings: array_like
-             Input array of dimension [R, Ns]
-
-    Returns
-    -------
-    True
-
-    Action
-    ------
-    Permutes the elements of each row of <ratings> in place; leaves the top row unchanged
-    """
-    r = np.apply_along_axis(np.random.permutation, axis=0, arr=ratings)
-    return r
 
 def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     """
@@ -98,11 +77,11 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     r = ratings.copy()
     if keep_dist:
         dist = np.zeros(iter)
-        dist = [compute_ts(np.apply_along_axis(np.random.permutation, axis=0, arr=r)) for i in range(iter)]
+        dist = [compute_ts(np.apply_along_axis(np.random.permutation, axis=1, arr=r)) for i in range(iter)]
         geq = np.sum(dist >= obs_ts)
     else:
         dist = None
         geq = 0
         for i in range(iter):
-            geq += compute_ts(np.apply_along_axis(np.random.permutation, axis=0, arr=r)) >= obs_ts
+            geq += compute_ts(np.apply_along_axis(np.random.permutation, axis=1, arr=r)) >= obs_ts
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
