@@ -1,4 +1,28 @@
-# -*- coding: utf-8 -*-
+"""
+There are $S$ strata (in this case, each stratum is a video).  There are $N_s$ 
+items in stratum $s$ (in this case, an item is corresponds to a 30-second
+snippet of the video). There are $N = \sum_{s=1}^S N_s$ items in all.
+
+There are $C$ non-exclusive categories to which each of the $N$ items might 
+belong; an item might belong to none of the categories (the categories are
+types of behavior that a child might exhibit in the 30-second snippet of
+video). That is, each item might be "labeled" with any of the $2^C$ subsets
+of the $C$ labels, including the empty set.
+
+There are $R$ "raters," each of whom labels each of the $N$ items with zero 
+or more elements of $C$.
+
+Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in stratum 
+$s$; and $L_{s,i,c,r} = 0$ if not.
+
+We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_i$; $c=1, ..., C$; 
+and $r=1, ..., R$.
+
+We want to know whether the categorizations are "reliable," in the sense that 
+agreement among the raters is higher than would be expected "by chance."  The
+reliability of each category $c$ is of interest, rather than an overall rating
+for all $C$ categories.
+"""
 
 from __future__ import division, print_function, absolute_import
 
@@ -9,9 +33,9 @@ import scipy.misc
 def compute_ts(ratings):
     """
     Compute the test statistic
-    .. math:: \rho_s \equiv
-        \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s} \sum_{r=1}^{R-1}
-            \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+
+    .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+              \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
 
     Parameters
     ----------
@@ -43,7 +67,6 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     If <keep_dist>, return the distribution of values of the test statistic; otherwise,
     return only the number of permutations for which the value of the irr test statistic is
     at least as large as obs_ts.
-
 
     Parameters
     ----------
