@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User Guide &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
+    <link rel="next" title="Permutation Tests for Complex Data" href="../npc/index.html" />
+    <link rel="prev" title="Permutation tests and confidence sets" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../npc/index.html">Permutation Tests for Complex Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer&#8217;s Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">User Guide</a><ul>
+<li><a class="reference internal" href="#module-permute.irr">Interrater reliability</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../index.html" title="Previous Chapter: Permutation tests and confidence sets"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Permutation test...</span>
+    </a>
+  </li>
+  <li>
+    <a href="../npc/index.html" title="Next Chapter: Permutation Tests for Complex Data"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Permutation Test... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="module-permute.irr">
+<span id="interrater-reliability"></span><h2>Interrater reliability<a class="headerlink" href="#module-permute.irr" title="Permalink to this headline">¶</a></h2>
+<p>There are <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> strata (in this case, each stratum is a video).  There are <img class="math" src="../_images/math/f9b03df42cc4eecc1f289434c88139073ffd3847.png" alt="N_s"/> 
+items in stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/> (in this case, an item is corresponds to a 30-second
+snippet of the video). There are <img class="math" src="../_images/math/ee2b3ee4a690c60f42688efd1635dfd782705ee6.png" alt="N = \sum_{s=1}^S N_s"/> items in all.</p>
+<p>There are <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> non-exclusive categories to which each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items might 
+belong; an item might belong to none of the categories (the categories are
+types of behavior that a child might exhibit in the 30-second snippet of
+video). That is, each item might be &#8220;labeled&#8221; with any of the <img class="math" src="../_images/math/32a52b7125d5c55fcb10c9692dc9402bfd9fa492.png" alt="2^C"/> subsets
+of the <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> labels, including the empty set.</p>
+<p>There are <img class="math" src="../_images/math/9d86170e7de539c0ff999de09621ee0c7b6c8ed0.png" alt="R"/> &#8220;raters,&#8221; each of whom labels each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items with zero 
+or more elements of <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/>.</p>
+<p>Define <img class="math" src="../_images/math/eeb9906b8389b13de3d212f2aecc4b6f185f8eb4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> assigns label <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in stratum 
+<img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>; and <img class="math" src="../_images/math/ae0e104f159d8fd9282f0f2cb45aef75b7649835.png" alt="L_{s,i,c,r} = 0"/> if not.</p>
+<p>We observe <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/d2f3cf154030dd3071142a8df67ebde070d5cbde.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/c90f729ed2e03b2a8a8163c29d31fb2c7aa57f9a.png" alt="i=1, ..., N_i"/>; <img class="math" src="../_images/math/38ae701b1c9d25077178c5ff5d4135b09953e6f9.png" alt="c=1, ..., C"/>; 
+and <img class="math" src="../_images/math/279d963ad025cb121e5241060fd665ee0d6f6a16.png" alt="r=1, ..., R"/>.</p>
+<p>We want to know whether the categorizations are &#8220;reliable,&#8221; in the sense that 
+agreement among the raters is higher than would be expected &#8220;by chance.&#8221;  The
+reliability of each category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is of interest, rather than an overall rating
+for all <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> categories.</p>
+<dl class="function">
+<dt id="permute.irr.compute_ts">
+<tt class="descclassname">permute.irr.</tt><tt class="descname">compute_ts</tt><big>(</big><em>ratings</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#compute_ts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.compute_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<div class="math">
+<p><img src="../_images/math/5d98da39fdd92d5b39ecfb00df2bbac4d7b0b1e4.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})"/></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ratings: array_like</strong></p>
+<blockquote>
+<div><p>Input array of dimension [R, Ns]
+Each row corresponds to the ratings given by a single rater;
+columns correspond to items rated.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">rho_s: float</p>
+<blockquote class="last">
+<div><p>concordance of the ratings, where perfect concordance is 1.0</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.irr.simulate_ts_dist">
+<tt class="descclassname">permute.irr.</tt><tt class="descname">simulate_ts_dist</tt><big>(</big><em>ratings</em>, <em>obs_ts=None</em>, <em>iter=10000</em>, <em>keep_dist=False</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#simulate_ts_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.simulate_ts_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates the permutation distribution of the irr test statistic for a matrix of
+ratings &lt;ratings&gt;</p>
+<p>If obs_ts is not null, computes the reference value of the test statistic before
+the first permutation. Otherwise, uses the value obs_ts for comparison.</p>
+<p>If &lt;keep_dist&gt;, return the distribution of values of the test statistic; otherwise,
+return only the number of permutations for which the value of the irr test statistic is
+at least as large as obs_ts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ratings</strong> : array_like</p>
+<blockquote>
+<div><p>Input array of dimension [R, Ns]</p>
+</div></blockquote>
+<p><strong>obs_ts</strong> : float</p>
+<blockquote>
+<div><p>if None, obs_ts is calculated as the value of the test statistic for the
+original data</p>
+</div></blockquote>
+<p><strong>iter</strong> : integer</p>
+<blockquote>
+<div><p>number of random permutation of the elements of each row of ratings</p>
+</div></blockquote>
+<p><strong>keep_dist</strong> : bool</p>
+<blockquote>
+<div><p>flag for whether to store and return the array of values of the irr
+test statistic</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : {obs_ts, geq, iter, dist}</p>
+<p><strong>obs_ts</strong> : observed value of the test statistic for the input data, or the input value</p>
+<blockquote>
+<div><p>of obs_ts if obs_ts was given as input</p>
+</div></blockquote>
+<p><strong>geq</strong> : number of iterations for which the test statistic was greater than or equal to</p>
+<blockquote>
+<div><p>obs_ts</p>
+</div></blockquote>
+<p><strong>iter</strong> : iter</p>
+<p><strong>dist</strong> : if &lt;keep_dist&gt;, the array of values of the irr test statistic from the iter</p>
+<blockquote class="last">
+<div><p>iterations.  Otherwise, null.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

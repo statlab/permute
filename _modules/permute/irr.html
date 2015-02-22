@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>permute.irr &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../npc/index.html">Permutation Tests for Complex Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer&#8217;s Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <h1>Source code for permute.irr</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">There are $S$ strata (in this case, each stratum is a video).  There are $N_s$ </span>
+<span class="sd">items in stratum $s$ (in this case, an item is corresponds to a 30-second</span>
+<span class="sd">snippet of the video). There are $N = \sum_{s=1}^S N_s$ items in all.</span>
+
+<span class="sd">There are $C$ non-exclusive categories to which each of the $N$ items might </span>
+<span class="sd">belong; an item might belong to none of the categories (the categories are</span>
+<span class="sd">types of behavior that a child might exhibit in the 30-second snippet of</span>
+<span class="sd">video). That is, each item might be &quot;labeled&quot; with any of the $2^C$ subsets</span>
+<span class="sd">of the $C$ labels, including the empty set.</span>
+
+<span class="sd">There are $R$ &quot;raters,&quot; each of whom labels each of the $N$ items with zero </span>
+<span class="sd">or more elements of $C$.</span>
+
+<span class="sd">Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in stratum </span>
+<span class="sd">$s$; and $L_{s,i,c,r} = 0$ if not.</span>
+
+<span class="sd">We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_i$; $c=1, ..., C$; </span>
+<span class="sd">and $r=1, ..., R$.</span>
+
+<span class="sd">We want to know whether the categorizations are &quot;reliable,&quot; in the sense that </span>
+<span class="sd">agreement among the raters is higher than would be expected &quot;by chance.&quot;  The</span>
+<span class="sd">reliability of each category $c$ is of interest, rather than an overall rating</span>
+<span class="sd">for all $C$ categories.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">scipy.misc</span>
+
+<div class="viewcode-block" id="compute_ts"><a class="viewcode-back" href="../../user/index.html#permute.irr.compute_ts">[docs]</a><span class="k">def</span> <span class="nf">compute_ts</span><span class="p">(</span><span class="n">ratings</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the test statistic</span>
+
+<span class="sd">    .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}</span>
+<span class="sd">              \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratings: array_like</span>
+<span class="sd">             Input array of dimension [R, Ns]</span>
+<span class="sd">             Each row corresponds to the ratings given by a single rater;</span>
+<span class="sd">             columns correspond to items rated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rho_s: float</span>
+<span class="sd">           concordance of the ratings, where perfect concordance is 1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R</span><span class="p">,</span> <span class="n">Ns</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">R</span><span class="o">-</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">rho_s</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="p">(</span><span class="n">Ns</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rho_s</span>
+
+</div>
+<div class="viewcode-block" id="simulate_ts_dist"><a class="viewcode-back" href="../../user/index.html#permute.irr.simulate_ts_dist">[docs]</a><span class="k">def</span> <span class="nf">simulate_ts_dist</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">obs_ts</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">keep_dist</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulates the permutation distribution of the irr test statistic for a matrix of</span>
+<span class="sd">    ratings &lt;ratings&gt;</span>
+
+<span class="sd">    If obs_ts is not null, computes the reference value of the test statistic before</span>
+<span class="sd">    the first permutation. Otherwise, uses the value obs_ts for comparison.</span>
+
+<span class="sd">    If &lt;keep_dist&gt;, return the distribution of values of the test statistic; otherwise,</span>
+<span class="sd">    return only the number of permutations for which the value of the irr test statistic is</span>
+<span class="sd">    at least as large as obs_ts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ratings : array_like</span>
+<span class="sd">              Input array of dimension [R, Ns]</span>
+
+<span class="sd">    obs_ts : float</span>
+<span class="sd">             if None, obs_ts is calculated as the value of the test statistic for the</span>
+<span class="sd">             original data</span>
+
+<span class="sd">    iter : integer</span>
+<span class="sd">           number of random permutation of the elements of each row of ratings</span>
+
+<span class="sd">    keep_dist : bool</span>
+<span class="sd">                flag for whether to store and return the array of values of the irr</span>
+<span class="sd">                test statistic</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : {obs_ts, geq, iter, dist}</span>
+<span class="sd">    obs_ts : observed value of the test statistic for the input data, or the input value</span>
+<span class="sd">             of obs_ts if obs_ts was given as input</span>
+<span class="sd">    geq : number of iterations for which the test statistic was greater than or equal to</span>
+<span class="sd">          obs_ts</span>
+<span class="sd">    iter : iter</span>
+<span class="sd">    dist : if &lt;keep_dist&gt;, the array of values of the irr test statistic from the iter</span>
+<span class="sd">           iterations.  Otherwise, null.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">obs_ts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">obs_ts</span> <span class="o">=</span> <span class="n">compute_ts</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">keep_dist</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">iter</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="p">[</span><span class="n">compute_ts</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">iter</span><span class="p">)]</span>
+        <span class="n">geq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&gt;=</span> <span class="n">obs_ts</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">geq</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">iter</span><span class="p">):</span>
+            <span class="n">geq</span> <span class="o">+=</span> <span class="n">compute_ts</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">r</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="n">obs_ts</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s">&quot;obs_ts&quot;</span><span class="p">:</span> <span class="n">obs_ts</span><span class="p">,</span> <span class="s">&quot;geq&quot;</span><span class="p">:</span> <span class="n">geq</span><span class="p">,</span> <span class="s">&quot;iter&quot;</span><span class="p">:</span> <span class="nb">iter</span><span class="p">,</span> <span class="s">&quot;dist&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="p">}</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
