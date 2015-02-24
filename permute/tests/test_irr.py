@@ -29,3 +29,23 @@ def test_simulate_ts_dist():
     res1 = simulate_ts_dist(res)
     assert_equal(res1, expected_res1)
     
+
+
+np.random.seed(55)
+freq = np.random.choice([0.2, 0.8], Ns)
+res2 = np.zeros((R, Ns))
+
+for i in range(len(freq)):
+    res2[:,i] = np.random.binomial(1, freq[i], R)
+
+def test_irr_concordance():
+    rho_s2 = compute_ts(res2)
+    assert_almost_equal(rho_s2, 0.67619047619047623)
+    
+def test_simulate_ts_dist_concordance():
+    expected_res_conc = {'dist': None,
+                    'geq': 0,
+                    'obs_ts': 0.67619047619047623,
+                    'iter': 10000}
+    res_conc = simulate_ts_dist(res2)
+    assert_equal(res_conc, expected_res_conc)
