@@ -104,11 +104,16 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
 
     if keep_dist:
         dist = np.zeros(iter)
-        dist = [compute_ts(np.apply_along_axis(np.random.permutation, axis=1, arr=r)) for i in range(iter)]
+        for i in range(iter):
+            for row in r:
+                np.random.shuffle(row)
+            dist[i] = compute_ts(r)
         geq = np.sum(dist >= obs_ts)
     else:
         dist = None
         geq = 0
         for i in range(iter):
-            geq += compute_ts(np.apply_along_axis(np.random.permutation, axis=1, arr=r)) >= obs_ts
+            for row in r:
+                np.random.shuffle(row)            
+            geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
