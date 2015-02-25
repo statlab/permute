@@ -1,24 +1,23 @@
 """
-There are $S$ strata (in this case, each stratum is a video).  There are $N_s$ 
-items in stratum $s$ (in this case, an item is corresponds to a 30-second
-snippet of the video). There are $N = \sum_{s=1}^S N_s$ items in all.
+There are $S$ strata.
+There are $N_s$ items in stratum $s$.
+There are $N = \sum_{s=1}^S N_s$ items in all.
 
-There are $C$ non-exclusive categories to which each of the $N$ items might 
-belong; an item might belong to none of the categories (the categories are
-types of behavior that a child might exhibit in the 30-second snippet of
-video). That is, each item might be "labeled" with any of the $2^C$ subsets
+There are $C$ non-exclusive categories to which each of the $N$ items might
+belong; an item might belong to none of the categories.
+That is, each item might be "labeled" with any of the $2^C$ subsets
 of the $C$ labels, including the empty set.
 
-There are $R$ "raters," each of whom labels each of the $N$ items with zero 
+There are $R$ "raters," each of whom labels each of the $N$ items with zero
 or more elements of $C$.
 
-Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in stratum 
+Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in stratum
 $s$; and $L_{s,i,c,r} = 0$ if not.
 
-We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_i$; $c=1, ..., C$; 
+We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_s$; $c=1, ..., C$;
 and $r=1, ..., R$.
 
-We want to know whether the categorizations are "reliable," in the sense that 
+We want to know whether the categorizations are "reliable," in the sense that
 agreement among the raters is higher than would be expected "by chance."  The
 reliability of each category $c$ is of interest, rather than an overall rating
 for all $C$ categories.
@@ -36,6 +35,8 @@ def compute_ts(ratings):
 
     .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
               \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+              = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1).
 
     Parameters
     ----------
@@ -50,9 +51,9 @@ def compute_ts(ratings):
            concordance of the ratings, where perfect concordance is 1.0
     """
     R, Ns = ratings.shape
-    tmp = ratings.sum(0)
-    counts = scipy.misc.comb(tmp, 2) + scipy.misc.comb(R-tmp, 2)
-    rho_s = counts.sum()/(Ns*scipy.misc.comb(R, 2))
+    y = ratings.sum(0)
+    counts = y*(y-1)+(R-y)*(R-y-1)
+    rho_s = counts.sum()/(Ns*R*(R-1))
     return rho_s
 
 
