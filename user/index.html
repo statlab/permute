@@ -138,21 +138,20 @@
 </div>
 <div class="section" id="module-permute.irr">
 <span id="interrater-reliability"></span><h2>Interrater reliability<a class="headerlink" href="#module-permute.irr" title="Permalink to this headline">¶</a></h2>
-<p>There are <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> strata (in this case, each stratum is a video).  There are <img class="math" src="../_images/math/f9b03df42cc4eecc1f289434c88139073ffd3847.png" alt="N_s"/> 
-items in stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/> (in this case, an item is corresponds to a 30-second
-snippet of the video). There are <img class="math" src="../_images/math/ee2b3ee4a690c60f42688efd1635dfd782705ee6.png" alt="N = \sum_{s=1}^S N_s"/> items in all.</p>
-<p>There are <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> non-exclusive categories to which each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items might 
-belong; an item might belong to none of the categories (the categories are
-types of behavior that a child might exhibit in the 30-second snippet of
-video). That is, each item might be &#8220;labeled&#8221; with any of the <img class="math" src="../_images/math/32a52b7125d5c55fcb10c9692dc9402bfd9fa492.png" alt="2^C"/> subsets
+<p>There are <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> strata.
+There are <img class="math" src="../_images/math/f9b03df42cc4eecc1f289434c88139073ffd3847.png" alt="N_s"/> items in stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>.
+There are <img class="math" src="../_images/math/ee2b3ee4a690c60f42688efd1635dfd782705ee6.png" alt="N = \sum_{s=1}^S N_s"/> items in all.</p>
+<p>There are <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> non-exclusive categories to which each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items might
+belong; an item might belong to none of the categories.
+That is, each item might be &#8220;labeled&#8221; with any of the <img class="math" src="../_images/math/32a52b7125d5c55fcb10c9692dc9402bfd9fa492.png" alt="2^C"/> subsets
 of the <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> labels, including the empty set.</p>
-<p>There are <img class="math" src="../_images/math/9d86170e7de539c0ff999de09621ee0c7b6c8ed0.png" alt="R"/> &#8220;raters,&#8221; each of whom labels each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items with zero 
+<p>There are <img class="math" src="../_images/math/9d86170e7de539c0ff999de09621ee0c7b6c8ed0.png" alt="R"/> &#8220;raters,&#8221; each of whom labels each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items with zero
 or more elements of <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/>.</p>
-<p>Define <img class="math" src="../_images/math/eeb9906b8389b13de3d212f2aecc4b6f185f8eb4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> assigns label <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in stratum 
+<p>Define <img class="math" src="../_images/math/eeb9906b8389b13de3d212f2aecc4b6f185f8eb4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> assigns label <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in stratum
 <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>; and <img class="math" src="../_images/math/ae0e104f159d8fd9282f0f2cb45aef75b7649835.png" alt="L_{s,i,c,r} = 0"/> if not.</p>
-<p>We observe <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/d2f3cf154030dd3071142a8df67ebde070d5cbde.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/c90f729ed2e03b2a8a8163c29d31fb2c7aa57f9a.png" alt="i=1, ..., N_i"/>; <img class="math" src="../_images/math/38ae701b1c9d25077178c5ff5d4135b09953e6f9.png" alt="c=1, ..., C"/>; 
+<p>We observe <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/d2f3cf154030dd3071142a8df67ebde070d5cbde.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/ece2e20d2f1bc7c69f05b8b9809173b07020898d.png" alt="i=1, ..., N_s"/>; <img class="math" src="../_images/math/38ae701b1c9d25077178c5ff5d4135b09953e6f9.png" alt="c=1, ..., C"/>;
 and <img class="math" src="../_images/math/279d963ad025cb121e5241060fd665ee0d6f6a16.png" alt="r=1, ..., R"/>.</p>
-<p>We want to know whether the categorizations are &#8220;reliable,&#8221; in the sense that 
+<p>We want to know whether the categorizations are &#8220;reliable,&#8221; in the sense that
 agreement among the raters is higher than would be expected &#8220;by chance.&#8221;  The
 reliability of each category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is of interest, rather than an overall rating
 for all <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> categories.</p>
@@ -161,8 +160,10 @@ for all <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4
 <tt class="descclassname">permute.irr.</tt><tt class="descname">compute_ts</tt><big>(</big><em>ratings</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#compute_ts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.compute_ts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the test statistic</p>
 <div class="math">
-<p><img src="../_images/math/5d98da39fdd92d5b39ecfb00df2bbac4d7b0b1e4.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
-\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})"/></p>
+<p><img src="../_images/math/bb3e5207ac05bcb3315a2f6a771dab192ef62624.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+= \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+  (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)."/></p>
 </div><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
