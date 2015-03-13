@@ -1,4 +1,4 @@
-from ..irr import compute_ts, simulate_ts_dist, compute_inverseweight_npc
+from ..irr import compute_ts, simulate_ts_dist, compute_inverseweight_npc, simulate_npc_dist
 #from nose.tools import assert_almost_equal
 
 import numpy as np
@@ -60,3 +60,20 @@ def test_compute_inverseweight_npc():
     expected_npc = 0.7847396
     res_npc = compute_inverseweight_npc(pval, size)
     assert_almost_equal(expected_npc, res_npc)
+ 
+ 
+    
+np.random.seed(100)
+res1 = simulate_ts_dist(res, keep_dist = True)
+res_conc = simulate_ts_dist(res2, keep_dist = True)
+true_pvalue = np.array([ res1['geq']/res1['iter'], res_conc['geq']/res_conc['iter']])
+rho_perm = np.transpose(np.vstack((res1['dist'], res_conc['dist'])))
+
+@np.testing.decorators.skipif(True)
+def test_simulate_npc_dist():
+    expected_npc_res = {'dist': None,
+                        'iter': 10000,
+                        'leq': 9,
+                        'obs_npc':  0.010479912758633605}
+    obs_npc_res = simulate_npc_dist(rho_perm, size = np.array([Ns, Ns]), pvalues = true_pvalue)
+    assert_equal(obs_npc_res, expected_npc_res)
