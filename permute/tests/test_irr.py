@@ -1,4 +1,4 @@
-from ..irr import compute_ts, simulate_ts_dist
+from ..irr import compute_ts, simulate_ts_dist, compute_inverseweight_npc
 #from nose.tools import assert_almost_equal
 
 import numpy as np
@@ -51,3 +51,12 @@ def test_simulate_ts_dist_concordance():
                     'iter': 10000}
     res_conc = simulate_ts_dist(res2)
     assert_equal(res_conc, expected_res_conc)
+    
+    
+    
+pval = np.array([0.5, 0.25, 0.75])
+size = np.array([2, 4, 6])
+def test_compute_inverseweight_npc():
+    expected_npc = 0.7847396
+    res_npc = compute_inverseweight_npc(pval, size)
+    assert_almost_equal(expected_npc, res_npc)

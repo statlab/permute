@@ -57,6 +57,34 @@ def compute_ts(ratings):
     return rho_s
 
 
+def compute_inverseweight_npc(pvalues, size):
+    """
+    Compute the test statistic
+
+    .. math:: \npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
+
+    Parameters
+    ----------
+    pvalues: array_like
+             Input array of dimension S
+             Each entry corresponds to the p-value for rho_s, the 
+             concordance for the s-th stratum.
+    size: array_like
+             Input array of dimension S
+             Each entry corresponds to the number of items, Ns,
+             in the s-th stratum.
+    Returns
+    -------
+    npc: float
+         combined test statistic
+    """
+    weights = size**(-1/2)
+    return (pvalues*weights).sum()
+
+
+
+
+
 def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     """
     Simulates the permutation distribution of the irr test statistic for a matrix of
@@ -118,3 +146,71 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
                 np.random.shuffle(row)            
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
+
+
+
+
+
+
+def simulate_npc_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
+    """
+    Simulates the permutation distribution of the combined irr test statistic 
+    for S matrices of ratings <ratings> corresponding to S strata
+
+    If obs_ts is not null, computes the reference value of the test statistic before
+    the first permutation. Otherwise, uses the value obs_ts for comparison.
+
+    If <keep_dist>, return the distribution of values of the test statistic; otherwise,
+    return only the number of permutations for which the value of the irr test statistic is
+    at least as large as obs_ts.
+
+    Parameters
+    ----------
+    ratings : array_like
+              Input array of dimension [R, Ns]
+
+    obs_ts : float
+             if None, obs_ts is calculated as the value of the test statistic for the
+             original data
+
+    iter : integer
+           number of random permutation of the elements of each row of ratings
+
+    keep_dist : bool
+                flag for whether to store and return the array of values of the irr
+                test statistic
+
+
+    Returns
+    -------
+    out : {obs_ts, geq, iter, dist}
+    obs_ts : observed value of the test statistic for the input data, or the input value
+             of obs_ts if obs_ts was given as input
+    geq : number of iterations for which the test statistic was greater than or equal to
+          obs_ts
+    iter : iter
+    dist : if <keep_dist>, the array of values of the irr test statistic from the iter
+           iterations.  Otherwise, null.
+    """
+    r = ratings.copy()
+
+    if obs_ts is None:
+        obs_ts = compute_ts(r)
+
+
+    if keep_dist:
+        dist = np.zeros(iter)
+        for i in range(iter):
+            for row in r:
+                np.random.shuffle(row)
+            dist[i] = compute_ts(r)
+        geq = np.sum(dist >= obs_ts)
+    else:
+        dist = None
+        geq = 0
+        for i in range(iter):
+            for row in r:
+                np.random.shuffle(row)            
+            geq += (compute_ts(r) >= obs_ts)
+    return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
+
