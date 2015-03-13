@@ -154,7 +154,7 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
 
 def simulate_npc_dist(perm_distr, size, obs_npc = None, pvalues = None, keep_dist = False):
     """
-    Simulates the permutation distribution of the combined irr test statistic 
+    Simulates the permutation distribution of the combined NPC test statistic 
     for S matrices of ratings <ratings> corresponding to S strata
 
     If obs_ts is not null, computes the reference value of the test statistic before
@@ -193,12 +193,12 @@ def simulate_npc_dist(perm_distr, size, obs_npc = None, pvalues = None, keep_dis
     Returns
     -------
     out : {obs_ts, geq, iter, dist}
-    obs_ts : observed value of the test statistic for the input data, or the input value
+    obs_npc : observed value of the test statistic for the input data, or the input value
              of obs_ts if obs_ts was given as input
     leq : number of iterations for which the NPC test statistic was less than or equal to
           obs_npc
-    iter : iter
-    dist : if <keep_dist>, the array of values of the irr test statistic from the iter
+    iter : B
+    dist : if <keep_dist>, the array of values of the NPC test statistic from the iter
            iterations.  Otherwise, null.
     """
 
