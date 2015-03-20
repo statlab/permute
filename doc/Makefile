@@ -181,7 +181,7 @@ gitwash:
 	$(PYTHON) ../tools/gitwash_dumper.py dev permute \
 	--project-url=https://github.com/statlab/permute \
 	--repo-name=permute \
-	--github-user=pbstark \
+	--github-user=statlab \
 	--project-ml-url=http://groups.google.com/group/permute 
 
 github: html
