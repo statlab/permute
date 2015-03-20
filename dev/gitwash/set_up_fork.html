@@ -68,6 +68,7 @@
   <ul class="dropdown-menu globaltoc"
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../npc/index.html">Permutation Tests for Complex Data</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer&#8217;s Guide</a></li>
 </ul>
@@ -142,7 +143,7 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:your-user-name/permute.git
 cd permute
-git remote add upstream git://github.com/pbstark/permute.git
+git remote add upstream git://github.com/statlab/permute.git
 </pre></div>
 </div>
 </div>
@@ -165,7 +166,7 @@ remotes/origin/master
 that you also have a <tt class="docutils literal"><span class="pre">remote</span></tt> connection to <tt class="docutils literal"><span class="pre">origin/master</span></tt>.
 What remote repository is <tt class="docutils literal"><span class="pre">remote/origin</span></tt>? Try <tt class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span></tt> to
 see the URLs for the remote.  They will point to your github fork.</p>
-<p>Now you want to connect to the upstream <a class="reference external" href="http://github.com/pbstark/permute">permute github</a> repository, so
+<p>Now you want to connect to the upstream <a class="reference external" href="http://github.com/statlab/permute">permute github</a> repository, so
 you can merge in changes from trunk.</p>
 </li>
 </ol>
@@ -173,19 +174,19 @@ you can merge in changes from trunk.</p>
 <div class="section" id="linking-your-repository-to-the-upstream-repo">
 <span id="linking-to-upstream"></span><h3>Linking your repository to the upstream repo<a class="headerlink" href="#linking-your-repository-to-the-upstream-repo" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre>cd permute
-git remote add upstream git://github.com/pbstark/permute.git
+git remote add upstream git://github.com/statlab/permute.git
 </pre></div>
 </div>
 <p><tt class="docutils literal"><span class="pre">upstream</span></tt> here is just the arbitrary name we&#8217;re using to refer to the
-main <a class="reference external" href="https://github.com/pbstark/permute">permute</a> repository at <a class="reference external" href="http://github.com/pbstark/permute">permute github</a>.</p>
+main <a class="reference external" href="https://github.com/statlab/permute">permute</a> repository at <a class="reference external" href="http://github.com/statlab/permute">permute github</a>.</p>
 <p>Note that we&#8217;ve used <tt class="docutils literal"><span class="pre">git://</span></tt> for the URL rather than <tt class="docutils literal"><span class="pre">git&#64;</span></tt>.  The
 <tt class="docutils literal"><span class="pre">git://</span></tt> URL is read only.  This means we that we can&#8217;t accidentally
 (or deliberately) write to the upstream repo, and we are only going to
 use it to merge into our own code.</p>
 <p>Just for your own satisfaction, show yourself that you now have a new
 &#8216;remote&#8217;, with <tt class="docutils literal"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">-v</span> <span class="pre">show</span></tt>, giving you something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>upstream     git://github.com/pbstark/permute.git (fetch)
-upstream     git://github.com/pbstark/permute.git (push)
+<div class="highlight-python"><div class="highlight"><pre>upstream     git://github.com/statlab/permute.git (fetch)
+upstream     git://github.com/statlab/permute.git (push)
 origin       git@github.com:your-user-name/permute.git (fetch)
 origin       git@github.com:your-user-name/permute.git (push)
 </pre></div>
