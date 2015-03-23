@@ -2,11 +2,7 @@ User Guide
 ==========
 
 .. toctree::
-      :maxdepth: 2
+   :maxdepth: 2
 
-Interrater reliability
-----------------------
-
-.. automodule:: permute.irr
-    :members:
-
+   about.rst
+   irr.rst
