@@ -10,8 +10,9 @@ from numpy.testing import (assert_equal,
 R = 10
 Ns = 35
 
-np.random.seed(42)
-res =  np.random.binomial(1, .5, (R, Ns))
+from numpy.random import RandomState
+RNG = RandomState(42)
+res =  RNG.binomial(1, .5, (R, Ns))
 
 def test_irr():
     rho_s = compute_ts(res)
@@ -21,7 +22,7 @@ def test_irr():
     #assert_less(res[1], 0.01)
     #assert_almost_equal(res[3], res1[3])
 
-@np.testing.decorators.skipif(True)
+#@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
                     'geq': 615,
@@ -32,18 +33,19 @@ def test_simulate_ts_dist():
     
 
 
-np.random.seed(55)
-freq = np.random.choice([0.2, 0.8], Ns)
+freq = RNG.choice([0.2, 0.8], Ns)
 res2 = np.zeros((R, Ns))
 
 for i in range(len(freq)):
-    res2[:,i] = np.random.binomial(1, freq[i], R)
+    res2[:,i] = RNG.binomial(1, freq[i], R)
+
 
 def test_irr_concordance():
     rho_s2 = compute_ts(res2)
     assert_almost_equal(rho_s2, 0.67619047619047623)
 
-@np.testing.decorators.skipif(True)    
+
+#@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                     'geq': 0,
