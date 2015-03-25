@@ -25,7 +25,7 @@ def test_irr():
 #@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
-                    'geq': 615,
+                    'geq': 559,
                     'obs_ts': 0.51936507936507936,
                     'iter': 10000}
     res1 = simulate_ts_dist(res)
@@ -42,14 +42,14 @@ for i in range(len(freq)):
 
 def test_irr_concordance():
     rho_s2 = compute_ts(res2)
-    assert_almost_equal(rho_s2, 0.67619047619047623)
+    assert_almost_equal(rho_s2, 0.70476190476190481)
 
 
 #@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                     'geq': 0,
-                    'obs_ts': 0.67619047619047623,
+                    'obs_ts': 0.70476190476190481,
                     'iter': 10000}
     res_conc = simulate_ts_dist(res2)
     assert_equal(res_conc, expected_res_conc)
