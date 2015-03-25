@@ -8,7 +8,7 @@ For more information, see
 
 import os as _os
 
-import pandas as pd
+import numpy as np
 
 from .. import data_dir
 
@@ -29,7 +29,7 @@ def load(f):
     x : ndarray (or Pandas' frame?)
         Data loaded from permute.data_dir.
     """
-    return pd.read_csv(_os.path.join(data_dir, f))
+    return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
 
 def botulinum():
     """The
