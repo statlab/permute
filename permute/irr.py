@@ -57,6 +57,34 @@ def compute_ts(ratings):
     return rho_s
 
 
+def compute_inverseweight_npc(pvalues, size):
+    """
+    Compute the test statistic
+
+    .. math:: \npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
+
+    Parameters
+    ----------
+    pvalues: array_like
+             Input array of dimension S
+             Each entry corresponds to the p-value for rho_s, the 
+             concordance for the s-th stratum.
+    size: array_like
+             Input array of dimension S
+             Each entry corresponds to the number of items, Ns,
+             in the s-th stratum.
+    Returns
+    -------
+    npc: float
+         combined test statistic
+    """
+    weights = size**(-1/2)
+    return (pvalues*weights).sum()
+
+
+
+
+
 def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
     """
     Simulates the permutation distribution of the irr test statistic for a matrix of
@@ -118,3 +146,87 @@ def simulate_ts_dist(ratings, obs_ts = None, iter=10000, keep_dist = False):
                 np.random.shuffle(row)            
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
+
+
+
+
+
+
+def simulate_npc_dist(perm_distr, size, obs_npc = None, pvalues = None, keep_dist = False):
+    """
+    Simulates the permutation distribution of the combined NPC test statistic 
+    for S matrices of ratings <ratings> corresponding to S strata
+
+    If obs_ts is not null, computes the reference value of the test statistic before
+    the first permutation. Otherwise, uses the value obs_ts for comparison.
+
+    If <keep_dist>, return the distribution of values of the test statistic; otherwise,
+    return only the number of permutations for which the value of the irr test statistic is
+    at least as large as obs_ts.
+
+    Parameters
+    ----------
+    perm_distr : array_like
+                 Input array of dimension [B, S]
+                 Column s is the permutation distribution of rho_s, for s=1,...,S
+             
+    size: array_like
+             Input array of dimension S
+             Each entry corresponds to the number of items, Ns,
+             in the s-th stratum.   
+                              
+    obs_npc : float
+             if None, obs_npc is calculated as the value of the test statistic for the
+             original data
+             
+    pvalues: array_like
+             Input array of dimension S
+             Each entry corresponds to the p-value for rho_s, the 
+             concordance for the s-th stratum.
+      
+
+    keep_dist : bool
+                flag for whether to store and return the array of values of the irr
+                test statistic
+
+
+    Returns
+    -------
+    out : {obs_ts, geq, iter, dist}
+    obs_npc : observed value of the test statistic for the input data, or the input value
+             of obs_ts if obs_ts was given as input
+    leq : number of iterations for which the NPC test statistic was less than or equal to
+          obs_npc
+    iter : B
+    dist : if <keep_dist>, the array of values of the NPC test statistic from the iter
+           iterations.  Otherwise, null.
+    """
+
+
+    # Throw an error if both obs_npc and pvalues are None
+    
+    if obs_npc is None:
+        obs_npc = compute_inverseweight_npc(pvalues, size)
+
+    r = perm_distr.copy()
+    r = np.sort(r, axis = 0)
+    (B, S) = r.shape
+    
+    if keep_dist:
+        dist = np.zeros(B)
+        p = np.zeros((S,1))
+        for i in range(B):
+            for j in range(S):
+                p[j] = np.searchsorted(r[:,j], perm_distr[i,j])/B
+            dist[i] = compute_inverseweight_npc(p, size)
+        leq = np.sum(dist <= obs_npc)
+    else:
+        dist = None
+        p = np.zeros((S,1))
+        leq = 0
+        for i in range(B):
+            for j in range(S):
+                p[j] = np.searchsorted(r[:,j], perm_distr[i,j])/B
+            leq += (compute_inverseweight_npc(p, size) <= obs_npc)
+    return {"obs_npc": obs_npc, "leq": leq, "iter": B, "dist": dist}
+
