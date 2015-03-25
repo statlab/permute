@@ -5,8 +5,8 @@ Here's the long and short of it:
 
 1. If you are a first-time contributor:
 
-   * Go to `https://github.com/pbstark/permute
-     <http://github.com/pbstark/permute>`_ and click the
+   * Go to `https://github.com/statlab/permute
+     <http://github.com/statlab/permute>`_ and click the
      "fork" button to create your own copy of the project.
 
    * Clone the project to your local computer::
@@ -15,7 +15,7 @@ Here's the long and short of it:
 
    * Add the upstream repository::
 
-      git remote add upstream git@github.com:pbstark/permute.git
+      git remote add upstream git@github.com:statlab/permute.git
 
    * Now, you have remote repositories named:
 
@@ -52,7 +52,7 @@ Here's the long and short of it:
 
 For a more detailed discussion, read these :doc:`detailed documents
 <dev/gitwash/index>` on how to use Git with ``permute``
-(`<http://pbstark.github.io/permute/dev/gitwash/index.html>`_).
+(`<http://statlab.github.io/permute/dev/gitwash/index.html>`_).
 
 4. Review process:
 
@@ -172,4 +172,4 @@ detailing the test coverage::
 Bugs
 ----
 
-Please `report bugs on GitHub <https://github.com/pbstark/permute/issues>`_.
+Please `report bugs on GitHub <https://github.com/statlab/permute/issues>`_.
