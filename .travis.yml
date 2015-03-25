@@ -3,7 +3,7 @@ language: python
 
 env:
   global:
-    - DEPENDS="numpy scipy matplotlib pandas"
+    - DEPENDS="numpy scipy matplotlib"
     - COVERAGE=1
 
 python:
