@@ -163,8 +163,6 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
                                     response, groups, conditions
                                     )
 
-    # define the conditions, then map count_nonzero over them
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
-        pLeft, pRight, pBoth = np.array(
-            map(np.count_nonzero, conds)) / iterations
+        pLeft, pRight, pBoth = [np.count_nonzero(c)/iterations for c in conds]
         return pLeft, pRight, pBoth, tst, dist
