@@ -6,7 +6,6 @@ import math
 
 import numpy as np
 from scipy.stats import (binom,
-                         hypergeom,
                          ttest_ind)
 from scipy.optimize import brentq
 
@@ -14,7 +13,7 @@ from scipy.optimize import brentq
 def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     "Lower confidence level cl confidence interval for Binomial p, for x successes in n trials"
     if p is None:
-        p = x/n
+        p = x / n
     lo = 0.0
     if (x > 0):
         f = lambda q: cl - binom.cdf(x - 1, n, q)
@@ -25,7 +24,7 @@ def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16,
 def binoUpperCL(n, x, cl=0.975, p=None,  xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     "Upper confidence level cl confidence interval for Binomial p, for x successes in n trials"
     if p is None:
-        p = x/n
+        p = x / n
     hi = 1.0
     if (x < n):
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
@@ -91,16 +90,15 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
     hits = np.sum([(theStat(np.random.permutation(z)) >= ts)
                    for i in range(reps)])
     if CI == 'upper':
-        return hits/reps, binoUpperCL(reps, hits, cl=CL), ts
+        return hits / reps, binoUpperCL(reps, hits, cl=CL), ts
     elif CI == 'lower':
-        return hits/reps, binoLowerCL(reps, hits, cl=CL), ts
+        return hits / reps, binoLowerCL(reps, hits, cl=CL), ts
     elif CI == 'both':
-        return hits/reps,  \
+        return hits / reps,  \
             (binoLowerCL(reps, hits, cl=1 - (1 - CL) / 2), binoUpperCL(reps, hits, cl=1 - (1 - CL) / 2)), \
             ts
     else:
-        return hits/reps, ts
-
+        return hits / reps, ts
 
 
 def stratifiedPermutationTestMean(group, condition, response, groups, conditions):
@@ -170,4 +168,3 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
         pLeft, pRight, pBoth = np.array(
             map(np.count_nonzero, conds)) / iterations
         return pLeft, pRight, pBoth, tst, dist
-

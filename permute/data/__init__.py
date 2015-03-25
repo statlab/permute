@@ -14,7 +14,8 @@ from .. import data_dir
 
 
 __all__ = ['load',
-           'kenya',]
+           'kenya', ]
+
 
 def load(f):
     """Load a data file located in the data directory.
@@ -31,11 +32,13 @@ def load(f):
     """
     return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
 
+
 def botulinum():
     """The
 
     """
     return load(_os.path.join("npc", "botulinum.csv"))
+
 
 def chrom17m():
     """The
@@ -43,17 +46,20 @@ def chrom17m():
     """
     return load(_os.path.join("npc", "chrom17m.csv"))
 
+
 def confocal():
     """The
 
     """
     return load(_os.path.join("npc", "confocal.csv"))
 
+
 def germina():
     """The
 
     """
     return load(_os.path.join("npc", "germina.csv"))
+
 
 def kenya():
     """The Kenya dataset contains 16 observations and two variables in total.
@@ -63,11 +69,13 @@ def kenya():
     """
     return load(_os.path.join("npc", "kenya.csv"))
 
+
 def massaro_blair():
     """The
 
     """
     return load(_os.path.join("npc", "massaro_blair.csv"))
+
 
 def monachus():
     """The
@@ -75,11 +83,13 @@ def monachus():
     """
     return load(_os.path.join("npc", "monachus.csv"))
 
+
 def mult():
     """The
 
     """
     return load(_os.path.join("npc", "mult.csv"))
+
 
 def perch():
     """The
@@ -87,11 +97,13 @@ def perch():
     """
     return load(_os.path.join("npc", "perch.csv"))
 
+
 def rats():
     """The
 
     """
     return load(_os.path.join("npc", "rats.csv"))
+
 
 def setig():
     """The
@@ -99,11 +111,13 @@ def setig():
     """
     return load(_os.path.join("npc", "setig.csv"))
 
+
 def urology():
     """The
 
     """
     return load(_os.path.join("npc", "urology.csv"))
+
 
 def washing_test():
     """The
@@ -111,9 +125,9 @@ def washing_test():
     """
     return load(_os.path.join("npc", "washing_test.csv"))
 
+
 def waterfalls():
     """The
 
     """
     return load(_os.path.join("npc", "waterfalls.csv"))
-

@@ -4,16 +4,16 @@ descr = """Permutation tests and confidence sets for Python
 
 """
 
-DISTNAME            = 'permute'
-DESCRIPTION         = 'Permutation tests and confidence sets for Python'
-LONG_DESCRIPTION    = descr
-MAINTAINER          = 'Permute developers'
-MAINTAINER_EMAIL    = 'permute@googlegroups.com'
-URL                 = 'http://github.com/permute/permute'
-LICENSE             = 'BSD'
-DOWNLOAD_URL        = 'http://github.com/permute/permute'
-VERSION             = '0.1dev'
-PYTHON_VERSION      = (2, 7)
+DISTNAME = 'permute'
+DESCRIPTION = 'Permutation tests and confidence sets for Python'
+LONG_DESCRIPTION = descr
+MAINTAINER = 'Permute developers'
+MAINTAINER_EMAIL = 'permute@googlegroups.com'
+URL = 'http://github.com/permute/permute'
+LICENSE = 'BSD'
+DOWNLOAD_URL = 'http://github.com/permute/permute'
+VERSION = '0.1dev'
+PYTHON_VERSION = (2, 7)
 
 from setuptools import setup
 
@@ -43,5 +43,5 @@ setup(
     ],
 
     packages=['permute', 'permute.data', 'permute.tests'],
-    package_data={ 'permute.data': ['*.csv', '*/*.csv', '*/*/*.csv'] }
+    package_data={'permute.data': ['*.csv', '*/*.csv', '*/*/*.csv']}
 )
