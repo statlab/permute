@@ -26,7 +26,7 @@ for all $C$ categories.
 from __future__ import division, print_function, absolute_import
 
 import numpy as np
-
+from numpy.random import RandomState
 
 def compute_ts(ratings):
     """
@@ -81,7 +81,7 @@ def compute_inverseweight_npc(pvalues, size):
     return (pvalues * weights).sum()
 
 
-def simulate_ts_dist(ratings, obs_ts=None, iter=10000, keep_dist=False):
+def simulate_ts_dist(ratings, obs_ts=None, iter=10000, keep_dist=False, seed=None):
     """
     Simulates the permutation distribution of the irr test statistic for a matrix of
     ratings <ratings>
@@ -122,6 +122,7 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000, keep_dist=False):
            iterations.  Otherwise, null.
     """
     r = ratings.copy()
+    prng = RandomState(seed)
 
     if obs_ts is None:
         obs_ts = compute_ts(r)
@@ -130,7 +131,7 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000, keep_dist=False):
         dist = np.zeros(iter)
         for i in range(iter):
             for row in r:
-                np.random.shuffle(row)
+                prng.shuffle(row)
             dist[i] = compute_ts(r)
         geq = np.sum(dist >= obs_ts)
     else:
@@ -138,7 +139,7 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000, keep_dist=False):
         geq = 0
         for i in range(iter):
             for row in r:
-                np.random.shuffle(row)
+                prng.shuffle(row)
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
 
