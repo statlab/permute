@@ -1,6 +1,6 @@
 # Permutation tests and confidence sets
 
-[![Coverage Status](https://coveralls.io/repos/statlab/permute/badge.svg)](https://coveralls.io/r/statlab/permute)
+[![Coverage Status](https://coveralls.io/repos/statlab/permute/badge.svg?branch=master)](https://coveralls.io/r/statlab/permute?branch=master)
 
 Permutation tests and confidence sets for a variety of nonparametric
 testing and estimation problems, for a variety of randomization designs.
