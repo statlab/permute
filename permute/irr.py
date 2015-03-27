@@ -1,4 +1,6 @@
 """
+A stratified permutation test for multi-rater inter-rater reliability.
+
 There are $S$ strata.
 There are $N_s$ items in stratum $s$.
 There are $N = \sum_{s=1}^S N_s$ items in all.
@@ -11,16 +13,54 @@ of the $C$ labels, including the empty set.
 There are $R$ "raters," each of whom labels each of the $N$ items with zero
 or more elements of $C$.
 
-Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in stratum
-$s$; and $L_{s,i,c,r} = 0$ if not.
+Define $L_{s,i,c,r} = 1$, if rater $r$ assigns label $c$ to item $i$ in
+stratum $s$; and $L_{s,i,c,r} = 0$ if not.
 
-We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_s$; $c=1, ..., C$;
-and $r=1, ..., R$.
+We observe $\{ L_{s,i,c,r} \}$ for $s=1...S$;  $i=1, ..., N_s$;
+$c=1, ..., C$; and $r=1, ..., R$.
 
-We want to know whether the categorizations are "reliable," in the sense that
-agreement among the raters is higher than would be expected "by chance."  The
-reliability of each category $c$ is of interest, rather than an overall rating
-for all $C$ categories.
+We want to know whether the categorizations are "reliable," in the sense
+that agreement among the raters is higher than would be expected
+"by chance."  The reliability of each category $c$ is of interest,
+rather than an overall rating for all $C$ categories.
+
+Fix $c$, since we are considering only one category at a time.
+
+The null hypothesis for category $c$ is that, for each rater $r$, and each
+stratum $s$, the values $\{ L_{s,i,c,r} \}$ are exchangeable; that for
+each rater $r$, the values $\{ L_{s,i,c,r} \}$ for different strata $s$
+are independent; and that the values are independent across raters.
+
+Our test conditions on the sets of labels each rater assigns
+within each stratum, but not on the items to which those labels are
+assigned.  The null distribution involves permuting the assignments each
+given rater makes of category $c$ to items within each stratum $s$,
+permuting independently across across raters and across strata.
+
+The test statistic within stratum $s$ is
+
+.. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+              \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+              = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1).
+
+That is, within each stratum, we count the number of concordant pairs of
+assignments. If all $R$ raters agree whether item $i$ in stratum $s$
+belongs to category $c$, that contributes a term ${R \choose 2}$ to the
+sum.  If only half agree, the term for item $i$ contributes
+$2 {N/2 \choose 2}$ to the sum.  The normalization makes perfect
+agreement within stratum $s$ correspond to $\rho_s = 1$.
+
+To combine the results across strata to get an overall $p$-value, we could
+use any of the methods we've discussed, or the NPC (nonparametric
+combination of test) methods described in Pesarin and Salmaso, based on
+the $p$-values in different strata.  For instance, Fisher's combination
+statistic is
+
+$ \lambda = - \sum_{s=1}^S w_s \log \hat{p}_s,$
+
+where the nonnegative weights $\{w_s\}$ are chosen in some sensible manner
+(e.g., $w_s = N_s^{-1/2}$ would be reasonable).  
 """
 
 from __future__ import division, print_function, absolute_import

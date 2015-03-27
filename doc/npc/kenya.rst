@@ -10,17 +10,24 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
 
 .. ipython:: python
 
+   from __future__ import print_function
+
    from permute.data import kenya
 
    d = kenya()
 
-   d
+   print(d)
 
    import matplotlib.pyplot as plt
 
    @savefig test.png
-   d.iloc[: ,1:].plot()
+   plt.plot(d['ol_molo'])
 
+   plt.plot(d['kamba'])
+
+   plt.legend(['ol_molo', 'kamba'])
+
+   plt.show()
 .. rubric:: References
 
 .. bibliography:: ../permute.bib
