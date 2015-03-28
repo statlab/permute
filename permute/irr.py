@@ -49,15 +49,15 @@ assignments. If all $R$ raters agree whether item $i$ in stratum $s$
 belongs to category $c$, that contributes a term ${R \choose 2}$ to the
 sum.  If only half agree, the term for item $i$ contributes
 $2 {N/2 \choose 2}$ to the sum.  The normalization makes perfect
-agreement within stratum $s$ correspond to $\rho_s = 1$.
+agreement within stratum $s$ correspond to $\\rho_s = 1$.
 
-To combine the results across strata to get an overall $p$-value, we could
+To combine the results across strata to get an overall p-value, we could
 use any of the methods we've discussed, or the NPC (nonparametric
 combination of test) methods described in Pesarin and Salmaso, based on
-the $p$-values in different strata.  For instance, Fisher's combination
+the p-values in different strata.  For instance, Fisher's combination
 statistic is
 
-$ \lambda = - \sum_{s=1}^S w_s \log \hat{p}_s,$
+.. math:: \lambda = - \sum_{s=1}^S w_s \log \hat{p}_s,
 
 where the nonnegative weights $\{w_s\}$ are chosen in some sensible manner
 (e.g., $w_s = N_s^{-1/2}$ would be reasonable).  
@@ -100,7 +100,7 @@ def compute_inverseweight_npc(pvalues, size):
     """
     Compute the test statistic
 
-    .. math:: \npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
+    .. math:: npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
 
     Parameters
     ----------
@@ -112,6 +112,7 @@ def compute_inverseweight_npc(pvalues, size):
              Input array of dimension S
              Each entry corresponds to the number of items, Ns,
              in the s-th stratum.
+
     Returns
     -------
     npc: float

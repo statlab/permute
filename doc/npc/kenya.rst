@@ -20,14 +20,15 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
 
    import matplotlib.pyplot as plt
 
-   @savefig test.png
    plt.plot(d['ol_molo'])
 
    plt.plot(d['kamba'])
 
    plt.legend(['ol_molo', 'kamba'])
 
+   @savefig test.png
    plt.show()
+
 .. rubric:: References
 
 .. bibliography:: ../permute.bib
