@@ -130,6 +130,7 @@
       
   <div class="section" id="module-permute.irr">
 <span id="interrater-reliability"></span><h1>Interrater reliability<a class="headerlink" href="#module-permute.irr" title="Permalink to this headline">¶</a></h1>
+<p>A stratified permutation test for multi-rater inter-rater reliability.</p>
 <p>There are <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> strata.
 There are <img class="math" src="../_images/math/f9b03df42cc4eecc1f289434c88139073ffd3847.png" alt="N_s"/> items in stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>.
 There are <img class="math" src="../_images/math/ee2b3ee4a690c60f42688efd1635dfd782705ee6.png" alt="N = \sum_{s=1}^S N_s"/> items in all.</p>
@@ -139,14 +140,79 @@ That is, each item might be &#8220;labeled&#8221; with any of the <img class="ma
 of the <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> labels, including the empty set.</p>
 <p>There are <img class="math" src="../_images/math/9d86170e7de539c0ff999de09621ee0c7b6c8ed0.png" alt="R"/> &#8220;raters,&#8221; each of whom labels each of the <img class="math" src="../_images/math/75e27f04188974063be3230dca208cd495b77ce1.png" alt="N"/> items with zero
 or more elements of <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/>.</p>
-<p>Define <img class="math" src="../_images/math/eeb9906b8389b13de3d212f2aecc4b6f185f8eb4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> assigns label <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in stratum
-<img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>; and <img class="math" src="../_images/math/ae0e104f159d8fd9282f0f2cb45aef75b7649835.png" alt="L_{s,i,c,r} = 0"/> if not.</p>
-<p>We observe <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/d2f3cf154030dd3071142a8df67ebde070d5cbde.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/ece2e20d2f1bc7c69f05b8b9809173b07020898d.png" alt="i=1, ..., N_s"/>; <img class="math" src="../_images/math/38ae701b1c9d25077178c5ff5d4135b09953e6f9.png" alt="c=1, ..., C"/>;
-and <img class="math" src="../_images/math/279d963ad025cb121e5241060fd665ee0d6f6a16.png" alt="r=1, ..., R"/>.</p>
-<p>We want to know whether the categorizations are &#8220;reliable,&#8221; in the sense that
-agreement among the raters is higher than would be expected &#8220;by chance.&#8221;  The
-reliability of each category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is of interest, rather than an overall rating
-for all <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> categories.</p>
+<p>Define <img class="math" src="../_images/math/eeb9906b8389b13de3d212f2aecc4b6f185f8eb4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/> assigns label <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in
+stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>; and <img class="math" src="../_images/math/ae0e104f159d8fd9282f0f2cb45aef75b7649835.png" alt="L_{s,i,c,r} = 0"/> if not.</p>
+<p>We observe <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/d2f3cf154030dd3071142a8df67ebde070d5cbde.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/ece2e20d2f1bc7c69f05b8b9809173b07020898d.png" alt="i=1, ..., N_s"/>;
+<img class="math" src="../_images/math/38ae701b1c9d25077178c5ff5d4135b09953e6f9.png" alt="c=1, ..., C"/>; and <img class="math" src="../_images/math/279d963ad025cb121e5241060fd665ee0d6f6a16.png" alt="r=1, ..., R"/>.</p>
+<p>We want to know whether the categorizations are &#8220;reliable,&#8221; in the sense
+that agreement among the raters is higher than would be expected
+&#8220;by chance.&#8221;  The reliability of each category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is of interest,
+rather than an overall rating for all <img class="math" src="../_images/math/2bcc65482aa8e15cd4c9e9f2542451fb4e971a91.png" alt="C"/> categories.</p>
+<p>Fix <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/>, since we are considering only one category at a time.</p>
+<p>The null hypothesis for category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is that, for each rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/>, and each
+stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>, the values <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> are exchangeable; that for
+each rater <img class="math" src="../_images/math/2ede365ad144ab396916ec60458da03860803078.png" alt="r"/>, the values <img class="math" src="../_images/math/78f8c04da4e9ba785fb63d30b43650585789ede0.png" alt="\{ L_{s,i,c,r} \}"/> for different strata <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>
+are independent; and that the values are independent across raters.</p>
+<p>Our test conditions on the sets of labels each rater assigns
+within each stratum, but not on the items to which those labels are
+assigned.  The null distribution involves permuting the assignments each
+given rater makes of category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> to items within each stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>,
+permuting independently across across raters and across strata.</p>
+<p>The test statistic within stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/> is</p>
+<div class="math">
+<p><img src="../_images/math/bb3e5207ac05bcb3315a2f6a771dab192ef62624.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+= \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+  (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)."/></p>
+</div><p>That is, within each stratum, we count the number of concordant pairs of
+assignments. If all <img class="math" src="../_images/math/9d86170e7de539c0ff999de09621ee0c7b6c8ed0.png" alt="R"/> raters agree whether item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> in stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>
+belongs to category <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/>, that contributes a term <img class="math" src="../_images/math/abb60fa2d09bfa9495ba9352854178fee055b5ab.png" alt="{R \choose 2}"/> to the
+sum.  If only half agree, the term for item <img class="math" src="../_images/math/a581f053bbfa5115f42c13094857cdd12a37ec49.png" alt="i"/> contributes
+<img class="math" src="../_images/math/0a7df8e795c614f5056287aafde33e976b4c2472.png" alt="2 {N/2 \choose 2}"/> to the sum.  The normalization makes perfect
+agreement within stratum <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/> correspond to <img class="math" src="../_images/math/42e241a59d505d3a953f4f9d625fa169adee2e89.png" alt="\rho_s = 1"/>.</p>
+<p>To combine the results across strata to get an overall p-value, we could
+use any of the methods we&#8217;ve discussed, or the NPC (nonparametric
+combination of test) methods described in Pesarin and Salmaso, based on
+the p-values in different strata.  For instance, Fisher&#8217;s combination
+statistic is</p>
+<div class="math">
+<p><img src="../_images/math/65ed0e1a4c681e314a1edbcf9e6b44312cef264c.png" alt="\lambda = - \sum_{s=1}^S w_s \log \hat{p}_s,"/></p>
+</div><p>where the nonnegative weights <img class="math" src="../_images/math/1de4496fc794e685da31f53d805d6ee55e7af269.png" alt="\{w_s\}"/> are chosen in some sensible manner
+(e.g., <img class="math" src="../_images/math/0778597112d2bfe3b8416b0652eedfbc55d880df.png" alt="w_s = N_s^{-1/2}"/> would be reasonable).</p>
+<dl class="function">
+<dt id="permute.irr.compute_inverseweight_npc">
+<tt class="descclassname">permute.irr.</tt><tt class="descname">compute_inverseweight_npc</tt><big>(</big><em>pvalues</em>, <em>size</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#compute_inverseweight_npc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.compute_inverseweight_npc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<div class="math">
+<p><img src="../_images/math/0c93093f92876e4bb438b30aa59b24226566fbe3.png" alt="npc \equiv \sum_{s=1}^S\frac{p_s}{\sqrt{N_s}}"/></p>
+</div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>pvalues: array_like</strong></p>
+<blockquote>
+<div><p>Input array of dimension S
+Each entry corresponds to the p-value for rho_s, the
+concordance for the s-th stratum.</p>
+</div></blockquote>
+<p><strong>size: array_like</strong></p>
+<blockquote>
+<div><p>Input array of dimension S
+Each entry corresponds to the number of items, Ns,
+in the s-th stratum.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">npc: float</p>
+<blockquote class="last">
+<div><p>combined test statistic</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="function">
 <dt id="permute.irr.compute_ts">
 <tt class="descclassname">permute.irr.</tt><tt class="descname">compute_ts</tt><big>(</big><em>ratings</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#compute_ts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.compute_ts" title="Permalink to this definition">¶</a></dt>
@@ -179,8 +245,71 @@ columns correspond to items rated.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="permute.irr.simulate_npc_dist">
+<tt class="descclassname">permute.irr.</tt><tt class="descname">simulate_npc_dist</tt><big>(</big><em>perm_distr</em>, <em>size</em>, <em>obs_npc=None</em>, <em>pvalues=None</em>, <em>keep_dist=False</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#simulate_npc_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.simulate_npc_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates the permutation distribution of the combined NPC test statistic
+for S matrices of ratings &lt;ratings&gt; corresponding to S strata</p>
+<p>If obs_ts is not null, computes the reference value of the test statistic before
+the first permutation. Otherwise, uses the value obs_ts for comparison.</p>
+<p>If &lt;keep_dist&gt;, return the distribution of values of the test statistic; otherwise,
+return only the number of permutations for which the value of the irr test statistic is
+at least as large as obs_ts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>perm_distr</strong> : array_like</p>
+<blockquote>
+<div><p>Input array of dimension [B, S]
+Column s is the permutation distribution of rho_s, for s=1,...,S</p>
+</div></blockquote>
+<p><strong>size: array_like</strong></p>
+<blockquote>
+<div><p>Input array of dimension S
+Each entry corresponds to the number of items, Ns,
+in the s-th stratum.</p>
+</div></blockquote>
+<p><strong>obs_npc</strong> : float</p>
+<blockquote>
+<div><p>if None, obs_npc is calculated as the value of the test statistic for the
+original data</p>
+</div></blockquote>
+<p><strong>pvalues: array_like</strong></p>
+<blockquote>
+<div><p>Input array of dimension S
+Each entry corresponds to the p-value for rho_s, the
+concordance for the s-th stratum.</p>
+</div></blockquote>
+<p><strong>keep_dist</strong> : bool</p>
+<blockquote>
+<div><p>flag for whether to store and return the array of values of the irr
+test statistic</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : {obs_ts, geq, iter, dist}</p>
+<p><strong>obs_npc</strong> : observed value of the test statistic for the input data, or the input value</p>
+<blockquote>
+<div><p>of obs_ts if obs_ts was given as input</p>
+</div></blockquote>
+<p><strong>leq</strong> : number of iterations for which the NPC test statistic was less than or equal to</p>
+<blockquote>
+<div><p>obs_npc</p>
+</div></blockquote>
+<p><strong>iter</strong> : B</p>
+<p><strong>dist</strong> : if &lt;keep_dist&gt;, the array of values of the NPC test statistic from the iter</p>
+<blockquote class="last">
+<div><p>iterations.  Otherwise, null.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="permute.irr.simulate_ts_dist">
-<tt class="descclassname">permute.irr.</tt><tt class="descname">simulate_ts_dist</tt><big>(</big><em>ratings</em>, <em>obs_ts=None</em>, <em>iter=10000</em>, <em>keep_dist=False</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#simulate_ts_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.simulate_ts_dist" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">permute.irr.</tt><tt class="descname">simulate_ts_dist</tt><big>(</big><em>ratings</em>, <em>obs_ts=None</em>, <em>iter=10000</em>, <em>keep_dist=False</em>, <em>seed=None</em><big>)</big><a class="reference internal" href="../_modules/permute/irr.html#simulate_ts_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.irr.simulate_ts_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulates the permutation distribution of the irr test statistic for a matrix of
 ratings &lt;ratings&gt;</p>
 <p>If obs_ts is not null, computes the reference value of the test statistic before
