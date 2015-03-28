@@ -79,14 +79,14 @@ def compute_ts(ratings):
 
     Parameters
     ----------
-    ratings: array_like
+    ratings : array_like
              Input array of dimension [R, Ns]
              Each row corresponds to the ratings given by a single rater;
              columns correspond to items rated.
 
     Returns
     -------
-    rho_s: float
+    rho_s : float
            concordance of the ratings, where perfect concordance is 1.0
     """
     R, Ns = ratings.shape
@@ -104,18 +104,18 @@ def compute_inverseweight_npc(pvalues, size):
 
     Parameters
     ----------
-    pvalues: array_like
+    pvalues : array_like
              Input array of dimension S
              Each entry corresponds to the p-value for rho_s, the
              concordance for the s-th stratum.
-    size: array_like
+    size : array_like
              Input array of dimension S
              Each entry corresponds to the number of items, Ns,
              in the s-th stratum.
 
     Returns
     -------
-    npc: float
+    npc : float
          combined test statistic
     """
     weights = size ** (-1 / 2)
@@ -203,7 +203,7 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None, pvalues=None, keep_dist=Fa
                  Input array of dimension [B, S]
                  Column s is the permutation distribution of rho_s, for s=1,...,S
 
-    size: array_like
+    size : array_like
              Input array of dimension S
              Each entry corresponds to the number of items, Ns,
              in the s-th stratum.
@@ -212,7 +212,7 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None, pvalues=None, keep_dist=Fa
              if None, obs_npc is calculated as the value of the test statistic for the
              original data
 
-    pvalues: array_like
+    pvalues : array_like
              Input array of dimension S
              Each entry corresponds to the p-value for rho_s, the
              concordance for the s-th stratum.
