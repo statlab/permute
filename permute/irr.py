@@ -123,7 +123,7 @@ def compute_inverseweight_npc(pvalues, size):
     return (pvalues * weights).sum()
 
 
-def simulate_ts_dist(ratings, obs_ts=None, iter=10000,
+def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
                      keep_dist=False, seed=None):
     """
     Simulates the permutation distribution of the irr test statistic for
@@ -146,7 +146,7 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000,
              if None, obs_ts is calculated as the value of the test statistic
              for the original data
 
-    iter : integer
+    num_perm : int
            number of random permutation of the elements of each row of ratings
 
     keep_dist : bool
@@ -156,12 +156,12 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000,
 
     Returns
     -------
-    out : {obs_ts, geq, iter, dist}
+    out : {obs_ts, geq, num_perm, dist}
     obs_ts : observed value of the test statistic for the input data, or the
              input value of obs_ts if obs_ts was given as input
     geq : number of iterations for which the test statistic was greater than
           or equal to obs_ts
-    iter : iter
+    num_perm : int
     dist : if <keep_dist>, the array of values of the irr test statistic from
            the iter iterations.  Otherwise, null.
     """
@@ -172,8 +172,8 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000,
         obs_ts = compute_ts(r)
 
     if keep_dist:
-        dist = np.zeros(iter)
-        for i in range(iter):
+        dist = np.zeros(num_perm)
+        for i in range(num_perm):
             for row in r:
                 prng.shuffle(row)
             dist[i] = compute_ts(r)
@@ -181,11 +181,11 @@ def simulate_ts_dist(ratings, obs_ts=None, iter=10000,
     else:
         dist = None
         geq = 0
-        for i in range(iter):
+        for i in range(num_perm):
             for row in r:
                 prng.shuffle(row)
             geq += (compute_ts(r) >= obs_ts)
-    return {"obs_ts": obs_ts, "geq": geq, "iter": iter, "dist": dist}
+    return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm, "dist": dist}
 
 
 def simulate_npc_dist(perm_distr, size, obs_npc=None,
@@ -231,12 +231,12 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
 
     Returns
     -------
-    out : {obs_ts, geq, iter, dist}
+    out : {obs_ts, geq, num_perm, dist}
     obs_npc : observed value of the test statistic for the input data, or the
              input value of obs_ts if obs_ts was given as input
     leq : number of iterations for which the NPC test statistic was less than
           or equal to obs_npc
-    iter : B
+    num_perm : B
     dist : if <keep_dist>, the array of values of the NPC test statistic from
            the iter iterations.  Otherwise, null.
     """
@@ -266,4 +266,4 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
             for j in range(S):
                 p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
             leq += (compute_inverseweight_npc(p, size) <= obs_npc)
-    return {"obs_npc": obs_npc, "leq": leq, "iter": B, "dist": dist}
+    return {"obs_npc": obs_npc, "leq": leq, "num_perm": B, "dist": dist}
