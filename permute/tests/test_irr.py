@@ -31,7 +31,7 @@ def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
                      'geq': 624,
                      'obs_ts': 0.51936507936507936,
-                     'iter': 10000}
+                     'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42)
     assert_equal(res1, expected_res1)
 
@@ -53,7 +53,7 @@ def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                          'geq': 0,
                          'obs_ts': 0.70476190476190481,
-                         'iter': 10000}
+                         'num_perm': 10000}
     res_conc = simulate_ts_dist(res2, seed=42)
     assert_equal(res_conc, expected_res_conc)
 
@@ -71,13 +71,13 @@ def test_compute_inverseweight_npc():
 res1 = simulate_ts_dist(res, keep_dist=True, seed=42)
 res_conc = simulate_ts_dist(res2, keep_dist=True, seed=42)
 true_pvalue = np.array(
-    [res1['geq'] / res1['iter'], res_conc['geq'] / res_conc['iter']])
+    [res1['geq'] / res1['num_perm'], res_conc['geq'] / res_conc['num_perm']])
 rho_perm = np.transpose(np.vstack((res1['dist'], res_conc['dist'])))
 
 
 def test_simulate_npc_dist():
     expected_npc_res = {'dist': None,
-                        'iter': 10000,
+                        'num_perm': 10000,
                         'leq': 5,
                         'obs_npc':  0.010547525099011886}
     obs_npc_res = simulate_npc_dist(
