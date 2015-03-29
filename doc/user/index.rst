@@ -4,6 +4,6 @@ User Guide
 .. toctree::
    :maxdepth: 2
 
-   about.rst
+   overview.rst
    irr.rst
    npc/index.rst

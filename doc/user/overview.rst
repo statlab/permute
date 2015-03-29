@@ -1,5 +1,5 @@
-Permutation tests and confidence sets
-=====================================
+Overview
+========
 
 .. automodule:: permute
 
