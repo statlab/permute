@@ -156,14 +156,18 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
 
     Returns
     -------
-    out : {obs_ts, geq, num_perm, dist}
-    obs_ts : observed value of the test statistic for the input data, or the
-             input value of obs_ts if obs_ts was given as input
-    geq : number of iterations for which the test statistic was greater than
-          or equal to obs_ts
-    num_perm : int
-    dist : if <keep_dist>, the array of values of the irr test statistic from
-           the num_perm iterations.  Otherwise, null.
+    out : dict
+        - obs_ts : int
+                 observed value of the test statistic for the input data, or the
+                 input value of obs_ts if obs_ts was given as input
+        - geq : int
+              number of iterations for which the test statistic was greater than
+              or equal to obs_ts
+        - num_perm : int
+              number of permutations
+        - dist : array-like
+               if <keep_dist>, the array of values of the irr test statistic from
+               the num_perm iterations.  Otherwise, null.
     """
     r = ratings.copy()
     prng = RandomState(seed)
@@ -231,14 +235,18 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
 
     Returns
     -------
-    out : {obs_ts, geq, num_perm, dist}
-    obs_npc : observed value of the test statistic for the input data, or the
-             input value of obs_ts if obs_ts was given as input
-    leq : number of iterations for which the NPC test statistic was less than
-          or equal to obs_npc
-    num_perm : B
-    dist : if <keep_dist>, the array of values of the NPC test statistic from
-           the num_perm iterations.  Otherwise, null.
+    out : dict
+        - obs_npc : float
+                 observed value of the test statistic for the input data, or the
+                 input value of obs_ts if obs_ts was given as input
+        - leq : int
+              number of iterations for which the NPC test statistic was less than
+              or equal to obs_npc
+        - num_perm : int
+              B
+        - dist : array-like
+               if <keep_dist>, the array of values of the NPC test statistic from
+               the num_perm iterations.  Otherwise, null.
     """
 
     # Throw an error if both obs_npc and pvalues are None
