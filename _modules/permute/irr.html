@@ -273,14 +273,18 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    out : {obs_ts, geq, num_perm, dist}</span>
-<span class="sd">    obs_ts : observed value of the test statistic for the input data, or the</span>
-<span class="sd">             input value of obs_ts if obs_ts was given as input</span>
-<span class="sd">    geq : number of iterations for which the test statistic was greater than</span>
-<span class="sd">          or equal to obs_ts</span>
-<span class="sd">    num_perm : int</span>
-<span class="sd">    dist : if &lt;keep_dist&gt;, the array of values of the irr test statistic from</span>
-<span class="sd">           the num_perm iterations.  Otherwise, null.</span>
+<span class="sd">    out : dict</span>
+<span class="sd">        - obs_ts : int</span>
+<span class="sd">                 observed value of the test statistic for the input data, or the</span>
+<span class="sd">                 input value of obs_ts if obs_ts was given as input</span>
+<span class="sd">        - geq : int</span>
+<span class="sd">              number of iterations for which the test statistic was greater than</span>
+<span class="sd">              or equal to obs_ts</span>
+<span class="sd">        - num_perm : int</span>
+<span class="sd">              number of permutations</span>
+<span class="sd">        - dist : array-like</span>
+<span class="sd">               if &lt;keep_dist&gt;, the array of values of the irr test statistic from</span>
+<span class="sd">               the num_perm iterations.  Otherwise, null.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">prng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -348,14 +352,18 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    out : {obs_ts, geq, num_perm, dist}</span>
-<span class="sd">    obs_npc : observed value of the test statistic for the input data, or the</span>
-<span class="sd">             input value of obs_ts if obs_ts was given as input</span>
-<span class="sd">    leq : number of iterations for which the NPC test statistic was less than</span>
-<span class="sd">          or equal to obs_npc</span>
-<span class="sd">    num_perm : B</span>
-<span class="sd">    dist : if &lt;keep_dist&gt;, the array of values of the NPC test statistic from</span>
-<span class="sd">           the num_perm iterations.  Otherwise, null.</span>
+<span class="sd">    out : dict</span>
+<span class="sd">        - obs_npc : float</span>
+<span class="sd">                 observed value of the test statistic for the input data, or the</span>
+<span class="sd">                 input value of obs_ts if obs_ts was given as input</span>
+<span class="sd">        - leq : int</span>
+<span class="sd">              number of iterations for which the NPC test statistic was less than</span>
+<span class="sd">              or equal to obs_npc</span>
+<span class="sd">        - num_perm : int</span>
+<span class="sd">              B</span>
+<span class="sd">        - dist : array-like</span>
+<span class="sd">               if &lt;keep_dist&gt;, the array of values of the NPC test statistic from</span>
+<span class="sd">               the num_perm iterations.  Otherwise, null.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Throw an error if both obs_npc and pvalues are None</span>
