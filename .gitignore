@@ -1,6 +1,4 @@
-doc/_static/test.png
 .DS_Store
-doc/_build/
 permute/old/Datasets_MATLAB_R_NPC/
 
 # Byte-compiled / optimized / DLL files
@@ -55,5 +53,5 @@ coverage.xml
 *.pot
 
 # Sphinx documentation
-docs/_build/
-
+doc/_build/
+doc/_static/test.png
