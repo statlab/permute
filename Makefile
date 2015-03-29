@@ -14,4 +14,3 @@ doctest:
 
 coverage:
 	nosetests permute --with-coverage --cover-package=permute
-
