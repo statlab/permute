@@ -5,7 +5,6 @@ Permutation tests and confidence sets
    :maxdepth: 2
 
    user/index.rst
-   npc/index.rst
    dev/index.rst
 
 

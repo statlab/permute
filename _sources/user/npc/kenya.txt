@@ -31,4 +31,4 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
 
 .. rubric:: References
 
-.. bibliography:: ../permute.bib
+.. bibliography:: ../../permute.bib

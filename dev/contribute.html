@@ -30,16 +30,16 @@
     <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
     <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
-    <link rel="up" title="Developer’s Guide" href="index.html" />
+    <link rel="up" title="Developer Guide" href="index.html" />
     <link rel="next" title="Working with permute source code" href="gitwash/index.html" />
-    <link rel="prev" title="Developer’s Guide" href="index.html" />
+    <link rel="prev" title="Developer Guide" href="index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -69,8 +69,7 @@
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../npc/index.html">Permutation Tests for Complex Data</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer&#8217;s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer Guide</a></li>
 </ul>
 </ul>
 </li>
@@ -85,7 +84,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Development process</a></li>
-<li><a class="reference internal" href="#divergence-between-upstream-master-and-your-feature-branch">Divergence between <tt class="docutils literal"><span class="pre">upstream</span> <span class="pre">master</span></tt> and your feature branch</a></li>
+<li><a class="reference internal" href="#divergence-between-upstream-master-and-your-feature-branch">Divergence between <code class="docutils literal"><span class="pre">upstream</span> <span class="pre">master</span></code> and your feature branch</a></li>
 <li><a class="reference internal" href="#guidelines">Guidelines</a></li>
 <li><a class="reference internal" href="#stylistic-guidelines">Stylistic Guidelines</a></li>
 <li><a class="reference internal" href="#test-coverage">Test coverage</a></li>
@@ -99,7 +98,7 @@
               
                 
   <li>
-    <a href="index.html" title="Previous Chapter: Developer’s Guide"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Developer’s Guid...</span>
+    <a href="index.html" title="Previous Chapter: Developer Guide"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Developer Guide</span>
     </a>
   </li>
   <li>
@@ -155,8 +154,8 @@
 <li><p class="first">Now, you have remote repositories named:</p>
 <blockquote>
 <div><ul class="simple">
-<li><tt class="docutils literal"><span class="pre">upstream</span></tt>, which refers to the <tt class="docutils literal"><span class="pre">permute</span></tt> repository</li>
-<li><tt class="docutils literal"><span class="pre">origin</span></tt>, which refers to your personal fork</li>
+<li><code class="docutils literal"><span class="pre">upstream</span></code>, which refers to the <code class="docutils literal"><span class="pre">permute</span></code> repository</li>
+<li><code class="docutils literal"><span class="pre">origin</span></code>, which refers to your personal fork</li>
 </ul>
 </div></blockquote>
 </li>
@@ -177,7 +176,7 @@ such as &#8216;permutation-speedups&#8217;:</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Commit locally as you progress (<tt class="docutils literal"><span class="pre">git</span> <span class="pre">add</span></tt> and <tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></tt>)</p>
+<li><p class="first">Commit locally as you progress (<code class="docutils literal"><span class="pre">git</span> <span class="pre">add</span></code> and <code class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></code>)</p>
 </li>
 </ul>
 </li>
@@ -197,7 +196,7 @@ to ask for review.</p>
 </ul>
 </li>
 </ol>
-<p>For a more detailed discussion, read these <tt class="xref doc docutils literal"><span class="pre">detailed</span> <span class="pre">documents</span></tt> on how to use Git with <tt class="docutils literal"><span class="pre">permute</span></tt>
+<p>For a more detailed discussion, read these <code class="xref doc docutils literal"><span class="pre">detailed</span> <span class="pre">documents</span></code> on how to use Git with <code class="docutils literal"><span class="pre">permute</span></code>
 (<a class="reference external" href="http://statlab.github.io/permute/dev/gitwash/index.html">http://statlab.github.io/permute/dev/gitwash/index.html</a>).</p>
 <ol class="arabic" start="4">
 <li><p class="first">Review process:</p>
@@ -228,7 +227,7 @@ cross) and inspecting the build and test log.</li>
 <blockquote>
 <div><p>Before merging your commits, you must add a description of your changes
 to the release notes of the upcoming version in
-<tt class="docutils literal"><span class="pre">doc/release/release_dev.rst</span></tt>.</p>
+<code class="docutils literal"><span class="pre">doc/release/release_dev.rst</span></code>.</p>
 </div></blockquote>
 </li>
 </ol>
@@ -240,7 +239,7 @@ where 123 is the issue number.</p>
 </div>
 </div>
 <div class="section" id="divergence-between-upstream-master-and-your-feature-branch">
-<h1>Divergence between <tt class="docutils literal"><span class="pre">upstream</span> <span class="pre">master</span></tt> and your feature branch<a class="headerlink" href="#divergence-between-upstream-master-and-your-feature-branch" title="Permalink to this headline">¶</a></h1>
+<h1>Divergence between <code class="docutils literal"><span class="pre">upstream</span> <span class="pre">master</span></code> and your feature branch<a class="headerlink" href="#divergence-between-upstream-master-and-your-feature-branch" title="Permalink to this headline">¶</a></h1>
 <p>Do <em>not</em> ever merge the main branch into yours. If GitHub indicates that the
 branch of your Pull Request can no longer be merged automatically, rebase
 onto master:</p>
@@ -283,8 +282,8 @@ you get no response to your pull request.
 <ul>
 <li><p class="first">Set up your editor to remove trailing whitespace.  Follow <a class="reference external" href="www.python.org/dev/peps/pep-0008/">PEP08</a>.  Check code with pyflakes / flake8.</p>
 </li>
-<li><p class="first">Use numpy data types instead of strings (<tt class="docutils literal"><span class="pre">np.uint8</span></tt> instead of
-<tt class="docutils literal"><span class="pre">&quot;uint8&quot;</span></tt>).</p>
+<li><p class="first">Use numpy data types instead of strings (<code class="docutils literal"><span class="pre">np.uint8</span></code> instead of
+<code class="docutils literal"><span class="pre">&quot;uint8&quot;</span></code>).</p>
 </li>
 <li><p class="first">Use the following import conventions:</p>
 <div class="highlight-python"><div class="highlight"><pre>import numpy as np
@@ -304,7 +303,7 @@ cimport numpy as cnp # in Cython code
 i.e., statement coverage should be at 100%.</p>
 <p>To measure the test coverage, install
 <a class="reference external" href="http://nedbatchelder.com/code/coverage/">coverage.py</a>
-(e.g., using <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">coverage</span></tt>) and then run:</p>
+(e.g., using <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">coverage</span></code>) and then run:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ make coverage
 </pre></div>
 </div>
@@ -335,7 +334,7 @@ permute                                              0      0   100%
     </p>
     <p>
         &copy; Copyright 2015, permute developers.<br/>
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
     </p>
   </div>
 </footer>

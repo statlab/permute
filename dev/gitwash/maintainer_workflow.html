@@ -39,7 +39,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body>
+  <body role="document">
 
   <div id="navbar" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -69,8 +69,7 @@
       role="menu"
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../npc/index.html">Permutation Tests for Complex Data</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer&#8217;s Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer Guide</a></li>
 </ul>
 </ul>
 </li>
@@ -142,8 +141,8 @@
 <p>This page is for maintainers — those of us who merge our own or other
 peoples&#8217; changes into the upstream repository.</p>
 <p>Being as how you&#8217;re a maintainer, you are completely on top of the basic stuff
-in <a class="reference internal" href="development_workflow.html#development-workflow"><em>Development workflow</em></a>.</p>
-<p>The instructions in <a class="reference internal" href="set_up_fork.html#linking-to-upstream"><em>Linking your repository to the upstream repo</em></a> add a remote that has read-only
+in <a class="reference internal" href="development_workflow.html#development-workflow"><span>Development workflow</span></a>.</p>
+<p>The instructions in <a class="reference internal" href="set_up_fork.html#linking-to-upstream"><span>Linking your repository to the upstream repo</span></a> add a remote that has read-only
 access to the upstream repo.  Being a maintainer, you&#8217;ve got read-write access.</p>
 <p>It&#8217;s good to have your upstream remote have a scary name, to remind you that
 it&#8217;s a read-write remote:</p>
@@ -154,7 +153,7 @@ git fetch upstream-rw
 <div class="section" id="integrating-changes">
 <h2>Integrating changes<a class="headerlink" href="#integrating-changes" title="Permalink to this headline">¶</a></h2>
 <p>Let&#8217;s say you have some changes that need to go into trunk
-(<tt class="docutils literal"><span class="pre">upstream-rw/master</span></tt>).</p>
+(<code class="docutils literal"><span class="pre">upstream-rw/master</span></code>).</p>
 <p>The changes are in some branch that you are currently on.  For example, you are
 looking at someone&#8217;s changes like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>git remote add someone git://github.com/someone/permute.git
@@ -187,7 +186,7 @@ git merge --no-ff upstream-rw/master
 </div>
 <p>The merge will be detected by github, and should close any related pull requests
 automatically.</p>
-<p>Note the <tt class="docutils literal"><span class="pre">--no-ff</span></tt> above.  This forces git to make a merge commit, rather than
+<p>Note the <code class="docutils literal"><span class="pre">--no-ff</span></code> above.  This forces git to make a merge commit, rather than
 doing a fast-forward, so that these set of commits branch off trunk then rejoin
 the main history with a merge, rather than appearing to have been made directly
 on top of trunk.</p>
@@ -202,18 +201,18 @@ git log -p upstream-rw/master..
 </div>
 <p>The first line above just shows the history in a compact way, with a text
 representation of the history graph. The second line shows the log of commits
-excluding those that can be reached from trunk (<tt class="docutils literal"><span class="pre">upstream-rw/master</span></tt>), and
-including those that can be reached from current HEAD (implied with the <tt class="docutils literal"><span class="pre">..</span></tt>
+excluding those that can be reached from trunk (<code class="docutils literal"><span class="pre">upstream-rw/master</span></code>), and
+including those that can be reached from current HEAD (implied with the <code class="docutils literal"><span class="pre">..</span></code>
 at the end). So, it shows the commits unique to this branch compared to trunk.
-The <tt class="docutils literal"><span class="pre">-p</span></tt> option shows the diff for these commits in patch form.</p>
+The <code class="docutils literal"><span class="pre">-p</span></code> option shows the diff for these commits in patch form.</p>
 </div>
 <div class="section" id="push-to-trunk">
 <h3>Push to trunk<a class="headerlink" href="#push-to-trunk" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python"><div class="highlight"><pre>git push upstream-rw my-new-feature:master
 </pre></div>
 </div>
-<p>This pushes the <tt class="docutils literal"><span class="pre">my-new-feature</span></tt> branch in this repository to the <tt class="docutils literal"><span class="pre">master</span></tt>
-branch in the <tt class="docutils literal"><span class="pre">upstream-rw</span></tt> repository.</p>
+<p>This pushes the <code class="docutils literal"><span class="pre">my-new-feature</span></code> branch in this repository to the <code class="docutils literal"><span class="pre">master</span></code>
+branch in the <code class="docutils literal"><span class="pre">upstream-rw</span></code> repository.</p>
 </div>
 </div>
 </div>
@@ -231,7 +230,7 @@ branch in the <tt class="docutils literal"><span class="pre">upstream-rw</span><
     </p>
     <p>
         &copy; Copyright 2015, permute developers.<br/>
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
     </p>
   </div>
 </footer>
