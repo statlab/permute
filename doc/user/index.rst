@@ -6,3 +6,4 @@ User Guide
 
    about.rst
    irr.rst
+   npc/index.rst

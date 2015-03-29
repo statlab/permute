@@ -163,7 +163,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
           or equal to obs_ts
     num_perm : int
     dist : if <keep_dist>, the array of values of the irr test statistic from
-           the iter iterations.  Otherwise, null.
+           the num_perm iterations.  Otherwise, null.
     """
     r = ratings.copy()
     prng = RandomState(seed)
@@ -238,7 +238,7 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
           or equal to obs_npc
     num_perm : B
     dist : if <keep_dist>, the array of values of the NPC test statistic from
-           the iter iterations.  Otherwise, null.
+           the num_perm iterations.  Otherwise, null.
     """
 
     # Throw an error if both obs_npc and pvalues are None
