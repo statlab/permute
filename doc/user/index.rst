@@ -5,5 +5,6 @@ User Guide
    :maxdepth: 2
 
    overview.rst
+   stratified.rst
    irr.rst
    npc/index.rst
