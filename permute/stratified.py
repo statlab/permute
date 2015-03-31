@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+Stratified permutation tests.
+"""
+
 from __future__ import division, print_function, absolute_import
 
 import math
@@ -186,12 +190,12 @@ def stratifiedPermutationTestMean(group, condition, response,
       The
     """
     tst = 0.0
-    if (len(groups) < 2):
+    if len(groups) < 2:
         raise ValueError('Number of groups must be at least 2.')
-    elif (len(groups) == 2):
+    elif len(groups) == 2:
         stat = lambda u: u[0] - u[1]
-    elif (len(groups) > 2):
-        stat = lambda u: np.std(u)
+    elif len(groups) > 2:
+        stat = np.std
     for g in groups:
         gg = group == g
         x = [gg & (condition == c) for c in conditions]
