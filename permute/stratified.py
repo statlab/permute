@@ -91,8 +91,8 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     return ci_low, ci_upp
 
 
-def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater",
-                  CI=False, level=0.95, seed=None):
+def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
+                    CI=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -171,8 +171,8 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater",
         return hits / reps, ts
 
 
-def stratifiedPermutationTestMean(group, condition, response,
-                                  groups, conditions):
+def stratified_permutationtest_mean(group, condition, response,
+                                     groups, conditions):
     """
     Calculates variability in sample means between treatment conditions,
     within groups.
@@ -206,8 +206,8 @@ def stratifiedPermutationTestMean(group, condition, response,
     return tst
 
 
-def stratifiedPermutationTest(group, condition, response, iterations=1.0e4,
-                              testStatistic=stratifiedPermutationTestMean):
+def stratified_permutationtest(group, condition, response, iterations=1.0e4,
+                                testStatistic=stratified_permutationtest_mean):
     """
     Stratified permutation test using the sum of the differences in means
     between two or more conditions in each group (stratum) as the test
@@ -252,8 +252,7 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4,
             dist[i] = testStatistic(group,
                                     permute_within_groups(
                                         group, condition, groups),
-                                    response, groups, conditions
-                                    )
+                                    response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
         pLeft, pRight, pBoth = [np.count_nonzero(c)/iterations for c in conds]

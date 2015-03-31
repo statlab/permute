@@ -4,10 +4,10 @@ import numpy as np
 
 from nose.tools import assert_almost_equal, assert_less
 
-from ..stratified import stratifiedPermutationTest as spt
+from ..stratified import stratified_permutationtest as spt
 
 
-def test_stratifiedPermutationTest():
+def test_stratified_permutationtest():
     group = np.array(
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])
     condition = np.array(
