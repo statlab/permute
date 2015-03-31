@@ -131,27 +131,21 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
       The
     """
     z = np.concatenate([x, y])   # pooled responses
-    stats = dict(
-        mean=lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
-        t=lambda u: ttest_ind(
+    stats = {
+        'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
+        't': lambda u: ttest_ind(
             u[:len(y)], u[len(y):], equal_var=True)[0]
-    )
-    try:
-        tst = stats[stat]
-    except KeyError:
-        raise ValueError("Unrecognized test statistic (stat): " + stat)
+    }
+    tst = stats[stat]
 
-    if alternative == 'greater':
-        theStat = tst
-    elif alternative == 'less':
-        theStat = lambda u: -tst(u)
-    elif alternative == 'two-sided':
-        theStat = lambda u: math.fabs(tst(u))
-    else:
-        raise ValueError("Unrecognized alternative: " + alternative)
+    theStat = {
+        'greater': tst,
+        'less': lambda u: -tst(u)
+        'two-sided': lambda u: math.fabs(tst(u))
+    }
 
-    ts = theStat(z)
-    hits = np.sum([(theStat(np.random.permutation(z)) >= ts)
+    ts = theStat[alternative](z)
+    hits = np.sum([(theStat[alternative](np.random.permutation(z)) >= ts)
                    for i in range(reps)])
 
     if CI in ["two-sided", "less", "greater"]:
