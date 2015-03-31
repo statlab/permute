@@ -5,9 +5,38 @@ from __future__ import division, print_function, absolute_import
 import math
 
 import numpy as np
+from numpy.random import RandomState
+
 from scipy.stats import (binom,
                          ttest_ind)
 from scipy.optimize import brentq
+
+
+def permute_within_groups(group, condition, groups, seed=None):
+    """
+    Permutation of a multiset.
+
+    Parameters
+    ----------
+    group : int
+      The
+    condition : int
+      The
+    groups : int
+      The
+
+    Returns
+    -------
+    permuted : int
+      The
+    """
+    permuted = condition.copy()
+    prng = RandomState(seed)
+    
+    for g in groups:
+        gg = group == g
+        permuted[gg] = prng.permutation(condition[gg])
+    return permuted
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -58,40 +87,38 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     return ci_low, ci_upp
 
 
-def permuTestMean(x, y, reps=10 ** 5, stat='mean', alternative="greater", CI=False, CL=0.95):
+def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False, CL=0.95):
     """
-       One-sided or two-sided, two-sample permutation test for equality of two
-       means, with p-value estimated by simulated random sampling with reps replications.
+    One-sided or two-sided, two-sample permutation test for equality of two
+    means, with p-value estimated by simulated random sampling with reps replications.
 
-       Tests the hypothesis that x and y are a random partition of x,y
-       against the alternative that x comes from a population with mean
-           (a) greater than that of the population from which y comes, if side = 'greater_than'
-           (b) less than that of the population from which y comes, if side = 'less_than'
-           (c) different from that of the population from which y comes, if side = 'both'
+    Tests the hypothesis that x and y are a random partition of x,y
+    against the alternative that x comes from a population with mean
+        (a) greater than that of the population from which y comes, if side = 'greater_than'
+        (b) less than that of the population from which y comes, if side = 'less_than'
+        (c) different from that of the population from which y comes, if side = 'both'
 
-       If stat == 'mean', the test statistic is (mean(x) - mean(y))
-       (equivalently, sum(x), since those are monotonically related)
+    If stat == 'mean', the test statistic is (mean(x) - mean(y))
+    (equivalently, sum(x), since those are monotonically related)
 
-       If stat == 't', the test statistic is the two-sample t-statistic--but the p-value
-       is still estimated by the randomization, approximating the permutation distribution.
-       The t-statistic is computed using scipy.stats.ttest_ind
+    If stat == 't', the test statistic is the two-sample t-statistic--but the p-value
+    is still estimated by the randomization, approximating the permutation distribution.
+    The t-statistic is computed using scipy.stats.ttest_ind
 
-       If CI == 'upper', computes an upper confidence bound on the true
-       p-value based on the simulations by inverting Binomial tests.
+    If CI == 'upper', computes an upper confidence bound on the true
+    p-value based on the simulations by inverting Binomial tests.
 
-       If CI == 'lower', computes a lower confidence bound on the true
-       p-value based on the simulations by inverting Binomial tests.
+    If CI == 'lower', computes a lower confidence bound on the true
+    p-value based on the simulations by inverting Binomial tests.
 
-       If CI == 'both', computes lower and upper confidence bounds on the true
-       p-value based on the simulations by inverting Binomial tests.
+    If CI == 'both', computes lower and upper confidence bounds on the true
+    p-value based on the simulations by inverting Binomial tests.
 
-       CL is the confidence limit for the confidence bounds.
+    CL is the confidence limit for the confidence bounds.
 
-       output is the estimated p-value and the test statistic, if CI == False
-       output is <estimated p-value, confidence bound on p-value, test statistic> if CI in {'lower','upper'}
-       output is <estimated p-value, [lower confidence bound, upper confidence bound], test statistic> if CI == 'both'
-
-
+    output is the estimated p-value and the test statistic, if CI == False
+    output is <estimated p-value, confidence bound on p-value, test statistic> if CI in {'lower','upper'}
+    output is <estimated p-value, [lower confidence bound, upper confidence bound], test statistic> if CI == 'both'
     """
     z = np.concatenate([x, y])   # pooled responses
     stats = dict(
@@ -145,14 +172,6 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
     return tst
 
 
-def permuteWithinGroups(group, condition, groups):
-    permuted = condition.copy()
-    for g in groups:
-        gg = group == g
-        permuted[gg] = np.random.permutation(condition[gg])
-    return permuted
-
-
 def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, testStatistic=stratifiedPermutationTestMean):
     '''
     Stratified permutation test using the sum of the differences in means between two or more conditions in
@@ -180,7 +199,7 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, test
         dist = np.zeros(iterations)
         for i in range(int(iterations)):
             dist[i] = testStatistic(group,
-                                    permuteWithinGroups(
+                                    permute_within_groups(
                                         group, condition, groups),
                                     response, groups, conditions
                                     )
