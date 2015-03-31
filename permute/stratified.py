@@ -119,6 +119,16 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
     output is the estimated p-value and the test statistic, if CI == False
     output is <estimated p-value, confidence bound on p-value, test statistic> if CI in {'lower','upper'}
     output is <estimated p-value, [lower confidence bound, upper confidence bound], test statistic> if CI == 'both'
+
+    Parameters
+    ----------
+    group : int
+      The
+
+    Returns
+    -------
+    permuted : int
+      The
     """
     z = np.concatenate([x, y])   # pooled responses
     stats = dict(
@@ -151,13 +161,25 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
 
 
 def stratifiedPermutationTestMean(group, condition, response, groups, conditions):
-    '''
-    Calculates variability in sample means between treatment conditions, within groups.
-    If there are two treatment conditions, the test statistic is the difference in means,
-    aggregated across groups.
-    If there are more than two treatment conditions, the test statistic is the standard deviation of
-    the means, aggregated across groups.
-    '''
+    """
+    Calculates variability in sample means between treatment conditions,
+    within groups.
+
+    If there are two treatment conditions, the test statistic is the
+    difference in means, aggregated across groups.
+    If there are more than two treatment conditions, the test statistic
+    is the standard deviation of the means, aggregated across groups.
+
+    Parameters
+    ----------
+    group : int
+      The 
+    
+    Returns 
+    -------
+    tst : float
+      The
+    """
     tst = 0.0
     if (len(groups) < 2):
         raise ValueError('Number of groups must be at least 2.')
@@ -172,24 +194,41 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
     return tst
 
 
-def stratifiedPermutationTest(group, condition, response, iterations=1.0e4, testStatistic=stratifiedPermutationTestMean):
-    '''
-    Stratified permutation test using the sum of the differences in means between two or more conditions in
-    each group (stratum) as the test statistic.
-    The test statistic is
-        \sum_{g in groups} [
-                            f(mean(response for cases in group g assigned to each condition))
-                           ].
-    The function f is the difference if there are two conditions, and the standard deviation if there are
-    more than two conditions.
-    There should be at least one group and at least two conditions.
-    Under the null hypothesis, all assignments to the two conditions that preserve the number of
-    cases assigned to the conditions are equally likely.
-    Groups in which all cases are assigned to the same condition are skipped; they do not contribute
-    to the p-value since all randomizations give the same contribution to the difference in means.
+def stratifiedPermutationTest(group, condition, response, iterations=1.0e4,
+                              testStatistic=stratifiedPermutationTestMean):
+    """
+    Stratified permutation test using the sum of the differences in means
+    between two or more conditions in each group (stratum) as the test
+    statistic.
 
-    Dependencies: numpy (as np)
-    '''
+    The test statistic is
+
+    .. math:: \sum_{g \in \\text{groups}} [
+                 f(mean(\\text{response for cases in group $g$
+                               assigned to each condition}))].
+
+    The function f is the difference if there are two conditions, and
+    the standard deviation if there are more than two conditions.
+
+    There should be at least one group and at least two conditions.
+    Under the null hypothesis, all assignments to the two conditions that
+    preserve the number of cases assigned to the conditions are equally
+    likely.
+
+    Groups in which all cases are assigned to the same condition are
+    skipped; they do not contribute to the p-value since all randomizations
+    give the same contribution to the difference in means.
+
+    Parameters
+    ----------
+    group : int
+      The 
+    
+    Returns 
+    -------
+    permuted : int
+      The
+    """
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
