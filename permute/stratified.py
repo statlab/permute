@@ -10,29 +10,55 @@ from scipy.stats import (binom,
 from scipy.optimize import brentq
 
 
-def binoLowerCL(n, x, cl=0.975, p=None, xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
-    "Lower confidence level cl confidence interval for Binomial p, for x successes in n trials"
+def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
+                        xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
+    """
+    Compute the confidence interval for a binomial.
+
+    Parameters
+    ----------
+    n : int
+      The number of Bernoulli trials.
+    x : int
+      The number of successes.
+    cl : float in (0, 1)
+      The desired confidence level.
+    alternative : {"two-sided", "less", "greater"}
+      Indicates the alternative hypothesis.
+    p : float in (0, 1)
+      The probability of success in each trial.
+    xtol : float
+      Tolerance
+    rtol : float
+      Tolerance
+    maxiter : int
+      Maximum number of iterations.
+
+    Returns
+    -------
+    ci_low, ci_upp : float
+        lower and upper confidence level with coverage (approximately)
+        1-alpha.
+    """
     if p is None:
         p = x / n
-    lo = 0.0
-    if (x > 0):
+    ci_low = 0.0
+    ci_upp = 1.0
+
+    if alternative == 'both':
+        cl = 1 - (1-cl)/2
+
+    if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
-        lo = brentq(f, 0.0, p, xtol, rtol, maxiter)
-    return lo
-
-
-def binoUpperCL(n, x, cl=0.975, p=None,  xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
-    "Upper confidence level cl confidence interval for Binomial p, for x successes in n trials"
-    if p is None:
-        p = x / n
-    hi = 1.0
-    if (x < n):
+        ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
+    elif alternative != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
-        hi = brentq(f, p, 1.0, xtol, rtol, maxiter)
-    return hi
+        ci_upp = brentq(f, 1.0, p, xtol, rtol, maxiter)
+
+    return ci_low, ci_upp
 
 
-def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False, CL=0.95):
+def permuTestMean(x, y, reps=10 ** 5, stat='mean', alternative="greater", CI=False, CL=0.95):
     """
        One-sided or two-sided, two-sample permutation test for equality of two
        means, with p-value estimated by simulated random sampling with reps replications.
@@ -65,7 +91,6 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
        output is <estimated p-value, confidence bound on p-value, test statistic> if CI in {'lower','upper'}
        output is <estimated p-value, [lower confidence bound, upper confidence bound], test statistic> if CI == 'both'
 
-       Dependencies: numpy, numpy.random, scipy.stats, binoUpperCL, binoLowerCL
 
     """
     z = np.concatenate([x, y])   # pooled responses
@@ -78,25 +103,22 @@ def permuTestMean(x, y, reps=10 ** 5, stat='mean', side='greater_than', CI=False
         tst = stats[stat]
     except KeyError:
         raise ValueError("Unrecognized test statistic (stat): " + stat)
-    if side == 'greater_than':
+
+    if alternative == 'greater':
         theStat = tst
-    elif side == 'less_than':
+    elif alternative == 'less':
         theStat = lambda u: -tst(u)
-    elif side == 'both':
+    elif alternative == 'two-sided':
         theStat = lambda u: math.fabs(tst(u))
     else:
-        raise ValueError("Unrecognized side choice: " + side)
+        raise ValueError("Unrecognized alternative: " + alternative)
+
     ts = theStat(z)
     hits = np.sum([(theStat(np.random.permutation(z)) >= ts)
                    for i in range(reps)])
-    if CI == 'upper':
-        return hits / reps, binoUpperCL(reps, hits, cl=CL), ts
-    elif CI == 'lower':
-        return hits / reps, binoLowerCL(reps, hits, cl=CL), ts
-    elif CI == 'both':
-        return hits / reps,  \
-            (binoLowerCL(reps, hits, cl=1 - (1 - CL) / 2), binoUpperCL(reps, hits, cl=1 - (1 - CL) / 2)), \
-            ts
+
+    if CI in ["two-sided", "less", "greater"]:
+        return hits / reps, binom_conf_interval(reps, cl, alternative), ts
     else:
         return hits / reps, ts
 
