@@ -87,7 +87,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     return ci_low, ci_upp
 
 
-def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False, CL=0.95):
+def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False, CL=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of two
     means, with p-value estimated by simulated random sampling with reps replications.
@@ -130,6 +130,7 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
     permuted : int
       The
     """
+    prng = RandomState(seed)
     z = np.concatenate([x, y])   # pooled responses
     stats = {
         'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
@@ -145,7 +146,7 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
     }
 
     ts = theStat[alternative](z)
-    hits = np.sum([(theStat[alternative](np.random.permutation(z)) >= ts)
+    hits = np.sum([(theStat[alternative](prng.permutation(z)) >= ts)
                    for i in range(reps)])
 
     if CI in ["two-sided", "less", "greater"]:
