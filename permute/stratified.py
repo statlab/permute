@@ -140,7 +140,7 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
 
     theStat = {
         'greater': tst,
-        'less': lambda u: -tst(u)
+        'less': lambda u: -tst(u),
         'two-sided': lambda u: math.fabs(tst(u))
     }
 
