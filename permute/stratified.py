@@ -16,7 +16,7 @@ from scipy.stats import (binom,
 from scipy.optimize import brentq
 
 
-def permute_within_groups(group, condition, groups, seed=None):
+def permute_within_groups(group, condition, groups, prng=None):
     """
     Permutation of a multiset.
 
@@ -35,7 +35,8 @@ def permute_within_groups(group, condition, groups, seed=None):
       The
     """
     permuted = condition.copy()
-    prng = RandomState(seed)
+    if prng==None:
+        prng = RandomState()
 
     for g in groups:
         gg = group == g
@@ -207,7 +208,8 @@ def stratified_permutationtest_mean(group, condition, response,
 
 
 def stratified_permutationtest(group, condition, response, iterations=1.0e4,
-                                testStatistic=stratified_permutationtest_mean):
+                               testStatistic=stratified_permutationtest_mean,
+                               seed=None):
     """
     Stratified permutation test using the sum of the differences in means
     between two or more conditions in each group (stratum) as the test
@@ -241,6 +243,8 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
     permuted : int
       The
     """
+    prng = RandomState(seed)
+    
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
@@ -251,7 +255,7 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
         for i in range(int(iterations)):
             dist[i] = testStatistic(group,
                                     permute_within_groups(
-                                        group, condition, groups),
+                                        group, condition, groups, prng),
                                     response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]

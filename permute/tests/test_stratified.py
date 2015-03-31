@@ -15,7 +15,7 @@ def test_stratified_permutationtest():
     response = np.array(
         [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0])
 
-    res = spt(group, condition, response, iterations=1000)
-    res1 = spt(group, condition, response, iterations=1000)
+    res = spt(group, condition, response, iterations=1000, seed=42)
+    res1 = spt(group, condition, response, iterations=1000, seed=42)
     assert_less(res[1], 0.01)
     assert_almost_equal(res[3], res1[3])
