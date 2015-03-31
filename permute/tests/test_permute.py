@@ -4,7 +4,7 @@ import numpy as np
 
 from nose.tools import assert_almost_equal, assert_less
 
-from ..permute import stratifiedPermutationTest as spt
+from ..stratified import stratifiedPermutationTest as spt
 
 
 def test_stratifiedPermutationTest():
