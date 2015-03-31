@@ -32,7 +32,7 @@ def permute_within_groups(group, condition, groups, seed=None):
     """
     permuted = condition.copy()
     prng = RandomState(seed)
-    
+
     for g in groups:
         gg = group == g
         permuted[gg] = prng.permutation(condition[gg])
@@ -87,22 +87,28 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     return ci_low, ci_upp
 
 
-def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False, CL=0.95, seed=None):
+def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater",
+                  CI=False, level=0.95, seed=None):
     """
-    One-sided or two-sided, two-sample permutation test for equality of two
-    means, with p-value estimated by simulated random sampling with reps replications.
+    One-sided or two-sided, two-sample permutation test for equality of
+    two means, with p-value estimated by simulated random sampling with
+    reps replications.
 
     Tests the hypothesis that x and y are a random partition of x,y
     against the alternative that x comes from a population with mean
-        (a) greater than that of the population from which y comes, if side = 'greater_than'
-        (b) less than that of the population from which y comes, if side = 'less_than'
-        (c) different from that of the population from which y comes, if side = 'both'
+        (a) greater than that of the population from which y comes,
+            if side = 'greater_than'
+        (b) less than that of the population from which y comes,
+            if side = 'less_than'
+        (c) different from that of the population from which y comes,
+            if side = 'both'
 
     If stat == 'mean', the test statistic is (mean(x) - mean(y))
     (equivalently, sum(x), since those are monotonically related)
 
-    If stat == 't', the test statistic is the two-sample t-statistic--but the p-value
-    is still estimated by the randomization, approximating the permutation distribution.
+    If stat == 't', the test statistic is the two-sample t-statistic--but
+    the p-value is still estimated by the randomization, approximating
+    the permutation distribution.
     The t-statistic is computed using scipy.stats.ttest_ind
 
     If CI == 'upper', computes an upper confidence bound on the true
@@ -117,8 +123,11 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
     CL is the confidence limit for the confidence bounds.
 
     output is the estimated p-value and the test statistic, if CI == False
-    output is <estimated p-value, confidence bound on p-value, test statistic> if CI in {'lower','upper'}
-    output is <estimated p-value, [lower confidence bound, upper confidence bound], test statistic> if CI == 'both'
+    output is <estimated p-value, confidence bound on p-value, test statistic>
+         if CI in {'lower','upper'}
+    output is <estimated p-value,
+         [lower confidence bound, upper confidence bound], test statistic>,
+          if CI == 'both'
 
     Parameters
     ----------
@@ -150,12 +159,13 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater", CI=False
                    for i in range(reps)])
 
     if CI in ["two-sided", "less", "greater"]:
-        return hits / reps, binom_conf_interval(reps, cl, alternative), ts
+        return hits / reps, binom_conf_interval(reps, level, alternative), ts
     else:
         return hits / reps, ts
 
 
-def stratifiedPermutationTestMean(group, condition, response, groups, conditions):
+def stratifiedPermutationTestMean(group, condition, response,
+                                  groups, conditions):
     """
     Calculates variability in sample means between treatment conditions,
     within groups.
@@ -168,9 +178,9 @@ def stratifiedPermutationTestMean(group, condition, response, groups, conditions
     Parameters
     ----------
     group : int
-      The 
-    
-    Returns 
+      The
+
+    Returns
     -------
     tst : float
       The
@@ -217,9 +227,9 @@ def stratifiedPermutationTest(group, condition, response, iterations=1.0e4,
     Parameters
     ----------
     group : int
-      The 
-    
-    Returns 
+      The
+
+    Returns
     -------
     permuted : int
       The
