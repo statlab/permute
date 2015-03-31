@@ -100,6 +100,7 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater",
 
     Tests the hypothesis that x and y are a random partition of x,y
     against the alternative that x comes from a population with mean
+
         (a) greater than that of the population from which y comes,
             if side = 'greater_than'
         (b) less than that of the population from which y comes,
@@ -127,11 +128,13 @@ def permuTestMean(x, y, reps=10**5, stat='mean', alternative="greater",
     CL is the confidence limit for the confidence bounds.
 
     output is the estimated p-value and the test statistic, if CI == False
+
     output is <estimated p-value, confidence bound on p-value, test statistic>
-         if CI in {'lower','upper'}
+    if CI in {'lower','upper'}
+
     output is <estimated p-value,
-         [lower confidence bound, upper confidence bound], test statistic>,
-          if CI == 'both'
+    [lower confidence bound, upper confidence bound], test statistic>,
+    if CI == 'both'
 
     Parameters
     ----------
