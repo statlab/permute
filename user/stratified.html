@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stratified testing &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
+    <link rel="up" title="User Guide" href="index.html" />
+    <link rel="next" title="Interrater reliability" href="irr.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Stratified testing</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="overview.html" title="Previous Chapter: Overview"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Overview</span>
+    </a>
+  </li>
+  <li>
+    <a href="irr.html" title="Next Chapter: Interrater reliability"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Interrater relia... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="module-permute.stratified">
+<span id="stratified-testing"></span><h1>Stratified testing<a class="headerlink" href="#module-permute.stratified" title="Permalink to this headline">¶</a></h1>
+<p>Stratified permutation tests.</p>
+<dl class="function">
+<dt id="permute.stratified.binom_conf_interval">
+<code class="descclassname">permute.stratified.</code><code class="descname">binom_conf_interval</code><span class="sig-paren">(</span><em>n</em>, <em>x</em>, <em>cl=0.975</em>, <em>alternative='two-sided'</em>, <em>p=None</em>, <em>xtol=1e-12</em>, <em>rtol=4.440892098500626e-16</em>, <em>maxiter=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#binom_conf_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.stratified.binom_conf_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the confidence interval for a binomial.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n</strong> : int</p>
+<blockquote>
+<div><p>The number of Bernoulli trials.</p>
+</div></blockquote>
+<p><strong>x</strong> : int</p>
+<blockquote>
+<div><p>The number of successes.</p>
+</div></blockquote>
+<p><strong>cl</strong> : float in (0, 1)</p>
+<blockquote>
+<div><p>The desired confidence level.</p>
+</div></blockquote>
+<p><strong>alternative</strong> : {&#8220;two-sided&#8221;, &#8220;less&#8221;, &#8220;greater&#8221;}</p>
+<blockquote>
+<div><p>Indicates the alternative hypothesis.</p>
+</div></blockquote>
+<p><strong>p</strong> : float in (0, 1)</p>
+<blockquote>
+<div><p>The probability of success in each trial.</p>
+</div></blockquote>
+<p><strong>xtol</strong> : float</p>
+<blockquote>
+<div><p>Tolerance</p>
+</div></blockquote>
+<p><strong>rtol</strong> : float</p>
+<blockquote>
+<div><p>Tolerance</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of iterations.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ci_low, ci_upp</strong> : float</p>
+<blockquote class="last">
+<div><p>lower and upper confidence level with coverage (approximately)
+1-alpha.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.stratified.permute_within_groups">
+<code class="descclassname">permute.stratified.</code><code class="descname">permute_within_groups</code><span class="sig-paren">(</span><em>group</em>, <em>condition</em>, <em>groups</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#permute_within_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.stratified.permute_within_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permutation of a multiset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>group</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+<p><strong>condition</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+<p><strong>groups</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>permuted</strong> : int</p>
+<blockquote class="last">
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.stratified.permutetest_mean">
+<code class="descclassname">permute.stratified.</code><code class="descname">permutetest_mean</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>reps=100000</em>, <em>stat='mean'</em>, <em>alternative='greater'</em>, <em>CI=False</em>, <em>level=0.95</em>, <em>seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#permutetest_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.stratified.permutetest_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, two-sample permutation test for equality of
+two means, with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Tests the hypothesis that x and y are a random partition of x,y
+against the alternative that x comes from a population with mean</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>greater than that of the population from which y comes,
+if side = &#8216;greater_than&#8217;</li>
+<li>less than that of the population from which y comes,
+if side = &#8216;less_than&#8217;</li>
+<li>different from that of the population from which y comes,
+if side = &#8216;both&#8217;</li>
+</ol>
+</div></blockquote>
+<p>If stat == &#8216;mean&#8217;, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related)</p>
+<p>If stat == &#8216;t&#8217;, the test statistic is the two-sample t-statistic&#8211;but
+the p-value is still estimated by the randomization, approximating
+the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind</p>
+<p>If CI == &#8216;upper&#8217;, computes an upper confidence bound on the true
+p-value based on the simulations by inverting Binomial tests.</p>
+<p>If CI == &#8216;lower&#8217;, computes a lower confidence bound on the true
+p-value based on the simulations by inverting Binomial tests.</p>
+<p>If CI == &#8216;both&#8217;, computes lower and upper confidence bounds on the true
+p-value based on the simulations by inverting Binomial tests.</p>
+<p>CL is the confidence limit for the confidence bounds.</p>
+<p>output is the estimated p-value and the test statistic, if CI == False</p>
+<p>output is &lt;estimated p-value, confidence bound on p-value, test statistic&gt;
+if CI in {&#8216;lower&#8217;,&#8217;upper&#8217;}</p>
+<p>output is &lt;estimated p-value,
+[lower confidence bound, upper confidence bound], test statistic&gt;,
+if CI == &#8216;both&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>group</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>permuted</strong> : int</p>
+<blockquote class="last">
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.stratified.stratified_permutationtest">
+<code class="descclassname">permute.stratified.</code><code class="descname">stratified_permutationtest</code><span class="sig-paren">(</span><em>group</em>, <em>condition</em>, <em>response</em>, <em>iterations=10000.0</em>, <em>testStatistic=&lt;function stratified_permutationtest_mean&gt;</em>, <em>seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#stratified_permutationtest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.stratified.stratified_permutationtest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stratified permutation test using the sum of the differences in means
+between two or more conditions in each group (stratum) as the test
+statistic.</p>
+<p>The test statistic is</p>
+<div class="math">
+<p><img src="../_images/math/e41b0112f2bff9fd2501207be3b5f39d4f2a6117.png" alt="\sum_{g \in \text{groups}} [
+f(mean(\text{response for cases in group :math:`g`
+              assigned to each condition}))]."/></p>
+</div><p>The function f is the difference if there are two conditions, and
+the standard deviation if there are more than two conditions.</p>
+<p>There should be at least one group and at least two conditions.
+Under the null hypothesis, all assignments to the two conditions that
+preserve the number of cases assigned to the conditions are equally
+likely.</p>
+<p>Groups in which all cases are assigned to the same condition are
+skipped; they do not contribute to the p-value since all randomizations
+give the same contribution to the difference in means.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>group</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>permuted</strong> : int</p>
+<blockquote class="last">
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.stratified.stratified_permutationtest_mean">
+<code class="descclassname">permute.stratified.</code><code class="descname">stratified_permutationtest_mean</code><span class="sig-paren">(</span><em>group</em>, <em>condition</em>, <em>response</em>, <em>groups</em>, <em>conditions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#stratified_permutationtest_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.stratified.stratified_permutationtest_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates variability in sample means between treatment conditions,
+within groups.</p>
+<p>If there are two treatment conditions, the test statistic is the
+difference in means, aggregated across groups.
+If there are more than two treatment conditions, the test statistic
+is the standard deviation of the means, aggregated across groups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>group</strong> : int</p>
+<blockquote>
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tst</strong> : float</p>
+<blockquote class="last">
+<div><p>The</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
