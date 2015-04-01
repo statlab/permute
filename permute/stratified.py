@@ -184,7 +184,7 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def stratified_permutationtest_mean(group, condition, response,
-                                     groups, conditions):
+                                    groups, conditions):
     """
     Calculates variability in sample means between treatment conditions,
     within groups.
@@ -255,7 +255,7 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
       The
     """
     prng = RandomState(seed)
-    # np.unique vs. set? 
+    # np.unique vs. set?
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
