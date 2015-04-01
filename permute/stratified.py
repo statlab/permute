@@ -130,16 +130,16 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     If interval == 'both', computes lower and upper confidence bounds on the true
     p-value based on the simulations by inverting Binomial tests.
 
-    CL is the confidence limit for the confidence bounds.
+    level is the confidence limit for the confidence bounds.
 
-    output is the estimated p-value and the test statistic, if CI == False
+    output is the estimated p-value and the test statistic, if level == False
 
     output is <estimated p-value, confidence bound on p-value, test statistic>
-    if CI in {'lower','upper'}
+    if interval in {'lower','upper'}
 
     output is <estimated p-value,
     [lower confidence bound, upper confidence bound], test statistic>,
-    if CI == 'both'
+    if interval == 'both'
 
     Parameters
     ----------
@@ -170,7 +170,7 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     hits = np.sum([(theStat[alternative](prng.permutation(z)) >= ts)
                    for i in range(reps)])
 
-    if CI in ["two-sided", "less", "greater"]:
+    if interval in ["upper", "lower", "both"]:
         return hits / reps, binom_conf_interval(reps, level, alternative), ts
     else:
         return hits / reps, ts
