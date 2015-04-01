@@ -18,28 +18,30 @@ from scipy.optimize import brentq
 
 def permute_within_groups(group, condition, groups, prng=None):
     """
-    Permutation of a multiset.
+    Permutation of condition within each group.
 
     Parameters
     ----------
-    group : int
-      The
-    condition : int
-      The
-    groups : int
-      The
+    group : array-like
+      A 1-d array indicating group membership
+    condition : array-like
+      A 1-d array indcating treatment.
+    groups : array-like
+      The unique elements of group
 
     Returns
     -------
-    permuted : int
-      The
+    permuted : array-like
+      The within group permutation of condition.
     """
     permuted = condition.copy()
     if prng==None:
         prng = RandomState()
 
+    # FIXME: do we need to pass `groups` in?
     for g in groups:
         gg = group == g
+        # FIXME: is this in-place?
         permuted[gg] = prng.permutation(condition[gg])
     return permuted
 
@@ -74,18 +76,20 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         lower and upper confidence level with coverage (approximately)
         1-alpha.
     """
+    # FIXME: check whether there is any need to split this in two (upp v low)
     if p is None:
         p = x / n
     ci_low = 0.0
     ci_upp = 1.0
 
-    if alternative == 'both':
+    if interval == 'both':
         cl = 1 - (1-cl)/2
 
-    if alternative != "greater" and x > 0:
+    # FIXME: should I check that interval is valid?
+    if interval != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
-    elif alternative != "less" and x < n:
+    elif interval != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         ci_upp = brentq(f, 1.0, p, xtol, rtol, maxiter)
 
@@ -93,7 +97,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
-                    CI=False, level=0.95, seed=None):
+                    interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -103,49 +107,52 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     against the alternative that x comes from a population with mean
 
         (a) greater than that of the population from which y comes,
-            if side = 'greater_than'
+            if side = 'greater'
         (b) less than that of the population from which y comes,
-            if side = 'less_than'
+            if side = 'less'
         (c) different from that of the population from which y comes,
             if side = 'both'
 
-    If stat == 'mean', the test statistic is (mean(x) - mean(y))
-    (equivalently, sum(x), since those are monotonically related)
-
-    If stat == 't', the test statistic is the two-sample t-statistic--but
-    the p-value is still estimated by the randomization, approximating
-    the permutation distribution.
-    The t-statistic is computed using scipy.stats.ttest_ind
-
-    If CI == 'upper', computes an upper confidence bound on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    If CI == 'lower', computes a lower confidence bound on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    If CI == 'both', computes lower and upper confidence bounds on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    CL is the confidence limit for the confidence bounds.
-
-    output is the estimated p-value and the test statistic, if CI == False
-
-    output is <estimated p-value, confidence bound on p-value, test statistic>
-    if CI in {'lower','upper'}
-
-    output is <estimated p-value,
-    [lower confidence bound, upper confidence bound], test statistic>,
-    if CI == 'both'
-
     Parameters
     ----------
-    group : int
-      The
+    x : array-like
+      Sample 1
+    y : array-like
+      Sample 2
+    reps : int
+      number of repetitions
+    stat : {'mean', 't'}
+      If stat == 'mean', the test statistic is (mean(x) - mean(y))
+      (equivalently, sum(x), since those are monotonically related)
+
+      If stat == 't', the test statistic is the two-sample t-statistic--but
+      the p-value is still estimated by the randomization, approximating
+      the permutation distribution.
+      The t-statistic is computed using scipy.stats.ttest_ind
+    interval : {'upper', 'lower', 'both'}
+      If interval == 'upper', computes an upper confidence bound on the true
+      p-value based on the simulations by inverting Binomial tests.
+
+      If interval == 'lower', computes a lower confidence bound on the true
+      p-value based on the simulations by inverting Binomial tests.
+
+      If interval == 'both', computes lower and upper confidence bounds on the true
+      p-value based on the simulations by inverting Binomial tests.
+    level : float in (0, 1)
+      the confidence limit for the confidence bounds.
+
 
     Returns
     -------
-    permuted : int
-      The
+    output : int
+      output is the estimated p-value and the test statistic, if level == False
+
+      output is <estimated p-value, confidence bound on p-value, test statistic>
+      if interval in {'lower','upper'}
+
+      output is <estimated p-value,
+      [lower confidence bound, upper confidence bound], test statistic>,
+      if interval == 'both'
     """
     prng = RandomState(seed)
     z = np.concatenate([x, y])   # pooled responses
@@ -166,7 +173,7 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     hits = np.sum([(theStat[alternative](prng.permutation(z)) >= ts)
                    for i in range(reps)])
 
-    if CI in ["two-sided", "less", "greater"]:
+    if interval in ["upper", "lower", "both"]:
         return hits / reps, binom_conf_interval(reps, level, alternative), ts
     else:
         return hits / reps, ts
