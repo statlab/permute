@@ -76,6 +76,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         lower and upper confidence level with coverage (approximately)
         1-alpha.
     """
+    # FIXME: check whether there is any need to split this in two (upp v low)
     if p is None:
         p = x / n
     ci_low = 0.0
@@ -84,6 +85,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     if alternative == 'both':
         cl = 1 - (1-cl)/2
 
+    # FIXME: should I check that alternative is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
