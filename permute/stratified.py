@@ -2,6 +2,8 @@
 
 """
 Stratified permutation tests.
+
+WIP: revisit FIXME w/ PS, reevaluate func names and args
 """
 
 from __future__ import division, print_function, absolute_import
@@ -35,7 +37,7 @@ def permute_within_groups(group, condition, groups, prng=None):
       The within group permutation of condition.
     """
     permuted = condition.copy()
-    if prng==None:
+    if prng is None:
         prng = RandomState()
 
     # FIXME: do we need to pass `groups` in?
@@ -46,6 +48,7 @@ def permute_within_groups(group, condition, groups, prng=None):
     return permuted
 
 
+# maybe use kwargs from xtol and rtol?
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
     """
@@ -77,19 +80,20 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         1-alpha.
     """
     # FIXME: check whether there is any need to split this in two (upp v low)
+    # PS had done, but I merged the 2 function into 1 while refactoring
     if p is None:
         p = x / n
     ci_low = 0.0
     ci_upp = 1.0
 
-    if interval == 'both':
+    if alternative == 'both':
         cl = 1 - (1-cl)/2
 
     # FIXME: should I check that interval is valid?
-    if interval != "greater" and x > 0:
+    if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
-    elif interval != "less" and x < n:
+    elif alternative != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         ci_upp = brentq(f, 1.0, p, xtol, rtol, maxiter)
 
@@ -97,7 +101,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
-                    interval=False, level=0.95, seed=None):
+                     interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -136,8 +140,8 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
       If interval == 'lower', computes a lower confidence bound on the true
       p-value based on the simulations by inverting Binomial tests.
 
-      If interval == 'both', computes lower and upper confidence bounds on the true
-      p-value based on the simulations by inverting Binomial tests.
+      If interval == 'both', computes lower and upper confidence bounds on
+      the true p-value based on the simulations by inverting Binomial tests.
     level : float in (0, 1)
       the confidence limit for the confidence bounds.
 
@@ -251,7 +255,7 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
       The
     """
     prng = RandomState(seed)
-    
+    # np.unique vs. set? 
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
