@@ -18,28 +18,30 @@ from scipy.optimize import brentq
 
 def permute_within_groups(group, condition, groups, prng=None):
     """
-    Permutation of a multiset.
+    Permutation of condition within each group.
 
     Parameters
     ----------
-    group : int
-      The
-    condition : int
-      The
-    groups : int
-      The
+    group : array-like
+      A 1-d array indicating group membership
+    condition : array-like
+      A 1-d array indcating treatment.
+    groups : array-like
+      The unique elements of group
 
     Returns
     -------
-    permuted : int
-      The
+    permuted : array-like
+      The within group permutation of condition.
     """
     permuted = condition.copy()
     if prng==None:
         prng = RandomState()
 
+    # FIXME: do we need to pass `groups` in?
     for g in groups:
         gg = group == g
+        # FIXME: is this in-place?
         permuted[gg] = prng.permutation(condition[gg])
     return permuted
 
