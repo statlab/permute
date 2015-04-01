@@ -82,14 +82,14 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     ci_low = 0.0
     ci_upp = 1.0
 
-    if alternative == 'both':
+    if interval == 'both':
         cl = 1 - (1-cl)/2
 
-    # FIXME: should I check that alternative is valid?
-    if alternative != "greater" and x > 0:
+    # FIXME: should I check that interval is valid?
+    if interval != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
-    elif alternative != "less" and x < n:
+    elif interval != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         ci_upp = brentq(f, 1.0, p, xtol, rtol, maxiter)
 
@@ -97,7 +97,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
-                    CI=False, level=0.95, seed=None):
+                    interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -121,13 +121,13 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     the permutation distribution.
     The t-statistic is computed using scipy.stats.ttest_ind
 
-    If CI == 'upper', computes an upper confidence bound on the true
+    If interval == 'upper', computes an upper confidence bound on the true
     p-value based on the simulations by inverting Binomial tests.
 
-    If CI == 'lower', computes a lower confidence bound on the true
+    If interval == 'lower', computes a lower confidence bound on the true
     p-value based on the simulations by inverting Binomial tests.
 
-    If CI == 'both', computes lower and upper confidence bounds on the true
+    If interval == 'both', computes lower and upper confidence bounds on the true
     p-value based on the simulations by inverting Binomial tests.
 
     CL is the confidence limit for the confidence bounds.
