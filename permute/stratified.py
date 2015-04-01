@@ -107,49 +107,52 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     against the alternative that x comes from a population with mean
 
         (a) greater than that of the population from which y comes,
-            if side = 'greater_than'
+            if side = 'greater'
         (b) less than that of the population from which y comes,
-            if side = 'less_than'
+            if side = 'less'
         (c) different from that of the population from which y comes,
             if side = 'both'
 
-    If stat == 'mean', the test statistic is (mean(x) - mean(y))
-    (equivalently, sum(x), since those are monotonically related)
-
-    If stat == 't', the test statistic is the two-sample t-statistic--but
-    the p-value is still estimated by the randomization, approximating
-    the permutation distribution.
-    The t-statistic is computed using scipy.stats.ttest_ind
-
-    If interval == 'upper', computes an upper confidence bound on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    If interval == 'lower', computes a lower confidence bound on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    If interval == 'both', computes lower and upper confidence bounds on the true
-    p-value based on the simulations by inverting Binomial tests.
-
-    level is the confidence limit for the confidence bounds.
-
-    output is the estimated p-value and the test statistic, if level == False
-
-    output is <estimated p-value, confidence bound on p-value, test statistic>
-    if interval in {'lower','upper'}
-
-    output is <estimated p-value,
-    [lower confidence bound, upper confidence bound], test statistic>,
-    if interval == 'both'
-
     Parameters
     ----------
-    group : int
-      The
+    x : array-like
+      Sample 1
+    y : array-like
+      Sample 2
+    reps : int
+      number of repetitions
+    stat : {'mean', 't'}
+      If stat == 'mean', the test statistic is (mean(x) - mean(y))
+      (equivalently, sum(x), since those are monotonically related)
+
+      If stat == 't', the test statistic is the two-sample t-statistic--but
+      the p-value is still estimated by the randomization, approximating
+      the permutation distribution.
+      The t-statistic is computed using scipy.stats.ttest_ind
+    interval : {'upper', 'lower', 'both'}
+      If interval == 'upper', computes an upper confidence bound on the true
+      p-value based on the simulations by inverting Binomial tests.
+
+      If interval == 'lower', computes a lower confidence bound on the true
+      p-value based on the simulations by inverting Binomial tests.
+
+      If interval == 'both', computes lower and upper confidence bounds on the true
+      p-value based on the simulations by inverting Binomial tests.
+    level : float in (0, 1)
+      the confidence limit for the confidence bounds.
+
 
     Returns
     -------
-    permuted : int
-      The
+    output : int
+      output is the estimated p-value and the test statistic, if level == False
+
+      output is <estimated p-value, confidence bound on p-value, test statistic>
+      if interval in {'lower','upper'}
+
+      output is <estimated p-value,
+      [lower confidence bound, upper confidence bound], test statistic>,
+      if interval == 'both'
     """
     prng = RandomState(seed)
     z = np.concatenate([x, y])   # pooled responses
