@@ -45,7 +45,7 @@ def permute_within_groups(group, condition, groups, prng=None):
     for g in groups:
         gg = group == g
         # FIXME: is this in-place?
-        permuted[gg] = prng.permutation(condition[gg])
+        permuted[gg] = prng.shuffle(permuted[gg])
     return permuted
 
 
