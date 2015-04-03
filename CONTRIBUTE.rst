@@ -174,12 +174,12 @@ Bugs
 
 Please `report bugs on GitHub <https://github.com/statlab/permute/issues>`_.
 
-Working with `np.random`
-------------------------
+Working with ``np.random``
+--------------------------
 
-If you need to set a random seed, do **not** use `np.random.seed()`.  Using
-`np.random.seed()` can produce inconsistent results.  Instead you should create
-an instance of `np.random.RandomState()` with your chosen seed.  Here is a tiny
+If you need to set a random seed, do **not** use ``np.random.seed()``.  Using
+``np.random.seed()`` can produce inconsistent results.  Instead you should create
+an instance of ``np.random.RandomState()`` with your chosen seed.  Here is a tiny
 example of how you might create a function that generates random numbers::
 
     from numpy.random import RandomState
@@ -189,6 +189,6 @@ example of how you might create a function that generates random numbers::
         x = prng.randint(10)
         return x
 
-If `seed=None`, then `RandomState(seed)` will try to read data from the
-system (e.g., `/dev/urandom` or the system clock) to initialize the
+If ``seed=None``, then ``RandomState(seed)`` will try to read data from the
+system (e.g., ``/dev/urandom`` or the system clock) to initialize the
 pseudo-random number generator.
