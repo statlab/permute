@@ -96,7 +96,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     if alternative == 'both':
         cl = 1 - (1-cl)/2
 
-    # FIXME: should I check that interval is valid?
+    # FIXME: should I check that alternative is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, kwargs)
@@ -107,8 +107,8 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     return ci_low, ci_upp
 
 
-def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
-                     interval=False, level=0.95, seed=None):
+def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
+               interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -140,6 +140,7 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
       the p-value is still estimated by the randomization, approximating
       the permutation distribution.
       The t-statistic is computed using scipy.stats.ttest_ind
+      # FIXME: Explanation or example of how to pass in a function, instead of a str
     interval : {'upper', 'lower', 'both'}
       If interval == 'upper', computes an upper confidence bound on the true
       p-value based on the simulations by inverting Binomial tests.
@@ -167,6 +168,8 @@ def permutetest_mean(x, y, reps=10**5, stat='mean', alternative="greater",
     """
     prng = RandomState(seed)
     z = np.concatenate([x, y])   # pooled responses
+    # FIXME: Type check: we may want to pass in a function for argument 'stat'
+    # FIXME: If function, use that. Otherwise, look in the dictionary
     stats = {
         'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
         't': lambda u: ttest_ind(
