@@ -99,10 +99,10 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     # FIXME: should I check that interval is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
-        ci_low = brentq(f, 0.0, p, **kwargs)
+        ci_low = brentq(f, 0.0, p, kwargs)
     elif alternative != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
-        ci_upp = brentq(f, 1.0, p, **kwargs)
+        ci_upp = brentq(f, 1.0, p, kwargs)
 
     return ci_low, ci_upp
 
