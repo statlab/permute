@@ -41,6 +41,7 @@ def permute_within_groups(group, condition, groups, prng=None):
         prng = RandomState()
 
     # FIXME: do we need to pass `groups` in?
+    # Yes, don't want to repeatedly identify unique elements (avoid additional flops)
     for g in groups:
         gg = group == g
         # FIXME: is this in-place?
