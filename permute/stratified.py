@@ -49,9 +49,9 @@ def permute_within_groups(group, condition, groups, prng=None):
     return permuted
 
 
-# maybe use kwargs from xtol and rtol?
+# maybe use kwargs from xtol and rtol, maxiter?
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
-                        xtol=1e-12, rtol=4.4408920985006262e-16, maxiter=100):
+                        **kwargs):
     """
     Compute the confidence interval for a binomial.
 
@@ -67,18 +67,23 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
       Indicates the alternative hypothesis.
     p : float in (0, 1)
       The probability of success in each trial.
-    xtol : float
-      Tolerance
-    rtol : float
-      Tolerance
-    maxiter : int
-      Maximum number of iterations.
+    **kwargs : dict
+      Key word arguments
 
     Returns
     -------
     ci_low, ci_upp : float
         lower and upper confidence level with coverage (approximately)
         1-alpha.
+
+    Notes
+    -----
+    xtol : float
+      Tolerance
+    rtol : float
+      Tolerance
+    maxiter : int
+      Maximum number of iterations.
     """
     # FIXME: check whether there is any need to split this in two (upp v low)
     # PS had done, but I merged the 2 function into 1 while refactoring
@@ -93,10 +98,10 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     # FIXME: should I check that interval is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
-        ci_low = brentq(f, 0.0, p, xtol, rtol, maxiter)
+        ci_low = brentq(f, 0.0, p, **kwargs)
     elif alternative != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
-        ci_upp = brentq(f, 1.0, p, xtol, rtol, maxiter)
+        ci_upp = brentq(f, 1.0, p, **kwargs)
 
     return ci_low, ci_upp
 
