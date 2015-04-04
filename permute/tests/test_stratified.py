@@ -8,12 +8,10 @@ from ..stratified import stratified_permutationtest as spt
 
 
 def test_stratified_permutationtest():
-    group = np.array(
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])
-    condition = np.array(
-        [1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3])
-    response = np.array(
-        [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0])
+    group = np.repeat([1, 2, 3], 9)
+    condition = np.repeat([1, 2, 3]*3, 3)
+    response = np.zeros_like(group)
+    response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
 
     res = spt(group, condition, response, iterations=1000, seed=42)
     res1 = spt(group, condition, response, iterations=1000, seed=42)
