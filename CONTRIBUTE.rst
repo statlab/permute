@@ -155,16 +155,16 @@ Please prefix all commit summaries with one (or more) of the following labels.
 This should help others to easily classify the commits into meaningful
 categories:
 
-  * *BF* : bug fix
-  * *RF* : refactoring
-  * *ENH* : new feature or extended functionality
-  * *BW* : addresses backward-compatibility
-  * *OPT* : optimization
-  * *BK* : breaks something and/or tests fail
-  * *DOC*: for all kinds of documentation related commits
-  * *TEST* : for adding or changing tests
-  * *STY* : PEP8 conformance, whitespace changes etc that do not affect
-    function.
+* *BF* : bug fix
+* *RF* : refactoring
+* *ENH* : new feature or extended functionality
+* *BW* : addresses backward-compatibility
+* *OPT* : optimization
+* *BK* : breaks something and/or tests fail
+* *DOC*: for all kinds of documentation related commits
+* *TEST* : for adding or changing tests
+* *STY* : PEP8 conformance, whitespace changes etc that do not affect
+  function.
 
 So your commit message might look something like this::
 
