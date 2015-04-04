@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Stratified permutation tests.
-
-WIP: revisit FIXME w/ PS, reevaluate func names and args
+Core.
 """
 
 from __future__ import division, print_function, absolute_import
@@ -16,6 +14,40 @@ from numpy.random import RandomState
 from scipy.optimize import brentq
 
 from scipy.stats import (binom, ttest_ind)
+
+
+def permute_within_groups(group, condition, groups, prng=None):
+    """
+    Permutation of condition within each group.
+
+    Parameters
+    ----------
+    group : array-like
+      A 1-d array indicating group membership
+    condition : array-like
+      A 1-d array indcating treatment.
+    groups : array-like
+      The unique elements of group
+
+    Returns
+    -------
+    permuted : array-like
+      The within group permutation of condition.
+    """
+    permuted = condition.copy()
+    if prng is None:
+        prng = RandomState()
+
+    # FIXME: do we need to pass `groups` in?
+    # Yes, don't want to repeatedly identify unique elements
+    # (avoid additional flops) -- maybe memoize
+    for g in groups:
+        gg = group == g
+        # FIXME: Shuffle in place doesn't seem to work for slices
+        # prng.shuffle(permuted[gg])
+        permuted[gg] = prng.permutation(permuted[gg])
+    return permuted
+
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
