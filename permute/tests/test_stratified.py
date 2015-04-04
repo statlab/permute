@@ -11,7 +11,7 @@ def test_stratified_permutationtest():
     group = np.repeat([1, 2, 3], 9)
     condition = np.repeat([1, 2, 3]*3, 3)
     response = np.zeros_like(group)
-    response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
+    response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
     res = spt(group, condition, response, iterations=1000, seed=42)
     res1 = spt(group, condition, response, iterations=1000, seed=42)
