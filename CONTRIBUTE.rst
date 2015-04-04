@@ -182,12 +182,12 @@ Pull request codes
 
 When you submit a pull request to github, github will ask you for a summary.  If
 your code is not ready to merge, but you want to get feedback, please consider
-using ``WIP - me working on image design`` or similar for the title of your pull
+using ``WIP - experimental optimization`` or similar for the title of your pull
 request. That way we will all know that it's not yet ready to merge and that
 you may be interested in more fundamental comments about design.
 
 When you think the pull request is ready to merge, change the title (using the
-*Edit* button) to something like ``MRG - my work on image design``.
+*Edit* button) to something like ``MRG - optimization``.
 
 Test coverage
 -------------
