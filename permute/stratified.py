@@ -43,14 +43,14 @@ def permute_within_groups(group, condition, groups, prng=None):
         prng = RandomState()
 
     # FIXME: do we need to pass `groups` in?
-    # Yes, don't want to repeatedly identify unique elements (avoid additional flops)
+    # Yes, don't want to repeatedly identify unique elements
+    # (avoid additional flops) -- maybe memoize
     for g in groups:
         gg = group == g
         # FIXME: Shuffle in place doesn't seem to work for slices
-        #prng.shuffle(permuted[gg])
+        # prng.shuffle(permuted[gg])
         permuted[gg] = prng.permutation(permuted[gg])
     return permuted
-
 
 
 def stratified_permutationtest_mean(group, condition, response,

@@ -18,7 +18,6 @@ from scipy.optimize import brentq
 from scipy.stats import (binom, ttest_ind)
 
 
-# maybe use kwargs from xtol and rtol, maxiter?
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         **kwargs):
     """
@@ -54,8 +53,6 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     maxiter : int
       Maximum number of iterations.
     """
-    # FIXME: check whether there is any need to split this in two (upp v low)
-    # PS had done, but I merged the 2 function into 1 while refactoring
     if p is None:
         p = x / n
     ci_low = 0.0
