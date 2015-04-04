@@ -8,16 +8,8 @@ WIP: revisit FIXME w/ PS, reevaluate func names and args
 
 from __future__ import division, print_function, absolute_import
 
-import math
-
 import numpy as np
 from numpy.random import RandomState
-
-from scipy.stats import (binom,
-                         ttest_ind)
-from scipy.optimize import brentq
-
-from .core import binom_conf_interval
 
 
 def permute_within_groups(group, condition, groups, prng=None):
