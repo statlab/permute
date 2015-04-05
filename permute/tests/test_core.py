@@ -5,7 +5,8 @@ from numpy.random import RandomState
 
 
 from ..core import (binom_conf_interval,
-                    permute_within_groups)
+                    permute_within_groups,
+                    two_sample)
 
 
 def test_permute_within_group():
@@ -24,3 +25,23 @@ def test_permute_within_group():
 @np.testing.dec.skipif(True)
 def test_binom_conf_interval():
     res = binom_conf_interval(10, 3)
+
+def test_two_sample():
+    prng = RandomState(42)
+
+    x = prng.normal(1, size=20)
+    y = prng.normal(4, size=20)
+    res = two_sample(x, y, seed=42)
+    expected = (1.0, -2.9053234460477784)
+    np.testing.assert_equal(res, expected)
+
+    y = prng.normal(1.4, size=20)
+    res = two_sample(x, y, seed=42)
+    expected = (0.96975, -0.54460818906623765)
+    np.testing.assert_equal(res, expected)
+
+    y = prng.normal(1, size=20)
+    res = two_sample(x, y, seed=42)
+    expected = (0.66505000000000003, -0.13990200413154097)
+    np.testing.assert_equal(res, expected)
+
