@@ -49,6 +49,16 @@ def permute_within_groups(group, condition, groups, prng=None):
     return permuted
 
 
+def permute_rows(m, prng=None):
+    """
+    Permute the rows of a matrix in-place
+    """
+    if prng is None:
+        prng = RandomState()
+
+    for row in m:
+        prng.shuffle(row)
+
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         **kwargs):

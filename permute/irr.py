@@ -68,16 +68,7 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 from numpy.random import RandomState
 
-
-def permute_rows(m, prng=None):
-    """
-    Permute the rows of a matrix in-place
-    """
-    if prng is None:
-        prng = RandomState()
-
-    for row in m:
-        prng.shuffle(row)
+from .core import permute_rows
 
 
 def compute_ts(ratings):
