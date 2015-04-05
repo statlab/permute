@@ -68,6 +68,8 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 from numpy.random import RandomState
 
+from .core import permute_rows
+
 
 def compute_ts(ratings):
     """
@@ -178,16 +180,14 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
     if keep_dist:
         dist = np.zeros(num_perm)
         for i in range(num_perm):
-            for row in r:
-                prng.shuffle(row)
+            permute_rows(r, prng)
             dist[i] = compute_ts(r)
         geq = np.sum(dist >= obs_ts)
     else:
         dist = None
         geq = 0
         for i in range(num_perm):
-            for row in r:
-                prng.shuffle(row)
+            permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm, "dist": dist}
 
