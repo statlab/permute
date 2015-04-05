@@ -52,6 +52,18 @@ def permute_within_groups(group, condition, groups, prng=None):
 def permute_rows(m, prng=None):
     """
     Permute the rows of a matrix in-place
+
+    Parameters
+    ----------
+    m : array-like
+      A 2-d array
+    prng : RandomState object or None
+      The Pseudo-random number generator (used for replicability)
+
+    Returns
+    -------
+    None
+      Original matrix is permute in-place, nothing returned
     """
     if prng is None:
         prng = RandomState()
