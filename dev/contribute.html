@@ -87,8 +87,11 @@
 <li><a class="reference internal" href="#divergence-between-upstream-master-and-your-feature-branch">Divergence between <code class="docutils literal"><span class="pre">upstream</span> <span class="pre">master</span></code> and your feature branch</a></li>
 <li><a class="reference internal" href="#guidelines">Guidelines</a></li>
 <li><a class="reference internal" href="#stylistic-guidelines">Stylistic Guidelines</a></li>
+<li><a class="reference internal" href="#commit-message-codes">Commit message codes</a></li>
+<li><a class="reference internal" href="#pull-request-codes">Pull request codes</a></li>
 <li><a class="reference internal" href="#test-coverage">Test coverage</a></li>
 <li><a class="reference internal" href="#bugs">Bugs</a></li>
+<li><a class="reference internal" href="#working-with-np-random">Working with <code class="docutils literal"><span class="pre">np.random</span></code></a></li>
 </ul>
 </ul>
 </li>
@@ -297,6 +300,44 @@ cimport numpy as cnp # in Cython code
 </li>
 </ul>
 </div>
+<div class="section" id="commit-message-codes">
+<h1>Commit message codes<a class="headerlink" href="#commit-message-codes" title="Permalink to this headline">¶</a></h1>
+<p>Please prefix all commit summaries with one (or more) of the following labels.
+This should help others to easily classify the commits into meaningful
+categories:</p>
+<ul class="simple">
+<li><em>BF</em> : bug fix</li>
+<li><em>RF</em> : refactoring</li>
+<li><em>ENH</em> : new feature or extended functionality</li>
+<li><em>BW</em> : addresses backward-compatibility</li>
+<li><em>OPT</em> : optimization</li>
+<li><em>BK</em> : breaks something and/or tests fail</li>
+<li><em>DOC</em>: for all kinds of documentation related commits</li>
+<li><em>TEST</em> : for adding or changing tests</li>
+<li><em>STY</em> : PEP8 conformance, whitespace changes etc that do not affect
+function.</li>
+</ul>
+<p>So your commit message might look something like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>TEST: relax test threshold slightly
+
+Attempted fix for failure on windows test run when arrays are in fact
+very close (within 6 dp).
+</pre></div>
+</div>
+<p>Keeping up a habit of doing this is useful because it makes it much easier to
+see at a glance which changes are likely to be important when you are looking
+for sources of bugs, fixes, large refactorings or new features.</p>
+</div>
+<div class="section" id="pull-request-codes">
+<h1>Pull request codes<a class="headerlink" href="#pull-request-codes" title="Permalink to this headline">¶</a></h1>
+<p>When you submit a pull request to github, github will ask you for a summary.  If
+your code is not ready to merge, but you want to get feedback, please consider
+using <code class="docutils literal"><span class="pre">WIP</span> <span class="pre">-</span> <span class="pre">experimental</span> <span class="pre">optimization</span></code> or similar for the title of your pull
+request. That way we will all know that it&#8217;s not yet ready to merge and that
+you may be interested in more fundamental comments about design.</p>
+<p>When you think the pull request is ready to merge, change the title (using the
+<em>Edit</em> button) to something like <code class="docutils literal"><span class="pre">MRG</span> <span class="pre">-</span> <span class="pre">optimization</span></code>.</p>
+</div>
 <div class="section" id="test-coverage">
 <h1>Test coverage<a class="headerlink" href="#test-coverage" title="Permalink to this headline">¶</a></h1>
 <p>Tests for a module should ideally cover all code in that module,
@@ -319,6 +360,24 @@ permute                                              0      0   100%
 <div class="section" id="bugs">
 <h1>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h1>
 <p>Please <a class="reference external" href="https://github.com/statlab/permute/issues">report bugs on GitHub</a>.</p>
+</div>
+<div class="section" id="working-with-np-random">
+<h1>Working with <code class="docutils literal"><span class="pre">np.random</span></code><a class="headerlink" href="#working-with-np-random" title="Permalink to this headline">¶</a></h1>
+<p>If you need to set a random seed, do <strong>not</strong> use <code class="docutils literal"><span class="pre">np.random.seed()</span></code>.  Using
+<code class="docutils literal"><span class="pre">np.random.seed()</span></code> can produce inconsistent results.  Instead you should create
+an instance of <code class="docutils literal"><span class="pre">np.random.RandomState()</span></code> with your chosen seed.  Here is a tiny
+example of how you might create a function that generates random numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+
+<span class="k">def</span> <span class="nf">func1</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">prng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">prng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">seed=None</span></code>, then <code class="docutils literal"><span class="pre">RandomState(seed)</span></code> will try to read data from the
+system (e.g., <code class="docutils literal"><span class="pre">/dev/urandom</span></code> or the system clock) to initialize the
+pseudo-random number generator.</p>
 </div>
 
 
