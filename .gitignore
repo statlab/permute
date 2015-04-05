@@ -1,6 +1,10 @@
 .DS_Store
 permute/old/Datasets_MATLAB_R_NPC/
 
+# IPython notebooks
+*.ipynb
+.ipynb_checkpoints
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
