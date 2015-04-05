@@ -42,8 +42,8 @@ def test_two_sample():
     x = prng.normal(1, size=20)
     y = prng.normal(4, size=20)
     res = two_sample(x, y, seed=42)
-    expected = (1.0, -2.9053234460477788)
-    np.testing.assert_equal(res, expected)
+    expected = (1.0, -2.90532344604777)
+    np.testing.assert_almost_equal(res, expected)
 
     y = prng.normal(1.4, size=20)
     res = two_sample(x, y, seed=42)
