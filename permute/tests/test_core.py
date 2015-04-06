@@ -13,8 +13,8 @@ from ..core import (binom_conf_interval,
 def test_permute_within_group():
     group = np.repeat([1, 2, 3], 9)
     condition = np.repeat([1, 2, 3]*3, 3)
-    response = np.zeros_like(group)
-    response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
+    #response = np.zeros_like(group)
+    #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
     groups = np.unique(group)
 
     prng1 = RandomState(42)
@@ -22,6 +22,11 @@ def test_permute_within_group():
     res1 = permute_within_groups(group, condition, groups, prng1)
     res2 = permute_within_groups(group, condition, groups, prng2)
     np.testing.assert_equal(res1, res2)
+
+    res3 = permute_within_groups(group, condition, groups)
+    np.testing.assert_equal(res3.max(), 3)
+    res3.sort()
+    np.testing.assert_equal(group, res3)
 
 @np.testing.dec.skipif(True)
 def test_binom_conf_interval():
