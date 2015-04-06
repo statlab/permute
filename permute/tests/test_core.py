@@ -41,6 +41,11 @@ def test_permute_rows():
                          [7, 4, 5, 5, 3, 7, 1, 2, 7, 1]])
     np.testing.assert_array_equal(x, expected)
 
+    permute_rows(x)
+    np.testing.assert_equal(x.max(), 9)
+    np.testing.assert_equal(x.min(), 1)
+
+
 def test_two_sample():
     prng = RandomState(42)
 
@@ -60,3 +65,4 @@ def test_two_sample():
     expected = (0.66505000000000003, -0.13990200413154097)
     np.testing.assert_equal(res, expected)
 
+    #res = two_sample(x, y, seed=42, interval="both")
