@@ -13,8 +13,8 @@ from ..core import (binom_conf_interval,
 def test_permute_within_group():
     group = np.repeat([1, 2, 3], 9)
     condition = np.repeat([1, 2, 3]*3, 3)
-    response = np.zeros_like(group)
-    response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
+    #response = np.zeros_like(group)
+    #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
     groups = np.unique(group)
 
     prng1 = RandomState(42)
@@ -22,6 +22,11 @@ def test_permute_within_group():
     res1 = permute_within_groups(group, condition, groups, prng1)
     res2 = permute_within_groups(group, condition, groups, prng2)
     np.testing.assert_equal(res1, res2)
+
+    res3 = permute_within_groups(group, condition, groups)
+    np.testing.assert_equal(res3.max(), 3)
+    res3.sort()
+    np.testing.assert_equal(group, res3)
 
 @np.testing.dec.skipif(True)
 def test_binom_conf_interval():
@@ -35,6 +40,11 @@ def test_permute_rows():
     expected = np.array([[2, 7, 7, 6, 4, 9, 3, 4, 6, 6],
                          [7, 4, 5, 5, 3, 7, 1, 2, 7, 1]])
     np.testing.assert_array_equal(x, expected)
+
+    permute_rows(x)
+    np.testing.assert_equal(x.max(), 9)
+    np.testing.assert_equal(x.min(), 1)
+
 
 def test_two_sample():
     prng = RandomState(42)
@@ -55,3 +65,4 @@ def test_two_sample():
     expected = (0.66505000000000003, -0.13990200413154097)
     np.testing.assert_equal(res, expected)
 
+    #res = two_sample(x, y, seed=42, interval="both")
