@@ -49,6 +49,20 @@ def permute_within_groups(group, condition, groups, prng=None):
     return permuted
 
 
+def permuteWithinGroups(x, group, prng=None):
+    '''
+    Permutes the elements of x within groups
+    Input: ndarray x to be permuted, ndarray group of group ids, np.random.RandomState object prng
+    '''
+    if prng == None:
+        prng = RandomState()
+    permuted = x.copy()
+    for g in np.unique(group):
+        gg = group == g
+        permuted[gg] = prng.permutation(permuted[gg])
+    return permuted
+
+
 def permute_rows(m, prng=None):
     """
     Permute the rows of a matrix in-place
@@ -70,6 +84,39 @@ def permute_rows(m, prng=None):
 
     for row in m:
         prng.shuffle(row)
+
+
+def corr(x, y, reps=10**4, prng=None):
+    '''
+    Simulate permutation p-value for Spearman correlation coefficient
+    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
+    '''
+    if prng == None:
+        prng = RandomState()
+    t = np.corrcoef(x, y)[0,1]
+    sims = [np.corrcoef(prng.permutation(x), y)[0,1] for i in range(reps)]
+    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
+
+
+def stratCorrTst(x, y, group):
+    '''
+    Calculates sum of Spearman correlations between x and y, computed separately in each group.
+    '''
+    tst = 0.0
+    for g in np.unique(group):
+        gg = group == g
+        tst += np.corrcoef(x[gg], y[gg])[0,1]
+    return tst
+
+
+def stratCorr(x, y, group, prng, reps=10**4):
+    '''
+    Simulate permutation p-value of stratified Spearman correlation test.
+    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
+    '''
+    t = stratCorrTst(x, y, group)
+    sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group) for i in range(reps)]
+    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
