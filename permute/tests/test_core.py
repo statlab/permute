@@ -74,4 +74,7 @@ def test_two_sample():
     expected = (0.66505000000000003, -0.13990200413154097)
     np.testing.assert_equal(res, expected)
 
-    #res = two_sample(x, y, seed=42, interval="both")
+    res = two_sample(x, y, seed=42, interval="two-sided")
+    expected = (0.66505000000000003, (0.0, 0.6675064023707297), -0.13990200413154097)
+    np.testing.assert_equal(res, expected)
+    
