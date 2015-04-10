@@ -28,10 +28,19 @@ def test_permute_within_group():
     res3.sort()
     np.testing.assert_equal(group, res3)
 
-@np.testing.dec.skipif(True)
 def test_binom_conf_interval():
     res = binom_conf_interval(10, 3)
-
+    expected = (0.05154625578928545, 0.6915018049393984)
+    np.testing.assert_equal(res, expected)
+    
+    res2 = binom_conf_interval(10, 5, cl = 0.95, alternative = "greater")
+    expected2 = (0.0, 0.7775588989918742)
+    np.testing.assert_equal(res2, expected2)
+    
+    res3 = binom_conf_interval(10, 5, cl = 0.95, alternative = "less")
+    expected3 = (0.22244110100812578, 1.0)
+    np.testing.assert_equal(res3, expected3)
+    
 def test_permute_rows():
     prng = RandomState(42)
 
