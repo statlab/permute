@@ -112,14 +112,14 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     ci_low = 0.0
     ci_upp = 1.0
 
-    if alternative == 'both':
+    if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
     # FIXME: should I check that alternative is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, *kwargs)
-    elif alternative != "less" and x < n:
+    if alternative != "less" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         ci_upp = brentq(f, 1.0, p, *kwargs)
 
