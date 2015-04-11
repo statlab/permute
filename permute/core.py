@@ -16,18 +16,16 @@ from scipy.optimize import brentq
 from scipy.stats import (binom, ttest_ind)
 
 
-def permute_within_groups(group, condition, groups, prng=None):
+def permute_within_groups(x, group, prng=None):
     """
     Permutation of condition within each group.
 
     Parameters
     ----------
+    x : array-like
+        A 1-d array indicating treatment.
     group : array-like
         A 1-d array indicating group membership
-    condition : array-like
-        A 1-d array indcating treatment.
-    groups : array-like
-        The unique elements of group
     prng : RandomState instance or None, optional (default=None)
         If RandomState instance, prng is the pseudorandom number generator;
         If None, the pseudorandom number generator is the RandomState
@@ -36,9 +34,9 @@ def permute_within_groups(group, condition, groups, prng=None):
     Returns
     -------
     permuted : array-like
-      The within group permutation of condition.
+      The within group permutation of x.
     """
-    permuted = condition.copy()
+    permuted = x.copy()
     if prng is None:
         prng = RandomState()
 
@@ -152,7 +150,7 @@ def stratCorr(x, y, group, reps=10**4, prng=None):
     -------
     """
     t = stratCorrTst(x, y, group)
-    sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group)
+    sims = [stratCorrTst(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
     left_pv = np.sum(sims <= t)/reps
     right_pv = np.sum(sims >= t)/reps

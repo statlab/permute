@@ -11,19 +11,18 @@ from ..core import (binom_conf_interval,
 
 
 def test_permute_within_group():
+    x = np.repeat([1, 2, 3]*3, 3)
     group = np.repeat([1, 2, 3], 9)
-    condition = np.repeat([1, 2, 3]*3, 3)
     #response = np.zeros_like(group)
     #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
-    groups = np.unique(group)
 
     prng1 = RandomState(42)
     prng2 = RandomState(42)
-    res1 = permute_within_groups(group, condition, groups, prng1)
-    res2 = permute_within_groups(group, condition, groups, prng2)
+    res1 = permute_within_groups(x, group, prng1)
+    res2 = permute_within_groups(x, group, prng2)
     np.testing.assert_equal(res1, res2)
 
-    res3 = permute_within_groups(group, condition, groups)
+    res3 = permute_within_groups(x, group)
     np.testing.assert_equal(res3.max(), 3)
     res3.sort()
     np.testing.assert_equal(group, res3)

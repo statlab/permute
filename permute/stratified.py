@@ -97,7 +97,7 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
         for i in range(int(iterations)):
             dist[i] = testStatistic(group,
                                     permute_within_groups(
-                                        group, condition, groups, prng),
+                                        condition, group, prng),
                                     response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
