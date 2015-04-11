@@ -16,47 +16,31 @@ from scipy.optimize import brentq
 from scipy.stats import (binom, ttest_ind)
 
 
-def permute_within_groups(group, condition, groups, prng=None):
+def permute_within_groups(x, group, prng=None):
     """
     Permutation of condition within each group.
 
     Parameters
     ----------
+    x : array-like
+        A 1-d array indicating treatment.
     group : array-like
-      A 1-d array indicating group membership
-    condition : array-like
-      A 1-d array indcating treatment.
-    groups : array-like
-      The unique elements of group
+        A 1-d array indicating group membership
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
 
     Returns
     -------
     permuted : array-like
-      The within group permutation of condition.
+      The within group permutation of x.
     """
-    permuted = condition.copy()
+    permuted = x.copy()
     if prng is None:
         prng = RandomState()
 
-    # FIXME: do we need to pass `groups` in?
-    # Yes, don't want to repeatedly identify unique elements
     # (avoid additional flops) -- maybe memoize
-    for g in groups:
-        gg = group == g
-        # FIXME: Shuffle in place doesn't seem to work for slices
-        # prng.shuffle(permuted[gg])
-        permuted[gg] = prng.permutation(permuted[gg])
-    return permuted
-
-
-def permuteWithinGroups(x, group, prng=None):
-    '''
-    Permutes the elements of x within groups
-    Input: ndarray x to be permuted, ndarray group of group ids, np.random.RandomState object prng
-    '''
-    if prng == None:
-        prng = RandomState()
-    permuted = x.copy()
     for g in np.unique(group):
         gg = group == g
         permuted[gg] = prng.permutation(permuted[gg])
@@ -71,8 +55,10 @@ def permute_rows(m, prng=None):
     ----------
     m : array-like
       A 2-d array
-    prng : RandomState object or None
-      The Pseudo-random number generator (used for replicability)
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
 
     Returns
     -------
@@ -87,36 +73,33 @@ def permute_rows(m, prng=None):
 
 
 def corr(x, y, reps=10**4, prng=None):
-    '''
+    """
     Simulate permutation p-value for Spearman correlation coefficient
-    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
-    '''
-    if prng == None:
+
+    Parameters
+    ----------
+    x : array-like
+    y : array-like
+    reps : int
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
+
+    Returns
+    -------
+    tuple
+        Returns test statistic, simulations, left-sided p-value,
+        right-sided p-value, two-sided p-value
+    """
+    if prng is None:
         prng = RandomState()
-    t = np.corrcoef(x, y)[0,1]
-    sims = [np.corrcoef(prng.permutation(x), y)[0,1] for i in range(reps)]
-    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
-
-
-def stratCorrTst(x, y, group):
-    '''
-    Calculates sum of Spearman correlations between x and y, computed separately in each group.
-    '''
-    tst = 0.0
-    for g in np.unique(group):
-        gg = group == g
-        tst += np.corrcoef(x[gg], y[gg])[0,1]
-    return tst
-
-
-def stratCorr(x, y, group, prng, reps=10**4):
-    '''
-    Simulate permutation p-value of stratified Spearman correlation test.
-    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
-    '''
-    t = stratCorrTst(x, y, group)
-    sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group) for i in range(reps)]
-    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
+    t = np.corrcoef(x, y)[0, 1]
+    sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
+    left_pv = np.sum(sims <= t)/reps
+    right_pv = np.sum(sims >= t)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
+    return t, left_pv, right_pv, two_sided_pv, sims
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -154,6 +137,8 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     maxiter : int
       Maximum number of iterations.
     """
+    assert alternative in ("two-sided", "less", "greater")
+
     if p is None:
         p = x / n
     ci_low = 0.0
@@ -162,7 +147,6 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
-    # FIXME: should I check that alternative is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, *kwargs)
@@ -206,7 +190,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
       the p-value is still estimated by the randomization, approximating
       the permutation distribution.
       The t-statistic is computed using scipy.stats.ttest_ind
-      # FIXME: Explanation or example of how to pass in a function, instead of a str
+      # FIXME: Explanation or example of how to pass in a function,
+      # instead of a str
     interval : {'upper', 'lower', 'two-sided'}
       If interval == 'upper', computes an upper confidence bound on the true
       p-value based on the simulations by inverting Binomial tests.
@@ -223,12 +208,12 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     Returns
     -------
     output : int
-      output is the estimated p-value and the test statistic, if level == False
+      the estimated p-value and the test statistic, if level == False
 
-      output is <estimated p-value, confidence bound on p-value, test statistic>
+      <estimated p-value, confidence bound on p-value, test statistic>
       if interval in {'lower','upper'}
 
-      output is <estimated p-value,
+      <estimated p-value,
       [lower confidence bound, upper confidence bound], test statistic>,
       if interval == 'two-sided'
     """
@@ -254,6 +239,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
                    for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return hits / reps, binom_conf_interval(n = reps, x = hits, cl = level, alternative = alternative), ts
+        return (hits/reps,
+                binom_conf_interval(reps, hits, level, alternative), ts)
     else:
-        return hits / reps, ts
+        return hits/reps, ts
