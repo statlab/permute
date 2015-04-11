@@ -185,6 +185,36 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="permute.core.corr">
+<code class="descclassname">permute.core.</code><code class="descname">corr</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>reps=10000</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#corr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate permutation p-value for Spearman correlation coefficient</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<p><strong>y</strong> : array-like</p>
+<p><strong>reps</strong> : int</p>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
+<blockquote>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>Returns test statistic, simulations, left-sided p-value,
+right-sided p-value, two-sided p-value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="permute.core.permute_rows">
 <code class="descclassname">permute.core.</code><code class="descname">permute_rows</code><span class="sig-paren">(</span><em>m</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#permute_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.permute_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the rows of a matrix in-place</p>
@@ -196,9 +226,11 @@
 <blockquote>
 <div><p>A 2-d array</p>
 </div></blockquote>
-<p><strong>prng</strong> : RandomState object or None</p>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
 <blockquote>
-<div><p>The Pseudo-random number generator (used for replicability)</p>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -214,29 +246,31 @@
 
 <dl class="function">
 <dt id="permute.core.permute_within_groups">
-<code class="descclassname">permute.core.</code><code class="descname">permute_within_groups</code><span class="sig-paren">(</span><em>group</em>, <em>condition</em>, <em>groups</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#permute_within_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.permute_within_groups" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">permute.core.</code><code class="descname">permute_within_groups</code><span class="sig-paren">(</span><em>x</em>, <em>group</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#permute_within_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.permute_within_groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permutation of condition within each group.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>group</strong> : array-like</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>A 1-d array indicating treatment.</p>
+</div></blockquote>
+<p><strong>group</strong> : array-like</p>
 <blockquote>
 <div><p>A 1-d array indicating group membership</p>
 </div></blockquote>
-<p><strong>condition</strong> : array-like</p>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
 <blockquote>
-<div><p>A 1-d array indcating treatment.</p>
-</div></blockquote>
-<p><strong>groups</strong> : array-like</p>
-<blockquote>
-<div><p>The unique elements of group</p>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>permuted</strong> : array-like</p>
 <blockquote class="last">
-<div><p>The within group permutation of condition.</p>
+<div><p>The within group permutation of x.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -259,7 +293,7 @@ if side = &#8216;greater&#8217;</li>
 <li>less than that of the population from which y comes,
 if side = &#8216;less&#8217;</li>
 <li>different from that of the population from which y comes,
-if side = &#8216;both&#8217;</li>
+if side = &#8216;two-sided&#8217;</li>
 </ol>
 </div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
@@ -286,15 +320,16 @@ if side = &#8216;both&#8217;</li>
 the p-value is still estimated by the randomization, approximating
 the permutation distribution.
 The t-statistic is computed using scipy.stats.ttest_ind
-# FIXME: Explanation or example of how to pass in a function, instead of a str</p>
+# FIXME: Explanation or example of how to pass in a function,
+# instead of a str</p>
 </div></blockquote>
-<p><strong>interval</strong> : {&#8216;upper&#8217;, &#8216;lower&#8217;, &#8216;both&#8217;}</p>
+<p><strong>interval</strong> : {&#8216;upper&#8217;, &#8216;lower&#8217;, &#8216;two-sided&#8217;}</p>
 <blockquote>
 <div><p>If interval == &#8216;upper&#8217;, computes an upper confidence bound on the true
 p-value based on the simulations by inverting Binomial tests.</p>
 <p>If interval == &#8216;lower&#8217;, computes a lower confidence bound on the true
 p-value based on the simulations by inverting Binomial tests.</p>
-<p>If interval == &#8216;both&#8217;, computes lower and upper confidence bounds on
+<p>If interval == &#8216;two-sided&#8217;, computes lower and upper confidence bounds on
 the true p-value based on the simulations by inverting Binomial tests.</p>
 </div></blockquote>
 <p><strong>level</strong> : float in (0, 1)</p>
@@ -305,12 +340,12 @@ the true p-value based on the simulations by inverting Binomial tests.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : int</p>
 <blockquote class="last">
-<div><p>output is the estimated p-value and the test statistic, if level == False</p>
-<p>output is &lt;estimated p-value, confidence bound on p-value, test statistic&gt;
+<div><p>the estimated p-value and the test statistic, if level == False</p>
+<p>&lt;estimated p-value, confidence bound on p-value, test statistic&gt;
 if interval in {&#8216;lower&#8217;,&#8217;upper&#8217;}</p>
-<p>output is &lt;estimated p-value,
+<p>&lt;estimated p-value,
 [lower confidence bound, upper confidence bound], test statistic&gt;,
-if interval == &#8216;both&#8217;</p>
+if interval == &#8216;two-sided&#8217;</p>
 </div></blockquote>
 </td>
 </tr>

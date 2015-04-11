@@ -131,6 +131,57 @@
 <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">permute_within_groups</span>
 
 
+<div class="viewcode-block" id="corrcoef"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.corrcoef">[docs]</a><span class="k">def</span> <span class="nf">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates sum of Spearman correlations between x and y,</span>
+<span class="sd">    computed separately in each group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    group : array-like</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+        <span class="n">gg</span> <span class="o">=</span> <span class="n">group</span> <span class="o">==</span> <span class="n">g</span>
+        <span class="n">tst</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">gg</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">gg</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tst</span>
+
+</div>
+<div class="viewcode-block" id="sim_corr"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.sim_corr">[docs]</a><span class="k">def</span> <span class="nf">sim_corr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">prng</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate permutation p-value of stratified Spearman correlation test.</span>
+<span class="sd">    Returns test statistic, simulations, left-sided p-value,</span>
+<span class="sd">    right-sided p-value, two-sided p-value</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    group : array-like</span>
+<span class="sd">    reps : int</span>
+<span class="sd">    prng : RandomState instance or None, optional (default=None)</span>
+<span class="sd">        If RandomState instance, prng is the pseudorandom number generator;</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+    <span class="n">sims</span> <span class="o">=</span> <span class="p">[</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">permute_within_groups</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">)]</span>
+    <span class="n">left_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">reps</span>
+    <span class="n">right_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&gt;=</span> <span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">reps</span>
+    <span class="n">two_sided_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sims</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">/</span><span class="n">reps</span>
+    <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">left_pv</span><span class="p">,</span> <span class="n">right_pv</span><span class="p">,</span> <span class="n">two_sided_pv</span><span class="p">,</span> <span class="n">sims</span>
+
+</div>
 <div class="viewcode-block" id="stratified_permutationtest_mean"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.stratified_permutationtest_mean">[docs]</a><span class="k">def</span> <span class="nf">stratified_permutationtest_mean</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span>
                                     <span class="n">groups</span><span class="p">,</span> <span class="n">conditions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -203,7 +254,6 @@
 <span class="sd">      The</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">prng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="c"># np.unique vs. set?</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
     <span class="n">conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -214,7 +264,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">iterations</span><span class="p">)):</span>
             <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">group</span><span class="p">,</span>
                                     <span class="n">permute_within_groups</span><span class="p">(</span>
-                                        <span class="n">group</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span>
+                                        <span class="n">condition</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span>
                                     <span class="n">response</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span>
 
         <span class="n">conds</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">,</span> <span class="n">dist</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tst</span><span class="p">)]</span>
