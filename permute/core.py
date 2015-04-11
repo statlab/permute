@@ -80,35 +80,39 @@ def permute_rows(m, prng=None):
 
 
 def corr(x, y, reps=10**4, prng=None):
-    '''
+    """
     Simulate permutation p-value for Spearman correlation coefficient
-    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
-    '''
-    if prng == None:
+    Returns test statistic, simulations, left-sided p-value,
+    right-sided p-value, two-sided p-value
+    """
+    if prng is None:
         prng = RandomState()
-    t = np.corrcoef(x, y)[0,1]
-    sims = [np.corrcoef(prng.permutation(x), y)[0,1] for i in range(reps)]
+    t = np.corrcoef(x, y)[0, 1]
+    sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
     return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
 
 
 def stratCorrTst(x, y, group):
-    '''
-    Calculates sum of Spearman correlations between x and y, computed separately in each group.
-    '''
+    """
+    Calculates sum of Spearman correlations between x and y,
+    computed separately in each group.
+    """
     tst = 0.0
     for g in np.unique(group):
         gg = group == g
-        tst += np.corrcoef(x[gg], y[gg])[0,1]
+        tst += np.corrcoef(x[gg], y[gg])[0, 1]
     return tst
 
 
 def stratCorr(x, y, group, prng, reps=10**4):
-    '''
+    """
     Simulate permutation p-value of stratified Spearman correlation test.
-    Returns test statistic, simulations, left-sided p-value, right-sided p-value, two-sided p-value
-    '''
+    Returns test statistic, simulations, left-sided p-value,
+    right-sided p-value, two-sided p-value
+    """
     t = stratCorrTst(x, y, group)
-    sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group) for i in range(reps)]
+    sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group)
+            for i in range(reps)]
     return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
 
 
@@ -199,7 +203,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
       the p-value is still estimated by the randomization, approximating
       the permutation distribution.
       The t-statistic is computed using scipy.stats.ttest_ind
-      # FIXME: Explanation or example of how to pass in a function, instead of a str
+      # FIXME: Explanation or example of how to pass in a function,
+      # instead of a str
     interval : {'upper', 'lower', 'two-sided'}
       If interval == 'upper', computes an upper confidence bound on the true
       p-value based on the simulations by inverting Binomial tests.
@@ -216,12 +221,12 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     Returns
     -------
     output : int
-      output is the estimated p-value and the test statistic, if level == False
+      the estimated p-value and the test statistic, if level == False
 
-      output is <estimated p-value, confidence bound on p-value, test statistic>
+      <estimated p-value, confidence bound on p-value, test statistic>
       if interval in {'lower','upper'}
 
-      output is <estimated p-value,
+      <estimated p-value,
       [lower confidence bound, upper confidence bound], test statistic>,
       if interval == 'two-sided'
     """
@@ -247,6 +252,6 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
                    for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return hits / reps, binom_conf_interval(n = reps, x = hits, cl = level, alternative = alternative), ts
+        return hits/reps, binom_conf_interval(reps, hits, level, alternative), ts
     else:
-        return hits / reps, ts
+        return hits/reps, ts
