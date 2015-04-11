@@ -40,14 +40,9 @@ def permute_within_groups(x, group, prng=None):
     if prng is None:
         prng = RandomState()
 
-    # FIXME: do we need to pass `groups` in?
-    # Yes, don't want to repeatedly identify unique elements
     # (avoid additional flops) -- maybe memoize
-    # for g in groups:
     for g in np.unique(group):
         gg = group == g
-        # FIXME: Shuffle in place doesn't seem to work for slices
-        # prng.shuffle(permuted[gg])
         permuted[gg] = prng.permutation(permuted[gg])
     return permuted
 
@@ -193,6 +188,8 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     maxiter : int
       Maximum number of iterations.
     """
+    assert alternative in ("two-sided", "less", "greater")
+
     if p is None:
         p = x / n
     ci_low = 0.0
@@ -201,7 +198,6 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
-    # FIXME: should I check that alternative is valid?
     if alternative != "greater" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, *kwargs)
