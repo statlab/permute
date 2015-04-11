@@ -82,20 +82,47 @@ def permute_rows(m, prng=None):
 def corr(x, y, reps=10**4, prng=None):
     """
     Simulate permutation p-value for Spearman correlation coefficient
-    Returns test statistic, simulations, left-sided p-value,
-    right-sided p-value, two-sided p-value
+
+    Parameters
+    ----------
+    x : array-like
+    y : array-like
+    reps : int
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
+
+    Returns
+    -------
+    tuple
+        Returns test statistic, simulations, left-sided p-value,
+        right-sided p-value, two-sided p-value
     """
     if prng is None:
         prng = RandomState()
     t = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
-    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
+    left_pv = np.sum(sims <= t)/reps
+    right_pv = np.sum(sims >= t)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
+    return t, left_pv, right_pv, two_sided_pv, sims
 
 
 def stratCorrTst(x, y, group):
     """
     Calculates sum of Spearman correlations between x and y,
     computed separately in each group.
+
+    Parameters
+    ----------
+    y : array-like
+    y : array-like
+    group : array-like
+
+    Returns
+    -------
+    float
     """
     tst = 0.0
     for g in np.unique(group):
@@ -104,16 +131,33 @@ def stratCorrTst(x, y, group):
     return tst
 
 
-def stratCorr(x, y, group, prng, reps=10**4):
+def stratCorr(x, y, group, reps=10**4, prng=None):
     """
     Simulate permutation p-value of stratified Spearman correlation test.
     Returns test statistic, simulations, left-sided p-value,
     right-sided p-value, two-sided p-value
+
+    Parameters
+    ----------
+    y : array-like
+    y : array-like
+    group : array-like
+    reps : int
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
+
+    Returns
+    -------
     """
     t = stratCorrTst(x, y, group)
     sims = [stratCorrTst(permuteWithinGroups(x, group, prng), y, group)
             for i in range(reps)]
-    return t, np.sum(sims <= t)/reps, np.sum(sims >= t)/reps, np.sum(np.abs(sims) >= np.abs(t))/reps, sims
+    left_pv = np.sum(sims <= t)/reps
+    right_pv = np.sum(sims >= t)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
+    return t, left_pv, right_pv, two_sided_pv, sims
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -252,6 +296,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
                    for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return hits/reps, binom_conf_interval(reps, hits, level, alternative), ts
+        return (hits/reps,
+                binom_conf_interval(reps, hits, level, alternative), ts)
     else:
         return hits/reps, ts
