@@ -23,11 +23,15 @@ def permute_within_groups(group, condition, groups, prng=None):
     Parameters
     ----------
     group : array-like
-      A 1-d array indicating group membership
+        A 1-d array indicating group membership
     condition : array-like
-      A 1-d array indcating treatment.
+        A 1-d array indcating treatment.
     groups : array-like
-      The unique elements of group
+        The unique elements of group
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
 
     Returns
     -------
@@ -41,24 +45,11 @@ def permute_within_groups(group, condition, groups, prng=None):
     # FIXME: do we need to pass `groups` in?
     # Yes, don't want to repeatedly identify unique elements
     # (avoid additional flops) -- maybe memoize
-    for g in groups:
+    # for g in groups:
+    for g in np.unique(group):
         gg = group == g
         # FIXME: Shuffle in place doesn't seem to work for slices
         # prng.shuffle(permuted[gg])
-        permuted[gg] = prng.permutation(permuted[gg])
-    return permuted
-
-
-def permuteWithinGroups(x, group, prng=None):
-    '''
-    Permutes the elements of x within groups
-    Input: ndarray x to be permuted, ndarray group of group ids, np.random.RandomState object prng
-    '''
-    if prng == None:
-        prng = RandomState()
-    permuted = x.copy()
-    for g in np.unique(group):
-        gg = group == g
         permuted[gg] = prng.permutation(permuted[gg])
     return permuted
 
@@ -71,8 +62,10 @@ def permute_rows(m, prng=None):
     ----------
     m : array-like
       A 2-d array
-    prng : RandomState object or None
-      The Pseudo-random number generator (used for replicability)
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
 
     Returns
     -------
