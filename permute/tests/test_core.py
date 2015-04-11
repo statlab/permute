@@ -5,6 +5,7 @@ from numpy.random import RandomState
 
 
 from ..core import (binom_conf_interval,
+                    corr,
                     permute_within_groups,
                     permute_rows,
                     two_sample)
@@ -27,6 +28,29 @@ def test_permute_within_group():
     res3.sort()
     np.testing.assert_equal(group, res3)
 
+def test_corr():
+    prng = RandomState(42)
+    x = prng.randint(5, size=10)
+    y = x
+    res1 = corr(x, y, prng=prng)
+    res2 = corr(x, y)
+    np.testing.assert_equal(len(res1), 5)
+    np.testing.assert_equal(len(res2), 5)
+    np.testing.assert_equal(res1[0], res2[0])
+    np.testing.assert_equal(res1[1], res2[1])
+    #np.testing.assert_equal(res1[2], res2[2])
+    #np.testing.assert_equal(res1[3], res2[3])
+
+    y = prng.randint(5, size=10)
+    res1 = corr(x, y, prng=prng)
+    res2 = corr(x, y)
+    np.testing.assert_equal(len(res1), 5)
+    np.testing.assert_equal(len(res2), 5)
+    np.testing.assert_equal(res1[0], res2[0])
+    #np.testing.assert_equal(res1[1], res2[1])
+    #np.testing.assert_equal(res1[2], res2[2])
+    #np.testing.assert_equal(res1[3], res2[3])
+
 def test_binom_conf_interval():
     res = binom_conf_interval(10, 3)
     expected = (0.05154625578928545, 0.6915018049393984)
@@ -39,6 +63,7 @@ def test_binom_conf_interval():
     res3 = binom_conf_interval(10, 5, cl = 0.95, alternative = "less")
     expected3 = (0.22244110100812578, 1.0)
     np.testing.assert_equal(res3, expected3)
+
     
 def test_permute_rows():
     prng = RandomState(42)
