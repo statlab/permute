@@ -107,7 +107,7 @@ def corr(x, y, reps=10**4, prng=None):
     return t, left_pv, right_pv, two_sided_pv, sims
 
 
-def stratCorrTst(x, y, group):
+def strat_corr_tst(x, y, group):
     """
     Calculates sum of Spearman correlations between x and y,
     computed separately in each group.
@@ -129,7 +129,7 @@ def stratCorrTst(x, y, group):
     return tst
 
 
-def stratCorr(x, y, group, reps=10**4, prng=None):
+def strat_corr(x, y, group, reps=10**4, prng=None):
     """
     Simulate permutation p-value of stratified Spearman correlation test.
     Returns test statistic, simulations, left-sided p-value,
@@ -149,8 +149,8 @@ def stratCorr(x, y, group, reps=10**4, prng=None):
     Returns
     -------
     """
-    t = stratCorrTst(x, y, group)
-    sims = [stratCorrTst(permute_within_groups(x, group, prng), y, group)
+    t = strat_corr_tst(x, y, group)
+    sims = [strat_corr_tst(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
     left_pv = np.sum(sims <= t)/reps
     right_pv = np.sum(sims >= t)/reps
