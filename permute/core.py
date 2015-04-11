@@ -102,57 +102,6 @@ def corr(x, y, reps=10**4, prng=None):
     return t, left_pv, right_pv, two_sided_pv, sims
 
 
-def strat_corrcoef(x, y, group):
-    """
-    Calculates sum of Spearman correlations between x and y,
-    computed separately in each group.
-
-    Parameters
-    ----------
-    y : array-like
-    y : array-like
-    group : array-like
-
-    Returns
-    -------
-    float
-    """
-    tst = 0.0
-    for g in np.unique(group):
-        gg = group == g
-        tst += np.corrcoef(x[gg], y[gg])[0, 1]
-    return tst
-
-
-def strat_corr(x, y, group, reps=10**4, prng=None):
-    """
-    Simulate permutation p-value of stratified Spearman correlation test.
-    Returns test statistic, simulations, left-sided p-value,
-    right-sided p-value, two-sided p-value
-
-    Parameters
-    ----------
-    y : array-like
-    y : array-like
-    group : array-like
-    reps : int
-    prng : RandomState instance or None, optional (default=None)
-        If RandomState instance, prng is the pseudorandom number generator;
-        If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`.
-
-    Returns
-    -------
-    """
-    t = strat_corr_tst(x, y, group)
-    sims = [strat_corrcoef(permute_within_groups(x, group, prng), y, group)
-            for i in range(reps)]
-    left_pv = np.sum(sims <= t)/reps
-    right_pv = np.sum(sims >= t)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
-    return t, left_pv, right_pv, two_sided_pv, sims
-
-
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         **kwargs):
     """

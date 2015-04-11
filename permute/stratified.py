@@ -14,6 +14,57 @@ from numpy.random import RandomState
 from .core import permute_within_groups
 
 
+def corrcoef(x, y, group):
+    """
+    Calculates sum of Spearman correlations between x and y,
+    computed separately in each group.
+
+    Parameters
+    ----------
+    y : array-like
+    y : array-like
+    group : array-like
+
+    Returns
+    -------
+    float
+    """
+    tst = 0.0
+    for g in np.unique(group):
+        gg = group == g
+        tst += np.corrcoef(x[gg], y[gg])[0, 1]
+    return tst
+
+
+def sim_corr(x, y, group, reps=10**4, prng=None):
+    """
+    Simulate permutation p-value of stratified Spearman correlation test.
+    Returns test statistic, simulations, left-sided p-value,
+    right-sided p-value, two-sided p-value
+
+    Parameters
+    ----------
+    y : array-like
+    y : array-like
+    group : array-like
+    reps : int
+    prng : RandomState instance or None, optional (default=None)
+        If RandomState instance, prng is the pseudorandom number generator;
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`.
+
+    Returns
+    -------
+    """
+    t = corrcoef(x, y, group)
+    sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
+            for i in range(reps)]
+    left_pv = np.sum(sims <= t)/reps
+    right_pv = np.sum(sims >= t)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
+    return t, left_pv, right_pv, two_sided_pv, sims
+
+
 def stratified_permutationtest_mean(group, condition, response,
                                     groups, conditions):
     """
@@ -86,7 +137,6 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
       The
     """
     prng = RandomState(seed)
-    # np.unique vs. set?
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
