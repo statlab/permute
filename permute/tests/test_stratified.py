@@ -30,6 +30,7 @@ def test_corrcoef():
     res2 = corrcoef(x, y, group)
     np.testing.assert_equal(res1, res2)
 
+
 def test_sim_corr():
     prng = RandomState(42)
     x = prng.rand(10)
@@ -38,4 +39,3 @@ def test_sim_corr():
     res1 = sim_corr(x, y, group, prng=prng)
     res2 = sim_corr(x, y, group)
     np.testing.assert_equal(res1[0], res2[0])
- 
