@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Core functions &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
+    <link rel="up" title="User Guide" href="index.html" />
+    <link rel="next" title="Stratified testing" href="stratified.html" />
+    <link rel="prev" title="Overview" href="overview.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Core functions</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="overview.html" title="Previous Chapter: Overview"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Overview</span>
+    </a>
+  </li>
+  <li>
+    <a href="stratified.html" title="Next Chapter: Stratified testing"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Stratified testi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="module-permute.core">
+<span id="core-functions"></span><h1>Core functions<a class="headerlink" href="#module-permute.core" title="Permalink to this headline">¶</a></h1>
+<p>Core.</p>
+<dl class="function">
+<dt id="permute.core.binom_conf_interval">
+<code class="descclassname">permute.core.</code><code class="descname">binom_conf_interval</code><span class="sig-paren">(</span><em>n</em>, <em>x</em>, <em>cl=0.975</em>, <em>alternative='two-sided'</em>, <em>p=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#binom_conf_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.binom_conf_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the confidence interval for a binomial.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n</strong> : int</p>
+<blockquote>
+<div><p>The number of Bernoulli trials.</p>
+</div></blockquote>
+<p><strong>x</strong> : int</p>
+<blockquote>
+<div><p>The number of successes.</p>
+</div></blockquote>
+<p><strong>cl</strong> : float in (0, 1)</p>
+<blockquote>
+<div><p>The desired confidence level.</p>
+</div></blockquote>
+<p><strong>alternative</strong> : {&#8220;two-sided&#8221;, &#8220;less&#8221;, &#8220;greater&#8221;}</p>
+<blockquote>
+<div><p>Indicates the alternative hypothesis.</p>
+</div></blockquote>
+<p><strong>p</strong> : float in (0, 1)</p>
+<blockquote>
+<div><p>The probability of success in each trial.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Key word arguments</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ci_low, ci_upp</strong> : float</p>
+<blockquote class="last">
+<div><p>lower and upper confidence level with coverage (approximately)
+1-alpha.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>xtol <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Tolerance</dd>
+<dt>rtol <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Tolerance</dd>
+<dt>maxiter <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Maximum number of iterations.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.core.corr">
+<code class="descclassname">permute.core.</code><code class="descname">corr</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>reps=10000</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#corr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate permutation p-value for Spearman correlation coefficient</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<p><strong>y</strong> : array-like</p>
+<p><strong>reps</strong> : int</p>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
+<blockquote>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>Returns test statistic, simulations, left-sided p-value,
+right-sided p-value, two-sided p-value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.core.permute_rows">
+<code class="descclassname">permute.core.</code><code class="descname">permute_rows</code><span class="sig-paren">(</span><em>m</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#permute_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.permute_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permute the rows of a matrix in-place</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>m</strong> : array-like</p>
+<blockquote>
+<div><p>A 2-d array</p>
+</div></blockquote>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
+<blockquote>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+<blockquote class="last">
+<div><p>Original matrix is permute in-place, nothing returned</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.core.permute_within_groups">
+<code class="descclassname">permute.core.</code><code class="descname">permute_within_groups</code><span class="sig-paren">(</span><em>x</em>, <em>group</em>, <em>prng=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#permute_within_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.permute_within_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permutation of condition within each group.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>A 1-d array indicating treatment.</p>
+</div></blockquote>
+<p><strong>group</strong> : array-like</p>
+<blockquote>
+<div><p>A 1-d array indicating group membership</p>
+</div></blockquote>
+<p><strong>prng</strong> : RandomState instance or None, optional (default=None)</p>
+<blockquote>
+<div><p>If RandomState instance, prng is the pseudorandom number generator;
+If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>permuted</strong> : array-like</p>
+<blockquote class="last">
+<div><p>The within group permutation of x.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="permute.core.two_sample">
+<code class="descclassname">permute.core.</code><code class="descname">two_sample</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>reps=100000</em>, <em>stat='mean'</em>, <em>alternative='greater'</em>, <em>interval=False</em>, <em>level=0.95</em>, <em>seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#two_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#permute.core.two_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, two-sample permutation test for equality of
+two means, with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Tests the hypothesis that x and y are a random partition of x,y
+against the alternative that x comes from a population with mean</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>greater than that of the population from which y comes,
+if side = &#8216;greater&#8217;</li>
+<li>less than that of the population from which y comes,
+if side = &#8216;less&#8217;</li>
+<li>different from that of the population from which y comes,
+if side = &#8216;two-sided&#8217;</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>Sample 1</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like</p>
+<blockquote>
+<div><p>Sample 2</p>
+</div></blockquote>
+<p><strong>reps</strong> : int</p>
+<blockquote>
+<div><p>number of repetitions</p>
+</div></blockquote>
+<p><strong>stat</strong> : {&#8216;mean&#8217;, &#8216;t&#8217;}</p>
+<blockquote>
+<div><p>If stat == &#8216;mean&#8217;, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related)</p>
+<p>If stat == &#8216;t&#8217;, the test statistic is the two-sample t-statistic&#8211;but
+the p-value is still estimated by the randomization, approximating
+the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind
+# FIXME: Explanation or example of how to pass in a function,
+# instead of a str</p>
+</div></blockquote>
+<p><strong>interval</strong> : {&#8216;upper&#8217;, &#8216;lower&#8217;, &#8216;two-sided&#8217;}</p>
+<blockquote>
+<div><p>If interval == &#8216;upper&#8217;, computes an upper confidence bound on the true
+p-value based on the simulations by inverting Binomial tests.</p>
+<p>If interval == &#8216;lower&#8217;, computes a lower confidence bound on the true
+p-value based on the simulations by inverting Binomial tests.</p>
+<p>If interval == &#8216;two-sided&#8217;, computes lower and upper confidence bounds on
+the true p-value based on the simulations by inverting Binomial tests.</p>
+</div></blockquote>
+<p><strong>level</strong> : float in (0, 1)</p>
+<blockquote>
+<div><p>the confidence limit for the confidence bounds.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>output</strong> : int</p>
+<blockquote class="last">
+<div><p>the estimated p-value and the test statistic, if level == False</p>
+<p>&lt;estimated p-value, confidence bound on p-value, test statistic&gt;
+if interval in {&#8216;lower&#8217;,&#8217;upper&#8217;}</p>
+<p>&lt;estimated p-value,
+[lower confidence bound, upper confidence bound], test statistic&gt;,
+if interval == &#8216;two-sided&#8217;</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../index.html" />
+    <link rel="up" title="User Guide" href="index.html" />
+    <link rel="next" title="Core functions" href="core.html" />
+    <link rel="prev" title="User Guide" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#problems-methods">Problems/Methods:</a></li>
+<li><a class="reference internal" href="#confidence-sets">Confidence sets</a></li>
+<li><a class="reference internal" href="#links">Links</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: User Guide"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; User Guide</span>
+    </a>
+  </li>
+  <li>
+    <a href="core.html" title="Next Chapter: Core functions"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Core functions &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="module-permute">
+<span id="overview"></span><h1>Overview<a class="headerlink" href="#module-permute" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">permute</span></code> provides permutation tests and confidence intervals for a variety
+of nonparametric testing and estimation problems, for a variety of
+randomization designs.</p>
+<ul class="simple">
+<li>Stratified and unstratified tests ...</li>
+<li>Test statistics in each stratum ...</li>
+<li>Methods of combining tests across strata ...</li>
+<li>Nonparametric combinations of tests ...</li>
+</ul>
+<div class="section" id="problems-methods">
+<h2>Problems/Methods:<a class="headerlink" href="#problems-methods" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>The 2-sample problem</li>
+<li>The <em>n</em>-sample problem</li>
+<li>Tests for the slope in linear regression</li>
+<li>Tests for quantiles</li>
+<li>Tests of independence and association: runs tests, permutation association,  ...</li>
+<li>Tests of exchangeability</li>
+<li>Tests of symmetry: reflection, spherical, ...</li>
+<li>Permutation ANOVA</li>
+<li>Goodness of fit tests</li>
+<li>...</li>
+</ol>
+</div>
+<div class="section" id="confidence-sets">
+<h2>Confidence sets<a class="headerlink" href="#confidence-sets" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Constant shifts</li>
+<li>Proportional shifts</li>
+<li>Monotone shifts</li>
+<li>...</li>
+</ol>
+</div>
+<div class="section" id="links">
+<h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
+<p>UC Berkeley&#8217;s Statistics 240: Nonparametric and Robust Methods.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.stat.berkeley.edu/~johann/240spring15/index.html">2015 course
+website</a></li>
+<li><a class="reference external" href="http://www.stat.berkeley.edu/~stark/Teach/S240/Notes/index.htm">Philip Stark&#8217;s lecture
+notes</a></li>
+</ul>
+<p>&#8220;Permutation Tests for Complex Data: Theory, Applications and Software&#8221;
+by Fortunato Pesarin, Luigi Salmaso</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470516410.html">Publisher&#8217;s
+website</a></li>
+<li><a class="reference external" href="http://www.wiley.com/legacy/wileychi/pesarin/material.html">Supplementary Material (i.e., code and
+data)</a></li>
+<li><a class="reference external" href="http://static.gest.unipd.it/~salmaso/NPC_TEST.htm">NPC test code</a></li>
+</ul>
+<p>&#8220;Stochastic Ordering and ANOVA: Theory and Applications with R&#8221;
+by Basso D., Pesarin F., Salmaso L., Solari A.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://static.gest.unipd.it/~salmaso/web/springerbook.htm">R code</a></li>
+</ul>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

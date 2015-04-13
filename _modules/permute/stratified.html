@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>permute.stratified &mdash; Permutation tests and confidence sets 0.1dev documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Permutation tests and confidence sets 0.1dev documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <h1>Source code for permute.stratified</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Stratified permutation tests.</span>
+
+<span class="sd">WIP: revisit FIXME w/ PS, reevaluate func names and args</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">permute_within_groups</span>
+
+
+<div class="viewcode-block" id="corrcoef"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.corrcoef">[docs]</a><span class="k">def</span> <span class="nf">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates sum of Spearman correlations between x and y,</span>
+<span class="sd">    computed separately in each group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    group : array-like</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+        <span class="n">gg</span> <span class="o">=</span> <span class="n">group</span> <span class="o">==</span> <span class="n">g</span>
+        <span class="n">tst</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">gg</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">gg</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tst</span>
+
+</div>
+<div class="viewcode-block" id="sim_corr"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.sim_corr">[docs]</a><span class="k">def</span> <span class="nf">sim_corr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">prng</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate permutation p-value of stratified Spearman correlation test.</span>
+<span class="sd">    Returns test statistic, simulations, left-sided p-value,</span>
+<span class="sd">    right-sided p-value, two-sided p-value</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    group : array-like</span>
+<span class="sd">    reps : int</span>
+<span class="sd">    prng : RandomState instance or None, optional (default=None)</span>
+<span class="sd">        If RandomState instance, prng is the pseudorandom number generator;</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+    <span class="n">sims</span> <span class="o">=</span> <span class="p">[</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">permute_within_groups</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">)]</span>
+    <span class="n">left_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">reps</span>
+    <span class="n">right_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&gt;=</span> <span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">reps</span>
+    <span class="n">two_sided_pv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sims</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">/</span><span class="n">reps</span>
+    <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">left_pv</span><span class="p">,</span> <span class="n">right_pv</span><span class="p">,</span> <span class="n">two_sided_pv</span><span class="p">,</span> <span class="n">sims</span>
+
+</div>
+<div class="viewcode-block" id="stratified_permutationtest_mean"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.stratified_permutationtest_mean">[docs]</a><span class="k">def</span> <span class="nf">stratified_permutationtest_mean</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span>
+                                    <span class="n">groups</span><span class="p">,</span> <span class="n">conditions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates variability in sample means between treatment conditions,</span>
+<span class="sd">    within groups.</span>
+
+<span class="sd">    If there are two treatment conditions, the test statistic is the</span>
+<span class="sd">    difference in means, aggregated across groups.</span>
+<span class="sd">    If there are more than two treatment conditions, the test statistic</span>
+<span class="sd">    is the standard deviation of the means, aggregated across groups.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    group : int</span>
+<span class="sd">      The</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tst : float</span>
+<span class="sd">      The</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Number of groups must be at least 2.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">gg</span> <span class="o">=</span> <span class="n">group</span> <span class="o">==</span> <span class="n">g</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">gg</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">condition</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">]</span>
+        <span class="n">tst</span> <span class="o">+=</span> <span class="n">stat</span><span class="p">([</span><span class="n">response</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))])</span>
+    <span class="k">return</span> <span class="n">tst</span>
+
+</div>
+<div class="viewcode-block" id="stratified_permutationtest"><a class="viewcode-back" href="../../user/stratified.html#permute.stratified.stratified_permutationtest">[docs]</a><span class="k">def</span> <span class="nf">stratified_permutationtest</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mf">1.0e4</span><span class="p">,</span>
+                               <span class="n">testStatistic</span><span class="o">=</span><span class="n">stratified_permutationtest_mean</span><span class="p">,</span>
+                               <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stratified permutation test using the sum of the differences in means</span>
+<span class="sd">    between two or more conditions in each group (stratum) as the test</span>
+<span class="sd">    statistic.</span>
+
+<span class="sd">    The test statistic is</span>
+
+<span class="sd">    .. math:: \sum_{g \in \\text{groups}} [</span>
+<span class="sd">                 f(mean(\\text{response for cases in group $g$</span>
+<span class="sd">                               assigned to each condition}))].</span>
+
+<span class="sd">    The function f is the difference if there are two conditions, and</span>
+<span class="sd">    the standard deviation if there are more than two conditions.</span>
+
+<span class="sd">    There should be at least one group and at least two conditions.</span>
+<span class="sd">    Under the null hypothesis, all assignments to the two conditions that</span>
+<span class="sd">    preserve the number of cases assigned to the conditions are equally</span>
+<span class="sd">    likely.</span>
+
+<span class="sd">    Groups in which all cases are assigned to the same condition are</span>
+<span class="sd">    skipped; they do not contribute to the p-value since all randomizations</span>
+<span class="sd">    give the same contribution to the difference in means.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    group : int</span>
+<span class="sd">      The</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    permuted : int</span>
+<span class="sd">      The</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tst</span> <span class="o">=</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">iterations</span><span class="p">)):</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">group</span><span class="p">,</span>
+                                    <span class="n">permute_within_groups</span><span class="p">(</span>
+                                        <span class="n">condition</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span>
+                                    <span class="n">response</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span>
+
+        <span class="n">conds</span> <span class="o">=</span> <span class="p">[</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">,</span> <span class="n">dist</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tst</span><span class="p">)]</span>
+        <span class="n">pLeft</span><span class="p">,</span> <span class="n">pRight</span><span class="p">,</span> <span class="n">pBoth</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">/</span><span class="n">iterations</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conds</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pLeft</span><span class="p">,</span> <span class="n">pRight</span><span class="p">,</span> <span class="n">pBoth</span><span class="p">,</span> <span class="n">tst</span><span class="p">,</span> <span class="n">dist</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, permute developers.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
