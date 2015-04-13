@@ -12,7 +12,7 @@ testing and estimation problems, for a variety of randomization designs.
 
 ## Installation from binaries
 
-No binary releases yet; but soon.
+No binary releases yet; but very soon.
 
 ## Installation from source
 
