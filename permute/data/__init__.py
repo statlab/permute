@@ -37,7 +37,7 @@ def nsgk():
     """The
 
     """
-    return np.loadtxt(_os.path.join(data_dir, "NSGK_clean.txt"),
+    return np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
                       delimiter=',', skiprows=1, dtype=np.int)
 
 def botulinum():
