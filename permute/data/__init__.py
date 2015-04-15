@@ -33,6 +33,13 @@ def load(f):
     return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
 
 
+def nsgk():
+    """The
+
+    """
+    return np.loadtxt(_os.path.join(data_dir, "NSGK_clean.txt"),
+                      delimiter=',', skiprows=1, dtype=np.int)
+
 def botulinum():
     """The
 
