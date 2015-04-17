@@ -37,8 +37,14 @@ def nsgk():
     """The
 
     """
-    return np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
-                      delimiter=',', skiprows=1, dtype=np.int)
+    nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
+                    delimiter=',', skiprows=1, dtype=np.int)
+    shape = tuple(nz.max(axis=0))
+    xx = np.zeros(shape, dtype=np.int)
+    nz -= 1
+    for c, i in enumerate(nz):
+        xx[tuple(i)] = 1
+    return xx
 
 def botulinum():
     """The
