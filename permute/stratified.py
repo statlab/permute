@@ -32,8 +32,8 @@ def corrcoef(x, y, group):
     tst = 0.0
     for g in np.unique(group):
         gg = group == g
-        if np.var(x[gg]) > 0 and np.var(y[gg]) > 0:
-            tst += np.corrcoef(x[gg], y[gg])[0, 1]
+        tst += np.corrcoef(x[gg], y[gg])[0, 1]
+
     return tst
 
 
