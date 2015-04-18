@@ -37,3 +37,18 @@ def find_duplicate_rows(x, as_string=False):
     if as_string:
         dups = [",".join([str(c) for c in r.tolist()]) for r in dups]
     return dups
+
+
+def find_consecutive_duplicate_rows(x, as_string=False):
+    """ Find rows which are duplicated in x
+    """
+    indx = []
+    prev = x[0]
+    for i, r in enumerate(x[1:]):
+        if (r == prev).all():
+            indx.append(i)
+        prev = r
+    dups = x[indx]
+    if as_string:
+        dups = [",".join([str(c) for c in r.tolist()]) for r in dups]
+    return dups
