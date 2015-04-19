@@ -8,4 +8,4 @@ def test_nsgk():
     nsgk = data.nsgk()
     assert_equal(nsgk.shape, (40, 183, 8, 10))
     assert_equal(nsgk.dtype, np.dtype('int64'))
-    assert_equal(nsgk.sum(), 24699)
+    assert_equal(nsgk.sum(), 24708)
