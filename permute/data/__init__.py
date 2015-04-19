@@ -33,6 +33,19 @@ def load(f):
     return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
 
 
+def nsgk():
+    """The
+
+    """
+    nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
+                    delimiter=',', skiprows=1, dtype=np.int)
+    shape = tuple(nz.max(axis=0))
+    x = np.zeros(shape, dtype=np.int)
+    nz -= 1
+    for r in nz:
+        x[tuple(r)] = 1
+    return x
+
 def botulinum():
     """The
 

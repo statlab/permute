@@ -155,14 +155,15 @@ Please prefix all commit summaries with one (or more) of the following labels.
 This should help others to easily classify the commits into meaningful
 categories:
 
-* *BF* : bug fix
-* *RF* : refactoring
+* *BUG* : bug fix
+* *RFT* : refactoring
 * *ENH* : new feature or extended functionality
-* *BW* : addresses backward-compatibility
+* *BKW* : addresses backward-compatibility
 * *OPT* : optimization
-* *BK* : breaks something and/or tests fail
+* *BRK* : breaks something and/or tests fail
 * *DOC*: for all kinds of documentation related commits
-* *TEST* : for adding or changing tests
+* *TST* : for adding or changing tests
+* *DAT* : for adding or changing data files
 * *STY* : PEP8 conformance, whitespace changes etc that do not affect
   function.
 
