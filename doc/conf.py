@@ -37,7 +37,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     'sphinx.ext.pngmath',
-    'numpydoc',
+    'sphinx.ext.napoleon',
     'dollarmath',
     'sphinxcontrib.bibtex',
     'IPython.sphinxext.ipython_console_highlighting',
