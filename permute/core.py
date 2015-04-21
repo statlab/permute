@@ -214,7 +214,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     float
         the test statistic
     tuple
-        These values are only returned if `level` == False
+        These values are only returned if `level` == True
 
         (a) confidence bound on p-value,
             if interval in {'lower','upper'}
