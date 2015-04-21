@@ -66,7 +66,7 @@ copyright = u'2015, permute developers'
 # built documents.
 #
 # The short X.Y version.
-version = '0.1dev'
+version = '0.1.dev0'
 # The full version, including alpha/beta/rc tags.
 release = '0.1dev'
 
