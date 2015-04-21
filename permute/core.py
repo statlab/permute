@@ -34,7 +34,7 @@ def permute_within_groups(x, group, prng=None):
     Returns
     -------
     permuted : array-like
-      The within group permutation of x.
+        The within group permutation of x.
     """
     permuted = x.copy()
     if prng is None:
@@ -54,7 +54,7 @@ def permute_rows(m, prng=None):
     Parameters
     ----------
     m : array-like
-      A 2-d array
+        A 2-d array
     prng : RandomState instance or None, optional (default=None)
         If RandomState instance, prng is the pseudorandom number generator;
         If None, the pseudorandom number generator is the RandomState
@@ -63,7 +63,7 @@ def permute_rows(m, prng=None):
     Returns
     -------
     None
-      Original matrix is permute in-place, nothing returned
+        Original matrix is permute in-place, nothing returned
     """
     if prng is None:
         prng = RandomState()
@@ -110,32 +110,32 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     Parameters
     ----------
     n : int
-      The number of Bernoulli trials.
+        The number of Bernoulli trials.
     x : int
-      The number of successes.
+        The number of successes.
     cl : float in (0, 1)
-      The desired confidence level.
+        The desired confidence level.
     alternative : {"two-sided", "less", "greater"}
-      Indicates the alternative hypothesis.
+        Indicates the alternative hypothesis.
     p : float in (0, 1)
-      The probability of success in each trial.
+        The probability of success in each trial.
     **kwargs : dict
-      Key word arguments
+        Key word arguments
 
     Returns
     -------
-    ci_low, ci_upp : float
+    tuple
         lower and upper confidence level with coverage (approximately)
         1-alpha.
 
     Notes
     -----
     xtol : float
-      Tolerance
+        Tolerance
     rtol : float
-      Tolerance
+        Tolerance
     maxiter : int
-      Maximum number of iterations.
+        Maximum number of iterations.
     """
     assert alternative in ("two-sided", "less", "greater")
 
@@ -167,55 +167,59 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     Tests the hypothesis that x and y are a random partition of x,y
     against the alternative that x comes from a population with mean
 
-        (a) greater than that of the population from which y comes,
-            if side = 'greater'
-        (b) less than that of the population from which y comes,
-            if side = 'less'
-        (c) different from that of the population from which y comes,
-            if side = 'two-sided'
+    (a) greater than that of the population from which y comes,
+        if side = 'greater'
+    (b) less than that of the population from which y comes,
+        if side = 'less'
+    (c) different from that of the population from which y comes,
+        if side = 'two-sided'
 
     Parameters
     ----------
     x : array-like
-      Sample 1
+        Sample 1
     y : array-like
-      Sample 2
+        Sample 2
     reps : int
-      number of repetitions
+        number of repetitions
     stat : {'mean', 't'}
-      If stat == 'mean', the test statistic is (mean(x) - mean(y))
-      (equivalently, sum(x), since those are monotonically related)
+        The test statistic.
 
-      If stat == 't', the test statistic is the two-sample t-statistic--but
-      the p-value is still estimated by the randomization, approximating
-      the permutation distribution.
-      The t-statistic is computed using scipy.stats.ttest_ind
-      # FIXME: Explanation or example of how to pass in a function,
-      # instead of a str
+        (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
+            (equivalently, sum(x), since those are monotonically related)
+        (b) If stat == 't', the test statistic is the two-sample t-statistic--
+            but the p-value is still estimated by the randomization,
+            approximating the permutation distribution.
+            The t-statistic is computed using scipy.stats.ttest_ind
+        (c) FIXME: Explanation or example of how to pass in a function,
+            instead of a str
     interval : {'upper', 'lower', 'two-sided'}
-      If interval == 'upper', computes an upper confidence bound on the true
-      p-value based on the simulations by inverting Binomial tests.
+        The type of confidence interval
 
-      If interval == 'lower', computes a lower confidence bound on the true
-      p-value based on the simulations by inverting Binomial tests.
-
-      If interval == 'two-sided', computes lower and upper confidence bounds on
-      the true p-value based on the simulations by inverting Binomial tests.
+        (a) If interval == 'upper', computes an upper confidence bound on the
+            true p-value based on the simulations by inverting Binomial tests.
+        (b) If interval == 'lower', computes a lower confidence bound on the
+            true p-value based on the simulations by inverting Binomial tests.
+        (c) If interval == 'two-sided', computes lower and upper confidence
+            bounds on the true p-value based on the simulations by inverting
+            Binomial tests.
     level : float in (0, 1)
-      the confidence limit for the confidence bounds.
+        the confidence limit for the confidence bounds.
 
 
     Returns
     -------
-    output : int
-      the estimated p-value and the test statistic, if level == False
+    float
+        the estimated p-value and the test statistic,
+    float
+        the test statistic
+    tuple
+        These values are only returned if `level` == False
 
-      <estimated p-value, confidence bound on p-value, test statistic>
-      if interval in {'lower','upper'}
-
-      <estimated p-value,
-      [lower confidence bound, upper confidence bound], test statistic>,
-      if interval == 'two-sided'
+        (a) confidence bound on p-value,
+            if interval in {'lower','upper'}
+        (b) [lower confidence bound, upper confidence bound],
+            if interval == 'two-sided'
     """
     prng = RandomState(seed)
     z = np.concatenate([x, y])   # pooled responses
@@ -239,7 +243,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
                    for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return (hits/reps,
-                binom_conf_interval(reps, hits, level, alternative), ts)
+        return (hits/reps, ts,
+                binom_conf_interval(reps, hits, level, alternative))
     else:
         return hits/reps, ts

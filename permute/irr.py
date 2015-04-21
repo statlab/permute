@@ -42,7 +42,7 @@ The test statistic within stratum $s$ is
 .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
               \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
               = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
-                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1).
+                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)).
 
 That is, within each stratum, we count the number of concordant pairs of
 assignments. If all $R$ raters agree whether item $i$ in stratum $s$
@@ -78,19 +78,19 @@ def compute_ts(ratings):
     .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
               \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
               = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
-                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1).
+                (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)).
 
     Parameters
     ----------
     ratings : array_like
-             Input array of dimension [R, Ns]
-             Each row corresponds to the ratings given by a single rater;
-             columns correspond to items rated.
+        Input array of dimension [R, Ns]
+        Each row corresponds to the ratings given by a single rater;
+        columns correspond to items rated.
 
     Returns
     -------
     rho_s : float
-           concordance of the ratings, where perfect concordance is 1.0
+        concordance of the ratings, where perfect concordance is 1.0
     """
     R, Ns = ratings.shape
     y = ratings.sum(0)
@@ -108,18 +108,18 @@ def compute_inverseweight_npc(pvalues, size):
     Parameters
     ----------
     pvalues : array_like
-             Input array of dimension S
-             Each entry corresponds to the p-value for rho_s, the
-             concordance for the s-th stratum.
+        Input array of dimension S
+        Each entry corresponds to the p-value for $\\rho_s$, the
+        concordance for the s-th stratum.
     size : array_like
-             Input array of dimension S
-             Each entry corresponds to the number of items, Ns,
-             in the s-th stratum.
+        Input array of dimension S
+        Each entry corresponds to the number of items, $N_s$,
+        in the s-th stratum.
 
     Returns
     -------
     npc : float
-         combined test statistic
+        combined test statistic
     """
     weights = size ** (-1 / 2)
     return (pvalues * weights).sum()
@@ -129,47 +129,45 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
                      keep_dist=False, seed=None):
     """
     Simulates the permutation distribution of the irr test statistic for
-    a matrix of ratings <ratings>
+    a matrix of ratings ``ratings``
 
-    If obs_ts is not null, computes the reference value of the test
+    If ``obs_ts`` is not ``None``, computes the reference value of the test
     statistic before the first permutation. Otherwise, uses the value
-    obs_ts for comparison.
+    ``obs_ts`` for comparison.
 
-    If <keep_dist>, return the distribution of values of the test statistic;
+    If ``keep_dist``, return the distribution of values of the test statistic;
     otherwise, return only the number of permutations for which the value of
-    the irr test statistic is at least as large as obs_ts.
+    the irr test statistic is at least as large as ``obs_ts``.
 
     Parameters
     ----------
     ratings : array_like
               Input array of dimension [R, Ns]
-
     obs_ts : float
-             if None, obs_ts is calculated as the value of the test statistic
-             for the original data
-
+             if None, ``obs_ts`` is calculated as the value of the test
+             statistic for the original data
     num_perm : int
            number of random permutation of the elements of each row of ratings
-
     keep_dist : bool
                 flag for whether to store and return the array of values of
                 the irr test statistic
 
-
     Returns
     -------
-    out : dict
-        - obs_ts : int
-                 observed value of the test statistic for the input data, or
-                 the input value of obs_ts if obs_ts was given as input
-        - geq : int
-              number of iterations for which the test statistic was greater
-              than or equal to obs_ts
-        - num_perm : int
-              number of permutations
-        - dist : array-like
-               if <keep_dist>, the array of values of the irr test statistic
-               from the num_perm iterations.  Otherwise, null.
+    dict
+        A dictionary containing:
+
+        obs_ts : int
+            observed value of the test statistic for the input data, or
+            the input value of ``obs_ts`` if ``obs_ts`` was given as input
+        geq : int
+            number of iterations for which the test statistic was greater
+            than or equal to ``obs_ts``
+        num_perm : int
+            number of permutations
+        dist : array-like
+            if ``keep_dist``, the array of values of the irr test statistic
+            from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
     r = ratings.copy()
     prng = RandomState(seed)
@@ -196,57 +194,54 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
                       pvalues=None, keep_dist=False):
     """
     Simulates the permutation distribution of the combined NPC test statistic
-    for S matrices of ratings <ratings> corresponding to S strata
+    for S matrices of ratings ``ratings`` corresponding to S strata
 
     If obs_ts is not null, computes the reference value of the test statistic
-    before the first permutation. Otherwise, uses the value obs_ts for
+    before the first permutation. Otherwise, uses the value ``obs_ts`` for
     comparison.
 
-    If <keep_dist>, return the distribution of values of the test statistic;
+    If ``keep_dist``, return the distribution of values of the test statistic;
     otherwise, return only the number of permutations for which the value of
-    the irr test statistic is at least as large as obs_ts.
+    the irr test statistic is at least as large as ``obs_ts``.
 
     Parameters
     ----------
     perm_distr : array_like
-                 Input array of dimension [B, S]
-                 Column s is the permutation distribution of rho_s,
-                 for s=1,...,S
-
+        Input array of dimension [B, S]
+        Column s is the permutation distribution of ``rho_s``,
+        for s=1,...,S
     size : array_like
-             Input array of dimension S
-             Each entry corresponds to the number of items, Ns,
-             in the s-th stratum.
-
+        Input array of dimension S
+        Each entry corresponds to the number of items, Ns,
+        in the s-th stratum.
     obs_npc : float
-             if None, obs_npc is calculated as the value of the test
-             statistic for the original data
-
+        if ``None``, ``obs_npc`` is calculated as the value of the test
+        statistic for the original data
     pvalues : array_like
-             Input array of dimension S
-             Each entry corresponds to the p-value for rho_s, the
-             concordance for the s-th stratum.
-
-
+        Input array of dimension S
+        Each entry corresponds to the p-value for ``rho_s``, the
+        concordance for the s-th stratum.
     keep_dist : bool
-                flag for whether to store and return the array of values
-                of the irr test statistic
+        flag for whether to store and return the array of values
+        of the irr test statistic
 
 
     Returns
     -------
-    out : dict
-        - obs_npc : float
-                 observed value of the test statistic for the input data, or
-                 the input value of obs_ts if obs_ts was given as input
-        - leq : int
-              number of iterations for which the NPC test statistic was less
-              than or equal to obs_npc
-        - num_perm : int
-              B
-        - dist : array-like
-               if <keep_dist>, the array of values of the NPC test statistic
-               from the num_perm iterations.  Otherwise, null.
+    dict
+        A dictionary containing:
+
+        obs_npc : float
+            observed value of the test statistic for the input data, or
+            the input value of ``obs_ts`` if ``obs_ts`` was given as input
+        leq : int
+            number of iterations for which the NPC test statistic was less
+            than or equal to ``obs_npc``
+        num_perm : int
+            number of permutations
+        dist : ndarray
+            if ``keep_dist``, the array of values of the NPC test statistic
+            from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
 
     # Throw an error if both obs_npc and pvalues are None

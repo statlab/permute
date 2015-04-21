@@ -102,8 +102,8 @@ def test_two_sample():
 
     res = two_sample(x, y, seed=42, interval="two-sided")
     expected_pv = 0.66505000000000003
-    expected_ci = (0.0, 0.6675064023707297)
     expected_ts = -0.13990200413154097
+    expected_ci = (0.0, 0.6675064023707297)
     np.testing.assert_equal(res[0], expected_pv)
-    np.testing.assert_almost_equal(res[1], expected_ci)
-    np.testing.assert_equal(res[2], expected_ts)
+    np.testing.assert_equal(res[1], expected_ts)
+    np.testing.assert_almost_equal(res[2], expected_ci)
