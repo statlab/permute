@@ -2,8 +2,6 @@
 
 """
 Stratified permutation tests.
-
-WIP: revisit FIXME w/ PS, reevaluate func names and args
 """
 
 from __future__ import division, print_function, absolute_import
@@ -21,13 +19,14 @@ def corrcoef(x, y, group):
 
     Parameters
     ----------
-    y : array-like
+    x : array-like
     y : array-like
     group : array-like
 
     Returns
     -------
     float
+        The sum of Spearman correlations
     """
     tst = 0.0
     for g in np.unique(group):
@@ -40,12 +39,10 @@ def corrcoef(x, y, group):
 def sim_corr(x, y, group, reps=10**4, prng=None):
     """
     Simulate permutation p-value of stratified Spearman correlation test.
-    Returns test statistic, simulations, left-sided p-value,
-    right-sided p-value, two-sided p-value
 
     Parameters
     ----------
-    y : array-like
+    x : array-like
     y : array-like
     group : array-like
     reps : int
@@ -56,6 +53,9 @@ def sim_corr(x, y, group, reps=10**4, prng=None):
 
     Returns
     -------
+    tuple
+        Returns test statistic, simulations, left-sided p-value,
+        right-sided p-value, two-sided p-value
     """
     t = corrcoef(x, y, group)
     sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
