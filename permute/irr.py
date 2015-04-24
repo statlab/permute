@@ -165,6 +165,8 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
             than or equal to ``obs_ts``
         num_perm : int
             number of permutations
+        pvalue : float
+            geq / num_perm
         dist : array-like
             if ``keep_dist``, the array of values of the irr test statistic
             from the ``num_perm`` iterations.  Otherwise, ``None``.
@@ -187,7 +189,8 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
         for i in range(num_perm):
             permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
-    return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm, "dist": dist}
+    return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm,
+            "pvalue": geq/num_perm, "dist": dist}
 
 
 def simulate_npc_dist(perm_distr, size, obs_npc=None,

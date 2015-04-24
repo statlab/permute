@@ -31,6 +31,7 @@ def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
                      'geq': 624,
                      'obs_ts': 0.51936507936507936,
+                     'pvalue': 0.0624,
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42)
     assert_equal(res1, expected_res1)
@@ -61,6 +62,7 @@ def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                          'geq': 0,
                          'obs_ts': 0.70476190476190481,
+                         'pvalue': 0.0,
                          'num_perm': 10000}
     res_conc = simulate_ts_dist(res2, seed=42)
     assert_equal(res_conc, expected_res_conc)
