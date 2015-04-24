@@ -9,6 +9,7 @@ from ..irr import (compute_ts,
                    compute_inverseweight_npc,
                    simulate_npc_dist)
 
+from ..data import nsgk
 
 R = 10
 Ns = 35
@@ -43,6 +44,19 @@ def test_simulate_ts_dist():
     assert_equal(res2['obs_ts'], expected_res2['obs_ts'])
     assert_equal(res2['num_perm'], expected_res2['num_perm'])
     assert_equal(res2['dist'].shape, (10000,))
+
+def test_with_naomi_data():
+    """ Test irr functionality using Naomi data."""
+    x = d.nsgk()
+    t = x[:, 1, :, :]
+    y = t[:, 0, :]
+    res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42)
+    expected_res = {'dist': array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.]),
+                    'geq': 10,
+                    'num_perm': 10,
+                    'pvalue': 1,
+                    'obs_ts': 1.0}
+    assert_equal(res, expected_res)
 
 
 freq = RNG.choice([0.2, 0.8], Ns)
