@@ -47,11 +47,11 @@ def test_simulate_ts_dist():
 
 def test_with_naomi_data():
     """ Test irr functionality using Naomi data."""
-    x = d.nsgk()
+    x = nsgk()
     t = x[:, 1, :, :]
     y = t[:, 0, :]
     res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42)
-    expected_res = {'dist': array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.]),
+    expected_res = {'dist': np.array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.]),
                     'geq': 10,
                     'num_perm': 10,
                     'pvalue': 1,
