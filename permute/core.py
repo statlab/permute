@@ -119,7 +119,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         Indicates the alternative hypothesis.
     p : float in (0, 1)
         The probability of success in each trial.
-    **kwargs : dict
+    kwargs : dict
         Key word arguments
 
     Returns
