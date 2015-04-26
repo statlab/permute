@@ -5,6 +5,7 @@ User Guide
    :maxdepth: 2
 
    overview.rst
+   eda.rst
    core.rst
    stratified.rst
    irr.rst
