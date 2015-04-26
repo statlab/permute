@@ -24,9 +24,6 @@ def find_duplicate_rows(x, as_string=False):
         12533:16,20,2,8
         12534-17,24,2,8
 
-
-    See
-    ---
     http://stackoverflow.com/questions/8560440/removing-duplicate-columns-and-rows-from-a-numpy-2d-array
     """
     indx = np.lexsort(x.T)
