@@ -34,6 +34,14 @@ def test_simulate_ts_dist():
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42)
     assert_equal(res1, expected_res1)
+    expected_res2 = {'geq': 9457,
+                     'obs_ts': 0.46285714285714286,
+                     'num_perm': 10000}
+    res2 = simulate_ts_dist(res[:5], seed=42, keep_dist=True)
+    assert_equal(res2['geq'], expected_res2['geq'])
+    assert_equal(res2['obs_ts'], expected_res2['obs_ts'])
+    assert_equal(res2['num_perm'], expected_res2['num_perm'])
+    assert_equal(res2['dist'].shape, (10000,))
 
 
 freq = RNG.choice([0.2, 0.8], Ns)
