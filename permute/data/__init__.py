@@ -34,8 +34,7 @@ def load(f):
 
 
 def nsgk():
-    """The
-
+    """NSGK test data for irr.
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
                     delimiter=',', skiprows=1, dtype=np.int)
@@ -44,7 +43,37 @@ def nsgk():
     nz -= 1
     for r in nz:
         x[tuple(r)] = 1
-    return x
+
+    # given order: time_stamp,domain,video,rater
+    # desired order: domain,video,rater,time_stamp
+    x = x.transpose(1, 2, 3, 0)
+    # hardcoding the number of timestamps per video
+    time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]
+    p1 = [[m[:, :time_stamps[i]] for i, m in enumerate(n)]for n in x]
+
+    ## Alternatively, I could return a 2D object array with
+    ##  rater x time_stamp(video) matrices as entries
+    ## Not sure which is better, so I will wait to see how I use it.
+    # p1 = np.zeros(x.shape[:2], dtype=object)
+    # for i, n in enumerate(x):
+    #     for j, m in enumerate(n):
+    #        p1[i, j] = m
+
+    return p1
+
+#def another_poss():
+#    nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
+#                    delimiter=',', skiprows=1, dtype=np.int)
+#    _, nd, nv, nr = tuple(nz.max(axis=0))
+#    dv = np.zeros((nd, nv), dtype=object)
+#    time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]
+#    for n in range(nd):
+#        for v in range(nv):
+#            dv[n, v] = np.zeros((nr, time_stamps[v]), dtype=np.int)
+#    nz -= 1
+#    for _ts, _d, _v, _r in nz:
+#        dv[_d, _v][_r, _ts] = 1 
+#
 
 def botulinum():
     """The
