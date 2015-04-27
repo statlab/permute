@@ -57,7 +57,7 @@ by Basso D., Pesarin F., Salmaso L., Solari A.
 """
 
 import os.path as _osp
-import imp as _imp
+import importlib as _imp
 import functools as _functools
 import warnings as _warnings
 
@@ -73,7 +73,7 @@ else:
 
 
 try:
-    _imp.find_module('nose')
+    _imp.import_module('nose')
 except ImportError:
     def _test(verbose=False):
         """This would run all unit tests, but nose couldn't be
