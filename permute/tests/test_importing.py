@@ -12,6 +12,8 @@ from nose.tools import raises
 def test_nose_import_error():
     _tmp = sys.modules['nose']
     sys.modules['nose'] = None
+    reload(permute)
     from permute import _test
     _test()
     sys.modules['nose'] = _tmp
+    reload(permute)

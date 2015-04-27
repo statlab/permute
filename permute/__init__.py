@@ -87,12 +87,16 @@ except ImportError:
         """
         raise ImportError("Could not load nose. Doctests not available.")
 else:
-    def _test(doctest=False, verbose=False):
+    def _test(doctest=False, verbose=False, dry_run=False, run_all=True):
         """Run all unit tests."""
         import nose
         args = ['', pkg_dir, '--exe', '--ignore-files=^_test']
         if verbose:
             args.extend(['-v', '-s'])
+        if dry_run:
+            args.extend(['--collect-only'])
+        if not run_all:
+            args.extend(['-A', 'not slow'])
         if doctest:
             args.extend(['--with-doctest', '--ignore-files=^\.',
                          '--ignore-files=^setup\.py$$', '--ignore-files=test'])

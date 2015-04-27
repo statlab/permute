@@ -4,6 +4,7 @@ import numpy as np
 from numpy.random import RandomState
 
 from nose.tools import assert_almost_equal, assert_less
+from nose.plugins.attrib import attr
 
 from ..stratified import stratified_permutationtest as spt
 from ..stratified import corrcoef, sim_corr
@@ -31,6 +32,7 @@ def test_corrcoef():
     np.testing.assert_equal(res1, res2)
 
 
+@attr('slow')
 def test_sim_corr():
     prng = RandomState(42)
     x = prng.rand(10)
