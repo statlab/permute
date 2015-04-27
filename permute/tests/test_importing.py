@@ -22,4 +22,5 @@ def test_permute_tst():
     from .. import _test
     _test(dry_run=True)
     _test(doctest=True, dry_run=True)
+    _test(run_all=True, dry_run=True)
     _test(doctest=True, verbose=True, dry_run=True)
