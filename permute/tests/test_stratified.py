@@ -3,7 +3,7 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 from numpy.random import RandomState
 
-from nose.tools import assert_almost_equal, assert_less
+from nose.tools import assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
 
 from ..stratified import stratified_permutationtest as spt
@@ -21,6 +21,13 @@ def test_stratified_permutationtest():
     assert_less(res[1], 0.01)
     assert_almost_equal(res[3], res1[3])
 
+
+#@raises(ValueError)
+def test_stratified_permutationtest_error():
+    group = np.array([1, 2, 3])
+    condition = np.array([1, 2, 3])
+    response = np.zeros_like(group)
+    res = spt(group, condition, response, iterations=1000, seed=42)
 
 def test_corrcoef():
     prng = RandomState(42)
