@@ -61,6 +61,20 @@ def nsgk():
 
     return p1
 
+#def another_poss():
+#    nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
+#                    delimiter=',', skiprows=1, dtype=np.int)
+#    _, nd, nv, nr = tuple(nz.max(axis=0))
+#    dv = np.zeros((nd, nv), dtype=object)
+#    time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]
+#    for n in range(nd):
+#        for v in range(nv):
+#            dv[n, v] = np.zeros((nr, time_stamps[v]), dtype=np.int)
+#    nz -= 1
+#    for _ts, _d, _v, _r in nz:
+#        dv[_d, _v][_r, _ts] = 1 
+#
+
 def botulinum():
     """The
 
