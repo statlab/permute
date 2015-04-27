@@ -105,6 +105,7 @@ else:
                 _warnings.simplefilter("ignore")
                 success = nose.run('permute', argv=args)
         else:
+            print(args)
             success = nose.run('permute', argv=args)
         # Return sys.exit code
         if success:

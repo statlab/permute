@@ -12,6 +12,14 @@ from nose.tools import raises
 def test_nose_import_error():
     _tmp = sys.modules['nose']
     sys.modules['nose'] = None
+    try:
+        from .. import _test
+        _test(dry_run=True)
+    finally:
+        sys.modules['nose'] = _tmp
+
+def test_permute_tst():
     from .. import _test
     _test(dry_run=True)
-    sys.modules['nose'] = _tmp
+    _test(doctest=True, dry_run=True)
+    _test(doctest=True, verbose=True, dry_run=True)
