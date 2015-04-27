@@ -71,7 +71,6 @@ def test_irr_concordance():
     assert_almost_equal(rho_s2, 0.70476190476190481)
 
 
-#@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                          'geq': 0,
@@ -107,3 +106,13 @@ def test_simulate_npc_dist():
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
     assert_equal(obs_npc_res, expected_npc_res)
+    expected_npc_res1 = {'num_perm': 10000,
+                        'leq': 5,
+                        'obs_npc':  0.010547525099011886}
+    obs_npc_res1 = simulate_npc_dist(
+        rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue, keep_dist=True)
+    assert_equal(obs_npc_res1['num_perm'], expected_npc_res1['num_perm'])
+    assert_equal(obs_npc_res1['leq'], expected_npc_res1['leq'])
+    assert_equal(obs_npc_res1['obs_npc'], expected_npc_res1['obs_npc'])
+    assert_equal(len(obs_npc_res1), 4)
+    assert_almost_equal(obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
