@@ -57,7 +57,7 @@ by Basso D., Pesarin F., Salmaso L., Solari A.
 """
 
 import os.path as _osp
-import imp as _imp
+import importlib as _imp
 import functools as _functools
 import warnings as _warnings
 
@@ -73,7 +73,7 @@ else:
 
 
 try:
-    _imp.find_module('nose')
+    _imp.import_module('nose')
 except ImportError:
     def _test(verbose=False):
         """This would run all unit tests, but nose couldn't be
@@ -87,12 +87,16 @@ except ImportError:
         """
         raise ImportError("Could not load nose. Doctests not available.")
 else:
-    def _test(doctest=False, verbose=False):
+    def _test(doctest=False, verbose=False, dry_run=False, run_all=True):
         """Run all unit tests."""
         import nose
         args = ['', pkg_dir, '--exe', '--ignore-files=^_test']
         if verbose:
             args.extend(['-v', '-s'])
+        if dry_run:
+            args.extend(['--collect-only'])
+        if not run_all:
+            args.extend(['-A', 'not slow'])
         if doctest:
             args.extend(['--with-doctest', '--ignore-files=^\.',
                          '--ignore-files=^setup\.py$$', '--ignore-files=test'])
@@ -101,6 +105,7 @@ else:
                 _warnings.simplefilter("ignore")
                 success = nose.run('permute', argv=args)
         else:
+            print(args)
             success = nose.run('permute', argv=args)
         # Return sys.exit code
         if success:

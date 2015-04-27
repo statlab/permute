@@ -1,5 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
+from nose.plugins.attrib import attr
+
 import numpy as np
 from numpy.random import RandomState
 
@@ -81,6 +83,7 @@ def test_permute_rows():
     np.testing.assert_equal(x.min(), 1)
 
 
+@attr('slow')
 def test_two_sample():
     prng = RandomState(42)
 

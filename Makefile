@@ -7,6 +7,9 @@ clean:
 	find . -name "*.so" -o -name "*.pyc" -o -name "*.pyx.md5" | xargs rm -f
 
 test:
+	python -c "import permute, sys, io; sys.exit(permute.test_verbose(run_all=False))"
+
+test-all:
 	python -c "import permute, sys, io; sys.exit(permute.test_verbose())"
 
 doctest:
