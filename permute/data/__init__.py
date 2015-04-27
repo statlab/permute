@@ -34,8 +34,7 @@ def load(f):
 
 
 def nsgk():
-    """The
-
+    """NSGK test data for irr.
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
                     delimiter=',', skiprows=1, dtype=np.int)
@@ -44,7 +43,16 @@ def nsgk():
     nz -= 1
     for r in nz:
         x[tuple(r)] = 1
-    return x
+
+    # given order: time_stamp,domain,video,rater
+    # desired order: domain,video,rater,time_stamp
+    x = x.swapaxes(0,1)
+    x = x.swapaxes(1,2)
+    x = x.swapaxes(2,3)
+    # hardcoding the number of timestamps per video
+    time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]
+    p1 = [[m[:, :time_stamps[i]] for i, m in enumerate(n)]for n in x]
+    return p1
 
 def botulinum():
     """The
