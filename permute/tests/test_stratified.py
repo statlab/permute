@@ -7,6 +7,7 @@ from nose.tools import assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
 
 from ..stratified import stratified_permutationtest as spt
+from ..stratified import stratified_permutationtest_mean as sptm
 from ..stratified import corrcoef, sim_corr
 
 
@@ -22,12 +23,14 @@ def test_stratified_permutationtest():
     assert_almost_equal(res[3], res1[3])
 
 
-#@raises(ValueError)
-def test_stratified_permutationtest_error():
-    group = np.array([1, 2, 3])
-    condition = np.array([1, 2, 3])
+@raises(ValueError)
+def test_stratified_permutationtest_mean_error():
+    group = np.array([1, 1, 1])
+    condition = np.array([2, 2, 2])
     response = np.zeros_like(group)
-    res = spt(group, condition, response, iterations=1000, seed=42)
+    groups = np.unique(group)
+    conditions = np.unique(condition)
+    res = sptm(group, condition, response, groups, conditions)
 
 def test_corrcoef():
     prng = RandomState(42)

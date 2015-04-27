@@ -9,6 +9,7 @@ from ..irr import (compute_ts,
                    compute_inverseweight_npc,
                    simulate_npc_dist)
 
+from ..data import nsgk
 
 R = 10
 Ns = 35
@@ -31,6 +32,7 @@ def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
                      'geq': 624,
                      'obs_ts': 0.51936507936507936,
+                     'pvalue': 0.0624,
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42)
     assert_equal(res1, expected_res1)
@@ -42,6 +44,19 @@ def test_simulate_ts_dist():
     assert_equal(res2['obs_ts'], expected_res2['obs_ts'])
     assert_equal(res2['num_perm'], expected_res2['num_perm'])
     assert_equal(res2['dist'].shape, (10000,))
+
+def test_with_naomi_data():
+    """ Test irr functionality using Naomi data."""
+    x = nsgk()
+    t = x[:, 1, :, :]
+    y = t[:, 0, :]
+    res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42)
+    expected_res = {'dist': np.array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.]),
+                    'geq': 10,
+                    'num_perm': 10,
+                    'pvalue': 1,
+                    'obs_ts': 1.0}
+    assert_equal(res, expected_res)
 
 
 freq = RNG.choice([0.2, 0.8], Ns)
@@ -56,11 +71,11 @@ def test_irr_concordance():
     assert_almost_equal(rho_s2, 0.70476190476190481)
 
 
-#@np.testing.decorators.skipif(True)
 def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                          'geq': 0,
                          'obs_ts': 0.70476190476190481,
+                         'pvalue': 0.0,
                          'num_perm': 10000}
     res_conc = simulate_ts_dist(res2, seed=42)
     assert_equal(res_conc, expected_res_conc)
@@ -91,3 +106,13 @@ def test_simulate_npc_dist():
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
     assert_equal(obs_npc_res, expected_npc_res)
+    expected_npc_res1 = {'num_perm': 10000,
+                        'leq': 5,
+                        'obs_npc':  0.010547525099011886}
+    obs_npc_res1 = simulate_npc_dist(
+        rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue, keep_dist=True)
+    assert_equal(obs_npc_res1['num_perm'], expected_npc_res1['num_perm'])
+    assert_equal(obs_npc_res1['leq'], expected_npc_res1['leq'])
+    assert_equal(obs_npc_res1['obs_npc'], expected_npc_res1['obs_npc'])
+    assert_equal(len(obs_npc_res1), 4)
+    assert_almost_equal(obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
