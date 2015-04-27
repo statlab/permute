@@ -46,12 +46,19 @@ def nsgk():
 
     # given order: time_stamp,domain,video,rater
     # desired order: domain,video,rater,time_stamp
-    x = x.swapaxes(0,1)
-    x = x.swapaxes(1,2)
-    x = x.swapaxes(2,3)
+    x = x.transpose(1, 2, 3, 0)
     # hardcoding the number of timestamps per video
     time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]
     p1 = [[m[:, :time_stamps[i]] for i, m in enumerate(n)]for n in x]
+
+    ## Alternatively, I could return a 2D object array with
+    ##  rater x time_stamp(video) matrices as entries
+    ## Not sure which is better, so I will wait to see how I use it.
+    # p1 = np.zeros(x.shape[:2], dtype=object)
+    # for i, n in enumerate(x):
+    #     for j, m in enumerate(n):
+    #        p1[i, j] = m
+
     return p1
 
 def botulinum():
