@@ -1,5 +1,5 @@
 # Tools for working with travis-ci
-export WHEELHOUSE="http://travis-wheels.scikit-image.org/"
+export WHEELHOUSE="--trusted-host http://travis-wheels.scikit-image.org/"
 
 retry () {
     # https://gist.github.com/fungusakafungus/1026804
