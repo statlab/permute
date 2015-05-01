@@ -158,7 +158,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               interval=False, level=0.95, seed=None):
+               keep_dist=False, interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -173,6 +173,10 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         if side = 'less'
     (c) different from that of the population from which y comes,
         if side = 'two-sided'
+
+    If ``keep_dist``, return the distribution of values of the test statistic;
+    otherwise, return only the number of permutations for which the value of
+    the test statistic and p-value.
 
     Parameters
     ----------
@@ -193,6 +197,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) FIXME: Explanation or example of how to pass in a function,
             instead of a str
+    keep_dist : bool
+        flag for whether to store and return the array of values
+        of the irr test statistic
     interval : {'upper', 'lower', 'two-sided'}
         The type of confidence interval
 
@@ -239,8 +246,19 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     }
 
     tst = theStat[alternative](z)
-    hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
-                   for i in range(reps)])
+    if keep_dist:
+       dist = []
+       for i in range(reps):
+           dist.append( theStat[alternative](prng.permutation(z)) )
+       hits = np.sum(dist >= tst)
+       if interval in ["upper", "lower", "two-sided"]:
+           return (hits/reps, tst,
+                   binom_conf_interval(reps, hits, level, alternative), dist)
+       else:
+           return hits/reps, tst, dist 
+    else:
+        hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
+                       for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
         return (hits/reps, tst,
