@@ -230,20 +230,20 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         't': lambda u: ttest_ind(
             u[:len(y)], u[len(y):], equal_var=True)[0]
     }
-    tst = stats[stat]
+    tst_fun = stats[stat]
 
     theStat = {
-        'greater': tst,
-        'less': lambda u: -tst(u),
-        'two-sided': lambda u: math.fabs(tst(u))
+        'greater': tst_fun,
+        'less': lambda u: -tst_fun(u),
+        'two-sided': lambda u: math.fabs(tst_fun(u))
     }
 
-    ts = theStat[alternative](z)
-    hits = np.sum([(theStat[alternative](prng.permutation(z)) >= ts)
+    tst = theStat[alternative](z)
+    hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
                    for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return (hits/reps, ts,
+        return (hits/reps, tst,
                 binom_conf_interval(reps, hits, level, alternative))
     else:
-        return hits/reps, ts
+        return hits/reps, tst
