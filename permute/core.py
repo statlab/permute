@@ -89,8 +89,8 @@ def corr(x, y, reps=10**4, prng=None):
     Returns
     -------
     tuple
-        Returns test statistic, simulations, left-sided p-value,
-        right-sided p-value, two-sided p-value
+        Returns test statistic, left-sided p-value,
+        right-sided p-value, two-sided p-value, simulated distribution
     """
     if prng is None:
         prng = RandomState()
