@@ -94,12 +94,12 @@ def corr(x, y, reps=10**4, prng=None):
     """
     if prng is None:
         prng = RandomState()
-    t = np.corrcoef(x, y)[0, 1]
+    tst = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
-    left_pv = np.sum(sims <= t)/reps
-    right_pv = np.sum(sims >= t)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
-    return t, left_pv, right_pv, two_sided_pv, sims
+    left_pv = np.sum(sims <= tst)/reps
+    right_pv = np.sum(sims >= tst)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(tst))/reps
+    return tst, left_pv, right_pv, two_sided_pv, sims
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -210,7 +210,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     Returns
     -------
     float
-        the estimated p-value and the test statistic,
+        the estimated p-value
     float
         the test statistic
     tuple
