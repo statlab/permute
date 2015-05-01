@@ -7,13 +7,13 @@ clean:
 	find . -name "*.so" -o -name "*.pyc" -o -name "*.pyx.md5" | xargs rm -f
 
 test:
-	python -c "import permute, sys, io; sys.exit(permute.test_verbose(run_all=False))"
+	nosetests permute -A 'not slow' --ignore-files=^_test -v -s
 
 test-all:
-	python -c "import permute, sys, io; sys.exit(permute.test_verbose())"
+	nosetests permute --ignore-files=^_test -v -s
 
 doctest:
-	python -c "import permute, sys, io; sys.exit(permute.doctest_verbose())"
+	nosetests permute --ignore-files=^_test -v -s --with-doctest --ignore-files=^\. --ignore-files=^setup\.py$$ --ignore-files=test
 
 coverage:
 	nosetests permute --with-coverage --cover-package=permute
