@@ -66,7 +66,7 @@ data_dir = _osp.join(pkg_dir, 'data')
 
 try:
     from .version import version as __version__
-except ImportError:
+except (ImportError):
     __version__ = "unbuilt-dev"
 else:
     del version

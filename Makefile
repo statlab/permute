@@ -16,4 +16,4 @@ doctest:
 	nosetests permute --ignore-files=^_test -v -s --with-doctest --ignore-files=^\. --ignore-files=^setup\.py$$ --ignore-files=test
 
 coverage:
-	nosetests permute --with-coverage --cover-package=permute --ignore-files=^_test -v -s
+	nosetests permute --with-coverage --cover-package=permute --ignore-files=^_test  -v -s

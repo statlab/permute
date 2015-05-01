@@ -80,6 +80,6 @@ if __name__ == "__main__":
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
 
-        packages=['permute', 'permute.data', 'permute.tests'],
+        packages=['permute', 'permute.data', 'permute.tests', 'permute.data.tests'],
         package_data={'permute.data': ['*.csv', '*/*.csv', '*/*/*.csv']}
     )
