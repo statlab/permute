@@ -59,6 +59,19 @@ def test_with_naomi_data():
                     'obs_ts': 1.0}
     assert_equal(res, expected_res)
 
+    # FIXME: this is how the analysis will be run. I just put it in the test file temporarily
+    time_stamps = np.array([36, 32, 35, 37, 31, 35, 40, 32])
+    category = []
+    #for i in range(len(nsgk)):
+    for i in [14,15,16,17,18]:
+    	d = []
+    	tst = []
+    	for j in range(len(x[i])):
+    		res =  simulate_ts_dist(x[i][j], keep_dist = True)
+    		d.append(res['dist'])
+    		tst.append(res['obs_ts'])
+    	perm_distr = np.asarray(d).transpose()
+    	category.append(  simulate_npc_dist(perm_distr, size = time_stamps, obs_npc=tst, keep_dist=False))
 
 freq = RNG.choice([0.2, 0.8], Ns)
 res2 = np.zeros((R, Ns))
