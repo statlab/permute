@@ -229,17 +229,17 @@ Working with ``np.random``
 --------------------------
 
 If you need to set a random seed, do **not** use ``np.random.seed()``.  Using
-``np.random.seed()`` can produce inconsistent results.  Instead you should create
-an instance of ``np.random.RandomState()`` with your chosen seed.  Here is a tiny
+``np.random.seed()`` can produce inconsistent results.  Instead you should use
+:func:`get_prng` with your chosen seed.  Here is a tiny
 example of how you might create a function that generates random numbers::
 
-    from numpy.random import RandomState
+    from permute.utils import get_prng
 
     def func1(seed=None):
-        prng = RandomState(seed)
+        prng = get_prng(seed)
         x = prng.randint(10)
         return x
 
-If ``seed=None``, then ``RandomState(seed)`` will try to read data from the
+If ``seed=None``, then ``get_prng(seed)`` will try to read data from the
 system (e.g., ``/dev/urandom`` or the system clock) to initialize the
-pseudo-random number generator.
+pseudo-random number generator.  See the docstring for more details.
