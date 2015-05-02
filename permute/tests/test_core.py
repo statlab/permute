@@ -60,11 +60,11 @@ def test_binom_conf_interval():
     expected = (0.05154625578928545, 0.6915018049393984)
     np.testing.assert_equal(res, expected)
 
-    res2 = binom_conf_interval(10, 5, cl=0.95, alternative="greater")
+    res2 = binom_conf_interval(10, 5, cl=0.95, alternative="upper")
     expected2 = (0.0, 0.7775588989918742)
     np.testing.assert_equal(res2, expected2)
 
-    res3 = binom_conf_interval(10, 5, cl=0.95, alternative="less")
+    res3 = binom_conf_interval(10, 5, cl=0.95, alternative="lower")
     expected3 = (0.22244110100812578, 1.0)
     np.testing.assert_equal(res3, expected3)
 
@@ -106,7 +106,7 @@ def test_two_sample():
     res = two_sample(x, y, seed=42, interval="two-sided")
     expected_pv = 0.66505000000000003
     expected_ts = -0.13990200413154097
-    expected_ci = (0.0, 0.6675064023707297)
+    expected_ci = (0.6621149803107692, 0.6679754440683887)
     np.testing.assert_equal(res[0], expected_pv)
     np.testing.assert_equal(res[1], expected_ts)
     np.testing.assert_almost_equal(res[2], expected_ci)
