@@ -253,7 +253,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
        hits = np.sum(dist >= tst)
        if interval in ["upper", "lower", "two-sided"]:
            return (hits/reps, tst,
-                   binom_conf_interval(reps, hits, level, alternative), dist)
+                   binom_conf_interval(reps, hits, level, interval), dist)
        else:
            return hits/reps, tst, dist 
     else:
@@ -262,6 +262,6 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
     if interval in ["upper", "lower", "two-sided"]:
         return (hits/reps, tst,
-                binom_conf_interval(reps, hits, level, alternative))
+                binom_conf_interval(reps, hits, level, interval))
     else:
         return hits/reps, tst
