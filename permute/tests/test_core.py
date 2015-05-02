@@ -103,14 +103,21 @@ def test_two_sample():
     expected = (0.66505000000000003, -0.13990200413154097)
     np.testing.assert_equal(res, expected)
 
-    res = two_sample(x, y, seed=42, interval="two-sided")
+    res = two_sample(x, y, seed=42, interval="upper")
     expected_pv = 0.66505000000000003
     expected_ts = -0.13990200413154097
-    expected_ci = (0.6621149803107692, 0.6679754440683887)
+    expected_ci = (0.0, 0.6675064023707297)
     np.testing.assert_equal(res[0], expected_pv)
     np.testing.assert_equal(res[1], expected_ts)
     np.testing.assert_almost_equal(res[2], expected_ci)
-
+    
+    res = two_sample(x, y, seed=42, interval="lower")
+    expected_ci = (0.6625865251964975, 1.0)
+    np.testing.assert_almost_equal(res[2], expected_ci)
+    res = two_sample(x, y, seed=42, interval="two-sided")
+    expected_ci = (0.6621149803107692, 0.6679754440683887)
+    np.testing.assert_almost_equal(res[2], expected_ci)
+    
     res = two_sample(x, y, seed=42, keep_dist=True)
     exp_dist_firstfive = [0.089396492796047111,
                           0.17390295863272254,
