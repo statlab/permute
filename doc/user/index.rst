@@ -6,6 +6,7 @@ User Guide
 
    overview.rst
    data.rst
+   utils.rst
    eda.rst
    core.rst
    stratified.rst

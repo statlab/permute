@@ -66,10 +66,9 @@ where the nonnegative weights $\{w_s\}$ are chosen in some sensible manner
 from __future__ import division, print_function, absolute_import
 
 import numpy as np
-from numpy.random import RandomState
 
 from .core import permute_rows
-
+from .utils import get_prng
 
 def compute_ts(ratings):
     """
@@ -151,6 +150,11 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
     keep_dist : bool
                 flag for whether to store and return the array of values of
                 the irr test statistic
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
     Returns
     -------
@@ -172,7 +176,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
             from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
     r = ratings.copy()
-    prng = RandomState(seed)
+    prng = get_prng(seed)
 
     if obs_ts is None:
         obs_ts = compute_ts(r)

@@ -9,14 +9,12 @@ from __future__ import division, print_function, absolute_import
 import math
 
 import numpy as np
-from numpy.random import RandomState
-
 from scipy.optimize import brentq
-
 from scipy.stats import (binom, ttest_ind)
 
+from .utils import get_prng
 
-def permute_within_groups(x, group, prng=None):
+def permute_within_groups(x, group, seed=None):
     """
     Permutation of condition within each group.
 
@@ -26,19 +24,19 @@ def permute_within_groups(x, group, prng=None):
         A 1-d array indicating treatment.
     group : array-like
         A 1-d array indicating group membership
-    prng : RandomState instance or None, optional (default=None)
-        If RandomState instance, prng is the pseudorandom number generator;
+    seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`.
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
     Returns
     -------
     permuted : array-like
         The within group permutation of x.
     """
+    prng = get_prng(seed)
     permuted = x.copy()
-    if prng is None:
-        prng = RandomState()
 
     # (avoid additional flops) -- maybe memoize
     for g in np.unique(group):
@@ -47,7 +45,7 @@ def permute_within_groups(x, group, prng=None):
     return permuted
 
 
-def permute_rows(m, prng=None):
+def permute_rows(m, seed=None):
     """
     Permute the rows of a matrix in-place
 
@@ -55,24 +53,24 @@ def permute_rows(m, prng=None):
     ----------
     m : array-like
         A 2-d array
-    prng : RandomState instance or None, optional (default=None)
-        If RandomState instance, prng is the pseudorandom number generator;
+    seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`.
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
     Returns
     -------
     None
         Original matrix is permute in-place, nothing returned
     """
-    if prng is None:
-        prng = RandomState()
+    prng = get_prng(seed)
 
     for row in m:
         prng.shuffle(row)
 
 
-def corr(x, y, reps=10**4, prng=None):
+def corr(x, y, reps=10**4, seed=None):
     """
     Simulate permutation p-value for Spearman correlation coefficient
 
@@ -81,10 +79,12 @@ def corr(x, y, reps=10**4, prng=None):
     x : array-like
     y : array-like
     reps : int
-    prng : RandomState instance or None, optional (default=None)
-        If RandomState instance, prng is the pseudorandom number generator;
+    seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`.
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
 
     Returns
     -------
@@ -92,8 +92,7 @@ def corr(x, y, reps=10**4, prng=None):
         Returns test statistic, left-sided p-value,
         right-sided p-value, two-sided p-value, simulated distribution
     """
-    if prng is None:
-        prng = RandomState()
+    prng = get_prng(seed)
     tst = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
     left_pv = np.sum(sims <= tst)/reps
@@ -214,6 +213,11 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             Binomial tests.
     level : float in (0, 1)
         the confidence limit for the confidence bounds.
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
 
     Returns
@@ -230,7 +234,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         (b) [lower confidence bound, upper confidence bound],
             if interval == 'two-sided'
     """
-    prng = RandomState(seed)
+    prng = get_prng(seed)
     z = np.concatenate([x, y])   # pooled responses
     # FIXME: Type check: we may want to pass in a function for argument 'stat'
     # FIXME: If function, use that. Otherwise, look in the dictionary

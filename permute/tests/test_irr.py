@@ -45,13 +45,14 @@ def test_simulate_ts_dist():
     assert_equal(res2['num_perm'], expected_res2['num_perm'])
     assert_equal(res2['dist'].shape, (10000,))
 
+
 def test_with_naomi_data():
     """ Test irr functionality using Naomi data."""
     x = nsgk()
     t = x[1]
     y = t[0]
     res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42)
-    expected_res = {'dist': np.array([ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.]),
+    expected_res = {'dist': np.array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]),
                     'geq': 10,
                     'num_perm': 10,
                     'pvalue': 1,
@@ -102,17 +103,18 @@ def test_simulate_npc_dist():
     expected_npc_res = {'dist': None,
                         'num_perm': 10000,
                         'leq': 5,
-                        'obs_npc':  0.010547525099011886}
+                        'obs_npc': 0.010547525099011886}
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
     assert_equal(obs_npc_res, expected_npc_res)
     expected_npc_res1 = {'num_perm': 10000,
-                        'leq': 5,
-                        'obs_npc':  0.010547525099011886}
+                         'leq': 5,
+                         'obs_npc':  0.010547525099011886}
     obs_npc_res1 = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue, keep_dist=True)
     assert_equal(obs_npc_res1['num_perm'], expected_npc_res1['num_perm'])
     assert_equal(obs_npc_res1['leq'], expected_npc_res1['leq'])
     assert_equal(obs_npc_res1['obs_npc'], expected_npc_res1['obs_npc'])
     assert_equal(len(obs_npc_res1), 4)
-    assert_almost_equal(obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
+    assert_almost_equal(
+        obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))

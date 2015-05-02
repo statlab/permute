@@ -169,7 +169,7 @@ categories:
 
 So your commit message might look something like this::
 
-    TEST: relax test threshold slightly
+    TST: relax test threshold slightly
 
     Attempted fix for failure on windows test run when arrays are in fact
     very close (within 6 dp).
@@ -205,11 +205,20 @@ To measure the test coverage, install
 This will print a report with one line for each file in `permute`,
 detailing the test coverage::
 
-  Name                                             Stmts   Exec  Cover   Missing
-  ------------------------------------------------------------------------------
-  permute                                              0      0   100%
-  ...
+  Name                 Stmts   Miss Branch BrMiss  Cover   Missing
+  ----------------------------------------------------------------
+  permute                 43      6     10      1    87%   72, 77-88
+  permute.core            55      0     30      4    95%
+  permute.data            45      0      2      0   100%
+  permute.eda             22      0      8      0   100%
+  permute.irr             52      0     20      2    97%
+  permute.stratified      44      0     16      4    93%
+  ----------------------------------------------------------------
+  TOTAL                  261      6     86     11    95%
+  ----------------------------------------------------------------------
+  Ran 35 tests in 37.199s
 
+  OK
 
 Bugs
 ----
@@ -220,17 +229,17 @@ Working with ``np.random``
 --------------------------
 
 If you need to set a random seed, do **not** use ``np.random.seed()``.  Using
-``np.random.seed()`` can produce inconsistent results.  Instead you should create
-an instance of ``np.random.RandomState()`` with your chosen seed.  Here is a tiny
+``np.random.seed()`` can produce inconsistent results.  Instead you should use
+:func:`get_prng` with your chosen seed.  Here is a tiny
 example of how you might create a function that generates random numbers::
 
-    from numpy.random import RandomState
+    from permute.utils import get_prng
 
     def func1(seed=None):
-        prng = RandomState(seed)
+        prng = get_prng(seed)
         x = prng.randint(10)
         return x
 
-If ``seed=None``, then ``RandomState(seed)`` will try to read data from the
+If ``seed=None``, then ``get_prng(seed)`` will try to read data from the
 system (e.g., ``/dev/urandom`` or the system clock) to initialize the
-pseudo-random number generator.
+pseudo-random number generator.  See the docstring for more details.
