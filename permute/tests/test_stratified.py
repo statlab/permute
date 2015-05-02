@@ -48,6 +48,7 @@ def test_stratified_permutationtest_mean_error():
     conditions = np.unique(condition)
     res = sptm(group, condition, response, groups, conditions)
 
+
 def test_corrcoef():
     prng = RandomState(42)
     x = prng.rand(10)
