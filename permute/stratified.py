@@ -54,16 +54,16 @@ def sim_corr(x, y, group, reps=10**4, prng=None):
     Returns
     -------
     tuple
-        Returns test statistic, simulations, left-sided p-value,
-        right-sided p-value, two-sided p-value
+        Returns test statistic, left-sided p-value,
+        right-sided p-value, two-sided p-value, simulated distribution
     """
-    t = corrcoef(x, y, group)
+    tst = corrcoef(x, y, group)
     sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
-    left_pv = np.sum(sims <= t)/reps
-    right_pv = np.sum(sims >= t)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
-    return t, left_pv, right_pv, two_sided_pv, sims
+    left_pv = np.sum(sims <= tst)/reps
+    right_pv = np.sum(sims >= tst)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(tst))/reps
+    return tst, left_pv, right_pv, two_sided_pv, sims
 
 
 def stratified_permutationtest_mean(group, condition, response,
@@ -152,5 +152,5 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
                                     response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
-        pLeft, pRight, pBoth = [np.count_nonzero(c)/iterations for c in conds]
-        return pLeft, pRight, pBoth, tst, dist
+        left_pv, right_pv, two_sided_pv = [np.count_nonzero(c)/iterations for c in conds]
+        return left_pv, right_pv, two_sided_pv, tst, dist

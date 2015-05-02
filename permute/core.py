@@ -89,17 +89,17 @@ def corr(x, y, reps=10**4, prng=None):
     Returns
     -------
     tuple
-        Returns test statistic, simulations, left-sided p-value,
-        right-sided p-value, two-sided p-value
+        Returns test statistic, left-sided p-value,
+        right-sided p-value, two-sided p-value, simulated distribution
     """
     if prng is None:
         prng = RandomState()
-    t = np.corrcoef(x, y)[0, 1]
+    tst = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
-    left_pv = np.sum(sims <= t)/reps
-    right_pv = np.sum(sims >= t)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(t))/reps
-    return t, left_pv, right_pv, two_sided_pv, sims
+    left_pv = np.sum(sims <= tst)/reps
+    right_pv = np.sum(sims >= tst)/reps
+    two_sided_pv = np.sum(np.abs(sims) >= np.abs(tst))/reps
+    return tst, left_pv, right_pv, two_sided_pv, sims
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -158,7 +158,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               interval=False, level=0.95, seed=None):
+               keep_dist=False, interval=False, level=0.95, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -173,6 +173,10 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         if side = 'less'
     (c) different from that of the population from which y comes,
         if side = 'two-sided'
+
+    If ``keep_dist``, return the distribution of values of the test statistic;
+    otherwise, return only the number of permutations for which the value of
+    the test statistic and p-value.
 
     Parameters
     ----------
@@ -193,6 +197,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) FIXME: Explanation or example of how to pass in a function,
             instead of a str
+    keep_dist : bool
+        flag for whether to store and return the array of values
+        of the irr test statistic
     interval : {'upper', 'lower', 'two-sided'}
         The type of confidence interval
 
@@ -210,7 +217,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     Returns
     -------
     float
-        the estimated p-value and the test statistic,
+        the estimated p-value
     float
         the test statistic
     tuple
@@ -230,20 +237,31 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         't': lambda u: ttest_ind(
             u[:len(y)], u[len(y):], equal_var=True)[0]
     }
-    tst = stats[stat]
+    tst_fun = stats[stat]
 
     theStat = {
-        'greater': tst,
-        'less': lambda u: -tst(u),
-        'two-sided': lambda u: math.fabs(tst(u))
+        'greater': tst_fun,
+        'less': lambda u: -tst_fun(u),
+        'two-sided': lambda u: math.fabs(tst_fun(u))
     }
 
-    ts = theStat[alternative](z)
-    hits = np.sum([(theStat[alternative](prng.permutation(z)) >= ts)
-                   for i in range(reps)])
+    tst = theStat[alternative](z)
+    if keep_dist:
+       dist = []
+       for i in range(reps):
+           dist.append( theStat[alternative](prng.permutation(z)) )
+       hits = np.sum(dist >= tst)
+       if interval in ["upper", "lower", "two-sided"]:
+           return (hits/reps, tst,
+                   binom_conf_interval(reps, hits, level, alternative), dist)
+       else:
+           return hits/reps, tst, dist 
+    else:
+        hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
+                       for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return (hits/reps, ts,
+        return (hits/reps, tst,
                 binom_conf_interval(reps, hits, level, alternative))
     else:
-        return hits/reps, ts
+        return hits/reps, tst
