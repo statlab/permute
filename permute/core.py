@@ -197,6 +197,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) FIXME: Explanation or example of how to pass in a function,
             instead of a str
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
     keep_dist : bool
         flag for whether to store and return the array of values
         of the irr test statistic
