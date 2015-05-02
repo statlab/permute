@@ -115,7 +115,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         The number of successes.
     cl : float in (0, 1)
         The desired confidence level.
-    alternative : {"two-sided", "less", "greater"}
+    alternative : {"two-sided", "lower", "upper"}
         Indicates the alternative hypothesis.
     p : float in (0, 1)
         The probability of success in each trial.
@@ -137,7 +137,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     maxiter : int
         Maximum number of iterations.
     """
-    assert alternative in ("two-sided", "less", "greater")
+    assert alternative in ("two-sided", "lower", "upper")
 
     if p is None:
         p = x / n
@@ -147,10 +147,10 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
-    if alternative != "greater" and x > 0:
+    if alternative != "upper" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
         ci_low = brentq(f, 0.0, p, *kwargs)
-    if alternative != "less" and x < n:
+    if alternative != "lower" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
         ci_upp = brentq(f, 1.0, p, *kwargs)
 
