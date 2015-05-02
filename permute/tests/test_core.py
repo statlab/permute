@@ -35,7 +35,7 @@ def test_corr():
     prng = RandomState(42)
     x = prng.randint(5, size=10)
     y = x
-    res1 = corr(x, y, prng=prng)
+    res1 = corr(x, y, seed=prng)
     res2 = corr(x, y)
     np.testing.assert_equal(len(res1), 5)
     np.testing.assert_equal(len(res2), 5)
@@ -45,7 +45,7 @@ def test_corr():
     #np.testing.assert_equal(res1[3], res2[3])
 
     y = prng.randint(5, size=10)
-    res1 = corr(x, y, prng=prng)
+    res1 = corr(x, y, seed=prng)
     res2 = corr(x, y)
     np.testing.assert_equal(len(res1), 5)
     np.testing.assert_equal(len(res2), 5)

@@ -65,6 +65,6 @@ def test_sim_corr():
     x = prng.rand(10)
     y = x
     group = prng.randint(3, size=10)
-    res1 = sim_corr(x, y, group, prng=prng)
+    res1 = sim_corr(x, y, group, seed=prng)
     res2 = sim_corr(x, y, group)
     np.testing.assert_equal(res1[0], res2[0])

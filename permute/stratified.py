@@ -7,10 +7,9 @@ Stratified permutation tests.
 from __future__ import division, print_function, absolute_import
 
 import numpy as np
-from numpy.random import RandomState
 
 from .core import permute_within_groups
-
+from .utils import get_prng
 
 def corrcoef(x, y, group):
     """
@@ -36,7 +35,7 @@ def corrcoef(x, y, group):
     return tst
 
 
-def sim_corr(x, y, group, reps=10**4, prng=None):
+def sim_corr(x, y, group, reps=10**4, seed=None):
     """
     Simulate permutation p-value of stratified Spearman correlation test.
 
@@ -46,10 +45,11 @@ def sim_corr(x, y, group, reps=10**4, prng=None):
     y : array-like
     group : array-like
     reps : int
-    prng : RandomState instance or None, optional (default=None)
-        If RandomState instance, prng is the pseudorandom number generator;
+    seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`.
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator.
 
     Returns
     -------
@@ -57,6 +57,7 @@ def sim_corr(x, y, group, reps=10**4, prng=None):
         Returns test statistic, left-sided p-value,
         right-sided p-value, two-sided p-value, simulated distribution
     """
+    prng = get_prng(seed)
     tst = corrcoef(x, y, group)
     sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
@@ -131,13 +132,18 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
     ----------
     group : int
       The
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
     Returns
     -------
     permuted : int
       The
     """
-    prng = RandomState(seed)
+    prng = get_prng(seed)
     groups = np.unique(group)
     conditions = np.unique(condition)
     if len(conditions) < 2:
