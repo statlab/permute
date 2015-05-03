@@ -242,8 +242,8 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         obs_npc : float
             observed value of the test statistic for the input data, or
             the input value of ``obs_ts`` if ``obs_ts`` was given as input
-        geq : int
-            number of iterations for which the NPC test statistic was greater
+        leq : int
+            number of iterations for which the NPC test statistic was less
             than or equal to ``obs_npc``
         num_perm : int
             number of permutations
@@ -272,15 +272,15 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
             for j in range(S):
                 p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
             dist[i] = compute_inverseweight_npc(p, size)
-        geq = np.sum(dist >= obs_npc)
+        leq = np.sum(dist <= obs_npc)
     else:
         dist = None
 
         p = np.zeros((S, 1))
-        geq = 0
+        leq = 0
         for i in range(B):
             for j in range(S):
                 p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
-            geq += (compute_inverseweight_npc(p, size) >= obs_npc)
-    return {"obs_npc": obs_npc, "pvalue": geq/B, "geq": geq, 
+            leq += (compute_inverseweight_npc(p, size) <= obs_npc)
+    return {"obs_npc": obs_npc, "pvalue": leq/B, "leq": leq, 
             "num_perm": B, "dist": dist}
