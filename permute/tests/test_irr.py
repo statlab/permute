@@ -1,6 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
 from nose.plugins.attrib import attr
+from nose.tools import raises
 
 import numpy as np
 from numpy.testing import (assert_equal,
@@ -138,6 +139,11 @@ def test_simulate_npc_dist():
     assert_almost_equal(
         obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
         
+        
+@raises(ValueError)        
+def test_simulate_npc_error():
+    simulate_npc_dist(rho_perm, size=np.array([Ns, Ns]))
+        
 
 def test_simulate_npc_perfect():
     mat1 = np.tile(np.array([1, 0, 1, 0, 0]), (5,1))
@@ -155,7 +161,7 @@ def test_simulate_npc_perfect():
     expected_overall = {'dist': None,
                         'leq': 10000,
                         'num_perm': 10000,
-                        'obs_npc': 2.0356034863652646,
+                        'obs_npc': 2.0491277293791672,
                         'pvalue': 1.0}
     assert_equal(overall, expected_overall)
 

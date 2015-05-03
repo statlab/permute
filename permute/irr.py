@@ -252,8 +252,8 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
             from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
 
-    if obs_ts is None and pvalues is None:
-        ValueError('You must input either obs_npc or pvalues')
+    if (obs_ts is None) and (pvalues is None):
+        raise ValueError('You must input either obs_ts or pvalues')
             
     r = perm_distr.copy()
     r = np.sort(r, axis=0)
