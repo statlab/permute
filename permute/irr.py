@@ -262,7 +262,8 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
     if pvalues is None:
         pvalues = np.zeros((S, 1))
         for j in range(S):
-            pvalues[j] = np.searchsorted(r[:, j], obs_ts[j]) / B
+            # count the number of permutation test stats that are less than or equal to the observed test stat
+            pvalues[j] = np.searchsorted(r[:, j], obs_ts[j], side='right') / B
     obs_npc = compute_inverseweight_npc(pvalues, size)
     
     if keep_dist:
