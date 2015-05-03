@@ -197,11 +197,12 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
             "pvalue": geq/num_perm, "dist": dist}
 
 
-def simulate_npc_dist(perm_distr, size, obs_npc=None,
+def simulate_npc_dist(perm_distr, size, obs_ts=None,
                       pvalues=None, keep_dist=False):
     """
     Simulates the permutation distribution of the combined NPC test statistic
-    for S matrices of ratings ``ratings`` corresponding to S strata
+    for S matrices of ratings ``ratings`` corresponding to S strata. The 
+    distribution comes from applying ``simulate_ts_dist`` to each of the S strata.
 
     If obs_ts is not null, computes the reference value of the test statistic
     before the first permutation. Otherwise, uses the value ``obs_ts`` for
@@ -221,7 +222,7 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
         Input array of dimension S
         Each entry corresponds to the number of items, Ns,
         in the s-th stratum.
-    obs_npc : float
+    obs_ts : float
         if ``None``, ``obs_npc`` is calculated as the value of the test
         statistic for the original data
     pvalues : array_like
@@ -251,15 +252,20 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
             from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
 
-    # Throw an error if both obs_npc and pvalues are None
-
-    if obs_npc is None:
-        obs_npc = compute_inverseweight_npc(pvalues, size)
-
+    if (obs_ts is None) and (pvalues is None):
+        raise ValueError('You must input either obs_ts or pvalues')
+            
     r = perm_distr.copy()
     r = np.sort(r, axis=0)
     (B, S) = r.shape
-
+        
+    if pvalues is None:
+        pvalues = np.zeros((S, 1))
+        for j in range(S):
+            # count the number of permutation test stats that are less than or equal to the observed test stat
+            pvalues[j] = np.searchsorted(r[:, j], obs_ts[j], side='right') / B
+    obs_npc = compute_inverseweight_npc(pvalues, size)
+    
     if keep_dist:
         dist = np.zeros(B)
         p = np.zeros((S, 1))
@@ -270,10 +276,12 @@ def simulate_npc_dist(perm_distr, size, obs_npc=None,
         leq = np.sum(dist <= obs_npc)
     else:
         dist = None
+
         p = np.zeros((S, 1))
         leq = 0
         for i in range(B):
             for j in range(S):
                 p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
             leq += (compute_inverseweight_npc(p, size) <= obs_npc)
-    return {"obs_npc": obs_npc, "leq": leq, "num_perm": B, "dist": dist}
+    return {"obs_npc": obs_npc, "pvalue": leq/B, "leq": leq, 
+            "num_perm": B, "dist": dist}
