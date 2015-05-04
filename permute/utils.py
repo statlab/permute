@@ -6,6 +6,7 @@ import numbers
 
 import numpy as np
 
+
 def get_prng(seed=None):
     """Turn seed into a np.random.RandomState instance
 
