@@ -152,18 +152,22 @@ def test_simulate_npc_perfect():
     time_stamps = np.array([5, 3])
     d = []          # list of the permutation distributions for each video
     tst = []        # list of test statistics for each video
+    pval = []
     for j in range(len(videos)): # loop over videos
-    	res =  simulate_ts_dist(videos[j], keep_dist = True, seed = 5)
-    	d.append(res['dist'])
-    	tst.append(res['obs_ts'])
+        res =  simulate_ts_dist(videos[j], keep_dist = True, seed = 5)
+        d.append(res['dist'])
+        tst.append(res['obs_ts'])
+        pval.append(res['pvalue'])
     perm_distr = np.asarray(d).transpose()
-    overall = simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=False)
+    overall1 = simulate_npc_dist(perm_distr, size = time_stamps, pvalues = pval, keep_dist=False)
+    overall2 = simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=False)
     expected_overall = {'dist': None,
-                        'leq': 10000,
+                        'leq': 83,
                         'num_perm': 10000,
-                        'obs_npc': 2.0491277293791672,
-                        'pvalue': 1.0}
-    assert_equal(overall, expected_overall)
+                        'obs_npc': 0.0076080098859340932,
+                        'pvalue': 0.0083000000000000001}
+    assert_equal(overall1, expected_overall)
+    assert_equal(overall2, expected_overall)
 
     overall = simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=True)
     exp_firstfive = np.array([ 0.02223304,  0.67969567,  1.13757326,  0.67969567,  0.67969567])
