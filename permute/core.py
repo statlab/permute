@@ -14,6 +14,7 @@ from scipy.stats import (binom, ttest_ind)
 
 from .utils import get_prng
 
+
 def permute_within_groups(x, group, seed=None):
     """
     Permutation of condition within each group.
@@ -253,15 +254,15 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
     tst = theStat[alternative](z)
     if keep_dist:
-       dist = []
-       for i in range(reps):
-           dist.append( theStat[alternative](prng.permutation(z)) )
-       hits = np.sum(dist >= tst)
-       if interval in ["upper", "lower", "two-sided"]:
-           return (hits/reps, tst,
-                   binom_conf_interval(reps, hits, level, interval), dist)
-       else:
-           return hits/reps, tst, dist 
+        dist = []
+        for i in range(reps):
+            dist.append(theStat[alternative](prng.permutation(z)))
+        hits = np.sum(dist >= tst)
+        if interval in ["upper", "lower", "two-sided"]:
+            return (hits/reps, tst,
+                    binom_conf_interval(reps, hits, level, interval), dist)
+        else:
+            return hits/reps, tst, dist
     else:
         hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
                        for i in range(reps)])

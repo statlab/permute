@@ -11,6 +11,7 @@ import numpy as np
 from .core import permute_within_groups
 from .utils import get_prng
 
+
 def corrcoef(x, y, group):
     """
     Calculates sum of Spearman correlations between x and y,

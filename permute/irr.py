@@ -70,6 +70,7 @@ import numpy as np
 from .core import permute_rows
 from .utils import get_prng
 
+
 def compute_ts(ratings):
     """
     Compute the test statistic
@@ -200,17 +201,19 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
                       pvalues=None, keep_dist=False):
     """
-    Simulates the permutation distribution of the combined NPC test statistic
-    for S matrices of ratings ``ratings`` corresponding to S strata. The 
-    distribution comes from applying ``simulate_ts_dist`` to each of the S strata.
+    Simulates the permutation distribution of the combined NPC test
+    statistic for S matrices of ratings ``ratings`` corresponding to
+    S strata. The distribution comes from applying ``simulate_ts_dist``
+    to each of the S strata.
 
-    If obs_ts is not null, computes the reference value of the test statistic
-    before the first permutation. Otherwise, uses the value ``obs_ts`` for
-    comparison.
+    If obs_ts is not null, computes the reference value of the test
+    statistic before the first permutation. Otherwise, uses the value
+    ``obs_ts`` for comparison.
 
-    If ``keep_dist``, return the distribution of values of the test statistic;
-    otherwise, return only the number of permutations for which the value of
-    the irr test statistic is at least as large as ``obs_ts``.
+    If ``keep_dist``, return the distribution of values of the test
+    statistic; otherwise, return only the number of permutations
+    for which the value of the irr test statistic is at least
+    as large as ``obs_ts``.
 
     Parameters
     ----------
@@ -254,17 +257,16 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
 
     if (obs_ts is None) and (pvalues is None):
         raise ValueError('You must input either obs_ts or pvalues')
-            
+
     r = perm_distr.copy()
     r = np.sort(r, axis=0)
     (B, S) = r.shape
-        
+
     if (pvalues is None):
         pvalues = np.zeros(S)
         for j in range(S):
-            # count the number of permutation test stats that are greater than or equal to the observed test stat
-            pvalues[j] = np.mean(perm_distr[:,j] >= obs_ts[j])
-    
+            pvalues[j] = np.mean(perm_distr[:, j] >= obs_ts[j])
+
     obs_npc = compute_inverseweight_npc(pvalues, size)
     if keep_dist:
         dist = np.zeros(B)
@@ -283,5 +285,5 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
             for j in range(S):
                 p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
             leq += (compute_inverseweight_npc(p, size) <= obs_npc)
-    return {"obs_npc": obs_npc, "pvalue": leq/B, "leq": leq, 
+    return {"obs_npc": obs_npc, "pvalue": leq/B, "leq": leq,
             "num_perm": B, "dist": dist}

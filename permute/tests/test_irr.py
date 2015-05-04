@@ -48,6 +48,7 @@ def test_simulate_ts_dist():
     assert_equal(res2['num_perm'], expected_res2['num_perm'])
     assert_equal(res2['dist'].shape, (10000,))
 
+
 @attr('slow')
 def test_with_naomi_data():
     """ Test irr functionality using Naomi data."""
@@ -62,23 +63,25 @@ def test_with_naomi_data():
                     'obs_ts': 1.0}
     assert_equal(res, expected_res)
 
-    # FIXME: this is how the analysis will be run. I just put it in the test file temporarily
+    # FIXME: this is how the analysis will be run. I just put it in the test
+    # file temporarily
     time_stamps = np.array([36, 32, 35, 37, 31, 35, 40, 32])
     category = []
-    #for i in range(len(nsgk)):
-    for i in range(20): # loop over categories
-    	d = []          # list of the permutation distributions for each video
-    	tst = []        # list of test statistics for each video
-    	for j in range(len(x[i])): # loop over videos
-    		res =  simulate_ts_dist(x[i][j], keep_dist = True)
-    		d.append(res['dist'])
-    		tst.append(res['obs_ts'])
-    	perm_distr = np.asarray(d).transpose()
-    	category.append(simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=False))
+    # for i in range(len(nsgk)):
+    for i in range(20):  # loop over categories
+        d = []          # list of the permutation distributions for each video
+        tst = []        # list of test statistics for each video
+        for j in range(len(x[i])):  # loop over videos
+            res = simulate_ts_dist(x[i][j], keep_dist=True)
+            d.append(res['dist'])
+            tst.append(res['obs_ts'])
+        perm_distr = np.asarray(d).transpose()
+        category.append(
+            simulate_npc_dist(perm_distr, size=time_stamps, obs_ts=tst, keep_dist=False))
     category_pvalues = []
     for i in range(len(category)):
-        category_pvalues.append( category[i]['pvalue'] )
-    
+        category_pvalues.append(category[i]['pvalue'])
+
 freq = RNG.choice([0.2, 0.8], Ns)
 res2 = np.zeros((R, Ns))
 
@@ -138,29 +141,31 @@ def test_simulate_npc_dist():
     assert_equal(len(obs_npc_res1), 5)
     assert_almost_equal(
         obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
-        
-        
-@raises(ValueError)        
+
+
+@raises(ValueError)
 def test_simulate_npc_error():
     simulate_npc_dist(rho_perm, size=np.array([Ns, Ns]))
-        
+
 
 def test_simulate_npc_perfect():
-    mat1 = np.tile(np.array([1, 0, 1, 0, 0]), (5,1))
-    mat2 = np.tile(np.array([0, 1, 0]), (5,1))
+    mat1 = np.tile(np.array([1, 0, 1, 0, 0]), (5, 1))
+    mat2 = np.tile(np.array([0, 1, 0]), (5, 1))
     videos = [mat1, mat2]
     time_stamps = np.array([5, 3])
     d = []          # list of the permutation distributions for each video
     tst = []        # list of test statistics for each video
     pval = []
-    for j in range(len(videos)): # loop over videos
-        res =  simulate_ts_dist(videos[j], keep_dist = True, seed = 5)
+    for j in range(len(videos)):  # loop over videos
+        res = simulate_ts_dist(videos[j], keep_dist=True, seed=5)
         d.append(res['dist'])
         tst.append(res['obs_ts'])
         pval.append(res['pvalue'])
     perm_distr = np.asarray(d).transpose()
-    overall1 = simulate_npc_dist(perm_distr, size = time_stamps, pvalues = pval, keep_dist=False)
-    overall2 = simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=False)
+    overall1 = simulate_npc_dist(
+        perm_distr, size=time_stamps, pvalues=pval, keep_dist=False)
+    overall2 = simulate_npc_dist(
+        perm_distr, size=time_stamps, obs_ts=tst, keep_dist=False)
     expected_overall = {'dist': None,
                         'leq': 83,
                         'num_perm': 10000,
@@ -169,7 +174,9 @@ def test_simulate_npc_perfect():
     assert_equal(overall1, expected_overall)
     assert_equal(overall2, expected_overall)
 
-    overall = simulate_npc_dist(perm_distr, size = time_stamps, obs_ts=tst, keep_dist=True)
-    exp_firstfive = np.array([ 0.02223304,  0.67969567,  1.13757326,  0.67969567,  0.67969567])
+    overall = simulate_npc_dist(
+        perm_distr, size=time_stamps, obs_ts=tst, keep_dist=True)
+    exp_firstfive = np.array(
+        [0.02223304,  0.67969567,  1.13757326,  0.67969567,  0.67969567])
     assert_almost_equal(overall['dist'].mean(), 0.79636768325946183)
     assert_almost_equal(overall['dist'][:5], exp_firstfive)
