@@ -19,7 +19,7 @@ How to make a new release of ``permute``
 
 - Update the docs:
 
-  - Edit ``doc/source/_static/docversions.js`` and commit
+  - Update ``version`` and ``release`` in ``doc/source/conf.py`` and commit
   - Build a clean version of the docs.  Run ``python setup.py install`` in the
     root dir, then ``make clean; make html`` in the docs.
   - Push upstream: ``make github``.
@@ -39,6 +39,7 @@ How to make a new release of ``permute``
 
    python setup.py register
    python setup.py sdist upload
+   python setup.py bdist_wheel upload
 
 - Increase the version number
 

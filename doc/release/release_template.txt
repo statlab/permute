@@ -34,3 +34,5 @@ Deprecations
 
 Contributors to this release
 ----------------------------
+(Listed alphabetically by last name)
+
