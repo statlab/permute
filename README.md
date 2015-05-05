@@ -12,14 +12,16 @@ testing and estimation problems, for a variety of randomization designs.
 
 ## Installation from binaries
 
-No binary releases yet; but very soon.
+```
+$ pip install permute
+```
 
 ## Installation from source
 
 Install dependencies using:
 
 ```
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 Then, install permute using:

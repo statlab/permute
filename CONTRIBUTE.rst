@@ -51,7 +51,7 @@ Here's the long and short of it:
      to ask for review.
 
 For a more detailed discussion, read these :doc:`detailed documents
-<dev/gitwash/index>` on how to use Git with ``permute``
+<gitwash/index>` on how to use Git with ``permute``
 (`<http://statlab.github.io/permute/dev/gitwash/index.html>`_).
 
 4. Review process:
