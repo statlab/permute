@@ -1,0 +1,51 @@
+How to make a new release of ``permute``
+========================================
+
+- Check ``TODO.txt`` for any outstanding tasks.
+
+- Update release notes.
+
+  1. Review and cleanup ``doc/release/release_dev.txt``
+
+     - To show a list of merges and contributors, run
+       ``doc/release/contribs.py <tag of prev release>``.
+
+  2. Rename to ``doc/release/release_X.txt``
+
+  3. Copy ``doc/release/release_template.txt`` to
+     ``doc/release/release_dev.txt`` for the next release.
+
+- Update the version number in ``setup.py`` and commit
+
+- Update the docs:
+
+  - Edit ``doc/source/_static/docversions.js`` and commit
+  - Build a clean version of the docs.  Run ``python setup.py install`` in the
+    root dir, then ``make clean; make html`` in the docs.
+  - Push upstream: ``make github``.
+
+- Add the version number as a tag in git::
+
+   git tag -s v0.X.0
+
+  (If you do not have a gpg key, use -m instead; it is important for
+  Debian packaging that the tags are annotated)
+
+- Push the new meta-data to github::
+
+   git push --tags origin master
+
+- Publish on PyPi::
+
+   python setup.py register
+   python setup.py sdist upload
+
+- Increase the version number
+
+  - In ``setup.py``, set to ``0.Xdev``.
+
+- Update the development docs for the new version ``0.Xdev`` just like above
+
+- Post release notes on mailing lists, blog, G+, etc.
+
+  - permute@googlegroups.com
