@@ -3,7 +3,7 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 from numpy.testing import assert_equal
 
-from ..eda import (find_duplicate_rows,
+from ..qa import (find_duplicate_rows,
                    find_consecutive_duplicate_rows)
 
 
