@@ -4,7 +4,9 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
 
-from ..utils import get_prng
+from ..utils import (get_prng,
+                     permute_rows,
+                     permute_within_groups)
 
 
 def test_get_random_state():
@@ -37,3 +39,35 @@ def test_get_random_state():
 @raises(ValueError)
 def test_get_random_state_error():
     get_prng(1.11)
+
+
+def test_permute_within_group():
+    x = np.repeat([1, 2, 3]*3, 3)
+    group = np.repeat([1, 2, 3], 9)
+    #response = np.zeros_like(group)
+    #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
+
+    prng1 = RandomState(42)
+    prng2 = RandomState(42)
+    res1 = permute_within_groups(x, group, prng1)
+    res2 = permute_within_groups(x, group, prng2)
+    np.testing.assert_equal(res1, res2)
+
+    res3 = permute_within_groups(x, group)
+    np.testing.assert_equal(res3.max(), 3)
+    res3.sort()
+    np.testing.assert_equal(group, res3)
+
+
+def test_permute_rows():
+    prng = RandomState(42)
+
+    x = prng.randint(10, size=20).reshape(2, 10)
+    permute_rows(x, prng)
+    expected = np.array([[2, 7, 7, 6, 4, 9, 3, 4, 6, 6],
+                         [7, 4, 5, 5, 3, 7, 1, 2, 7, 1]])
+    np.testing.assert_array_equal(x, expected)
+
+    permute_rows(x)
+    np.testing.assert_equal(x.max(), 9)
+    np.testing.assert_equal(x.min(), 1)

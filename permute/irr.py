@@ -67,8 +67,7 @@ from __future__ import division, print_function, absolute_import
 
 import numpy as np
 
-from .core import permute_rows
-from .utils import get_prng
+from .utils import get_prng, permute_rows
 
 
 def compute_ts(ratings):
