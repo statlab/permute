@@ -1,7 +1,7 @@
-Exploratory data analysis
--------------------------
+Quality assurance
+-----------------
 
-.. automodule:: permute.eda
+.. automodule:: permute.qa
           :members:
 
 
