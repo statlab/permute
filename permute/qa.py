@@ -1,4 +1,4 @@
-""" Exploratory data analysis tools.
+""" Quality assurance and data cleaning.
 """
 
 from __future__ import division, print_function, absolute_import
