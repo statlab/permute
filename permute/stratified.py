@@ -8,8 +8,7 @@ from __future__ import division, print_function, absolute_import
 
 import numpy as np
 
-from .core import permute_within_groups
-from .utils import get_prng
+from .utils import get_prng, permute_within_groups
 
 
 def corrcoef(x, y, group):
