@@ -6,7 +6,8 @@ from numpy.testing import assert_equal
 
 from ..utils import (get_prng,
                      permute_rows,
-                     permute_within_groups)
+                     permute_within_groups,
+                     permute_incidence_fixed_sums)
 
 
 def test_get_random_state():
@@ -71,3 +72,34 @@ def test_permute_rows():
     permute_rows(x)
     np.testing.assert_equal(x.max(), 9)
     np.testing.assert_equal(x.min(), 1)
+
+
+def test_permute_incidence_fixed_sums():
+    prng = RandomState(42)
+    x0 = prng.randint(2, size=80).reshape((8, 10))
+    x1 = permute_incidence_fixed_sums(x0)
+
+    K = 5
+
+    m = []
+    for i in range(1000):
+        x2 = permute_incidence_fixed_sums(x0, k=K)
+        m.append(np.sum(x0 != x2))
+
+    np.testing.assert_(max(m) <= K * 4,
+                       "Too many swaps occurred")
+
+    for axis in (0, 1):
+        for test_arr in (x1, x2):
+            np.testing.assert_array_equal(x0.sum(axis=axis),
+                                          test_arr.sum(axis=axis))
+
+
+@raises(ValueError)
+def test_permute_incidence_fixed_sums_ND_arr():
+    permute_incidence_fixed_sums(np.random.random((1, 1, 1)))
+
+
+@raises(ValueError)
+def test_permute_incidence_fixed_sums_non_binary():
+    permute_incidence_fixed_sums(np.array([[1, 2], [3, 4]]))
