@@ -80,7 +80,7 @@ def permute_rows(m, seed=None):
     Returns
     -------
     None
-        Original matrix is permute in-place, nothing returned
+        Original matrix is permuted in-place, nothing is returned.
     """
     prng = get_prng(seed)
 
@@ -88,3 +88,76 @@ def permute_rows(m, seed=None):
         prng.shuffle(row)
 
 
+def permute_incidence_fixed_sums(incidence, k=1):
+    """
+    Permute elements of a (binary) incidence matrix, keeping the
+    row and column sums in-tact.
+
+    Parameters
+    ----------
+    incidence : 2D ndarray
+        Incidence matrix to permute.
+    k : int
+        The number of successful pairwise swaps to perform.
+
+    Notes
+    -----
+    The row and column sums are kept fixed by always swapping elements
+    two pairs at a time.
+
+    Returns
+    -------
+    permuted : 2D ndarray
+        The permuted incidence matrix.
+    """
+
+    if not incidence.ndim == 2:
+        raise ValueError("Incidence matrix must be 2D")
+
+    if incidence.min() != 0 or incidence.max() != 1:
+        raise ValueError("Incidence matrix must be binary")
+
+    incidence = incidence.copy()
+
+    n, m = incidence.shape
+    rows = np.arange(n)
+    cols = np.arange(m)
+
+    K, k = k, 0
+    while k < K:
+
+        swappable = False
+        while (not swappable):
+            chosen_rows = np.random.choice(rows, 2, replace=False)
+            s0, s1 = chosen_rows
+
+            potential_cols0, = np.where((incidence[s0, :] == 1) &
+                                        (incidence[s1, :] == 0))
+
+            potential_cols1, = np.where((incidence[s0, :] == 0) &
+                                        (incidence[s1, :] == 1))
+
+            potential_cols0 = np.setdiff1d(potential_cols0, potential_cols1)
+
+            if (len(potential_cols0) == 0) or (len(potential_cols1) == 0):
+                continue
+
+            p0 = np.random.choice(potential_cols0)
+            p1 = np.random.choice(potential_cols1)
+
+            # These statements should always be true, so we should
+            # never raise an assertion here
+            assert incidence[s0, p0] == 1
+            assert incidence[s0, p1] == 0
+            assert incidence[s1, p0] == 0
+            assert incidence[s1, p1] == 1
+
+            swappable = True
+
+        i0 = incidence.copy()
+        incidence[[s0, s0, s1, s1],
+                  [p0, p1, p0, p1]] = [0, 1, 1, 0]
+
+        k += 1
+
+    return incidence
