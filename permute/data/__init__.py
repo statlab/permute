@@ -61,7 +61,18 @@ def nsgk():
 
     return p1
 
-#def another_poss():
+
+def macnell2014():
+    """Data from MacNell et alrom MacNell et alrom MacNell et al. 2014
+
+    .. Lillian MacNell, Adam Driscoll, and Andrea N Hunt, "What's
+       in a Name: Exposing Gender Bias in Student Ratings of Teaching,"
+       Innovative Higher Education, pp. 1-13, 2014.
+    """
+    return load("MacNell2014.csv")
+
+
+# def another_poss():
 #    nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
 #                    delimiter=',', skiprows=1, dtype=np.int)
 #    _, nd, nv, nr = tuple(nz.max(axis=0))
