@@ -10,7 +10,7 @@ import math
 
 import numpy as np
 from scipy.optimize import brentq
-from scipy.stats import (binom, ttest_ind)
+from scipy.stats import (binom, ttest_ind, ttest_1samp, bernoulli)
 
 from .utils import get_prng
 
@@ -215,4 +215,121 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         return (hits/reps, tst,
                 binom_conf_interval(reps, hits, level, interval))
     else:
+        return hits/reps, tst
+
+
+def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
+               keep_dist=False, seed=None):
+    """
+    One-sided or two-sided, one-sample permutation test for the mean, 
+    with p-value estimated by simulated random sampling with
+    reps replications.
+    
+    Alternatively, a permutation test for equality of means of two paired
+    samples.
+    
+    Tests the hypothesis that x and y are a random partition of x,y
+    against the alternative that x comes from a population with mean
+
+    (a) greater than that of the population from which y comes,
+        if side = 'greater'
+    (b) less than that of the population from which y comes,
+        if side = 'less'
+    (c) different from that of the population from which y comes,
+        if side = 'two-sided'
+
+    If ``keep_dist``, return the distribution of values of the test statistic;
+    otherwise, return only the number of permutations for which the value of
+    the test statistic and p-value.
+
+    Parameters
+    ----------
+    x : array-like
+        Sample 1
+    y : array-like
+        Sample 2. Must preserve the order of pairs with x
+    reps : int
+        number of repetitions
+    stat : {'mean', 't'}
+        The test statistic.
+
+        (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
+            (equivalently, sum(x), since those are monotonically related)
+        (b) If stat == 't', the test statistic is the two-sample t-statistic--
+            but the p-value is still estimated by the randomization,
+            approximating the permutation distribution.
+            The t-statistic is computed using scipy.stats.ttest_ind
+        (c) FIXME: Explanation or example of how to pass in a function,
+            instead of a str
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
+    keep_dist : bool
+        flag for whether to store and return the array of values
+        of the irr test statistic
+    interval : {'upper', 'lower', 'two-sided'}
+        The type of confidence interval
+
+        (a) If interval == 'upper', computes an upper confidence bound on the
+            true p-value based on the simulations by inverting Binomial tests.
+        (b) If interval == 'lower', computes a lower confidence bound on the
+            true p-value based on the simulations by inverting Binomial tests.
+        (c) If interval == 'two-sided', computes lower and upper confidence
+            bounds on the true p-value based on the simulations by inverting
+            Binomial tests.
+    level : float in (0, 1)
+        the confidence limit for the confidence bounds.
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
+
+    Returns
+    -------
+    float
+        the estimated p-value
+    float
+        the test statistic
+    tuple
+        These values are only returned if `level` == True
+
+        (a) confidence bound on p-value,
+            if interval in {'lower','upper'}
+        (b) [lower confidence bound, upper confidence bound],
+            if interval == 'two-sided'
+    """
+    prng = get_prng(seed)
+    
+    if y is None:
+        z = x
+    elif len(x)!=len(y):
+        raise ValueError('x and y must be pairs')
+        z = np.array(x)-np.array(y)
+        
+    # FIXME: Type check: we may want to pass in a function for argument 'stat'
+    # FIXME: If function, use that. Otherwise, look in the dictionary
+    stats = {
+        'mean': lambda u: np.mean(u),
+        't': lambda u: ttest_1samp(u, 0)[0]
+    }
+    tst_fun = stats[stat]
+
+    theStat = {
+        'greater': tst_fun,
+        'less': lambda u: -tst_fun(u),
+        'two-sided': lambda u: math.fabs(tst_fun(u))
+    }
+
+    tst = theStat[alternative](z)
+    n = len(z)
+    if keep_dist:
+        dist = []
+        for i in range(reps):
+            dist.append(theStat[alternative](z*(1-2*bernoulli.rvs(.5,size=n))))
+        hits = np.sum(dist >= tst)
+        return hits/reps, tst, dist
+    else:
+        hits = np.sum([(theStat[alternative](z*(1-2*bernoulli.rvs(.5,size=n)))) >= tst
+                       for i in range(reps)])
         return hits/reps, tst
