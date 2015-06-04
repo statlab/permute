@@ -1,46 +1,26 @@
 1. NSGK results
-
 - current tests has significant results and concordance is less than 1/2
 - is there a test that reveals scientifically significant results
   as well as statistically significant
 
 2. MacNell et al. re-analysis
-
 - two-sample kind of thing.
 
 3. Performance (Pythonic)
-
 - numba / Cython ? (Stefan)
 
 4. permuter scripts in pkg / building blocks
-
 - Ultimately want scripts in permute to test.  Are vignettes reusable?
   - enumerate / (combinat from CSP.R)
-  - itertools.combinations
-
-4.5 exact two-sample problem
-
-- (use MacNell as example/test)
-
-from itertools import combinations
-
-def two_sample
-
-  reps == "exact" or 1, 2, ...
-
-z = np.combinations([x, y])
-if reps == "exact":
-    for s in combinations(range(len(z)), len(x)):
-        in = set(s)
-        
+  - itertools.combinations       
          
+5. two_sample
 - remove interval and level from two_sample signature (use outside function)
+- exact two-sample problem
+	- (use MacNell as example/test)
+	- see issue + gist
 
-
-
-5. Confidence sets
-
-
+6. Confidence sets
 - shift model
 
 2-sample, ts is mean-like
@@ -61,6 +41,31 @@ brentq(-b, s0, ...)
 
 try with two-sample with exact
 
-6. ecological fixed-margin tests 
 
-- 
+
+7. k-sample tests
+- ks-like test statistic: combine ks for each pair of samples by max distance, sum of distances, npc...
+- Rank tests, e.g. Wilcoxon
+- other?
+
+8. n-dimensional k-sample
+- MST
+- LLQ
+- MDL (research topic)
+
+9. Association
+- Pearson
+- Spearman (replace data by their ranks in call to Pearson)
+- Regression ( null beta=0)
+
+10. Misc non-parametrics
+- Runs tests
+- Other kinds of symmetry
+- Romano-style projection
+- Permutation ANOVA
+
+11. Contingency tables
+- ecological fixed-margin tests 
+	- Stefan's data example - see issue
+	
+12. Nonparametric combination of tests
