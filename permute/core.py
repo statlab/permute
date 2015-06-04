@@ -10,7 +10,7 @@ import math
 
 import numpy as np
 from scipy.optimize import brentq
-from scipy.stats import (binom, ttest_ind, ttest_1samp, bernoulli)
+from scipy.stats import (binom, ttest_ind, ttest_1samp)
 
 from .utils import get_prng
 
@@ -294,6 +294,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         z = x
     elif len(x)!=len(y):
         raise ValueError('x and y must be pairs')
+    else:
         z = np.array(x)-np.array(y)
         
     # FIXME: Type check: we may want to pass in a function for argument 'stat'
@@ -315,10 +316,10 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     if keep_dist:
         dist = []
         for i in range(reps):
-            dist.append(theStat[alternative](z*(1-2*bernoulli.rvs(.5,size=n))))
+            dist.append(theStat[alternative](z*(1-2*prng.binomial(1,.5,size=n))))
         hits = np.sum(dist >= tst)
         return hits/reps, tst, dist
     else:
-        hits = np.sum([(theStat[alternative](z*(1-2*bernoulli.rvs(.5,size=n)))) >= tst
+        hits = np.sum([(theStat[alternative](z*(1-2*prng.binomial(1,.5,size=n)))) >= tst
                        for i in range(reps)])
         return hits/reps, tst
