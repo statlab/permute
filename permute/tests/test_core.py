@@ -8,7 +8,8 @@ from numpy.random import RandomState
 
 from ..core import (binom_conf_interval,
                     corr,
-                    two_sample)
+                    two_sample,
+                    one_sample)
 
 
 def test_corr():
@@ -101,3 +102,22 @@ def test_two_sample():
     np.testing.assert_almost_equal(res[2], expected_ci)
     np.testing.assert_equal(len(res[3]), 100000)
     np.testing.assert_almost_equal(res[3][:5], exp_dist_firstfive)
+
+def test_one_sample():
+    prng = RandomState(42)
+    
+    x = np.array(range(5))
+    y = x + prng.normal(size=5)
+    # case 1: one sample only
+    res = one_sample(x, seed = 42, reps = 100)
+    np.testing.assert_almost_equal(res[0], 0.05999999)
+    np.testing.assert_equal(res[1], 2)
+    
+    # case 2: paired sample
+    res = one_sample(x, y, seed = prng)
+    
+    # case 3: break it - supply x and y, but not paired
+    
+    # case 4: say keep_dist=True
+    
+    # case 5: use t as test statistic
