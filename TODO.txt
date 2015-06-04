@@ -1,0 +1,66 @@
+1. NSGK results
+
+- current tests has significant results and concordance is less than 1/2
+- is there a test that reveals scientifically significant results
+  as well as statistically significant
+
+2. MacNell et al. re-analysis
+
+- two-sample kind of thing.
+
+3. Performance (Pythonic)
+
+- numba / Cython ? (Stefan)
+
+4. permuter scripts in pkg / building blocks
+
+- Ultimately want scripts in permute to test.  Are vignettes reusable?
+  - enumerate / (combinat from CSP.R)
+  - itertools.combinations
+
+4.5 exact two-sample problem
+
+- (use MacNell as example/test)
+
+from itertools import combinations
+
+def two_sample
+
+  reps == "exact" or 1, 2, ...
+
+z = np.combinations([x, y])
+if reps == "exact":
+    for s in combinations(range(len(z)), len(x)):
+        in = set(s)
+        
+         
+- remove interval and level from two_sample signature (use outside function)
+
+
+
+5. Confidence sets
+
+
+- shift model
+
+2-sample, ts is mean-like
+ (want to estimate the difference in population means in this direction)
+
+ a. estimate difference in means , s = xbar - ybar
+ b. "know" ts(x-s, y) = 0 therefore the p-value is "big"
+    x and y fixed, return p-value 
+
+
+if 1/(n+m n) > alpha
+  
+sort z , x' = smallest len(x) of sorted x, y' remainder
+
+s = x'bar - y'bar (worst case)
+
+brentq(-b, s0, ...)
+
+try with two-sample with exact
+
+6. ecological fixed-margin tests 
+
+- 
