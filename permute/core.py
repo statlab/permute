@@ -178,6 +178,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             if interval in {'lower','upper'}
         (b) [lower confidence bound, upper confidence bound],
             if interval == 'two-sided'
+    list
+        The distribution of test statistics.
+        These values are only returned if `keep_dist` == True
     """
     prng = get_prng(seed)
     z = np.concatenate([x, y])   # pooled responses
@@ -228,14 +231,15 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     Alternatively, a permutation test for equality of means of two paired
     samples.
     
-    Tests the hypothesis that x and y are a random partition of x,y
-    against the alternative that x comes from a population with mean
+    Tests the hypothesis that x is distributed symmetrically symmetric about 0 
+    (or x and y have the same center) against the alternative that x comes from 
+    a population with mean
 
-    (a) greater than that of the population from which y comes,
+    (a) greater than 0 (greater than that of the population from which y comes),
         if side = 'greater'
-    (b) less than that of the population from which y comes,
+    (b) less than 0 (less than that of the population from which y comes),
         if side = 'less'
-    (c) different from that of the population from which y comes,
+    (c) different from 0 (different from that of the population from which y comes),
         if side = 'two-sided'
 
     If ``keep_dist``, return the distribution of values of the test statistic;
@@ -247,7 +251,8 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     x : array-like
         Sample 1
     y : array-like
-        Sample 2. Must preserve the order of pairs with x
+        Sample 2. Must preserve the order of pairs with x.
+        If None, x is taken to be the one sample.
     reps : int
         number of repetitions
     stat : {'mean', 't'}
@@ -266,18 +271,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     keep_dist : bool
         flag for whether to store and return the array of values
         of the irr test statistic
-    interval : {'upper', 'lower', 'two-sided'}
-        The type of confidence interval
-
-        (a) If interval == 'upper', computes an upper confidence bound on the
-            true p-value based on the simulations by inverting Binomial tests.
-        (b) If interval == 'lower', computes a lower confidence bound on the
-            true p-value based on the simulations by inverting Binomial tests.
-        (c) If interval == 'two-sided', computes lower and upper confidence
-            bounds on the true p-value based on the simulations by inverting
-            Binomial tests.
-    level : float in (0, 1)
-        the confidence limit for the confidence bounds.
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
         instance used by `np.random`;
@@ -291,13 +284,9 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         the estimated p-value
     float
         the test statistic
-    tuple
-        These values are only returned if `level` == True
-
-        (a) confidence bound on p-value,
-            if interval in {'lower','upper'}
-        (b) [lower confidence bound, upper confidence bound],
-            if interval == 'two-sided'
+    list
+        The distribution of test statistics.
+        These values are only returned if `keep_dist` == True
     """
     prng = get_prng(seed)
     
