@@ -1,6 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
 from nose.plugins.attrib import attr
+from nose.tools import assert_raises
 
 import numpy as np
 from numpy.random import RandomState
@@ -8,7 +9,8 @@ from numpy.random import RandomState
 
 from ..core import (binom_conf_interval,
                     corr,
-                    two_sample)
+                    two_sample,
+                    one_sample)
 
 
 def test_corr():
@@ -101,3 +103,37 @@ def test_two_sample():
     np.testing.assert_almost_equal(res[2], expected_ci)
     np.testing.assert_equal(len(res[3]), 100000)
     np.testing.assert_almost_equal(res[3][:5], exp_dist_firstfive)
+
+def test_one_sample():
+    prng = RandomState(42)
+    
+    x = np.array(range(5))
+    y = x-1
+    
+    # case 1: one sample only
+    res = one_sample(x, seed = 42, reps = 100)
+    np.testing.assert_almost_equal(res[0], 0.05999999)
+    np.testing.assert_equal(res[1], 2)
+    
+    # case 2: paired sample
+    res = one_sample(x, y, seed = 42, reps = 100)
+    np.testing.assert_equal(res[0], 0.02)
+    np.testing.assert_equal(res[1], 1)
+    
+    # case 3: break it - supply x and y, but not paired
+    y = np.append(y, 10)
+    assert_raises(ValueError, one_sample, x, y)
+    
+    # case 4: say keep_dist=True
+    res = one_sample(x, seed = 42, reps = 100, keep_dist=True)
+    np.testing.assert_almost_equal(res[0], 0.05999999)
+    np.testing.assert_equal(res[1], 2)
+    np.testing.assert_equal(min(res[2]), -2)
+    np.testing.assert_equal(max(res[2]), 2)
+    np.testing.assert_equal(np.median(res[2]), 0)
+
+    # case 5: use t as test statistic
+    y = x + prng.normal(size=5)
+    res = one_sample(x, y, seed = 42, reps = 100, stat = "t", alternative = "less")
+    np.testing.assert_equal(res[0], 0.07)
+    np.testing.assert_almost_equal(res[1], 1.4491883)
