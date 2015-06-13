@@ -201,9 +201,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
     tst = theStat[alternative](z)
     if keep_dist:
-        dist = []
+        dist = np.empty(reps)
         for i in range(reps):
-            dist.append(theStat[alternative](prng.permutation(z)))
+            dist[i] = theStat[alternative](prng.permutation(z))
         hits = np.sum(dist >= tst)
         if interval in ["upper", "lower", "two-sided"]:
             return (hits/reps, tst,
