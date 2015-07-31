@@ -49,7 +49,7 @@ def corr(x, y, reps=10**4, seed=None):
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         **kwargs):
     """
-    Compute the confidence interval for a binomial.
+    Compute a confidence interval for a binomial p, the probability of success in each trial.
 
     Parameters
     ----------
@@ -62,7 +62,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     alternative : {"two-sided", "lower", "upper"}
         Indicates the alternative hypothesis.
     p : float in (0, 1)
-        The probability of success in each trial.
+        Starting point in search for confidence bounds for probability of success in each trial.
     kwargs : dict
         Key word arguments
 
@@ -87,6 +87,62 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
         p = x / n
     ci_low = 0.0
     ci_upp = 1.0
+
+    if alternative == 'two-sided':
+        cl = 1 - (1-cl)/2
+
+    if alternative != "upper" and x > 0:
+        f = lambda q: cl - binom.cdf(x - 1, n, q)
+        ci_low = brentq(f, 0.0, p, *kwargs)
+    if alternative != "lower" and x < n:
+        f = lambda q: binom.cdf(x, n, q) - (1 - cl)
+        ci_upp = brentq(f, 1.0, p, *kwargs)
+
+    return ci_low, ci_upp
+
+def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
+                        **kwargs):
+    """
+    Compute a confidence interval for a hypergeometric G, the number of good objects in the population.
+
+    Parameters
+    ----------
+    n : int
+        The number of Bernoulli trials.
+    x : int
+        The number of "good" objects in the sample.
+    N : int
+        The number of objects in the population
+    cl : float in (0, 1)
+        The desired confidence level.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    G : int in [0, N]
+        Starting point in search for confidence bounds for hypergeometric G.
+    kwargs : dict
+        Key word arguments
+
+    Returns
+    -------
+    tuple
+        lower and upper confidence level with coverage (at least)
+        1-alpha.
+
+    Notes
+    -----
+    xtol : float
+        Tolerance
+    rtol : float
+        Tolerance
+    maxiter : int
+        Maximum number of iterations.
+    """
+    assert alternative in ("two-sided", "lower", "upper")
+
+    if G is None:
+        G = (x / n)*N
+    ci_low = 0.0
+    ci_upp = N
 
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
@@ -224,15 +280,15 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None):
     """
-    One-sided or two-sided, one-sample permutation test for the mean, 
+    One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
     reps replications.
-    
+
     Alternatively, a permutation test for equality of means of two paired
     samples.
-    
-    Tests the hypothesis that x is distributed symmetrically symmetric about 0 
-    (or x and y have the same center) against the alternative that x comes from 
+
+    Tests the hypothesis that x is distributed symmetrically symmetric about 0
+    (or x and y have the same center) against the alternative that x comes from
     a population with mean
 
     (a) greater than 0 (greater than that of the population from which y comes),
@@ -289,14 +345,14 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         These values are only returned if `keep_dist` == True
     """
     prng = get_prng(seed)
-    
+
     if y is None:
         z = x
     elif len(x)!=len(y):
         raise ValueError('x and y must be pairs')
     else:
         z = np.array(x)-np.array(y)
-        
+
     # FIXME: Type check: we may want to pass in a function for argument 'stat'
     # FIXME: If function, use that. Otherwise, look in the dictionary
     stats = {
