@@ -1,10 +1,124 @@
 """
 Various utilities and helper functions.
 """
+from __future__ import division, print_function, absolute_import
 
 import numbers
-
 import numpy as np
+from scipy.optimize import brentq
+from scipy.stats import (binom, hypergeom, ttest_ind, ttest_1samp)
+
+
+def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
+                        **kwargs):
+    """
+    Compute a confidence interval for a binomial p, the probability of success in each trial.
+
+    Parameters
+    ----------
+    n : int
+        The number of Bernoulli trials.
+    x : int
+        The number of successes.
+    cl : float in (0, 1)
+        The desired confidence level.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    p : float in (0, 1)
+        Starting point in search for confidence bounds for probability of success in each trial.
+    kwargs : dict
+        Key word arguments
+
+    Returns
+    -------
+    tuple
+        lower and upper confidence level with coverage (approximately)
+        1-alpha.
+
+    Notes
+    -----
+    xtol : float
+        Tolerance
+    rtol : float
+        Tolerance
+    maxiter : int
+        Maximum number of iterations.
+    """
+    assert alternative in ("two-sided", "lower", "upper")
+
+    if p is None:
+        p = x / n
+    ci_low = 0.0
+    ci_upp = 1.0
+
+    if alternative == 'two-sided':
+        cl = 1 - (1-cl)/2
+
+    if alternative != "upper" and x > 0:
+        f = lambda q: cl - binom.cdf(x - 1, n, q)
+        ci_low = brentq(f, 0.0, p, *kwargs)
+    if alternative != "lower" and x < n:
+        f = lambda q: binom.cdf(x, n, q) - (1 - cl)
+        ci_upp = brentq(f, 1.0, p, *kwargs)
+
+    return ci_low, ci_upp
+
+def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
+                        **kwargs):
+    """
+    Compute a confidence interval for a hypergeometric G, the number of good objects in the population.
+
+    Parameters
+    ----------
+    n : int
+        The number of Bernoulli trials.
+    x : int
+        The number of "good" objects in the sample.
+    N : int
+        The number of objects in the population
+    cl : float in (0, 1)
+        The desired confidence level.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    G : int in [0, N]
+        Starting point in search for confidence bounds for hypergeometric G.
+    kwargs : dict
+        Key word arguments
+
+    Returns
+    -------
+    tuple
+        lower and upper confidence level with coverage (at least)
+        1-alpha.
+
+    Notes
+    -----
+    xtol : float
+        Tolerance
+    rtol : float
+        Tolerance
+    maxiter : int
+        Maximum number of iterations.
+    """
+    assert alternative in ("two-sided", "lower", "upper")
+
+    if G is None:
+        G = math.floor((x / n)*N)
+    ci_low = 0.0
+    ci_upp = N
+
+    if alternative == 'two-sided':
+        cl = 1 - (1-cl)/2
+
+    if alternative != "upper" and x > 0:
+        f = lambda q: cl - scipy.stats.hypergeom.cdf(x-1, N, q, n)
+        ci_low = math.floor(sp.optimize.brentq(f, 0.0, G, *kwargs))
+
+    if alternative != "lower" and x < n:
+        f = lambda q: scipy.stats.hypergeom.cdf(x, N, q, n) - (1-cl)
+        ci_upp = math.ceil(sp.optimize.brentq(f, G, N, *kwargs))
+
+    return ci_low, ci_upp
 
 
 def get_prng(seed=None):
