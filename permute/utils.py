@@ -4,6 +4,7 @@ Various utilities and helper functions.
 from __future__ import division, print_function, absolute_import
 
 import numbers
+import math
 import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import (binom, hypergeom, ttest_ind, ttest_1samp)
@@ -71,11 +72,11 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
     Parameters
     ----------
     n : int
-        The number of Bernoulli trials.
+        The number of hypergeometric trials.
     x : int
         The number of "good" objects in the sample.
     N : int
-        The number of objects in the population
+        The total number of objects in the population
     cl : float in (0, 1)
         The desired confidence level.
     alternative : {"two-sided", "lower", "upper"}
@@ -111,12 +112,12 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
         cl = 1 - (1-cl)/2
 
     if alternative != "upper" and x > 0:
-        f = lambda q: cl - scipy.stats.hypergeom.cdf(x-1, N, q, n)
-        ci_low = math.floor(sp.optimize.brentq(f, 0.0, G, *kwargs))
+        f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
+        ci_low = math.floor(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
-        f = lambda q: scipy.stats.hypergeom.cdf(x, N, q, n) - (1-cl)
-        ci_upp = math.ceil(sp.optimize.brentq(f, G, N, *kwargs))
+        f = lambda q: hypergeom.cdf(x, N, q, n) - (1-cl)
+        ci_upp = math.ceil(brentq(f, G, N, *kwargs))
 
     return ci_low, ci_upp
 
