@@ -7,7 +7,8 @@ from numpy.testing import assert_equal
 from ..utils import (get_prng,
                      permute_rows,
                      permute_within_groups,
-                     permute_incidence_fixed_sums)
+                     permute_incidence_fixed_sums,
+                     hypergeom_conf_interval)
 
 
 def test_get_random_state():
@@ -36,6 +37,16 @@ def test_get_random_state():
     assert_equal(len(x6), 10)
     assert_equal(len(x7), 10)
 
+
+def test_hypergeom_conf_interval():
+    cl = 0.95
+    n = 10
+    x = 5
+    [lot, hit] = [6, 14]
+    alternative = "two-sided"
+    [lo, hi] = hypergeom_conf_interval(n, x, N, cl=cl, alternative = alternative)
+    np.testing.assert_equal(lo, lot)
+    np.testing.assert_equal(hi, hit)
 
 @raises(ValueError)
 def test_get_random_state_error():
