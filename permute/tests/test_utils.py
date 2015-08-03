@@ -28,24 +28,28 @@ def test_binom_conf_interval():
 
 def test_hypergeom_conf_interval():
     # Simple example. Suppose we have a box with 3 "good" things and 2 "bad" things. 
-    # We take 2 draws without replacement from the box and get x = 2 good things.
+    # We take 2 draws without replacement from the box and get x = 1 good things.
     # Then P(x >= 2) = P(x = 2) since we only do 2 draws; this simplifies calcs.
     # When G=0 or G=1, P(x = 2) = 0. 
-    res = hypergeom_conf_interval(2, 2, 5, cl = 0.9, alternative = "two-sided")
-    expected = (1.0, 5.0) # this is one smaller than I would've expected
+    res = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "two-sided")
+    expected = (1.0, 4.0) 
     np.testing.assert_equal(res, expected)
-    res2 = hypergeom_conf_interval(2, 2, 5, cl = 0.9, alternative = "upper")
-    expected2 = (0.0, 5.0) 
+    res2 = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "upper")
+    expected2 = (0.0, 4.0) 
     np.testing.assert_equal(res2, expected2)
-
-    # When G = 2, P(x = 2) = 0.1.
-    res3 = hypergeom_conf_interval(2, 2, 5, cl = 0.9, alternative = "lower")
-    expected3 = (2.0, 5.0) # this is what I expected
+    res3 = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "lower")
+    expected3 = (1.0, 5.0)
     np.testing.assert_equal(res3, expected3)
     
-    res4 = hypergeom_conf_interval(2, 2, 5, cl = 0.8, alternative = "two-sided")
-    expected4 = (2.0, 5.0) # this is one smaller than what I expected
-    np.testing.assert_equal(res4, expected3)
+    cl = 0.95
+    n = 10
+    x = 5
+    N = 20
+    [lot, hit] = [6, 14]
+    alternative = "two-sided"
+    [lo, hi] = hypergeom_conf_interval(n, x, N, cl=cl, alternative = alternative)
+    np.testing.assert_equal(lo, lot)
+    np.testing.assert_equal(hi, hit)
 
 
 def test_get_random_state():
