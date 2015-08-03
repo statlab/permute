@@ -64,6 +64,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
     return ci_low, ci_upp
 
+
 def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
                         **kwargs):
     """
@@ -105,18 +106,18 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
 
     if G is None:
         G = math.floor((x / n)*N)
-    ci_low = 0.0
+    ci_low = 0
     ci_upp = N
 
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
     if alternative != "upper" and x > 0:
-        f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
+        f = lambda q: cl - hypergeom.cdf(x, N, q, n)
         ci_low = math.floor(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
-        f = lambda q: hypergeom.cdf(x, N, q, n) - (1-cl)
+        f = lambda q: hypergeom.cdf(x-1, N, q, n) - (1-cl)
         ci_upp = math.ceil(brentq(f, G, N, *kwargs))
 
     return ci_low, ci_upp
