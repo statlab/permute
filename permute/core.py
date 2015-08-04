@@ -12,7 +12,7 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import (binom, ttest_ind, ttest_1samp)
 
-from .utils import get_prng
+from .utils import get_prng, binom_conf_interval
 
 
 def corr(x, y, reps=10**4, seed=None):
