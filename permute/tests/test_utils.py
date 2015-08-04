@@ -27,19 +27,21 @@ def test_binom_conf_interval():
 
 
 def test_hypergeom_conf_interval():
-    # Simple example. Suppose we have a box with 3 "good" things and 2 "bad" things. 
-    # We take 2 draws without replacement from the box and get x = 1 good things.
-    # Then P(x >= 2) = P(x = 2) since we only do 2 draws; this simplifies calcs.
-    # When G=0 or G=1, P(x = 2) = 0. 
     res = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "two-sided")
     expected = (1.0, 4.0) 
     np.testing.assert_equal(res, expected)
+    
     res2 = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "upper")
     expected2 = (0.0, 4.0) 
     np.testing.assert_equal(res2, expected2)
+    
     res3 = hypergeom_conf_interval(2, 1, 5, cl = 0.95, alternative = "lower")
     expected3 = (1.0, 5.0)
     np.testing.assert_equal(res3, expected3)
+    
+    res4 = hypergeom_conf_interval(2, 2, 5, cl = 0.95, alternative = "two-sided")
+    expected4 = (2.0, 5.0)
+    np.testing.assert_equal(res4, expected4)
     
     cl = 0.95
     n = 10
