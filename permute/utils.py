@@ -115,11 +115,8 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
         cl = 1 - (1-cl)/2
 
     if alternative != "upper" and x > 0:
-        if x == n:
-            ci_low = x
-        else:
-            f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
-            ci_low = math.ceil(brentq(f, 0.0, G, *kwargs))
+        f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
+        ci_low = math.ceil(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
         f = lambda q: hypergeom.cdf(x, N, q, n) - (1-cl)
