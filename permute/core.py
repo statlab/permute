@@ -136,8 +136,11 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         't': lambda u: ttest_ind(
             u[:len(y)], u[len(y):], equal_var=True)[0]
     }
-    tst_fun = stats[stat]
-
+    if callable(stat):
+        tst_fun = stat
+    else:
+        tst_fun = stats[stat]
+        
     theStat = {
         'greater': tst_fun,
         'less': lambda u: -tst_fun(u),
@@ -248,7 +251,10 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         'mean': lambda u: np.mean(u),
         't': lambda u: ttest_1samp(u, 0)[0]
     }
-    tst_fun = stats[stat]
+    if callable(stat):
+        tst_fun = stat
+    else:
+        tst_fun = stats[stat]
 
     theStat = {
         'greater': tst_fun,
