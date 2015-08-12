@@ -84,8 +84,17 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             but the p-value is still estimated by the randomization,
             approximating the permutation distribution.
             The t-statistic is computed using scipy.stats.ttest_ind
-        (c) FIXME: Explanation or example of how to pass in a function,
-            instead of a str
+        (c) If stat is a function (a callable object), the test statistic is
+            that function.  The function should take a permutation of the pooled
+            data and compute the test function from it. For instance, if the
+            test statistic is the Kolmogorov-Smirnov distance between the
+            empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
+            the test statistic could be written:
+
+            f = lambda u: np.max( \
+                [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
+                )
+
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
     keep_dist : bool
@@ -129,8 +138,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     """
     prng = get_prng(seed)
     z = np.concatenate([x, y])   # pooled responses
-    # FIXME: Type check: we may want to pass in a function for argument 'stat'
-    # FIXME: If function, use that. Otherwise, look in the dictionary
+
+    # If stat is callable, use it as the test function. Otherwise, look in the dictionary
+
     stats = {
         'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
         't': lambda u: ttest_ind(
@@ -140,7 +150,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         tst_fun = stat
     else:
         tst_fun = stats[stat]
-        
+
     theStat = {
         'greater': tst_fun,
         'less': lambda u: -tst_fun(u),
