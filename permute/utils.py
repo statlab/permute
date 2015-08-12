@@ -4,6 +4,7 @@ Various utilities and helper functions.
 from __future__ import division, print_function, absolute_import
 
 import numbers
+import math
 import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import (binom, hypergeom, ttest_ind, ttest_1samp)
@@ -63,25 +64,28 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
     return ci_low, ci_upp
 
+
 def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
                         **kwargs):
     """
-    Compute a confidence interval for a hypergeometric G, the number of good objects in the population.
+    Confidence interval for a hypergeometric distribution parameter G, the number of good 
+    objects in a population in size N, based on the number x of good objects in a simple
+    random sample of size n.
 
     Parameters
     ----------
     n : int
-        The number of Bernoulli trials.
+        The number of draws without replacement.
     x : int
         The number of "good" objects in the sample.
     N : int
-        The number of objects in the population
+        The number of objects in the population.
     cl : float in (0, 1)
         The desired confidence level.
     alternative : {"two-sided", "lower", "upper"}
         Indicates the alternative hypothesis.
     G : int in [0, N]
-        Starting point in search for confidence bounds for hypergeometric G.
+        Starting point in search for confidence bounds for the hypergeometric parameter G.
     kwargs : dict
         Key word arguments
 
@@ -103,20 +107,20 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
     assert alternative in ("two-sided", "lower", "upper")
 
     if G is None:
-        G = math.floor((x / n)*N)
-    ci_low = 0.0
+        G = (x / n)*N
+    ci_low = 0
     ci_upp = N
 
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
     if alternative != "upper" and x > 0:
-        f = lambda q: cl - scipy.stats.hypergeom.cdf(x-1, N, q, n)
-        ci_low = math.floor(sp.optimize.brentq(f, 0.0, G, *kwargs))
+        f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
+        ci_low = math.ceil(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
-        f = lambda q: scipy.stats.hypergeom.cdf(x, N, q, n) - (1-cl)
-        ci_upp = math.ceil(sp.optimize.brentq(f, G, N, *kwargs))
+        f = lambda q: hypergeom.cdf(x, N, q, n) - (1-cl)
+        ci_upp = math.floor(brentq(f, G, N, *kwargs))
 
     return ci_low, ci_upp
 

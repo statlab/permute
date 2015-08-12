@@ -7,8 +7,7 @@ import numpy as np
 from numpy.random import RandomState
 
 
-from ..core import (binom_conf_interval,
-                    corr,
+from ..core import (corr,
                     two_sample,
                     one_sample)
 
@@ -35,20 +34,6 @@ def test_corr():
     #np.testing.assert_equal(res1[1], res2[1])
     #np.testing.assert_equal(res1[2], res2[2])
     #np.testing.assert_equal(res1[3], res2[3])
-
-
-def test_binom_conf_interval():
-    res = binom_conf_interval(10, 3)
-    expected = (0.05154625578928545, 0.6915018049393984)
-    np.testing.assert_equal(res, expected)
-
-    res2 = binom_conf_interval(10, 5, cl=0.95, alternative="upper")
-    expected2 = (0.0, 0.7775588989918742)
-    np.testing.assert_equal(res2, expected2)
-
-    res3 = binom_conf_interval(10, 5, cl=0.95, alternative="lower")
-    expected3 = (0.22244110100812578, 1.0)
-    np.testing.assert_equal(res3, expected3)
 
 
 @attr('slow')
