@@ -88,7 +88,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             that function.  The function should take a permutation of the pooled
             data and compute the test function from it. For instance, if the
             test statistic is the Kolmogorov-Smirnov distance between the
-            empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
+            empirical distributions of the two samples, ``max_t |F_x(t) - F_y(t)|``,
             the test statistic could be written:
 
             f = lambda u: np.max( \
