@@ -3,7 +3,7 @@ language: python
 
 env:
   global:
-    - DEPENDS="numpy scipy matplotlib"
+    - DEPENDS="numpy scipy matplotlib ipython"
     - COVERAGE=1
 
 python:
@@ -17,6 +17,7 @@ before_install:
   - python --version # just to check
   - retry pip install nose # always
   - sudo apt-get install libblas-dev liblapack-dev libatlas3gf-base
+  - cd doc && pip install -r requirements.txt && cd ..
   - wheelhouse_pip_install ${DEPENDS}
   - if [ "${COVERAGE}" == "1" ]; then
     pip install coverage;
@@ -25,6 +26,7 @@ before_install:
 
 install:
   - python setup.py install
+  - cd doc && make html && cd ..
 
 script:
   - make coverage
