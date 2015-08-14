@@ -2,7 +2,7 @@ Permutation tests and confidence sets
 =====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    user/index.rst
    dev/index.rst
