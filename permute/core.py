@@ -214,16 +214,20 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     reps : int
         number of repetitions
     stat : {'mean', 't'}
-        The test statistic.
+        The test statistic. The statistic is computed based on either z = x or 
+        z = x - y, if y is specified.
 
-        (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
-            (equivalently, sum(x), since those are monotonically related)
-        (b) If stat == 't', the test statistic is the two-sample t-statistic--
+        (a) If stat == 'mean', the test statistic is mean(z).
+        (b) If stat == 't', the test statistic is the t-statistic--
             but the p-value is still estimated by the randomization,
             approximating the permutation distribution.
-            The t-statistic is computed using scipy.stats.ttest_ind
-        (c) FIXME: Explanation or example of how to pass in a function,
-            instead of a str
+        (c) If stat is a function (a callable object), the test statistic is
+            that function.  The function should take a permutation of the
+            data and compute the test function from it. For instance, if the
+            test statistic is the maximum absolute value, max_i |z_i|,
+            the test statistic could be written:
+
+            f = lambda u: np.max(abs(u))
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
     keep_dist : bool
@@ -255,8 +259,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     else:
         z = np.array(x)-np.array(y)
 
-    # FIXME: Type check: we may want to pass in a function for argument 'stat'
-    # FIXME: If function, use that. Otherwise, look in the dictionary
     stats = {
         'mean': lambda u: np.mean(u),
         't': lambda u: ttest_1samp(u, 0)[0]
