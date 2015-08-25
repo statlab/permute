@@ -191,78 +191,80 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**5, stat="mean", **kwargs):
-	"""
-	One-sided or two-sided confidence interval for the two-sample statistic
-	comparing two means, obtained by inverting the two-sample permutation test.
+                        reps=10**4, stat="mean", **kwargs):
+    """
+    One-sided or two-sided confidence interval for the two-sample statistic
+    comparing two means, obtained by inverting the two-sample permutation test.
 
-	Parameters
-	----------
-	x : array-like
-	    Sample 1
-	y : array-like
-	    Sample 2
+    Parameters
+    ----------
+    x : array-like
+        Sample 1
+    y : array-like
+        Sample 2
     cl : float in (0, 1)
         The desired confidence level. Default 0.95.	
-	alternative : {"two-sided", "lower", "upper"}
-	    Indicates the alternative hypothesis.
-	seed : RandomState instance or {None, int, RandomState instance}
-	    If None, the pseudorandom number generator is the RandomState
-	    instance used by `np.random`;
-	    If int, seed is the seed used by the random number generator;
-	    If RandomState instance, seed is the pseudorandom number generator
-	reps : int
-	    number of repetitions in two_sample
-	stat : {'mean', 't'}
-	    The test statistic.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+    reps : int
+        number of repetitions in two_sample
+    stat : {'mean', 't'}
+        The test statistic.
 
-	    (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
-	        (equivalently, sum(x), since those are monotonically related)
-	    (b) If stat == 't', the test statistic is the two-sample t-statistic--
-	        but the p-value is still estimated by the randomization,
-	        approximating the permutation distribution.
-	        The t-statistic is computed using scipy.stats.ttest_ind
-	    (c) If stat is a function (a callable object), the test statistic is
-	        that function.  The function should take a permutation of the pooled
-	        data and compute the test function from it. For instance, if the
-	        test statistic is the Kolmogorov-Smirnov distance between the
-	        empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
-	        the test statistic could be written:
+        (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
+            (equivalently, sum(x), since those are monotonically related)
+        (b) If stat == 't', the test statistic is the two-sample t-statistic--
+            but the p-value is still estimated by the randomization,
+            approximating the permutation distribution.
+            The t-statistic is computed using scipy.stats.ttest_ind
+        (c) If stat is a function (a callable object), the test statistic is
+            that function.  The function should take a permutation of the pooled
+            data and compute the test function from it. For instance, if the
+            test statistic is the Kolmogorov-Smirnov distance between the
+            empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
+            the test statistic could be written:
 
-	        f = lambda u: np.max( \
-	            [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
-	            )    
-	Returns
-	-------
-	tuple
-	    the estimated confidence limits
-	Notes
-	-----
+            f = lambda u: np.max( \
+                [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
+                )    
+    Returns
+    -------
+    tuple
+        the estimated confidence limits
+    Notes
+    -----
     xtol : float
-	    Tolerance in brentq
-	rtol : float
-	    Tolerance in brentq
-	maxiter : int
-	    Maximum number of iterations in brentq
-	"""
+        Tolerance in brentq
+    rtol : float
+        Tolerance in brentq
+    maxiter : int
+        Maximum number of iterations in brentq
+    """
 
-	assert alternative in ("two-sided", "lower", "upper")
-	prng = get_prng(seed)
+    assert alternative in ("two-sided", "lower", "upper")
+    prng = get_prng(seed)
 
-	shift_limit = max(x) - min(y)
-	observed = mean(x) - mean(y)
+    shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
+    observed = np.mean(x) - np.mean(y)
 
-	if alternative == 'two-sided':
-	    cl = 1 - (1-cl)/2
+    if alternative == 'two-sided':
+        alpha = (1-cl)/2
+    else:
+        alpha = 1-cl
 
-	if alternative != "upper":
-	    f = lambda q: cl - two_sample(x, y, seed=seed, shift=q, reps=reps, stat=stat)[0]
-	    ci_low = brentq(f, observed, -shift_limit)
-	if alternative != "lower":
-	    f = lambda q: two_sample(x, y, seed=seed, shift=q, reps=reps, stat=stat)[0] - (1 - cl)
-	    ci_upp = brentq(f, observed, shift_limit)
+    if alternative != "upper":
+        f = lambda q: alpha - two_sample(x, y, alternative="less", seed=seed, shift=q, reps=reps, stat=stat)[0]
+        ci_low = brentq(f, observed, -shift_limit)
+    if alternative != "lower":
+        f = lambda q: alpha - two_sample(x, y, alternative="greater", seed=seed, shift=q, reps=reps, stat=stat)[0]
+        ci_upp = brentq(f, observed, shift_limit)
 
-	return ci_low, ci_upp
+    return ci_low, ci_upp
 
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
