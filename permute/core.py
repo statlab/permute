@@ -120,7 +120,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         If RandomState instance, seed is the pseudorandom number generator
     shift : int
         A constant scalar shift in the distribution of y. That is, x is equal 
-        in distribution to y + shift.
+        in distribution to y - shift.
         If None, the shift is assumed to be 0. This is the null hypothesis one 
         typically tests.
         If int, then shift is subtracted off of y before permuting, then added 
@@ -167,8 +167,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     }
 
     tst = theStat[alternative](z)
-    z[len(x):] = z[len(x):] - shift
-    ind = np.concatenate([np.zeros(len(x)), np.ones(len(y))])
+    z[len(x):] = z[:len(x)] - shift
+    ind = np.concatenate([np.ones(len(x)), np.zeros(len(y))])
     if keep_dist:
         dist = np.empty(reps)
         for i in range(reps):
@@ -253,17 +253,15 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     observed = np.mean(x) - np.mean(y)
 
     if alternative == 'two-sided':
-        alpha = (1-cl)/2
-    else:
-        alpha = 1-cl
+        cl = 1 - (1-cl)/2
 
     if alternative != "upper":
-        f = lambda q: alpha - two_sample(x, y, alternative="less", seed=seed, shift=q, reps=reps, stat=stat)[0]
-        ci_low = brentq(f, observed, -shift_limit)
+        f = lambda q: cl - two_sample(x, y, alternative="less", seed=seed, shift=q, reps=reps, stat=stat)[0]
+        ci_low = brentq(f, observed, -2*shift_limit)
     if alternative != "lower":
-        f = lambda q: alpha - two_sample(x, y, alternative="greater", seed=seed, shift=q, reps=reps, stat=stat)[0]
-        ci_upp = brentq(f, observed, shift_limit)
-
+        f = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, shift=q, reps=reps, stat=stat)[0]
+        ci_upp = brentq(f, 2*shift_limit, observed)
+        
     return ci_low, ci_upp
 
 
