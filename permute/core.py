@@ -191,7 +191,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-						**kwargs):
+                        reps=10**5, stat="mean", **kwargs):
 	"""
 	One-sided or two-sided confidence interval for the two-sample statistic
 	comparing two means, obtained by inverting the two-sample permutation test.
@@ -211,13 +211,6 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 	    instance used by `np.random`;
 	    If int, seed is the seed used by the random number generator;
 	    If RandomState instance, seed is the pseudorandom number generator
-
-	Returns
-	-------
-	tuple
-	    the estimated confidence limits
-	Notes
-	-----
 	reps : int
 	    number of repetitions in two_sample
 	stat : {'mean', 't'}
@@ -238,8 +231,14 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
 	        f = lambda u: np.max( \
 	            [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
-	            )
-	xtol : float
+	            )    
+	Returns
+	-------
+	tuple
+	    the estimated confidence limits
+	Notes
+	-----
+    xtol : float
 	    Tolerance in brentq
 	rtol : float
 	    Tolerance in brentq
@@ -251,17 +250,16 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 	prng = get_prng(seed)
 
 	shift_limit = max(x) - min(y)
-	interval = [-shift_limit, shift_limit]
+	observed = mean(x) - mean(y)
 
 	if alternative == 'two-sided':
 	    cl = 1 - (1-cl)/2
-	observed = two_sample(x, y, seed=seed, reps=1)[1]
 
 	if alternative != "upper":
-	    f = lambda q: cl - two_sample(x, y, seed=seed, shift=q, reps = 100)[0]
+	    f = lambda q: cl - two_sample(x, y, seed=seed, shift=q, reps=reps, stat=stat)[0]
 	    ci_low = brentq(f, observed, -shift_limit)
 	if alternative != "lower":
-	    f = lambda q: two_sample(x, y, seed=seed, shift=q, reps = 100)[0] - (1 - cl)
+	    f = lambda q: two_sample(x, y, seed=seed, shift=q, reps=reps, stat=stat)[0] - (1 - cl)
 	    ci_upp = brentq(f, observed, shift_limit)
 
 	return ci_low, ci_upp
