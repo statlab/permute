@@ -47,7 +47,8 @@ def corr(x, y, reps=10**4, seed=None):
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, interval=False, level=0.95, seed=None):
+               keep_dist=False, interval=False, level=0.95, seed=None,
+               shift=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -117,7 +118,13 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
-
+    shift : int
+        A constant scalar shift in the distribution of y. That is, x is equal 
+        in distribution to y + shift.
+        If None, the shift is assumed to be 0. This is the null hypothesis one 
+        typically tests.
+        If int, then shift is subtracted off of y before permuting, then added 
+        back in to compute the permutation test statistic.
 
     Returns
     -------
@@ -137,6 +144,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         These values are only returned if `keep_dist` == True
     """
     prng = get_prng(seed)
+    if shift is None:
+        shift = 0
     z = np.concatenate([x, y])   # pooled responses
 
     # If stat is callable, use it as the test function. Otherwise, look in the dictionary
@@ -144,7 +153,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     stats = {
         'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
         't': lambda u: ttest_ind(
-            u[:len(y)], u[len(y):], equal_var=True)[0]
+            u[:len(x)], u[len(x):], equal_var=True)[0]
     }
     if callable(stat):
         tst_fun = stat
@@ -158,10 +167,12 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     }
 
     tst = theStat[alternative](z)
+    z[len(x):] = z[len(x):] - shift
+    ind = np.concatenate([np.zeros(len(x)), np.ones(len(y))])
     if keep_dist:
         dist = np.empty(reps)
         for i in range(reps):
-            dist[i] = theStat[alternative](prng.permutation(z))
+            dist[i] = theStat[alternative](prng.permutation(z) + ind*shift)
         hits = np.sum(dist >= tst)
         if interval in ["upper", "lower", "two-sided"]:
             return (hits/reps, tst,
@@ -169,7 +180,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         else:
             return hits/reps, tst, dist
     else:
-        hits = np.sum([(theStat[alternative](prng.permutation(z)) >= tst)
+        hits = np.sum([(theStat[alternative](prng.permutation(z) + ind*shift) >= tst)
                        for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
