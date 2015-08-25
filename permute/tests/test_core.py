@@ -107,6 +107,11 @@ def test_two_sample():
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
 
+    # Test null with shift other than zero
+    res = two_sample(x, y, seed=42, shift=2)
+    np.testing.assert_equal(res[0], 0)
+    np.testing.assert_equal(res[1], expected_ts)
+    
 def test_one_sample():
     prng = RandomState(42)
     
