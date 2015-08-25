@@ -102,9 +102,10 @@ def test_two_sample():
     f = lambda u: np.max( \
         [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
         )
-    res = two_sample(x, y, seed=42, stat=f)
-    np.testing.assert_equal(res[0], 0)
-    np.testing.assert_almost_equal(res[1], 0.9499999999)
+    res = two_sample(x, y, seed=42, stat=f, reps=100)
+    expected = (0.68999999999999995, 0.20000000000000007)
+    np.testing.assert_equal(res[0], expected[0])
+    np.testing.assert_equal(res[1], expected[1])
 
 def test_one_sample():
     prng = RandomState(42)
