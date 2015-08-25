@@ -251,7 +251,9 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
     shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
     observed = np.mean(x) - np.mean(y)
-
+    ci_low = -shift_limit
+    ci_upp = shift_limit
+    
     if alternative == 'two-sided':
         cl = 1 - (1-cl)/2
 
