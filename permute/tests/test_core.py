@@ -110,9 +110,11 @@ def test_two_sample():
 
     # Test null with shift other than zero
     res = two_sample(x, y, seed=42, shift=2)
-    np.testing.assert_equal(res[0], 0)
+    np.testing.assert_equal(res[0], 1)
     np.testing.assert_equal(res[1], expected_ts)
-    
+    res = two_sample(x, y, seed=42, shift=2, alternative="less")
+    np.testing.assert_equal(res[0], 0)
+    np.testing.assert_equal(res[1], -expected_ts)
 
 def test_two_sample_conf_int():
     prng = RandomState(42)
@@ -121,13 +123,13 @@ def test_two_sample_conf_int():
     x = range(5)
     y = range(1,6)
     res = two_sample_conf_int(x, y, seed=prng)
-    expected_ci = (-3.600000000000182, 0.6000000000011638)
+    expected_ci =  (-3.039627925495512, 1.3180643632398046)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
-    expected_ci = (-5, 0.5999999999993038)
+    expected_ci = (-5, 1)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="lower")
-    expected_ci = (-3.200000000000732, 5)
+    expected_ci = (-3, 5)
     np.testing.assert_almost_equal(res, expected_ci)
     
     

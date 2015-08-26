@@ -167,8 +167,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     }
 
     tst = theStat[alternative](z)
-    z[len(x):] = z[:len(x)] - shift
+#    z[len(x):] = z[:len(x)] - shift
     ind = np.concatenate([np.ones(len(x)), np.zeros(len(y))])
+    z = z - ind*shift
     if keep_dist:
         dist = np.empty(reps)
         for i in range(reps):
