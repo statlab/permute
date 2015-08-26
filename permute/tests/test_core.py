@@ -9,6 +9,7 @@ from numpy.random import RandomState
 
 from ..core import (corr,
                     two_sample,
+                    two_sample_conf_int,
                     one_sample)
 
 
@@ -111,6 +112,24 @@ def test_two_sample():
     res = two_sample(x, y, seed=42, shift=2)
     np.testing.assert_equal(res[0], 0)
     np.testing.assert_equal(res[1], expected_ts)
+    
+
+def test_two_sample_conf_int():
+    prng = RandomState(42)
+    
+    # Shift is -1
+    x = range(5)
+    y = range(1,6)
+    res = two_sample_conf_int(x, y, seed=prng)
+    expected_ci = (-3.600000000000182, 0.6000000000011638)
+    np.testing.assert_almost_equal(res, expected_ci)
+    res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
+    expected_ci = (-5, 0.5999999999993038)
+    np.testing.assert_almost_equal(res, expected_ci)
+    res = two_sample_conf_int(x, y, seed=prng, alternative="lower")
+    expected_ci = (-3.200000000000732, 5)
+    np.testing.assert_almost_equal(res, expected_ci)
+    
     
 def test_one_sample():
     prng = RandomState(42)
