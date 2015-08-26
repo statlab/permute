@@ -114,7 +114,7 @@ def test_two_sample():
     np.testing.assert_equal(res[1], expected_ts)
     res = two_sample(x, y, seed=42, shift=2, alternative="less")
     np.testing.assert_equal(res[0], 0)
-    np.testing.assert_equal(res[1], -expected_ts)
+    np.testing.assert_equal(res[1], expected_ts)
 
 def test_two_sample_conf_int():
     prng = RandomState(42)

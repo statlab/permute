@@ -120,7 +120,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         If RandomState instance, seed is the pseudorandom number generator
     shift : int
         A constant scalar shift in the distribution of y. That is, x is equal 
-        in distribution to y - shift.
+        in distribution to y + shift.
         If None, the shift is assumed to be 0. This is the null hypothesis one 
         typically tests.
         If int, then shift is subtracted off of y before permuting, then added 
@@ -165,9 +165,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'less': lambda u: -tst_fun(u),
         'two-sided': lambda u: math.fabs(tst_fun(u))
     }
-
+    
+    observed_tst = tst_fun(z)
     tst = theStat[alternative](z)
-#    z[len(x):] = z[:len(x)] - shift
     ind = np.concatenate([np.ones(len(x)), np.zeros(len(y))])
     z = z - ind*shift
     if keep_dist:
@@ -179,16 +179,16 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             return (hits/reps, tst,
                     binom_conf_interval(reps, hits, level, interval), dist)
         else:
-            return hits/reps, tst, dist
+            return hits/reps, observed_tst, dist
     else:
         hits = np.sum([(theStat[alternative](prng.permutation(z) + ind*shift) >= tst)
                        for i in range(reps)])
 
     if interval in ["upper", "lower", "two-sided"]:
-        return (hits/reps, tst,
+        return (hits/reps, observed_tst,
                 binom_conf_interval(reps, hits, level, interval))
     else:
-        return hits/reps, tst
+        return hits/reps, observed_tst
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
