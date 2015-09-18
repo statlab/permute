@@ -9,7 +9,8 @@ from ..utils import (binom_conf_interval,
                      get_prng,
                      permute_rows,
                      permute_within_groups,
-                     permute_incidence_fixed_sums)
+                     permute_incidence_fixed_sums,
+                     potential_outcomes)
 
 
 def test_binom_conf_interval():
@@ -147,3 +148,41 @@ def test_permute_incidence_fixed_sums_ND_arr():
 @raises(ValueError)
 def test_permute_incidence_fixed_sums_non_binary():
     permute_incidence_fixed_sums(np.array([[1, 2], [3, 4]]))
+
+def test_potential_outcomes():
+    x = np.array(range(5)) + 1
+    y = x + 4.5
+    f = lambda u: u + 3.5
+    finv = lambda u: u - 3.5
+    g = lambda u: np.exp(u*2)
+    ginv = lambda u: np.log(u)/2
+    
+    
+    res1f = potential_outcomes(x, y, f)
+    res2f = potential_outcomes(x, y, f, finv)
+    res1g = potential_outcomes(x, y, g)
+    res2g = potential_outcomes(x, y, g, ginv)
+    expectedf = np.array([[  1. ,  -2.5],
+       [  2. ,  -1.5],
+       [  3. ,  -0.5],
+       [  4. ,   0.5],
+       [  5. ,   1.5],
+       [  9. ,   5.5],
+       [ 10. ,   6.5],
+       [ 11. ,   7.5],
+       [ 12. ,   8.5],
+       [ 13. ,   9.5]])
+    expectedg = np.array([[  1.00000000e+00,   2.93390024e-17],
+       [  2.00000000e+00,   3.46573590e-01],
+       [  3.00000000e+00,   5.49306144e-01],
+       [  4.00000000e+00,   6.93147181e-01],
+       [  5.00000000e+00,   8.04718956e-01],
+       [  5.98741417e+04,   5.50000000e+00],
+       [  4.42413392e+05,   6.50000000e+00],
+       [  3.26901737e+06,   7.50000000e+00],
+       [  2.41549528e+07,   8.50000000e+00],
+       [  1.78482301e+08,   9.50000000e+00]])
+    np.testing.assert_equal(res1f, expectedf)
+    np.testing.assert_equal(res2f, expectedf)
+    np.testing.assert_array_almost_equal(res1g, expectedg, 1)
+    np.testing.assert_array_almost_equal(res2g, expectedg, 1)
