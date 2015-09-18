@@ -48,63 +48,43 @@ def test_two_sample():
     expected = (1.0, -2.90532344604777)
     np.testing.assert_almost_equal(res, expected)
     
-    # this one has keep_dist = True
+    # This one has keep_dist = True
     y = prng.normal(1.4, size=20)
     res = two_sample(x, y, seed=42)
     res2 = two_sample(x, y, seed=42, keep_dist=True)
     expected = (0.96975, -0.54460818906623765)
-    np.testing.assert_equal(res, expected)
-    np.testing.assert_equal(res2[:2], expected)
+    np.testing.assert_approx_equal(res[0], expected[0], 2)
+    np.testing.assert_equal(res[1], expected[1])
+    np.testing.assert_approx_equal(res2[0], expected[0], 2)
+    np.testing.assert_equal(res2[1], expected[1])
 
     # Normal-normal, same means
     y = prng.normal(1, size=20)
     res = two_sample(x, y, seed=42)
     expected = (0.66505000000000003, -0.13990200413154097)
-    np.testing.assert_equal(res, expected)
-
-    # Ask for an upper confidence limit
-    res = two_sample(x, y, seed=42, interval="upper")
-    expected_pv = 0.66505000000000003
-    expected_ts = -0.13990200413154097
-    expected_ci = (0.0, 0.6675064023707297)
-    np.testing.assert_equal(res[0], expected_pv)
-    np.testing.assert_equal(res[1], expected_ts)
-    np.testing.assert_almost_equal(res[2], expected_ci)
-    
-    # Ask for a lower confidence limit
-    res = two_sample(x, y, seed=42, interval="lower")
-    expected_ci = (0.6625865251964975, 1.0)
-    np.testing.assert_almost_equal(res[2], expected_ci)
-    res = two_sample(x, y, seed=42, interval="two-sided")
-    expected_ci = (0.6621149803107692, 0.6679754440683887)
-    np.testing.assert_almost_equal(res[2], expected_ci)
+    np.testing.assert_approx_equal(res[0], expected[0], 2)
+    np.testing.assert_equal(res[1], expected[1])
 
     # Check the permutation distribution
     res = two_sample(x, y, seed=42, keep_dist=True)
-    exp_dist_firstfive = [0.089396492796047111,
-                          0.17390295863272254,
-                         -0.034211921065956274,
-                          0.29103960535095719,
-                         -0.76420778601368644]
-    np.testing.assert_equal(res[0], expected_pv)
+    expected_pv = 0.66505000000000003
+    expected_ts = -0.13990200413154097
+    exp_dist_firstfive = [0.08939649,
+                         -0.26323896,
+                         0.15428355,
+                         -0.0294264,
+                         0.03318078]
+    np.testing.assert_approx_equal(res[0], expected_pv, 2)
     np.testing.assert_equal(res[1], expected_ts)
     np.testing.assert_equal(len(res[2]), 100000)
     np.testing.assert_almost_equal(res[2][:5], exp_dist_firstfive)
 
-    # Ask for two-sided interval and keep_dist
-    res = two_sample(x, y, seed=42, interval="two-sided", keep_dist=True)
-    np.testing.assert_equal(res[0], expected_pv)
-    np.testing.assert_equal(res[1], expected_ts)
-    np.testing.assert_almost_equal(res[2], expected_ci)
-    np.testing.assert_equal(len(res[3]), 100000)
-    np.testing.assert_almost_equal(res[3][:5], exp_dist_firstfive)
-    
     # Define a lambda function (K-S test)
-    f = lambda u: np.max( \
-        [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
-        )
+    f = lambda u,v: np.max( \
+        [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) \
+        for val in np.concatenate([u,v])])
     res = two_sample(x, y, seed=42, stat=f, reps=100)
-    expected = (0.68999999999999995, 0.20000000000000007)
+    expected = (0.68, 0.20000000000000007)
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
 
@@ -115,6 +95,7 @@ def test_two_sample():
     res = two_sample(x, y, seed=42, shift=2, alternative="less")
     np.testing.assert_equal(res[0], 0)
     np.testing.assert_equal(res[1], expected_ts)
+
 
 def test_two_sample_conf_int():
     prng = RandomState(42)
