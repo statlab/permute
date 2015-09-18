@@ -157,7 +157,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes, rr, axis=0)
-            dist[i] = theStat2[alternative](pp[:nx, 0], pp[nx:, 1])
+            dist[i] = theStat[alternative](pp[:nx, 0], pp[nx:, 1])
         hits = np.sum(dist >= tst)
         return hits/reps, observed_tst, dist
     else:
@@ -165,7 +165,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes, rr, axis=0)
-            hits += theStat2[alternative](pp[:nx, 0], pp[nx:, 1]) >= tst
+            hits += theStat[alternative](pp[:nx, 0], pp[nx:, 1]) >= tst
         return hits/reps, observed_tst
 
 
