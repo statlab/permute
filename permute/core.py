@@ -118,7 +118,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
-    shift : int
+    shift : float
         A constant scalar shift in the distribution of y. That is, x is equal 
         in distribution to y + shift.
         If None, the shift is assumed to be 0. This is the null hypothesis one 
@@ -146,49 +146,73 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     prng = get_prng(seed)
     if shift is None:
         shift = 0
-    z = np.concatenate([x, y])   # pooled responses
-
+#    z = np.concatenate([x, y])   # pooled responses
+    nx = len(x)
+    
+    pot_outx = np.concatenate([x, y + shift]) # Potential outcomes for all units under treatment
+    pot_outy = np.concatenate([x - shift, y]) # Potential outcomes for all units under control
+    potential_outcomes = np.column_stack([pot_outx, pot_outy])
+    
     # If stat is callable, use it as the test function. Otherwise, look in the dictionary
 
-    stats = {
-        'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
-        't': lambda u: ttest_ind(
-            u[:len(x)], u[len(x):], equal_var=True)[0]
+#    stats = {
+#        'mean': lambda u: np.mean(u[:len(x)]) - np.mean(u[len(x):]),
+#        't': lambda u: ttest_ind(
+#            u[:len(x)], u[len(x):], equal_var=True)[0]
+#    }
+    stats2 = {
+        'mean': lambda u,v: np.mean(u) - np.mean(v),
+        't': lambda u,v: ttest_ind(u, v, equal_var=True)[0]
     }
     if callable(stat):
-        tst_fun = stat
+#        tst_fun = stat
+        tst_fun2 = stat
     else:
-        tst_fun = stats[stat]
-
-    theStat = {
-        'greater': tst_fun,
-        'less': lambda u: -tst_fun(u),
-        'two-sided': lambda u: math.fabs(tst_fun(u))
-    }
-    
-    observed_tst = tst_fun(z)
-    tst = theStat[alternative](z)
-    ind = np.concatenate([np.ones(len(x)), np.zeros(len(y))])
-    z = z - ind*shift
+ #       tst_fun = stats[stat]
+        tst_fun2 = stats2[stat]
+        
+#    theStat = {
+#        'greater': tst_fun,
+#        'less': lambda u: -tst_fun(u),
+#        'two-sided': lambda u: math.fabs(tst_fun(u))
+#    }
+    theStat2 = {
+        'greater': tst_fun2,
+        'less': lambda u,v: -tst_fun2(u, v),
+        'two-sided': lambda u,v: math.fabs(tst_fun2(u, v))
+    }    
+#    observed_tst = tst_fun(z)
+    observed_tst = tst_fun2(pot_outx[:nx], pot_outy[nx:])
+#    tst = theStat[alternative](z)
+    tst = theStat2[alternative](pot_outx[:nx], pot_outy[nx:])
+#    ind = np.concatenate([np.ones(len(x)), np.zeros(len(y))])
+#    z = z - ind*shift
     if keep_dist:
-        dist = np.empty(reps)
+#        dist = np.empty(reps)
+        dist2 = np.empty(reps)
         for i in range(reps):
-            dist[i] = theStat[alternative](prng.permutation(z) + ind*shift)
-        hits = np.sum(dist >= tst)
+#            dist[i] = theStat[alternative](prng.permutation(z) + ind*shift)
+            prng.shuffle(potential_outcomes)
+            dist2[i] = theStat2[alternative](potential_outcomes[:nx, 0], potential_outcomes[nx:, 1])
+#        hits = np.sum(dist >= tst)
+        hits2 = np.sum(dist2 >= tst)
         if interval in ["upper", "lower", "two-sided"]:
-            return (hits/reps, tst,
+            return (hits2/reps, tst,
                     binom_conf_interval(reps, hits, level, interval), dist)
         else:
-            return hits/reps, observed_tst, dist
+            return hits2/reps, observed_tst, dist
     else:
-        hits = np.sum([(theStat[alternative](prng.permutation(z) + ind*shift) >= tst)
-                       for i in range(reps)])
-
+#        hits = np.sum([(theStat[alternative](prng.permutation(z) + ind*shift) >= tst)
+#                       for i in range(reps)])
+        hits2 = 0
+        for i in range(reps):
+            prng.shuffle(potential_outcomes)
+            hits2 += theStat2[alternative](potential_outcomes[:nx, 0], potential_outcomes[nx:, 1]) >= tst
     if interval in ["upper", "lower", "two-sided"]:
-        return (hits/reps, observed_tst,
+        return (hits2/reps, observed_tst,
                 binom_conf_interval(reps, hits, level, interval))
     else:
-        return hits/reps, observed_tst
+        return hits2/reps, observed_tst
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
