@@ -12,7 +12,7 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import (binom, ttest_ind, ttest_1samp)
 
-from .utils import get_prng, binom_conf_interval
+from .utils import get_prng, binom_conf_interval, potential_outcomes
 
 
 def corr(x, y, reps=10**4, seed=None):
@@ -106,13 +106,16 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
     shift : float
-        A constant scalar shift in the distribution of y. That is, x is equal 
-        in distribution to y + shift.
-        If None, the shift is assumed to be 0. This is the null hypothesis one 
-        typically tests.
-        If int, then shift is subtracted off of y before permuting, then added 
-        back in to compute the permutation test statistic.
-
+        The relationship between x and y under the null hypothesis.
+        
+        (a) If None, the shift is assumed to be 0. This is the null hypothesis one 
+            typically tests.
+        (b) A constant scalar shift in the distribution of y. That is, x is equal 
+            in distribution to y + shift.
+        (c) An invertible function, so under the null x_i = f(y_i) for all individuals i
+        (d) A tuple containing the function and its inverse (f, finverse), so
+            x_i = f(y_i) and y_i = finverse(x_i)
+        
     Returns
     -------
     float
@@ -124,16 +127,24 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         These values are only returned if `keep_dist` == True
     """
     prng = get_prng(seed)
-    if shift is None:
-        shift = 0
-    nx = len(x)
     
-    pot_outx = np.concatenate([x, y + shift]) # Potential outcomes for all units under treatment
-    pot_outy = np.concatenate([x - shift, y]) # Potential outcomes for all units under control
-    potential_outcomes = np.column_stack([pot_outx, pot_outy])
+    # Set up potential outcomes according to shift
+    if shift is None:
+        pot_outx = np.concatenate([x, y])
+        pot_outy = np.concatenate([x, y])
+        potential_outcomes = np.column_stack([pot_outx, pot_outy])
+    elif isinstance(shift, float) or isinstance(shift, int):
+        pot_outx = np.concatenate([x, y + shift]) # Potential outcomes for all units under treatment
+        pot_outy = np.concatenate([x - shift, y]) # Potential outcomes for all units under control
+        potential_outcomes = np.column_stack([pot_outx, pot_outy])
+    elif isinstance(shift, tuple):
+        potential_outcomes = potential_outcomes(x, y, shift[0], shift[1])
+    elif callable(shift):
+        potential_outcomes = potential_outcomes(x, y, shift)
+    else:
+        raise ValueError("Bad input for shift")
     
     # If stat is callable, use it as the test function. Otherwise, look in the dictionary
-
     stats = {
         'mean': lambda u,v: np.mean(u) - np.mean(v),
         't': lambda u,v: ttest_ind(u, v, equal_var=True)[0]
@@ -148,9 +159,11 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'less': lambda u,v: -tst_fun(u, v),
         'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
     }
+    
     observed_tst = tst_fun(pot_outx[:nx], pot_outy[nx:])
     tst = theStat[alternative](pot_outx[:nx], pot_outy[nx:])
     rr = range(len(pot_outx))
+    nx = len(x)
     
     if keep_dist:
         dist = np.empty(reps)
