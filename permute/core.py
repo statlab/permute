@@ -160,7 +160,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
     }
 
-    rr = range(pot_out_all.shape[0])
+    rr = list(range(pot_out_all.shape[0]))
     nx = len(x)    
     observed_tst = tst_fun(pot_out_all[:nx,0], pot_out_all[nx:,1])
     tst = theStat[alternative](pot_out_all[:nx,0], pot_out_all[nx:,1])
