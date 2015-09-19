@@ -159,11 +159,11 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'less': lambda u,v: -tst_fun(u, v),
         'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
     }
-    
-    observed_tst = tst_fun(pot_outx[:nx], pot_outy[nx:])
-    tst = theStat[alternative](pot_outx[:nx], pot_outy[nx:])
-    rr = range(len(pot_outx))
-    nx = len(x)
+
+    rr = range(potential_outcomes.shape[0])
+    nx = len(x)    
+    observed_tst = tst_fun(potential_outcomes[:nx,0], potential_outcomes[nx:,1])
+    tst = theStat[alternative](potential_outcomes[:nx,0], potential_outcomes[nx:,1])
     
     if keep_dist:
         dist = np.empty(reps)
