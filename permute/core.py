@@ -132,15 +132,15 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     if shift is None:
         pot_outx = np.concatenate([x, y])
         pot_outy = np.concatenate([x, y])
-        potential_outcomes = np.column_stack([pot_outx, pot_outy])
+        pot_out_all = np.column_stack([pot_outx, pot_outy])
     elif isinstance(shift, float) or isinstance(shift, int):
         pot_outx = np.concatenate([x, y + shift]) # Potential outcomes for all units under treatment
         pot_outy = np.concatenate([x - shift, y]) # Potential outcomes for all units under control
-        potential_outcomes = np.column_stack([pot_outx, pot_outy])
+        pot_out_all = np.column_stack([pot_outx, pot_outy])
     elif isinstance(shift, tuple):
-        potential_outcomes = potential_outcomes(x, y, shift[0], shift[1])
+        pot_out_all = potential_outcomes(x, y, shift[0], shift[1])
     elif callable(shift):
-        potential_outcomes = potential_outcomes(x, y, shift)
+        pot_out_all = potential_outcomes(x, y, shift)
     else:
         raise ValueError("Bad input for shift")
     
@@ -160,16 +160,16 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
     }
 
-    rr = range(potential_outcomes.shape[0])
+    rr = range(pot_out_all.shape[0])
     nx = len(x)    
-    observed_tst = tst_fun(potential_outcomes[:nx,0], potential_outcomes[nx:,1])
-    tst = theStat[alternative](potential_outcomes[:nx,0], potential_outcomes[nx:,1])
+    observed_tst = tst_fun(pot_out_all[:nx,0], pot_out_all[nx:,1])
+    tst = theStat[alternative](pot_out_all[:nx,0], pot_out_all[nx:,1])
     
     if keep_dist:
         dist = np.empty(reps)
         for i in range(reps):
             prng.shuffle(rr)
-            pp = np.take(potential_outcomes, rr, axis=0)
+            pp = np.take(pot_out_all, rr, axis=0)
             dist[i] = theStat[alternative](pp[:nx, 0], pp[nx:, 1])
         hits = np.sum(dist >= tst)
         return hits/reps, observed_tst, dist
@@ -177,16 +177,19 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         hits = 0
         for i in range(reps):
             prng.shuffle(rr)
-            pp = np.take(potential_outcomes, rr, axis=0)
+            pp = np.take(pot_out_all, rr, axis=0)
             hits += theStat[alternative](pp[:nx, 0], pp[nx:, 1]) >= tst
         return hits/reps, observed_tst
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**4, stat="mean", **kwargs):
+                        reps=10**4, stat="mean", shift=None, **kwargs):
     """
-    One-sided or two-sided confidence interval for the two-sample statistic
-    comparing two means, obtained by inverting the two-sample permutation test.
+    One-sided or two-sided confidence interval for the parameter determining
+    the treatment effect.  The default is the "shift model", where we are 
+    interested in the parameter d such that x is equal in distribution to
+    y + d. In general, if we have some family of invertible functions parameterized
+    by d, we'd like to find d such that x is equal in distribution to f(y, d).
 
     Parameters
     ----------
