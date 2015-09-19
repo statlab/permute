@@ -101,10 +101,10 @@ def test_two_sample_conf_int():
     prng = RandomState(42)
     
     # Shift is -1
-    x = range(5)
-    y = range(1,6)
+    x = np.array(range(5))
+    y = np.array(range(1,6))
     res = two_sample_conf_int(x, y, seed=prng)
-    expected_ci =  (-3.039627925495512, 1.3180643632398046)
+    expected_ci =  (-3.206390136239586, 1.0738676797240316)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
     expected_ci = (-5, 1)
