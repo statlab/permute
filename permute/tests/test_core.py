@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
 from nose.plugins.attrib import attr
-from nose.tools import assert_raises
+from nose.tools import assert_raises, raises
 
 import numpy as np
 from numpy.random import RandomState
@@ -150,6 +150,15 @@ def test_two_sample_conf_int():
     shift = (lambda u, d: u*d, lambda u,d: u/d)
     res = two_sample_conf_int(x, y, seed=5, shift=shift)
     np.testing.assert_almost_equal(res, (-1, 1.75))
+
+
+@raises(AssertionError)
+def test_two_sample_conf_int_bad_shift():
+    # Break it with a bad shift
+    x = np.array(range(5))
+    y = np.array(range(1,6))
+    shift = (lambda u,d: -d*u, lambda u,d: -u/d)
+    two_sample_conf_int(x, y, seed=5, shift=shift)
 
 
 def test_one_sample():
