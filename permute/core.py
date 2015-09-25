@@ -397,7 +397,9 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         assert (callable(shift[0])), "Supply f and finverse in shift tuple"
         assert (callable(shift[1])), "Supply f and finverse in shift tuple"
         f = shift[0]
-        finverse = shift[1]  
+        finverse = shift[1]
+        # Check that f is increasing in d; this is very ad hoc!
+        assert (f(5, 1) < f(5, 2)), "f must be increasing in the parameter d"
         shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)), 
                           abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
         observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)          
@@ -416,7 +418,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,  \
             shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
-        ci_low = brentq(g, observed, -2*shift_limit)
+        ci_low = brentq(g, -2*shift_limit, 2*shift_limit)
     
     if alternative != "lower":
         if shift is None:
@@ -425,7 +427,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed, \
                 shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
-        ci_upp = brentq(g, 2*shift_limit, observed)
+        ci_upp = brentq(g, -2*shift_limit, 2*shift_limit)
         
     return ci_low, ci_upp
 
