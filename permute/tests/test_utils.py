@@ -149,6 +149,7 @@ def test_permute_incidence_fixed_sums_ND_arr():
 def test_permute_incidence_fixed_sums_non_binary():
     permute_incidence_fixed_sums(np.array([[1, 2], [3, 4]]))
 
+
 def test_potential_outcomes():
     x = np.array(range(5)) + 1
     y = x + 4.5
@@ -183,3 +184,11 @@ def test_potential_outcomes():
     np.testing.assert_equal(resf, expectedf)
     np.testing.assert_almost_equal(resg[:5,:], expectedg[:5,:])
     np.testing.assert_almost_equal(resg[5:,:], expectedg[5:,:], 1)
+    
+    
+@raises(AssertionError)
+def test_potential_outcomes_bad_inverse():
+    f = lambda u: u + 3.5
+    ginv = lambda u: np.log(u)/2
+    potential_outcomes(np.array([1,2]), np.array([3,4]), f, ginv)
+    
