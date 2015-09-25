@@ -141,7 +141,17 @@ def test_two_sample_conf_int():
     expected_ci = (-3, 5)
     np.testing.assert_almost_equal(res, expected_ci)
     
+    # Specify shift with a function pair
+    shift = (lambda u, d: u + d, lambda u,d: u - d)
+    res = two_sample_conf_int(x, y, seed=5, shift=shift)
+    np.testing.assert_almost_equal(res, (-3, 1))
     
+    # Specify shift with a multiplicative pair
+    shift = (lambda u, d: u*d, lambda u,d: u/d)
+    res = two_sample_conf_int(x, y, seed=5, shift=shift)
+    np.testing.assert_almost_equal(res, (-1, 1.75))
+
+
 def test_one_sample():
     prng = RandomState(42)
     
