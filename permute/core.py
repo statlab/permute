@@ -370,9 +370,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         The relationship between x and y under the null hypothesis.
         
         (a) If None, the relationship is assumed to be additive (e.g. x = y+d)
-        (b) An invertible function, with arguments y and d, so under the null 
-            x_i = f(y_i, d) for all individuals i
-        (c) A tuple containing the function and its inverse (f, finverse), so
+        (b) A tuple containing the function and its inverse (f, finverse), so
             x_i = f(y_i, d) and y_i = finverse(x_i, d)
             
     Returns
@@ -399,12 +397,12 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         assert (callable(shift[0])), "Supply f and finverse in shift tuple"
         assert (callable(shift[1])), "Supply f and finverse in shift tuple"
         f = shift[0]
-        finverse = shift[1]            
+        finverse = shift[1]  
+        shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)), 
+                          abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
+        observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)          
     else:
         raise ValueError("Bad input for shift")
-    shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)), 
-                      abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
-    observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
     ci_low = -shift_limit
     ci_upp = shift_limit
     
@@ -413,19 +411,19 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
     if alternative != "upper":
         if shift is None:
-            g = lambda q: cl - two_sample(x, y, alternative="less", seed=seed,  \
+            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,  \
                 shift=q, reps=reps, stat=stat)[0]
         else:
-            g = lambda q: cl - two_sample(x, y, alternative="less", seed=seed,  \
+            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,  \
             shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
         ci_low = brentq(g, observed, -2*shift_limit)
     
     if alternative != "lower":
         if shift is None:
-            g = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, \
+            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed, \
                 shift=q, reps=reps, stat=stat)[0]
         else:
-            g = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, \
+            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed, \
                 shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
         ci_upp = brentq(g, 2*shift_limit, observed)
         
