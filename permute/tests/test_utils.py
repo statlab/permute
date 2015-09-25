@@ -158,10 +158,8 @@ def test_potential_outcomes():
     ginv = lambda u: np.log(u)/2
     
     
-    res1f = potential_outcomes(x, y, f)
-    res2f = potential_outcomes(x, y, f, finv)
-    res1g = potential_outcomes(x, y, g)
-    res2g = potential_outcomes(x, y, g, ginv)
+    resf = potential_outcomes(x, y, f, finv)
+    resg = potential_outcomes(x, y, g, ginv)
     expectedf = np.array([[  1. ,  -2.5],
        [  2. ,  -1.5],
        [  3. ,  -0.5],
@@ -172,7 +170,7 @@ def test_potential_outcomes():
        [ 11. ,   7.5],
        [ 12. ,   8.5],
        [ 13. ,   9.5]])
-    expectedg = np.array([[  1.00000000e+00,   2.93390024e-17],
+    expectedg = np.array([[  1.00000000e+00,   0.00000000e+00],
        [  2.00000000e+00,   3.46573590e-01],
        [  3.00000000e+00,   5.49306144e-01],
        [  4.00000000e+00,   6.93147181e-01],
@@ -182,7 +180,6 @@ def test_potential_outcomes():
        [  3.26901737e+06,   7.50000000e+00],
        [  2.41549528e+07,   8.50000000e+00],
        [  1.78482301e+08,   9.50000000e+00]])
-    np.testing.assert_equal(res1f, expectedf)
-    np.testing.assert_equal(res2f, expectedf)
-    np.testing.assert_array_almost_equal(res1g, expectedg, 1)
-    np.testing.assert_array_almost_equal(res2g, expectedg, 1)
+    np.testing.assert_equal(resf, expectedf)
+    np.testing.assert_almost_equal(resg[:5,:], expectedg[:5,:])
+    np.testing.assert_almost_equal(resg[5:,:], expectedg[5:,:], 1)
