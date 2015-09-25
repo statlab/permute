@@ -9,6 +9,7 @@ from numpy.random import RandomState
 
 from ..core import (corr,
                     two_sample,
+                    two_sample_shift,
                     two_sample_conf_int,
                     one_sample)
 
@@ -88,14 +89,40 @@ def test_two_sample():
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
 
+
+def test_two_sample_shift():
+    prng = RandomState(42)
+
+    # Normal-normal, different means examples
+    x = prng.normal(1, size=20)
+    y = prng.normal(4, size=20)
+    f = lambda u: u - 3
+    finv = lambda u: u + 3
+    f_err = lambda u: 2*u
+    f_err_inv = lambda u: u/2
+    expected_ts = -2.9053234460477784
+    
     # Test null with shift other than zero
-    res = two_sample(x, y, seed=42, shift=2)
+    res = two_sample_shift(x, y, seed=42, shift=2)
     np.testing.assert_equal(res[0], 1)
     np.testing.assert_equal(res[1], expected_ts)
-    res = two_sample(x, y, seed=42, shift=2, alternative="less")
+    res = two_sample_shift(x, y, seed=42, shift=2, alternative="less")
     np.testing.assert_equal(res[0], 0)
     np.testing.assert_equal(res[1], expected_ts)
-
+    
+    # Test null with shift -3
+    res = two_sample_shift(x, y, seed=42, shift=(f, finv))
+    np.testing.assert_equal(res[0], 0.38074999999999998)
+    np.testing.assert_equal(res[1], expected_ts)
+    res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
+    np.testing.assert_equal(res[0], 0.61924999999999997)
+    np.testing.assert_equal(res[1], expected_ts)
+    
+    # Test null with multiplicative shift
+    res = two_sample_shift(x, y, seed=42, shift=(f_err, f_err_inv), alternative="two-sided")
+    np.testing.assert_equal(res[0], 0.17139)
+    np.testing.assert_equal(res[1], expected_ts)
+    
 
 @attr('slow')
 def test_two_sample_conf_int():
