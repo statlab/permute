@@ -9,7 +9,7 @@ from __future__ import division, print_function, absolute_import
 import math
 
 import numpy as np
-from scipy.optimize import brentq
+from scipy.optimize import brentq, fsolve
 from scipy.stats import (binom, ttest_ind, ttest_1samp)
 
 from .utils import get_prng, binom_conf_interval, potential_outcomes
@@ -138,9 +138,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         pot_outy = np.concatenate([x - shift, y]) # Potential outcomes for all units under control
         pot_out_all = np.column_stack([pot_outx, pot_outy])
     elif isinstance(shift, tuple):
+        assert (callable(shift[0])), "Supply f and finverse in shift tuple"
+        assert (callable(shift[1])), "Supply f and finverse in shift tuple"
         pot_out_all = potential_outcomes(x, y, shift[0], shift[1])
-    elif callable(shift):
-        pot_out_all = potential_outcomes(x, y, shift)
     else:
         raise ValueError("Bad input for shift")
     
@@ -253,8 +253,19 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     assert alternative in ("two-sided", "lower", "upper")
     prng = get_prng(seed)
      
-    shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
-    observed = np.mean(x) - np.mean(y)
+    if shift is None:
+        shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
+        observed = np.mean(x) - np.mean(y)
+    elif isinstance(shift, tuple):
+        assert (callable(shift[0])), "Supply f and finverse in shift tuple"
+        assert (callable(shift[1])), "Supply f and finverse in shift tuple"
+        f = shift[0]
+        finverse = shift[1]            
+    else:
+        raise ValueError("Bad input for shift")
+    shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)), 
+                      abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
+    observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
     ci_low = -shift_limit
     ci_upp = shift_limit
     
@@ -265,31 +276,18 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         if shift is None:
             g = lambda q: cl - two_sample(x, y, alternative="less", seed=seed,  \
                 shift=q, reps=reps, stat=stat)[0]
-        elif isinstance(shift, tuple):
-            f = shift[0]
-            finverse = shift[1]
+        else:
             g = lambda q: cl - two_sample(x, y, alternative="less", seed=seed,  \
             shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
-        elif callable(shift):
-            g = lambda q: cl - two_sample(x, y, alternative="less", seed=seed,  \
-            shift=(lambda u: shift(u, q)), reps=reps, stat=stat)[0]
-        else:
-            raise ValueError("Bad input for shift")
         ci_low = brentq(g, observed, -2*shift_limit)
+    
     if alternative != "lower":
         if shift is None:
             g = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, \
                 shift=q, reps=reps, stat=stat)[0]
-        elif isinstance(shift, tuple):
-            f = shift[0]
-            finverse = shift[1]
+        else:
             g = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, \
                 shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
-        elif callable(shift):
-            g = lambda q: cl - two_sample(x, y, alternative="greater", seed=seed, \
-                shift=(lambda u: shift(u, q)), reps=reps, stat=stat)[0]
-        else:
-            raise ValueError("Bad input for shift")
         ci_upp = brentq(g, 2*shift_limit, observed)
         
     return ci_low, ci_upp
