@@ -305,9 +305,9 @@ def potential_outcomes(x, y, f, finverse):
         the second column contains all potential outcomes under the control.
     """
     
-    x = np.array(range(5)) + 1
-    assert np.allclose(finverse(f(x)), x), "f and finverse aren't inverses"
-    assert np.allclose(f(finverse(x)), x), "f and finverse aren't inverses"
+    tester = np.array(range(5)) + 1
+    assert np.allclose(finverse(f(tester)), tester), "f and finverse aren't inverses"
+    assert np.allclose(f(finverse(tester)), tester), "f and finverse aren't inverses"
     
     pot_treat = np.concatenate([x, f(y)])
     pot_ctrl = np.concatenate([finverse(x), y])
