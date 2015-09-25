@@ -97,6 +97,7 @@ def test_two_sample():
     np.testing.assert_equal(res[1], expected_ts)
 
 
+@attr('slow')
 def test_two_sample_conf_int():
     prng = RandomState(42)
     
