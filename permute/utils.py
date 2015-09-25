@@ -281,7 +281,7 @@ def permute_incidence_fixed_sums(incidence, k=1):
     return incidence
 
 
-def potential_outcomes(x, y, f, finverse=None):
+def potential_outcomes(x, y, f, finverse):
     """
     Given observations x under treatment and y under control conditions,
     returns the potential outcomes for units under their unobserved condition
@@ -297,7 +297,6 @@ def potential_outcomes(x, y, f, finverse=None):
         An invertible function
     finverse : function
         The inverse function to f.
-        If not specified, the inverse will be computed (this may be slow)
 
     Returns
     -------
@@ -306,12 +305,11 @@ def potential_outcomes(x, y, f, finverse=None):
         the second column contains all potential outcomes under the control.
     """
     
+    x = np.array(range(5))
+    assert all(finverse(f(x)) == x), "f and finverse aren't inverses"
+    assert all(f(finverse(x)) == x), "f and finverse aren't inverses"
+    
     pot_treat = np.concatenate([x, f(y)])
-    if callable(finverse):
-        pot_ctrl = np.concatenate([finverse(x), y])
-    else:
-        pot_ctrl = np.zeros(len(y))
-        for i in range(len(y)):
-            pot_ctrl[i] = fsolve(lambda u: f(u) - x[i], np.mean(y))
-        pot_ctrl = np.concatenate([pot_ctrl, y])
+    pot_ctrl = np.concatenate([finverse(x), y])
+
     return np.column_stack([pot_treat, pot_ctrl])
