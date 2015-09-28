@@ -3,69 +3,43 @@
 - is there a test that reveals scientifically significant results
   as well as statistically significant
 
-2. MacNell et al. re-analysis
-- two-sample kind of thing.
-
-3. Performance (Pythonic)
+2. Performance (Pythonic)
 - numba / Cython ? (Stefan)
 
-4. permuter scripts in pkg / building blocks
+3. permuter scripts in pkg / building blocks
 - Ultimately want scripts in permute to test.  Are vignettes reusable?
   - enumerate / (combinat from CSP.R)
   - itertools.combinations       
          
-5. two_sample
-- remove interval and level from two_sample signature (use outside function)
+4. two_sample
 - exact two-sample problem
 	- (use MacNell as example/test)
 	- see issue + gist
+- Write a vignette to show how this can be used to do rank tests, e.g. Wilcoxon
 
-6. Confidence sets
-- shift model
-
-2-sample, ts is mean-like
- (want to estimate the difference in population means in this direction)
-
- a. estimate difference in means , s = xbar - ybar
- b. "know" ts(x-s, y) = 0 therefore the p-value is "big"
-    x and y fixed, return p-value 
-
-
-if 1/(n+m n) > alpha
-  
-sort z , x' = smallest len(x) of sorted x, y' remainder
-
-s = x'bar - y'bar (worst case)
-
-brentq(-b, s0, ...)
-
-try with two-sample with exact
-
-
-
-7. k-sample tests
+5. k-sample tests
 - ks-like test statistic: combine ks for each pair of samples by max distance, sum of distances, npc...
-- Rank tests, e.g. Wilcoxon
+- Permutation ANOVA
 - other?
 
-8. n-dimensional k-sample
+6. n-dimensional k-sample
 - MST
 - LLQ
 - MDL (research topic)
 
-9. Association
+7. Association
 - Pearson
 - Spearman (replace data by their ranks in call to Pearson)
 - Regression ( null beta=0)
 
-10. Misc non-parametrics
+8. Misc non-parametrics
 - Runs tests
 - Other kinds of symmetry
 - Romano-style projection
-- Permutation ANOVA
 
-11. Contingency tables
+9. Contingency tables
 - ecological fixed-margin tests 
 	- Stefan's data example - see issue
 	
-12. Nonparametric combination of tests
+10. Nonparametric combination of tests
+- generalize the IRR NPC code
