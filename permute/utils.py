@@ -6,7 +6,7 @@ from __future__ import division, print_function, absolute_import
 import numbers
 import math
 import numpy as np
-from scipy.optimize import brentq
+from scipy.optimize import brentq, fsolve
 from scipy.stats import (binom, hypergeom, ttest_ind, ttest_1samp)
 
 
@@ -279,3 +279,37 @@ def permute_incidence_fixed_sums(incidence, k=1):
         k += 1
 
     return incidence
+
+
+def potential_outcomes(x, y, f, finverse):
+    """
+    Given observations x under treatment and y under control conditions,
+    returns the potential outcomes for units under their unobserved condition
+    under the hypothesis that x_i = f(y_i) for all units.
+
+    Parameters
+    ----------
+    x : array-like
+        Outcomes under treatment
+    y : array-like
+        Outcomes under control    
+    f : function
+        An invertible function
+    finverse : function
+        The inverse function to f.
+
+    Returns
+    -------
+    potential_outcomes : 2D array
+        The first column contains all potential outcomes under the treatment,
+        the second column contains all potential outcomes under the control.
+    """
+    
+    tester = np.array(range(5)) + 1
+    assert np.allclose(finverse(f(tester)), tester), "f and finverse aren't inverses"
+    assert np.allclose(f(finverse(tester)), tester), "f and finverse aren't inverses"
+    
+    pot_treat = np.concatenate([x, f(y)])
+    pot_ctrl = np.concatenate([finverse(x), y])
+
+    return np.column_stack([pot_treat, pot_ctrl])
