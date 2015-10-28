@@ -37,7 +37,8 @@ def test_stratified_permutationtest_mean():
     conditions = np.unique(condition)
     res = sptm(group, condition, response, groups, conditions)
     assert_equal(res, 0.0)
-
+    res2 = sptm(group, condition, response) # check defaults work
+    assert_equal(res2, 0.0)
 
 @raises(ValueError)
 def test_stratified_permutationtest_mean_error():
