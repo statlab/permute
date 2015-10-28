@@ -17,15 +17,15 @@ def test_stratified_permutationtest():
     response = np.zeros_like(group)
     response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
-    res = spt(group, condition, response, iterations=1000, seed=42)
-    res1 = spt(group, condition, response, iterations=1000, seed=42)
+    res = spt(group, condition, response, reps=1000, seed=42)
+    res1 = spt(group, condition, response, reps=1000, seed=42)
     assert_less(res[1], 0.01)
     assert_almost_equal(res[3], res1[3])
 
     group = np.array([1, 1, 1])
     condition = np.array([2, 2, 2])
     response = np.zeros_like(group)
-    res2 = spt(group, condition, response, iterations=1000, seed=42)
+    res2 = spt(group, condition, response, reps=1000, seed=42)
     assert_equal(res2, (1.0, 1.0, 1.0, np.nan, None))
 
 
@@ -37,7 +37,8 @@ def test_stratified_permutationtest_mean():
     conditions = np.unique(condition)
     res = sptm(group, condition, response, groups, conditions)
     assert_equal(res, 0.0)
-
+    res2 = sptm(group, condition, response) # check defaults work
+    assert_equal(res2, 0.0)
 
 @raises(ValueError)
 def test_stratified_permutationtest_mean_error():
