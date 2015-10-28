@@ -82,8 +82,7 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
 
 
 def stratified_permutationtest_mean(group, condition, response,
-                                    groups=np.unique(group), 
-                                    conditions=np.unique(condition)):
+                                    groups=None, conditions=None):
     """
     Calculates variability in sample means between treatment conditions,
     within groups.
@@ -112,6 +111,11 @@ def stratified_permutationtest_mean(group, condition, response,
     tst : float
       The observed test statistic
     """
+    if(groups is None):
+        groups = np.unique(group)
+    if(conditions is None):
+        conditions = np.unique(condition)
+    
     tst = 0.0
     if len(groups) < 2:
         raise ValueError('Number of groups must be at least 2.')
@@ -188,13 +192,13 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
         return 1.0, 1.0, 1.0, np.nan, None
     else:
         tst = testStatistic(group, condition, response, groups, conditions)
-        dist = np.zeros(iterations)
-        for i in range(int(iterations)):
+        dist = np.zeros(reps)
+        for i in range(int(reps)):
             dist[i] = testStatistic(group,
                                     permute_within_groups(
                                         condition, group, prng),
                                     response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
-        left_pv, right_pv, two_sided_pv = [np.count_nonzero(c)/iterations for c in conds]
+        left_pv, right_pv, two_sided_pv = [np.count_nonzero(c)/reps for c in conds]
         return left_pv, right_pv, two_sided_pv, tst, dist
