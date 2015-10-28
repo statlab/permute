@@ -19,8 +19,11 @@ def corrcoef(x, y, group):
     Parameters
     ----------
     x : array-like
+        Variable 1
     y : array-like
+        Variable 2, of the same length as x
     group : array-like
+        Group memberships, of the same length as x
 
     Returns
     -------
@@ -42,9 +45,13 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
     Parameters
     ----------
     x : array-like
+        Variable 1
     y : array-like
+        Variable 2, of the same length as x
     group : array-like
+        Group memberships, of the same length as x
     reps : int
+        Number of repetitions
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
         instance used by `np.random`;
@@ -53,9 +60,16 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
 
     Returns
     -------
-    tuple
-        Returns test statistic, left-sided p-value,
-        right-sided p-value, two-sided p-value, simulated distribution
+    float
+      the left (lower) p-value
+    float
+      the right (upper) p-value
+    float
+      the two-sided p-value
+    float
+      the observed test statistic
+    list
+      the null distribution
     """
     prng = get_prng(seed)
     tst = corrcoef(x, y, group)
@@ -68,7 +82,8 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
 
 
 def stratified_permutationtest_mean(group, condition, response,
-                                    groups, conditions):
+                                    groups=np.unique(group), 
+                                    conditions=np.unique(condition)):
     """
     Calculates variability in sample means between treatment conditions,
     within groups.
@@ -80,13 +95,22 @@ def stratified_permutationtest_mean(group, condition, response,
 
     Parameters
     ----------
-    group : int
-      The
+    group : array-like
+        Group memberships
+    condition : array-like
+        Treatment conditions, of the same length as group
+    response : array-like
+        Responses, of the same length as group
+    groups : array-like
+        Group labels. By default, it is the unique values of group
+    conditions : array-like
+        Condition labels. By default, it is the unique values of condition
+      
 
     Returns
     -------
     tst : float
-      The
+      The observed test statistic
     """
     tst = 0.0
     if len(groups) < 2:
@@ -102,13 +126,11 @@ def stratified_permutationtest_mean(group, condition, response,
     return tst
 
 
-def stratified_permutationtest(group, condition, response, iterations=1.0e4,
+def stratified_permutationtest(group, condition, response, reps=10**5,
                                testStatistic=stratified_permutationtest_mean,
                                seed=None):
     """
-    Stratified permutation test using the sum of the differences in means
-    between two or more conditions in each group (stratum) as the test
-    statistic.
+    Stratified permutation test based on differences in means.
 
     The test statistic is
 
@@ -130,8 +152,16 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
 
     Parameters
     ----------
-    group : int
-      The
+    group : array-like
+        Group memberships
+    condition : array-like
+        Treatment conditions, of the same length as group
+    response : array-like
+        Responses, of the same length as group
+    reps : int
+        Number of repetitions
+    testStatistic : function
+        Function to compute test statistic. By default, stratified_permutationtest_mean
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
         instance used by `np.random`;
@@ -140,8 +170,16 @@ def stratified_permutationtest(group, condition, response, iterations=1.0e4,
 
     Returns
     -------
-    permuted : int
-      The
+    float
+      the left (lower) p-value
+    float
+      the right (upper) p-value
+    float
+      the two-sided p-value
+    float
+      the observed test statistic
+    list
+      the null distribution
     """
     prng = get_prng(seed)
     groups = np.unique(group)
