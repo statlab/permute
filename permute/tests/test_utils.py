@@ -7,6 +7,7 @@ from numpy.testing import assert_equal
 from ..utils import (binom_conf_interval,
                      hypergeom_conf_interval,
                      get_prng,
+                     permute,
                      permute_rows,
                      permute_within_groups,
                      permute_incidence_fixed_sums,
@@ -103,6 +104,20 @@ def test_permute_within_group():
     np.testing.assert_equal(res3.max(), 3)
     res3.sort()
     np.testing.assert_equal(group, res3)
+
+
+def test_permute():
+    prng = RandomState(42)
+
+    x = prng.randint(10, size=20)
+    permute(x, prng)
+    expected = np.array([3, 2, 7, 9, 6, 5, 1, 6, 4, 2,
+                         7, 7, 7, 4, 4, 3, 1, 5, 7, 6])
+    np.testing.assert_array_equal(x, expected)
+
+    permute(x)
+    np.testing.assert_equal(x.max(), 9)
+    np.testing.assert_equal(x.min(), 1)
 
 
 def test_permute_rows():

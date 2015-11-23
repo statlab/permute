@@ -181,6 +181,29 @@ def permute_within_groups(x, group, seed=None):
     return permuted
 
 
+def permute(x, seed=None):
+    """
+    Permute an array in-place
+
+    Parameters
+    ----------
+    x : array-like
+        A 1-d array
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
+    Returns
+    -------
+    None
+        Original array is permuted in-place, nothing is returned.
+    """
+    prng = get_prng(seed)
+    prng.shuffle(x)
+
+
 def permute_rows(m, seed=None):
     """
     Permute the rows of a matrix in-place
