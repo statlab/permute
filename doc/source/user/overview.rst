@@ -40,7 +40,7 @@ probability.
 .. rubric:: Footnotes
 
 .. [#f1] A sequence $X_1, X_2, X_3, \dots, X_n$ of random variables is
-   \emph{exchangeable} if their joint distribution is invariant to
+   *exchangeable* if their joint distribution is invariant to
    permutations of the indices; that is,
 
    .. math::
