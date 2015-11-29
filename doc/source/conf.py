@@ -40,8 +40,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'dollarmath',
     'sphinxcontrib.bibtex',
-    'IPython.sphinxext.ipython_console_highlighting',
-    'IPython.sphinxext.ipython_directive',
     'plot_directive',
 ]
 
