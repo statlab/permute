@@ -42,3 +42,65 @@ freedom. If this additional assumption holds, then we can read the off a
 table. Note that, unlike in the permutation test, we were only able to
 calculate the (even with the additional assumptions) because we happened
 to be able to derive the distribution of this specific test statistic.
+
+
+Derivation
+~~~~~~~~~~
+
+Given $n$ observations
+
+.. math::
+
+  y_i = a + bx_i + \epsilon_i,
+
+the least square solution is
+
+.. math::
+
+  \min_{a, b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2
+
+
+Taking the partial derivative with respect to $a$
+
+.. math::
+
+  \frac{\partial }{\partial b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2
+   &= -2 \sum_{i=1}^n \left(y_i - a - bx_i \right) \\
+   &= -2 \left(\sum_{i=1}^n y_i - na - b \sum_{i=1}^n x_i \right) \\
+   &= -2n \left( \bar{y} - a - b \bar{x} \right).
+
+Setting this to $0$ and solving for $a$ yields our estimate $\hat{a}$
+
+.. math::
+
+  \hat{a} = \bar{y} - b \bar{x}.
+
+Taking the partial derivative with respect to $b$
+
+.. math::
+
+  \frac{\partial }{\partial b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2
+   &= -2 \sum_{i=1}^n \left(y_i - a - bx_i \right) x_i \\
+   &= -2 \left(\sum_{i=1}^n y_ix_i - a \sum_{i=1}^n x_i - b \sum_{i=1}^n x_ix_i \right) \\
+   &= -2n \left( \overline{xy} - a \bar{x} - b \overline{xx} \right).
+
+Plugging in $\hat{a}$, setting the result to $0$, and solving for $b$ yields
+
+.. math::
+
+  \hat{b} &= \frac{\overline{xy} - \bar{x}\bar{y}}{\overline{xx} - \bar{x}\bar{x}}
+    = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)}.
+
+So our test statistic is
+
+.. math::
+
+  t(x) = \frac{\hat{b}}{\mathrm{se}(\hat{b})} = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x) \mathrm{se}(\hat{b})}.
+
+The standard error of the estimate $\hat{b}$ is given by
+
+.. math::
+
+  \mathrm{se}(\hat{b}) &= \sqrt{\frac{\frac{1}{n} \sum \hat{\epsilon_i}^2}{\sum (x_i - \bar{x})^2}}
+    = \sqrt{\frac{\frac{1}{n} \sum \left(y_i - \hat{a} - \hat{b}x_i  \right)^2}{\sum (x_i - \bar{x})^2}}
+    = \sqrt{\frac{\frac{1}{n} \sum \left(y_i -  \bar{y} + \hat{b}(x_i - \bar{x})\right)^2}{\sum (x_i - \bar{x})^2}}.
