@@ -3,7 +3,7 @@ language: python
 
 env:
   global:
-    - DEPENDS="numpy scipy matplotlib ipython"
+    - DEPENDS="requirements.txt"
     - COVERAGE=1
 
 python:
@@ -14,7 +14,8 @@ before_install:
   - source tools/travis_tools.sh
   - virtualenv --python=python venv
   - source venv/bin/activate
-  - python --version # just to check
+  - python --version
+  - pip install --upgrade pip
   - sudo apt-get install libblas-dev liblapack-dev libatlas3gf-base
   - wheelhouse_pip_r_install ${DEPENDS}
 
