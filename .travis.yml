@@ -7,9 +7,9 @@ env:
     - COVERAGE=1
 
 python:
+  - 2.7
   - 3.4
   - 3.5
-  - 2.7
 
 before_install:
   - source tools/travis_tools.sh
