@@ -21,28 +21,27 @@ conditional probability regardless of the :math:`x`\ s. Hence every
 pairing :math:`(x_i, y_j)` for any fixed :math:`i` and for
 :math:`j = 1, 2, \dots, n` is equally likely.
 
-Using the least squares estimate of the slope normalized by its standard
-error as the test statistic, you can find its exact distribution under
-the null given the observed data by computing the test statistic on all
-possible pairs formed by permuting the :math:`y` values, keeping the
-original order of the :math:`x` values. From the distribution of the
-test statistic under the null conditioned on the observed data, the is
-the ratio of the count of the *as extreme* or *more extreme* test
-statistics to the total number of such test statistics. You might in
-principle enumerate all :math:`n!` equally likely pairings
-and then compute the exact . For sufficiently large :math:`n`,
-enumeration becomes infeasible; in which case, you could approximate the
-exact using a uniform random sample of the equally likely pairings.
+Using the least squares estimate of the slope as the test statistic, you can
+find its exact distribution under the null given the observed data by computing
+the test statistic on all possible pairs formed by permuting the :math:`y`
+values, keeping the original order of the :math:`x` values. From the
+distribution of the test statistic under the null conditioned on the observed
+data, the is the ratio of the count of the *as extreme* or *more extreme* test
+statistics to the total number of such test statistics. You might in principle
+enumerate all :math:`n!` equally likely pairings and then compute the exact p-value.
+For sufficiently large :math:`n`, enumeration becomes infeasible; in which
+case, you could approximate the exact p-value using a uniform random sample of the
+equally likely pairings.
 
 A parametric approach to this problem would begin by imposing additional
 assumptions on the noise :math:`\epsilon`. For example, if we assume
 that :math:`\{\epsilon_i\}` are iid Gaussians with mean zero, then the
-test statistic has a :math:`t`-distribution with :math:`n-2` degrees of
+the least squares estimate of the slope normalized by its standard
+error has a :math:`t`-distribution with :math:`n-2` degrees of
 freedom. If this additional assumption holds, then we can read the off a
 table. Note that, unlike in the permutation test, we were only able to
-calculate the (even with the additional assumptions) because we happened
+calculate the p-valye (even with the additional assumptions) because we happened
 to be able to derive the distribution of this specific test statistic.
-
 
 Derivation
 ~~~~~~~~~~
