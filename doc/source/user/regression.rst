@@ -1,22 +1,22 @@
 Regression
 ----------
 
-Given :math:`n=10` observations of two scalars :math:`(x_i, y_i)` for
+Given :math:`n` observations of two scalars :math:`(x_i, y_i)` for
 :math:`i = 1, 2, \dots, n`, consider the simple linear regression model
 
 .. math::
 
   y_i = a + bx_i + \epsilon_i.
 
-Assume that :math:`\{\epsilon_i\}_{i=1}^{10}` are exchangeable.
+Assume that :math:`\{\epsilon_i\}_{i=1}^{n}` are exchangeable.
 
 You are interested in testing whether the slope of the population
 regression line is non-zero; hence, your null hypothesis is
 :math:`b = 0`. If :math:`b = 0`, then the model reduces to
 :math:`y_i = a + \epsilon_i` for all :math:`i`. If this is true, the
-:math:`\{y_i\}_{i=1}^{10}` are exchangeable since they are just shifted
-versions of the exchangeable :math:`\{\epsilon_i\}_{i=1}^{10}`. Thus
-every permutation of the :math:`\{y_i\}_{i=1}^{10}` has the same
+:math:`\{y_i\}_{i=1}^{n}` are exchangeable since they are just shifted
+versions of the exchangeable :math:`\{\epsilon_i\}_{i=1}^{n}`. Thus
+every permutation of the :math:`\{y_i\}_{i=1}^{n}` has the same
 conditional probability regardless of the :math:`x`\ s. Hence every
 pairing :math:`(x_i, y_j)` for any fixed :math:`i` and for
 :math:`j = 1, 2, \dots, n` is equally likely.
@@ -28,8 +28,8 @@ possible pairs formed by permuting the :math:`y` values, keeping the
 original order of the :math:`x` values. From the distribution of the
 test statistic under the null conditioned on the observed data, the is
 the ratio of the count of the *as extreme* or *more extreme* test
-statistics to the total number of such test statistics. For :math:`n=10`
-you might in principle enumerate all :math:`10!` equally likely pairings
+statistics to the total number of such test statistics. You might in
+principle enumerate all :math:`n!` equally likely pairings
 and then compute the exact . For sufficiently large :math:`n`,
 enumeration becomes infeasible; in which case, you could approximate the
 exact using a uniform random sample of the equally likely pairings.
@@ -89,18 +89,39 @@ Plugging in $\hat{a}$, setting the result to $0$, and solving for $b$ yields
 .. math::
 
   \hat{b} &= \frac{\overline{xy} - \bar{x}\bar{y}}{\overline{xx} - \bar{x}\bar{x}}
-    = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)}.
+    = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)} = \mathrm{Cor}(x, y)\left(\frac{\mathrm{Std}(y)}{\mathrm{Std}(x)}\right).
 
-So our test statistic is
+Since $\frac{\mathrm{Std}(y)}{\mathrm{Std}(x)}$ is constant under the
+permutation of $y$, we can calculate the p-value using the permutation
+test of the correlation.
 
-.. math::
+.. code::
 
-  t(x) = \frac{\hat{b}}{\mathrm{se}(\hat{b})} = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x) \mathrm{se}(\hat{b})}.
+    >>> from __future__ import print_function
+    >>> import numpy as np
 
-The standard error of the estimate $\hat{b}$ is given by
+    >>> X = np.array([np.ones(10), np.random.random_integers(1, 4, 10)]).T
+    >>> beta = np.array([1.2, 2])
+    >>> epsilon = np.random.normal(0, .15, 10)
+    >>> y = X.dot(beta) + epsilon
 
-.. math::
+    >>> from permute.core import corr
+    >>> t, pv_left, pv_right, pv_both, dist = corr(X[:, 1], y)
+    >>> print(t)
+    0.998692462616
+    >>> print(pv_both)
+    0.0007
+    >>> print(pv_right)
+    0.0007
+    >>> print(pv_left)
+    1.0
 
-  \mathrm{se}(\hat{b}) &= \sqrt{\frac{\frac{1}{n} \sum \hat{\epsilon_i}^2}{\sum (x_i - \bar{x})^2}}
-    = \sqrt{\frac{\frac{1}{n} \sum \left(y_i - \hat{a} - \hat{b}x_i  \right)^2}{\sum (x_i - \bar{x})^2}}
-    = \sqrt{\frac{\frac{1}{n} \sum \left(y_i -  \bar{y} + \hat{b}(x_i - \bar{x})\right)^2}{\sum (x_i - \bar{x})^2}}.
+    >>> t, pv_both, dist = corr(X[:, 1], y)
+    >>> print(t)
+    0.103891027265
+    >>> print(pv_both)
+    0.765
+    >>> print(pv_right)
+    0.3818
+    >>> print(pv_left)
+    0.619
