@@ -152,7 +152,7 @@ def test_two_sample_conf_int():
     x = np.array(range(5))
     y = np.array(range(1,6))
     res = two_sample_conf_int(x, y, seed=prng)
-    expected_ci =  (-3.0442353, 1.0000037)
+    expected_ci =  (-3.5, 1.012957978810817)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
     expected_ci = (-5, 1)
@@ -164,7 +164,7 @@ def test_two_sample_conf_int():
     # Specify shift with a function pair
     shift = (lambda u, d: u + d, lambda u,d: u - d)
     res = two_sample_conf_int(x, y, seed=5, shift=shift)
-    np.testing.assert_almost_equal(res, (-3, 1))
+    np.testing.assert_almost_equal(res, (-3.5, 1))
     
     # Specify shift with a multiplicative pair
     shift = (lambda u, d: u*d, lambda u,d: u/d)
