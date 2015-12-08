@@ -42,11 +42,11 @@ def corr(x, y, reps=10**4, seed=None):
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
     left_pv = np.sum(sims <= tst)/reps
     right_pv = np.sum(sims >= tst)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(tst))/reps
+    two_sided_pv = 2*np.min(left_pv, right_pv)
     return tst, left_pv, right_pv, two_sided_pv, sims
 
 
-def two_sample_core(potential_outcomes_all, nx, tst_stat,
+def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                     reps=10**5, keep_dist=False, seed=None):
     '''
     Main workhorse function for two_sample and two_sample_shift
@@ -62,6 +62,8 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat,
         number of repetitions
     tst_stat: function
         The test statistic
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
     keep_dist : bool
         flag for whether to store and return the array of values
         of the irr test statistic
@@ -86,6 +88,12 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat,
     rr = list(range(potential_outcomes_all.shape[0]))
     tst = tst_stat(potential_outcomes_all[:nx,0], potential_outcomes_all[nx:,1])
     
+    thePvalue = {
+        'greater':   lambda p: p,
+        'less':      lambda p: 1-p,
+        'two-sided': lambda p: 2*min(p, 1-p)
+    }
+    
     if keep_dist:
         dist = np.empty(reps)
         for i in range(reps):
@@ -93,14 +101,14 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat,
             pp = np.take(potential_outcomes_all, rr, axis=0)
             dist[i] = tst_stat(pp[:nx, 0], pp[nx:, 1])
         hits = np.sum(dist >= tst)
-        return hits/reps, dist
+        return thePvalue[alternative](hits/reps), dist
     else:
         hits = 0
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
             hits += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
-        return hits/reps
+        return thePvalue[alternative](hits/reps)
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
@@ -186,16 +194,16 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     else:
         tst_fun = stats[stat]
         
-    theStat = {
-        'greater': tst_fun,
-        'less': lambda u,v: -tst_fun(u, v),
-        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
-    }
+#    theStat = {
+#        'greater': tst_fun,
+#        'less': lambda u,v: -tst_fun(u, v),
+#        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
+#    }
 
     nx = len(x)    
     observed_tst = tst_fun(pot_out_all[:nx,0], pot_out_all[nx:,1])
     
-    res = two_sample_core(pot_out_all, nx, theStat[alternative],
+    res = two_sample_core(pot_out_all, nx, tst_fun, alternative=alternative,
             reps=reps, keep_dist=keep_dist, seed=seed)
     
     if keep_dist:
@@ -303,16 +311,16 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
     else:
         tst_fun = stats[stat]
         
-    theStat = {
-        'greater': tst_fun,
-        'less': lambda u,v: -tst_fun(u, v),
-        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
-    }
+#    theStat = {
+#        'greater': tst_fun,
+#        'less': lambda u,v: -tst_fun(u, v),
+#        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
+#    }
 
     nx = len(x)    
     observed_tst = tst_fun(pot_out_all[:nx,0], pot_out_all[nx:,1])
     
-    res = two_sample_core(pot_out_all, nx, theStat[alternative],
+    res = two_sample_core(pot_out_all, nx, tst_fun, alternative=alternative,
             reps=reps, keep_dist=keep_dist, seed=seed)
     
     if keep_dist:
