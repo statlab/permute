@@ -77,7 +77,7 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
             for i in range(reps)]
     left_pv = np.sum(sims <= tst)/reps
     right_pv = np.sum(sims >= tst)/reps
-    two_sided_pv = np.sum(np.abs(sims) >= np.abs(tst))/reps
+    two_sided_pv = 2*np.min(left_pv, right_pv)
     return tst, left_pv, right_pv, two_sided_pv, sims
 
 
@@ -199,6 +199,7 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
                                         condition, group, prng),
                                     response, groups, conditions)
 
-        conds = [dist <= tst, dist >= tst, abs(dist) >= abs(tst)]
-        left_pv, right_pv, two_sided_pv = [np.count_nonzero(c)/reps for c in conds]
+        conds = [dist <= tst, dist >= tst]
+        left_pv, right_pv = [np.count_nonzero(c)/reps for c in conds]
+        two_sided_pv = 2*np.min(left_pv, right_pv)
         return left_pv, right_pv, two_sided_pv, tst, dist
