@@ -29,4 +29,11 @@ def test_tippett():
     np.testing.assert_almost_equal(tippett(pvalues), 0.95, 5)
     np.testing.assert_equal(tippett(1), 0)
     np.testing.assert_equal(tippett(10), -9)
-    
+
+
+def test_t2p():
+    obs = 5
+    distr = np.array(range(-10, 11))
+    np.testing.assert_equal(t2p(obs, distr, "greater"), 6/21)
+    np.testing.assert_equal(t2p(obs, distr, "less"), 16/21)
+    np.testing.assert_equal(t2p(obs, distr, "two-sided"), 12/21)
