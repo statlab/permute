@@ -119,12 +119,12 @@ def test_two_sample_shift():
     np.testing.assert_equal(res[0], 0.38074999999999998)
     np.testing.assert_equal(res[1], expected_ts)
     res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
-    np.testing.assert_equal(res[0], 0.61924999999999997)
+    np.testing.assert_almost_equal(res[0], 0.61925)
     np.testing.assert_equal(res[1], expected_ts)
     
     # Test null with multiplicative shift
     res = two_sample_shift(x, y, seed=42, shift=(f_err, f_err_inv), alternative="two-sided")
-    np.testing.assert_equal(res[0], 0.17139)
+    np.testing.assert_equal(res[0], 0)
     np.testing.assert_equal(res[1], expected_ts)
 
     # Define a lambda function
@@ -152,7 +152,7 @@ def test_two_sample_conf_int():
     x = np.array(range(5))
     y = np.array(range(1,6))
     res = two_sample_conf_int(x, y, seed=prng)
-    expected_ci =  (-3.0442353, 1.0000037)
+    expected_ci =  (-3.5, 1.012957978810817)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
     expected_ci = (-5, 1)
@@ -164,7 +164,7 @@ def test_two_sample_conf_int():
     # Specify shift with a function pair
     shift = (lambda u, d: u + d, lambda u,d: u - d)
     res = two_sample_conf_int(x, y, seed=5, shift=shift)
-    np.testing.assert_almost_equal(res, (-3, 1))
+    np.testing.assert_almost_equal(res, (-3.5, 1))
     
     # Specify shift with a multiplicative pair
     shift = (lambda u, d: u*d, lambda u,d: u/d)
@@ -212,5 +212,5 @@ def test_one_sample():
     # case 5: use t as test statistic
     y = x + prng.normal(size=5)
     res = one_sample(x, y, seed = 42, reps = 100, stat = "t", alternative = "less")
-    np.testing.assert_equal(res[0], 0.07)
-    np.testing.assert_almost_equal(res[1], 1.4491883)
+    np.testing.assert_almost_equal(res[0], 0.05)
+    np.testing.assert_almost_equal(res[1], -1.4491883)
