@@ -520,6 +520,11 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     else:
         z = np.array(x)-np.array(y)
 
+    thePvalue = {
+        'greater':   lambda p: p,
+        'less':      lambda p: 1-p,
+        'two-sided': lambda p: 2*min(p, 1-p)
+    }
     stats = {
         'mean': lambda u: np.mean(u),
         't': lambda u: ttest_1samp(u, 0)[0]
@@ -529,21 +534,15 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     else:
         tst_fun = stats[stat]
 
-    theStat = {
-        'greater': tst_fun,
-        'less': lambda u: -tst_fun(u),
-        'two-sided': lambda u: math.fabs(tst_fun(u))
-    }
-
-    tst = theStat[alternative](z)
+    tst = tst_fun(z)
     n = len(z)
     if keep_dist:
         dist = []
         for i in range(reps):
-            dist.append(theStat[alternative](z*(1-2*prng.binomial(1,.5,size=n))))
+            dist.append(tst_fun(z*(1-2*prng.binomial(1,.5,size=n))))
         hits = np.sum(dist >= tst)
-        return hits/reps, tst, dist
+        return thePvalue[alternative](hits/reps), tst, dist
     else:
-        hits = np.sum([(theStat[alternative](z*(1-2*prng.binomial(1,.5,size=n)))) >= tst
+        hits = np.sum([(tst_fun(z*(1-2*prng.binomial(1,.5,size=n)))) >= tst
                        for i in range(reps)])
-        return hits/reps, tst
+        return thePvalue[alternative](hits/reps), tst
