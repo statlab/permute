@@ -212,5 +212,5 @@ def test_one_sample():
     # case 5: use t as test statistic
     y = x + prng.normal(size=5)
     res = one_sample(x, y, seed = 42, reps = 100, stat = "t", alternative = "less")
-    np.testing.assert_equal(res[0], 0.07)
-    np.testing.assert_almost_equal(res[1], 1.4491883)
+    np.testing.assert_almost_equal(res[0], 0.05)
+    np.testing.assert_almost_equal(res[1], -1.4491883)
