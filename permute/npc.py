@@ -63,7 +63,29 @@ def tippett(pvalues):
         Tippett's combined test statistic
     '''
     return np.max(1-pvalues)
+    
 
+def inverse_n_weight(pvalues, size):
+    """
+    Compute the test statistic
+
+    .. math:: -\\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
+
+    Parameters
+    ----------
+    pvalues : array_like
+        Array of p-values to combine
+    size : array_like
+        The $i$th entry is the sample size used for the $i$th test
+
+    Returns
+    -------
+    float
+        combined test statistic
+    """
+    weights = size ** (-1 / 2)
+    return (-1 * pvalues * weights).sum()
+    
 
 # Nonparametric combination of tests
 
