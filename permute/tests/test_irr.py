@@ -9,7 +9,6 @@ from numpy.testing import (assert_equal,
 
 from ..irr import (compute_ts,
                    simulate_ts_dist,
-                   compute_inverseweight_npc,
                    simulate_npc_dist)
 
 from ..data import nsgk
@@ -77,7 +76,7 @@ def test_with_naomi_data():
             tst.append(res['obs_ts'])
         perm_distr = np.asarray(d).transpose()
         category.append(
-            simulate_npc_dist(perm_distr, size=time_stamps, obs_ts=tst, keep_dist=False))
+            simulate_npc_dist(perm_distr, size=time_stamps, obs_ts=tst))
     category_pvalues = []
     for i in range(len(category)):
         category_pvalues.append(category[i]['pvalue'])
@@ -106,14 +105,6 @@ def test_simulate_ts_dist_concordance():
 
 pval = np.array([0.5, 0.25, 0.75])
 size = np.array([2, 4, 6])
-
-
-def test_compute_inverseweight_npc():
-    expected_npc = 0.7847396
-    res_npc = compute_inverseweight_npc(pval, size)
-    assert_almost_equal(expected_npc, res_npc)
-
-
 res1 = simulate_ts_dist(res, keep_dist=True, seed=42)
 res_conc = simulate_ts_dist(res2, keep_dist=True, seed=42)
 true_pvalue = np.array(
@@ -122,25 +113,12 @@ rho_perm = np.transpose(np.vstack((res1['dist'], res_conc['dist'])))
 
 
 def test_simulate_npc_dist():
-    expected_npc_res = {'dist': None,
-                        'num_perm': 10000,
-                        'leq': 5,
-                        'obs_npc': 0.010547525099011886,
-                        'pvalue': 0.0005}
+    expected_npc_res = {'num_perm': 10000,
+                        'obs_npc': -0.010547525099011886,
+                        'pvalue': 0.0016}
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
     assert_equal(obs_npc_res, expected_npc_res)
-    expected_npc_res1 = {'num_perm': 10000,
-                         'leq': 5,
-                         'obs_npc':  0.010547525099011886}
-    obs_npc_res1 = simulate_npc_dist(
-        rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue, keep_dist=True)
-    assert_equal(obs_npc_res1['num_perm'], expected_npc_res1['num_perm'])
-    assert_equal(obs_npc_res1['leq'], expected_npc_res1['leq'])
-    assert_equal(obs_npc_res1['obs_npc'], expected_npc_res1['obs_npc'])
-    assert_equal(len(obs_npc_res1), 5)
-    assert_almost_equal(
-        obs_npc_res1['dist'][:2], np.array([0.5820746,  0.1648727]))
 
 
 @raises(ValueError)
@@ -163,20 +141,11 @@ def test_simulate_npc_perfect():
         pval.append(res['pvalue'])
     perm_distr = np.asarray(d).transpose()
     overall1 = simulate_npc_dist(
-        perm_distr, size=time_stamps, pvalues=pval, keep_dist=False)
+        perm_distr, size=time_stamps, pvalues=np.array(pval))
     overall2 = simulate_npc_dist(
-        perm_distr, size=time_stamps, obs_ts=tst, keep_dist=False)
-    expected_overall = {'dist': None,
-                        'leq': 83,
-                        'num_perm': 10000,
-                        'obs_npc': 0.0076080098859340932,
-                        'pvalue': 0.0083000000000000001}
+        perm_distr, size=time_stamps, obs_ts=tst)
+    expected_overall = {'num_perm': 10000,
+                        'obs_npc': -0.0076080098859340932,
+                        'pvalue': 0.0}
     assert_equal(overall1, expected_overall)
     assert_equal(overall2, expected_overall)
-
-    overall = simulate_npc_dist(
-        perm_distr, size=time_stamps, obs_ts=tst, keep_dist=True)
-    exp_firstfive = np.array(
-        [0.02223304,  0.67969567,  1.13757326,  0.67969567,  0.67969567])
-    assert_almost_equal(overall['dist'].mean(), 0.79636768325946183)
-    assert_almost_equal(overall['dist'][:5], exp_firstfive)

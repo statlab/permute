@@ -68,7 +68,7 @@ from __future__ import division, print_function, absolute_import
 import numpy as np
 
 from .utils import get_prng, permute_rows
-
+from.npc import inverse_n_weight, npc
 
 def compute_ts(ratings):
     """
@@ -96,32 +96,6 @@ def compute_ts(ratings):
     counts = y * (y-1) + (R-y) * (R-y-1)
     rho_s = counts.sum() / (Ns * R * (R-1))
     return rho_s
-
-
-def compute_inverseweight_npc(pvalues, size):
-    """
-    Compute the test statistic
-
-    .. math:: npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
-
-    Parameters
-    ----------
-    pvalues : array_like
-        Input array of dimension S
-        Each entry corresponds to the p-value for $\\rho_s$, the
-        concordance for the s-th stratum.
-    size : array_like
-        Input array of dimension S
-        Each entry corresponds to the number of items, $N_s$,
-        in the s-th stratum.
-
-    Returns
-    -------
-    npc : float
-        combined test statistic
-    """
-    weights = size ** (-1 / 2)
-    return (pvalues * weights).sum()
 
 
 def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
@@ -198,7 +172,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
 
 
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
-                      pvalues=None, keep_dist=False):
+                      pvalues=None):
     """
     Simulates the permutation distribution of the combined NPC test
     statistic for S matrices of ratings ``ratings`` corresponding to
@@ -231,10 +205,6 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         Input array of dimension S
         Each entry corresponds to the p-value for ``rho_s``, the
         concordance for the s-th stratum.
-    keep_dist : bool
-        flag for whether to store and return the array of values
-        of the irr test statistic
-
 
     Returns
     -------
@@ -249,40 +219,19 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
             than or equal to ``obs_npc``
         num_perm : int
             number of permutations
-        dist : ndarray
-            if ``keep_dist``, the array of values of the NPC test statistic
-            from the ``num_perm`` iterations.  Otherwise, ``None``.
     """
-
     if (obs_ts is None) and (pvalues is None):
         raise ValueError('You must input either obs_ts or pvalues')
 
-    r = perm_distr.copy()
-    r = np.sort(r, axis=0)
-    (B, S) = r.shape
-
+    (B, S) = perm_distr.shape
+    combine_func = lambda p: inverse_n_weight(p, size)
+    
     if (pvalues is None):
         pvalues = np.zeros(S)
         for j in range(S):
             pvalues[j] = np.mean(perm_distr[:, j] >= obs_ts[j])
 
-    obs_npc = compute_inverseweight_npc(pvalues, size)
-    if keep_dist:
-        dist = np.zeros(B)
-        p = np.zeros((S, 1))
-        for i in range(B):
-            for j in range(S):
-                p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
-            dist[i] = compute_inverseweight_npc(p, size)
-        leq = np.sum(dist <= obs_npc)
-    else:
-        dist = None
-
-        p = np.zeros((S, 1))
-        leq = 0
-        for i in range(B):
-            for j in range(S):
-                p[j] = np.searchsorted(r[:, j], perm_distr[i, j]) / B
-            leq += (compute_inverseweight_npc(p, size) <= obs_npc)
-    return {"obs_npc": obs_npc, "pvalue": leq/B, "leq": leq,
-            "num_perm": B, "dist": dist}
+    
+    obs_npc = combine_func(pvalues)
+    res = npc(pvalues, perm_distr, combine_func, alternatives="greater")
+    return {"obs_npc": obs_npc, "pvalue": res, "num_perm": B}    
