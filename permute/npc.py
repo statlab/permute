@@ -156,16 +156,17 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     
     # Convert test statistic distribution to p-values    
     combined_stat_distr = [0]*B
-    for i in range(B):
+    for b in range(B):
         pvalues_from_distr = [0]*n
-        for(j in range(n)):
-            pvalues_from_distr[j] = t2p(distr[b,j], distr[,j], alternatives[j])
-        if(combine == "liptak"):
+        for j in range(n):
+            pvalues_from_distr[j] = t2p(distr[b,j], distr[:,j], alternatives[j])
+        if combine == "liptak":
+            pvalues_from_distr = np.array(pvalues_from_distr)
             toosmall = np.where(pvalues_from_distr==0)
-            pvalues_from_distr[toosmall] = 1e-4 + pvalues_from_distr[toosmall]
+            pvalues_from_distr[toosmall] = 0.0001
             toobig = np.where(pvalues_from_distr==1)
-            pvalues_from_distr[toobig] = -1e-4 + pvalues_from_distr[toobig]
-        combined_stat_distr[i] = combine_func(pvalues_from_distr)
+            pvalues_from_distr[toobig] = 0.9999
+        combined_stat_distr[b] = combine_func(pvalues_from_distr)
     
     observed_combined_stat = combine_func(pvalues)
-    return np.sum(observed_combined_stat >= combined_stat_distr)/B
+    return np.sum(combined_stat_distr >= observed_combined_stat)/B
