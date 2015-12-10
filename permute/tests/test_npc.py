@@ -4,11 +4,14 @@ from nose.plugins.attrib import attr
 from nose.tools import assert_raises, raises
 
 import numpy as np
+from numpy.random import RandomState
 from scipy.stats import norm
 
 from ..npc import (fisher,
                    liptak,
-                   tippett)
+                   tippett,
+                   t2p,
+                   npc)
 
 def test_fisher():
     pvalues = np.linspace(0.05, 0.9, num=5)
@@ -37,3 +40,24 @@ def test_t2p():
     np.testing.assert_equal(t2p(obs, distr, "greater"), 6/21)
     np.testing.assert_equal(t2p(obs, distr, "less"), 16/21)
     np.testing.assert_equal(t2p(obs, distr, "two-sided"), 12/21)
+    
+
+def test_npc():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
+    res = npc(pvalues, distr, "fisher", "greater")
+    np.testing.assert_almost_equal(res, 0.33)
+    res = npc(pvalues, distr, "fisher", "less")
+    np.testing.assert_almost_equal(res, 0.33)
+    res = npc(pvalues, distr, "fisher", "two-sided")
+    np.testing.assert_almost_equal(res, 0.31)
+    res = npc(pvalues, distr, "liptak", "greater")
+    np.testing.assert_almost_equal(res, 0.35)
+    res = npc(pvalues, distr, "tippett", "greater")
+    np.testing.assert_almost_equal(res, 0.25)
+    res = npc(pvalues, distr, "fisher", 
+        alternatives=np.array(["less","greater","less",
+        "greater","two-sided"]))
+    np.testing.assert_almost_equal(res, 0.38)
+    
