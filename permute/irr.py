@@ -98,32 +98,6 @@ def compute_ts(ratings):
     return rho_s
 
 
-def compute_inverseweight_npc(pvalues, size):
-    """
-    Compute the test statistic
-
-    .. math:: npc \equiv \\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
-
-    Parameters
-    ----------
-    pvalues : array_like
-        Input array of dimension S
-        Each entry corresponds to the p-value for $\\rho_s$, the
-        concordance for the s-th stratum.
-    size : array_like
-        Input array of dimension S
-        Each entry corresponds to the number of items, $N_s$,
-        in the s-th stratum.
-
-    Returns
-    -------
-    npc : float
-        combined test statistic
-    """
-    weights = size ** (-1 / 2)
-    return (pvalues * weights).sum()
-
-
 def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
                      keep_dist=False, seed=None):
     """

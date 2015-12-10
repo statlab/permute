@@ -9,7 +9,6 @@ from numpy.testing import (assert_equal,
 
 from ..irr import (compute_ts,
                    simulate_ts_dist,
-                   compute_inverseweight_npc,
                    simulate_npc_dist)
 
 from ..data import nsgk
@@ -106,14 +105,6 @@ def test_simulate_ts_dist_concordance():
 
 pval = np.array([0.5, 0.25, 0.75])
 size = np.array([2, 4, 6])
-
-
-def test_compute_inverseweight_npc():
-    expected_npc = 0.7847396
-    res_npc = compute_inverseweight_npc(pval, size)
-    assert_almost_equal(expected_npc, res_npc)
-
-
 res1 = simulate_ts_dist(res, keep_dist=True, seed=42)
 res_conc = simulate_ts_dist(res2, keep_dist=True, seed=42)
 true_pvalue = np.array(
