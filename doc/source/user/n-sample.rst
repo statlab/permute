@@ -1,5 +1,5 @@
-$n$-sample
-----------
+n-sample
+--------
 
 [label=exa:cont] Consider the following randomized, controlled
 experiment. You suspect a specific treatment will increase the growth
