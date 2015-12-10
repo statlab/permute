@@ -160,8 +160,8 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         pvalues_from_distr = [0]*n
         for j in range(n):
             pvalues_from_distr[j] = t2p(distr[b,j], distr[:,j], alternatives[j])
+        pvalues_from_distr = np.array(pvalues_from_distr)
         if combine == "liptak":
-            pvalues_from_distr = np.array(pvalues_from_distr)
             toosmall = np.where(pvalues_from_distr==0)
             pvalues_from_distr[toosmall] = 0.0001
             toobig = np.where(pvalues_from_distr==1)
