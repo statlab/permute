@@ -71,6 +71,16 @@ def test_npc():
     np.testing.assert_almost_equal(res, 0.38)
     
 
+def test_npc_callable_combine():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
+    size = np.array([2, 4, 6, 4, 2])
+    combine = lambda p: inverse_n_weight(p, size)
+    res = npc(pvalues, distr, combine, "greater")
+    np.testing.assert_equal(res, 0.39)
+    
+    
 @raises(ValueError)
 def test_npc_bad_distr():
     prng = RandomState(55)
