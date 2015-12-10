@@ -40,7 +40,7 @@ the least squares estimate of the slope normalized by its standard
 error has a :math:`t`-distribution with :math:`n-2` degrees of
 freedom. If this additional assumption holds, then we can read the off a
 table. Note that, unlike in the permutation test, we were only able to
-calculate the p-valye (even with the additional assumptions) because we happened
+calculate the p-value (even with the additional assumptions) because we happened
 to be able to derive the distribution of this specific test statistic.
 
 Derivation
