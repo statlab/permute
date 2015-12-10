@@ -84,7 +84,7 @@ def inverse_n_weight(pvalues, size):
         combined test statistic
     """
     weights = size ** (-1 / 2)
-    return (-1 * pvalues * weights).sum()
+    return np.sum(-1 * pvalues * weights)
     
 
 # Nonparametric combination of tests
@@ -145,7 +145,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     combine : {'fisher', 'liptak', 'tippett'}
         The combining function to use. Default is "fisher"
         TODO: allow user to pass in their own combining function; check that it 
-        satifies the correct monotonicity
+        satifies the correct monotonicity. Describe the monotonicity!
     alternatives : array_like
         Optional, an array containing the alternatives for each partial test 
         ('greater', 'less', 'two-sided') or a single alternative, if all tests
@@ -173,8 +173,10 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         "liptak":liptak,
         "tippett":tippett
     }
-    combine_func = combine_library[combine]
-    # Throw an error if combine is an invalid input
+    if callable(combine):
+        combine_func = combine
+    else:
+        combine_func = combine_library[combine]
     
     # Convert test statistic distribution to p-values    
     combined_stat_distr = [0]*B
