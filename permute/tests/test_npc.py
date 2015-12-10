@@ -10,6 +10,7 @@ from scipy.stats import norm
 from ..npc import (fisher,
                    liptak,
                    tippett,
+                   inverse_n_weight,
                    t2p,
                    npc)
 
@@ -32,6 +33,14 @@ def test_tippett():
     np.testing.assert_almost_equal(tippett(pvalues), 0.95, 5)
     np.testing.assert_equal(tippett(1), 0)
     np.testing.assert_equal(tippett(10), -9)
+
+
+def test_inverse_n_weight():
+    pval = np.array([0.5, 0.25, 0.75])
+    size = np.array([2, 4, 6])
+    expected_npc = -0.7847396
+    res_npc = inverse_n_weight(pval, size)
+    np.testing.assert_almost_equal(expected_npc, res_npc)
 
 
 def test_t2p():
