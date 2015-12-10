@@ -61,3 +61,23 @@ def test_npc():
         "greater","two-sided"]))
     np.testing.assert_almost_equal(res, 0.38)
     
+
+@raises(ValueError)
+def test_npc_bad_distr():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
+    npc(pvalues, distr, "fisher", "greater")
+
+
+@raises(ValueError)
+def test_npc_bad_alternative():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=50).reshape(10, 5)
+    npc(pvalues, distr, "fisher", np.array(["greater", "less"]))
+
+
+@raises(ValueError)
+def test_npc_single_pvalue():
+    npc(np.array([1]), np.array([1,2,3]))  
