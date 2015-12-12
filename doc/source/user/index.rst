@@ -40,7 +40,6 @@ probability.
    :maxdepth: 2
 
    two-sample.rst
-   n-sample.rst
    regression.rst
    npc/index.rst
 
