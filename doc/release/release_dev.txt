@@ -1,7 +1,7 @@
-Announcement: permute 0.1.alpha0
+Announcement: permute 0.1.alpha4
 ================================
 
-We're happy to announce the release of permute v0.1.alpha0!
+We're happy to announce the release of permute v0.1.alpha4!
 
 permute is permutation testing and confidence set toolbox for Python.
 

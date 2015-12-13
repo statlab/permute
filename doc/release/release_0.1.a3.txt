@@ -1,0 +1,106 @@
+Announcement: permute 0.1.alpha3
+================================
+
+We're happy to announce the release of permute v0.1.alpha3!
+
+permute is permutation testing and confidence set toolbox for Python.
+
+For more information, examples, and documentation, please visit our website:
+
+http://statlab.github.io/permute/
+
+
+New Features
+------------
+
+This is the first release so everything is new.  As we get closer to
+the actual v0.1.0 release we will expand this section.
+
+Release v0.1.a2 was on tag v0.1.a2
+
+A total of 67 changes have been committed.
+
+It contained the following 73 merges:
+
+- * first-test:
+- * data:
+- * data:
+- * irr:
+- * 'master' of github.com:pbstark/permute:
+- Fixes - IRR permutation (#8)
+- * 'master' of github.com:pbstark/permute:
+- * doc:
+- Change to shuffling within rows (#11)
+- Irr test (#10)
+- close #7 (#17)
+- RF: try using module-level random state (#18)
+- ENH: enable travis-ci (#19)
+- * master:
+- * npc:
+- ENH: remove dependency on pandas (closes #16) (#20)
+- BF: set seed (#23)
+- Refactor philips example code closes #24 (#25)
+- Docstrings (#26)
+- Dev notes (#31)
+- Go over stratif (#32)
+- MRG: Minor cleanup (#35)
+- MRG: Workon core  (#36)
+- MRG: Test core (#38)
+- DATA: added NSGK data (#40)
+- Improve tests (#41)
+- Debug two sample (#43)
+- ENH: correlation tests from work on SET with Anne Boring (#42)
+- MRG: Cleanup from friday (#44)
+- MRG: class demo (#45)
+- BF: test for zero variances to avoid divide by zero (#47)
+- Eda and cleanup (#49)
+- ENH: find duplicate consecutive rows (#50)
+- MRG: Clean naomi data (#48)
+- MRG: Improve website (#51)
+- Cleanup with pbs and kno (#53)
+- MRG: Doc (#56)
+- MRG: Docfix (#57)
+- MRG: try to check if missing nose dependency is handled (#58)
+- MRG: coverage (#59)
+- MRG: Trying irr with naomi data (#55)
+- ENH: closes #54 (#60)
+- MRG: Internal consistency (#62)
+- MRG: More core consistency (#63)
+- MRG: Sundry cleanups (#61)
+- Nsgk data looping (#65)
+- irr-bug-fix (#66)
+- RFT: remove old code (#67)
+- MRG: Make first release (#68)
+- Eda2qa (#70)
+- MRG: restructuring (#71)
+- MRG: Add permutation of binary incidence matrix with fixed row and column sums (#72)
+- DAT: add MacNell 2014 data (#73)
+- MRG: Paired/one-sample test (#77)
+- MRG: Two sample bugfix (#79)
+- MRG: moved binom & hypergeo CIs to utils; improved hypergeo CIs (#80)
+- MRG: Hyper tests (#84)
+- WIP: add option for generic function input for two_sample and one_sample (#85)
+- DOC: improved documentation for two_sample (#86)
+- Fixes to the documentation infra-structure (#87)
+- MRG: Two-sample confidence interval for shift model (#88)
+- ENH: update to do list (#89)
+- MRG: Clean stratif doc (#91)
+- MRG: clean up from last release (#92)
+- WIP: Regression (#93)
+- MRG: update pip requirements (#94)
+- MRG: Two-sided p-values (#98)
+- Broaden overview (#97)
+- MRG: add derivation for regression slope test (#95)
+- MRG: NPC (#99)
+- MRG: Docs (#100)
+- MRG: cleanup (#101)
+- DOC: update contributors (#102)
+
+Made by the following committers [alphabetical by last name]:
+
+- Matthew Brett
+- Jarrod Millman
+- Kellie Ottoboni
+- Philip B. Stark
+- Stefan van der Walt
+- kellieotto
