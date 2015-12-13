@@ -111,9 +111,9 @@ def stratified_permutationtest_mean(group, condition, response,
     tst : float
       The observed test statistic
     """
-    if(groups is None):
+    if groups is None:
         groups = np.unique(group)
-    if(conditions is None):
+    if conditions is None:
         conditions = np.unique(condition)
 
     tst = 0.0
