@@ -227,7 +227,7 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
     (B, S) = perm_distr.shape
     combine_func = lambda p: inverse_n_weight(p, size)
 
-    if (pvalues is None):
+    if pvalues is None:
         pvalues = np.zeros(S)
         for j in range(S):
             pvalues[j] = np.mean(perm_distr[:, j] >= obs_ts[j])
