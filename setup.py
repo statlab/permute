@@ -12,7 +12,7 @@ MAINTAINER_EMAIL = 'permute@googlegroups.com'
 URL = 'http://statlab.github.io/permute/'
 LICENSE = 'BSD License'
 DOWNLOAD_URL = 'http://github.com/statlab/permute'
-VERSION = '0.1dev'
+VERSION = '0.1.alpha3'
 PYTHON_VERSION = (2, 7)
 
 INSTALL_REQUIRES = [
@@ -70,6 +70,7 @@ if __name__ == "__main__":
             'Programming Language :: Python',
             'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: 3.5',
             'Topic :: Scientific/Engineering',
             'Operating System :: Microsoft :: Windows',
             'Operating System :: POSIX',
