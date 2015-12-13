@@ -3,11 +3,12 @@ Various utilities and helper functions.
 """
 from __future__ import division, print_function, absolute_import
 
-import numbers
 import math
+import numbers
+
 import numpy as np
-from scipy.optimize import brentq, fsolve
-from scipy.stats import (binom, hypergeom, ttest_ind, ttest_1samp)
+from scipy.optimize import brentq
+from scipy.stats import binom, hypergeom
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -268,7 +269,7 @@ def permute_incidence_fixed_sums(incidence, k=1):
     while k < K:
 
         swappable = False
-        while (not swappable):
+        while not swappable:
             chosen_rows = np.random.choice(rows, 2, replace=False)
             s0, s1 = chosen_rows
 
