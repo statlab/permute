@@ -53,7 +53,7 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
     ci_upp = 1.0
 
     if alternative == 'two-sided':
-        cl = 1 - (1-cl)/2
+        cl = 1 - (1 - cl) / 2
 
     if alternative != "upper" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
@@ -66,9 +66,9 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
 
 def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
-                        **kwargs):
+                            **kwargs):
     """
-    Confidence interval for a hypergeometric distribution parameter G, the number of good 
+    Confidence interval for a hypergeometric distribution parameter G, the number of good
     objects in a population in size N, based on the number x of good objects in a simple
     random sample of size n.
 
@@ -107,19 +107,19 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
     assert alternative in ("two-sided", "lower", "upper")
 
     if G is None:
-        G = (x / n)*N
+        G = (x / n) * N
     ci_low = 0
     ci_upp = N
 
     if alternative == 'two-sided':
-        cl = 1 - (1-cl)/2
+        cl = 1 - (1 - cl) / 2
 
     if alternative != "upper" and x > 0:
-        f = lambda q: cl - hypergeom.cdf(x-1, N, q, n)
+        f = lambda q: cl - hypergeom.cdf(x - 1, N, q, n)
         ci_low = math.ceil(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
-        f = lambda q: hypergeom.cdf(x, N, q, n) - (1-cl)
+        f = lambda q: hypergeom.cdf(x, N, q, n) - (1 - cl)
         ci_upp = math.floor(brentq(f, G, N, *kwargs))
 
     return ci_low, ci_upp
@@ -315,7 +315,7 @@ def potential_outcomes(x, y, f, finverse):
     x : array-like
         Outcomes under treatment
     y : array-like
-        Outcomes under control    
+        Outcomes under control
     f : function
         An invertible function
     finverse : function
@@ -327,11 +327,13 @@ def potential_outcomes(x, y, f, finverse):
         The first column contains all potential outcomes under the treatment,
         the second column contains all potential outcomes under the control.
     """
-    
+
     tester = np.array(range(5)) + 1
-    assert np.allclose(finverse(f(tester)), tester), "f and finverse aren't inverses"
-    assert np.allclose(f(finverse(tester)), tester), "f and finverse aren't inverses"
-    
+    assert np.allclose(finverse(f(tester)),
+                       tester), "f and finverse aren't inverses"
+    assert np.allclose(f(finverse(tester)),
+                       tester), "f and finverse aren't inverses"
+
     pot_treat = np.concatenate([x, f(y)])
     pot_ctrl = np.concatenate([finverse(x), y])
 

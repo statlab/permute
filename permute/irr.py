@@ -70,6 +70,7 @@ import numpy as np
 from .utils import get_prng, permute_rows
 from.npc import inverse_n_weight, npc
 
+
 def compute_ts(ratings):
     """
     Compute the test statistic
@@ -93,8 +94,8 @@ def compute_ts(ratings):
     """
     R, Ns = ratings.shape
     y = ratings.sum(0)
-    counts = y * (y-1) + (R-y) * (R-y-1)
-    rho_s = counts.sum() / (Ns * R * (R-1))
+    counts = y * (y - 1) + (R - y) * (R - y - 1)
+    rho_s = counts.sum() / (Ns * R * (R - 1))
     return rho_s
 
 
@@ -168,7 +169,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
             permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm,
-            "pvalue": geq/num_perm, "dist": dist}
+            "pvalue": geq / num_perm, "dist": dist}
 
 
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
@@ -225,13 +226,12 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
 
     (B, S) = perm_distr.shape
     combine_func = lambda p: inverse_n_weight(p, size)
-    
+
     if (pvalues is None):
         pvalues = np.zeros(S)
         for j in range(S):
             pvalues[j] = np.mean(perm_distr[:, j] >= obs_ts[j])
 
-    
     obs_npc = combine_func(pvalues)
     res = npc(pvalues, perm_distr, combine_func, alternatives="greater")
-    return {"obs_npc": obs_npc, "pvalue": res, "num_perm": B}    
+    return {"obs_npc": obs_npc, "pvalue": res, "num_perm": B}
