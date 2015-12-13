@@ -75,9 +75,9 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
     tst = corrcoef(x, y, group)
     sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
-    left_pv = np.sum(sims <= tst)/reps
-    right_pv = np.sum(sims >= tst)/reps
-    two_sided_pv = 2*np.min(left_pv, right_pv)
+    left_pv = np.sum(sims <= tst) / reps
+    right_pv = np.sum(sims >= tst) / reps
+    two_sided_pv = 2 * np.min(left_pv, right_pv)
     return tst, left_pv, right_pv, two_sided_pv, sims
 
 
@@ -104,18 +104,18 @@ def stratified_permutationtest_mean(group, condition, response,
         Group labels. By default, it is the unique values of group
     conditions : array-like
         Condition labels. By default, it is the unique values of condition
-      
+
 
     Returns
     -------
     tst : float
       The observed test statistic
     """
-    if(groups is None):
+    if groups is None:
         groups = np.unique(group)
-    if(conditions is None):
+    if conditions is None:
         conditions = np.unique(condition)
-    
+
     tst = 0.0
     if len(groups) < 2:
         raise ValueError('Number of groups must be at least 2.')
@@ -200,6 +200,6 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
                                     response, groups, conditions)
 
         conds = [dist <= tst, dist >= tst]
-        left_pv, right_pv = [np.count_nonzero(c)/reps for c in conds]
-        two_sided_pv = 2*np.min(left_pv, right_pv)
+        left_pv, right_pv = [np.count_nonzero(c) / reps for c in conds]
+        two_sided_pv = 2 * np.min(left_pv, right_pv)
         return left_pv, right_pv, two_sided_pv, tst, dist

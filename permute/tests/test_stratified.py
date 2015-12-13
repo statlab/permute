@@ -13,7 +13,7 @@ from ..stratified import corrcoef, sim_corr
 
 def test_stratified_permutationtest():
     group = np.repeat([1, 2, 3], 9)
-    condition = np.repeat([1, 2, 3]*3, 3)
+    condition = np.repeat([1, 2, 3] * 3, 3)
     response = np.zeros_like(group)
     response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
@@ -37,8 +37,9 @@ def test_stratified_permutationtest_mean():
     conditions = np.unique(condition)
     res = sptm(group, condition, response, groups, conditions)
     assert_equal(res, 0.0)
-    res2 = sptm(group, condition, response) # check defaults work
+    res2 = sptm(group, condition, response)  # check defaults work
     assert_equal(res2, 0.0)
+
 
 @raises(ValueError)
 def test_stratified_permutationtest_mean_error():

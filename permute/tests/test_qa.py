@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_equal
 
 from ..qa import (find_duplicate_rows,
-                   find_consecutive_duplicate_rows)
+                  find_consecutive_duplicate_rows)
 
 
 def test_find_duplicate_rows():
