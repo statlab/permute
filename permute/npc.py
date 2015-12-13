@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
 import numpy as np
-from scipy.stats import norm, rankdata
+from scipy.stats import norm
 
 
 # Combining functions
@@ -110,13 +110,13 @@ def t2p(stat, distr, alternative="greater"):
     '''
 
     B = len(distr)
-    if(alternative != "less"):
+    if alternative != "less":
         pupper = np.sum(distr >= stat) / B
         pvalue = pupper
-    if(alternative != "greater"):
+    if alternative != "greater":
         plower = np.sum(distr <= stat) / B
         pvalue = plower
-    if(alternative == "two-sided"):
+    if alternative == "two-sided":
         pvalue = 2 * min([pupper, plower])
     return pvalue
 
@@ -158,13 +158,13 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     '''
     n = len(pvalues)
     B = distr.shape[0]
-    if(n < 2):
+    if n < 2:
         raise ValueError("One p-value: nothing to combine!")
-    if(n != distr.shape[1]):
+    if n != distr.shape[1]:
         raise ValueError("Mismatch in number of p-values and size of distr")
-    if(isinstance(alternatives, str)):
+    if isinstance(alternatives, str):
         alternatives = np.array([alternatives] * n)
-    elif(len(alternatives) != n):
+    elif len(alternatives) != n:
         raise ValueError("Mismatch in number of p-values and alternatives")
     # check values of alternatives
 
