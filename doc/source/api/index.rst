@@ -9,4 +9,5 @@ API reference
    qa.rst
    core.rst
    stratified.rst
+   npc.rst
    irr.rst
