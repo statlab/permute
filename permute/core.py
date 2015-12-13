@@ -6,13 +6,11 @@ Core.
 
 from __future__ import division, print_function, absolute_import
 
-import math
-
 import numpy as np
 from scipy.optimize import brentq, fsolve
-from scipy.stats import (binom, ttest_ind, ttest_1samp)
+from scipy.stats import ttest_ind, ttest_1samp
 
-from .utils import get_prng, binom_conf_interval, potential_outcomes
+from .utils import get_prng, potential_outcomes
 
 
 def corr(x, y, reps=10**4, seed=None):
@@ -54,7 +52,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
     Parameters
     ----------
     potential_outcomes_all : array-like
-        2D array of potential outcomes under treatment (1st column) 
+        2D array of potential outcomes under treatment (1st column)
         and control (2nd column). To be passed in from potential_outcomes
     nx : int
         Size of the treatment group x
@@ -113,7 +111,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None, shift=None):
+               keep_dist=False, seed=None):
     """
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -277,7 +275,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
     shift : float
         The relationship between x and y under the null hypothesis.
 
-        (a) A constant scalar shift in the distribution of y. That is, x is equal 
+        (a) A constant scalar shift in the distribution of y. That is, x is equal
             in distribution to y + shift.
         (b) A tuple containing the function and its inverse (f, finverse), so
             x_i = f(y_i) and y_i = finverse(x_i)
@@ -336,10 +334,10 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**4, stat="mean", shift=None, **kwargs):
+                        reps=10**4, stat="mean", shift=None):
     """
     One-sided or two-sided confidence interval for the parameter determining
-    the treatment effect.  The default is the "shift model", where we are 
+    the treatment effect.  The default is the "shift model", where we are
     interested in the parameter d such that x is equal in distribution to
     y + d. In general, if we have some family of invertible functions parameterized
     by d, we'd like to find d such that x is equal in distribution to f(y, d).
@@ -351,7 +349,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     y : array-like
         Sample 2
     cl : float in (0, 1)
-        The desired confidence level. Default 0.95.	
+        The desired confidence level. Default 0.95.
     alternative : {"two-sided", "lower", "upper"}
         Indicates the alternative hypothesis.
     seed : RandomState instance or {None, int, RandomState instance}
@@ -379,7 +377,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
             f = lambda u: np.max( \
                 [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
-                )    
+                )
     shift : float
         The relationship between x and y under the null hypothesis.
 
@@ -391,6 +389,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     -------
     tuple
         the estimated confidence limits
+
     Notes
     -----
     xtol : float
@@ -402,11 +401,11 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     """
 
     assert alternative in ("two-sided", "lower", "upper")
-    prng = get_prng(seed)
 
     if shift is None:
         shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
-        observed = np.mean(x) - np.mean(y)
+        # FIXME: unused observed
+        # observed = np.mean(x) - np.mean(y)
     elif isinstance(shift, tuple):
         assert (callable(shift[0])), "Supply f and finverse in shift tuple"
         assert (callable(shift[1])), "Supply f and finverse in shift tuple"
@@ -416,7 +415,8 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         assert (f(5, 1) < f(5, 2)), "f must be increasing in the parameter d"
         shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)),
                           abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
-        observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
+        # FIXME: unused observed
+        # observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
     else:
         raise ValueError("Bad input for shift")
     ci_low = -shift_limit
@@ -481,7 +481,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     reps : int
         number of repetitions
     stat : {'mean', 't'}
-        The test statistic. The statistic is computed based on either z = x or 
+        The test statistic. The statistic is computed based on either z = x or
         z = x - y, if y is specified.
 
         (a) If stat == 'mean', the test statistic is mean(z).
