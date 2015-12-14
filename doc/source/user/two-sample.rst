@@ -91,17 +91,17 @@ reported gender---any particular student would assign the same rating regardless
 .. code::
 
     >>> from permute.core import two_sample
-    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided')
+    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided', seed = 20)
     >>> print('Test statistic:', np.round(t, 5))
     Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.27277
+    P-value (two-sided): 0.27824
 
 .. code::
 
-    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided') 
+    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided', seed = 20) 
     >>> print('P-value (two-sided):', np.round(p, 5))
-	P-value (two-sided): 0.23
+	P-value (two-sided): 0.28
 
 Since the permutation test also returns the approximately exact distribution of
 the test statistic, let’s compare the actual distribution with the
@@ -135,9 +135,7 @@ for group-level effects.
 More on teaching evaluations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We established that one instructor got higher ratings from students, but the
-difference was not significant. Now we may ask, did students ratings differ
-according to the gender that the instructor claimed to be?
+We established that one instructor got higher ratings when they used a male name than when they used a female name, but the difference was not significant. Now we may ask, did ratings differ according in this way for either of the two instructors?
 
 If there is no gender bias in the ratings, then students should give the same
 rating to the male instructor regardless of the gender he claims to be and
@@ -154,19 +152,16 @@ instructor higher if they identified as male
 
 The test statistic we use within groups is the Spearman correlation. For each
 instructor, we compute the correlation between their rating and reported
-gender, then add the absolute values of the correlations for the instructors.
+gender, then add the absolute values of the correlations for the instructors. Because reported gender is just a binary indicator, the correlation is equivalent to using the mean rating for male-identified instructors as a test statistic.
 
-.. plot::
-    :context:
+.. code::
 
     >>> from permute.stratified import sim_corr
-    >>> evals = np.recfromcsv("SET2.csv")
-    >>> rho, plower, pupper, pboth, sim = sim_corr(x=evals.rating, y=evals.final,
-    ...                                            group=evals.prof_id)
-    >>> print 'Test statistic:', np.round(rho, 5)
-    Test statistic: 0.94787
-    >>> print 'One-sided (upper) P-value:', np.round(pupper, 5)
-    One-sided (upper) P-value: 0.18
+    >>> rho, plower, pupper, pboth, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
+    >>> print('Test statistic:', np.round(rho, 5))
+    Test statistic: 0.4459
+    >>> print('One-sided (upper) P-value:', np.round(pupper, 5))
+    One-sided (upper) P-value: 0.0896
 
 Finally, I plot the simulated distribution of the test statistics under
 the null conditioned on the observed data in Figure [fig:figure2].
