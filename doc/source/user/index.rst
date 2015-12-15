@@ -39,6 +39,7 @@ probability.
 .. toctree::
    :maxdepth: 2
 
+   one-sample.rst
    two-sample.rst
    regression.rst
    npc/index.rst

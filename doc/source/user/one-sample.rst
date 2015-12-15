@@ -62,7 +62,14 @@ the event occurs is Binomial with :math:`n` equal to the number of samples and
 Example
 -------
 
-We'll generate some fake data to demonstrate the paired two-sample problem. We'll follow the cloned cells example above. The controls have a response that is distributed uniformly between 0 and 10. There is random variation among the cells, so the difference between responses in a pair is normally distributed with 0 mean. In the first case, suppose we give the treatment group an ineffective treatment, so there is no treatment effect. The treated cell is equally likely to have a response that is larger or smaller than it's clone's response.
+We'll generate some fake data to demonstrate the paired two-sample problem.
+We'll follow the cloned cells example above. The controls have a response that
+is distributed uniformly between 0 and 10. There is random variation among the
+cells, so the difference between responses in a pair is normally distributed
+with 0 mean. In the first case, suppose we give the treatment group an
+ineffective treatment, so there is no treatment effect. The treated cell is
+equally likely to have a response that is larger or smaller than it's clone's
+response.
 
 .. code::
 
@@ -72,26 +79,31 @@ We'll generate some fake data to demonstrate the paired two-sample problem. We'l
 	>>> from permute.core import one_sample
 
 	>>> prng = RandomState(42)
-	>>> control = prng.uniform(low = 0, high = 10, size = 100)
-	>>> ineffective_treatment = control + prng.normal(loc = 0, scale = 1, size = 100)
-	>>> (p, diff_means) = one_sample(ineffective_treatment, control, stat='mean', seed = prng)
+	>>> control = prng.uniform(low = 0, high=10, size=100)
+	>>> ineffective_treatment = control + prng.normal(loc=0, scale=1, size=100)
+	>>> (p, diff_means) = one_sample(ineffective_treatment, control, stat='mean', seed=prng)
 	>>> print("P-value: ", p)
 	P-value:  0.50726
 	>>> print("Difference in means:", diff_means)
 	Difference in means: -0.00108036016736
 	
-Now, suppose we give a new treatment that has a constant effect that increases the cell's response by 1.
+Now, suppose we give a new treatment that has a constant effect that increases
+the cell's response by 1.
 
 .. code::
 
-	>>> good_treatment = control + prng.normal(loc = 1, scale = 1, size = 100)
-	>>> (p, diff_means) = one_sample(good_treatment, control, stat='mean', seed = prng)
+	>>> good_treatment = control + prng.normal(loc=1, scale=1, size=100)
+	>>> (p, diff_means) = one_sample(good_treatment, control, stat='mean', seed=prng)
 	>>> print("P-value: ", p)
 	P-value:  0.0
 	>>> print("Difference in means:", diff_means)
 	Difference in means: 1.08009705107
 	
-`one_sample` is written to either take in two arguments and test the difference between pairs as we've done above, or to take in a single argument and test whether that variable is centered around 0. Below, we call `one_sample` in that manner, supplying the difference in response within pairs, and get the same results.
+`one_sample` is written to either take in two arguments and test the difference
+between pairs as we've done above, or to take in a single argument and test
+whether that variable is centered around 0. Below, we call `one_sample` in that
+manner, supplying the difference in response within pairs, and get the same
+results.
 
 .. code::
 
