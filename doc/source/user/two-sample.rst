@@ -1,63 +1,21 @@
 Two sample permutation tests
 ============================
 
-To illustrate the two-sample permutation test, consider the following
-randomized, controlled experiment. You suspect a specific treatment will
-increase the growth rate of a certain type of cell. To test this hypothesis,
-you clone 100 cells. Now there are 200 cells composed of 100 pairs of identical
-clones. For each cloned pair you randomly assign one to treatment, with
-probability 1/2, independently across the 100 pairs. At the end of the
-treatment, you measure the growth rate for all the cells. The null hypothesis
-is that treatment has no effect. If that is true, then the assignment of a
-clone to treatment amounts to an arbitrary label that has nothing to do with
-the measured response. So, given the responses within each pair (but not the
-knowledge of which clone in each pair had which response), it would have been
-just as likely to observe the same *numbers* but with flipped labels within
-each pair. We could generate new hypothetical datasets from the observed data
-by assigning the treatment and control labels for all the cloned pairs
-independently.  This yields a total of :math:`2^{100}` total datasets
-(including the observed data and all the hypothetical datasets that you
-generated), all equally likely to have occurred under the null, conditioning on
-the observed data (but not the labeling).
+Suppose that we have a completely randomized experiment, where people are assigned to two groups at random. Suppose we have :math:`N` individuals indexed by `i=1,\dots,N`. We assign them at random to one of two groups with a random treatment vector `Z`: if `Z_i = 1`, then individual `i` receives treatment (for example, a drug) and if `Z_i=0`, individual `i` receives no treatment (a placebo). We'd like to test whether or not the drug has an effect on how often catches a cold. The outcome measure is the number of times somebody gets a cold wihin one year of starting to take the drug (for simplicity, assume that this can be measured perfectly). We can measure the difference in outcomes between the two groups with any statistic we'd like. The statistic will be a function of the treatment vector `Z` and the outcomes, `Y_i(1)` being the outcome under treatment and `Y_i(0)` being the outcome under no treatment. We'll use the difference-in-means test statistic:
 
-The standard parametric approach to this problem is the paired :math:`t`-test,
-since the cloned cells are presumably more similar to each other than to
-another randomly chosen cell (and thus more readily compared). The paired
-:math:`t`-test assumes that, if the null hypothesis is true, the differences in
-response between each pair of clones are independently and identically (iid)
-normally distributed with mean zero and unknown variance. The test statistic is
-the mean of the differences between each cloned pair divided by the standard
-error of these differences. Under these assumptions, the test statistic is
-distributed as a :math:`t`-distribution with :math:`n-1` degrees of freedom.
-This means you can calculate the test statistic and then read off the from the
-:math:`t`-distribution. If the is below some prespecified critical value
-:math:`\alpha`, then you reject the null. If the true generative model for the
-data is not iid normal, however, the probability of rejecting the null
-hypothesis can be quite different from :math:`\alpha` even if treatment has no
-effect.
+.. math::
+   T(Z, Y(1), Y(0)) = \frac{1}{N_t}\sum_{i : Z_i = 1}Y_i(1) - \frac{1}{N_c}\sum_{i : Z_i = 0}Y_i(0)
 
-A permutation version of the :math:`t`-test can avoid that vulnerability: one
-can use the :math:`t`-statistic as the test statistic, but instead of selecting
-the critical value on the basis of Student’s :math:`t`-distribution, one uses
-the distribution of the statistic under the permutation distribution. Of
-course, other test statistics could be used instead; the test statistic should
-be sensitive to the nature of the alternative hypothesis, to ensure that the
-test has power against the alternatives the science suggests are relevant.
+Here, `N_t` is the number of treated individuals and `N_c` is the number of untreated individuals, so `N_t + N_c = N`. If the test statistic is negative, then we may have evidence that the drug reduces colds. Conversely, if the test statistic is positive, we may believe that the drug actually makes people more vulnerable to getting sick. If we have no a priori belief about what the drug may do, we simply want to know if it has any effect at all. How extreme does the statistic need to be to indicate that there is likely an effect?
 
-Regardless of which test statistic you choose for your permutation test, if the
-problem size is not too large then you enumerate all equally likely
-possibilities under the null given the observed data. If the problem is too
-large to feasibly enumerate, then you use a suitably large, iid random sample
-from the exact distribution just described, by selecting permutations uniformly
-at random and applying the test statistic to those permutations. As you
-increase the number of samples, you will get increasingly better (in
-probability) approximations of the exact distribution of the test statistic
-under the null. The null conditional probability of any event can be estimated
-as the proportion of random permutations for which the event occurs, and the
-sampling variability of that estimate can be characterized exactly, for
-instance, using binomial tests (since the distribution of the number of times
-the event occurs is Binomial with :math:`n` equal to the number of samples and
-:math:`p` the unknown probability to be estimated).
+If the drug has no effect on colds, then the number of colds that somebody has would be the same whether he or she received the drug or the placebo. This is the *strong null hypothesis*: the drug has no effect on any individual. Under the strong null, we know both potential outcomes for each individual; namely, their number of colds would be the same regardless of which treatment group they were assigned. In mathematical notation, `Y_i(1) = Y_i(0)` for all `i` under the strong null.
+
+The random assignment of people to treatment groups ensures that all possible assignments of `N_t` people to treatment are equally likely. Thus, we can find the null distribution of the test statistic by calculating `T(Z*, Y(1), Y(0))` for all possible treatment assignment vectors `Z*`. In general, this would not be possible, because for each individual we observe only `Y_i(1)` or `Y_i(0)`, but not both. However, the strong null hypothesis allows us to impute the missing potential outcome for each individual.
+
+There are `N \choose N_t` possible values of `Z*`.  In practice, this number is often too large to enumerate all possible values of `T(Z*, Y(1), Y(0))`. Instead, we simulate the distribution by taking a random subset of `B` of the `Z*`. Then, our estimated p-value for the test is
+
+.. math::
+   P = 2\times \min\left( \frac{ \#\left\lbrace  T(Z*) <= T(Z)\right\rbrace}{B}, \frac{\# \left\lbrace T(Z*) >= T(Z)\right\rbrace}{B}\right)
 
 Gender bias in student evaluation of teachers
 ---------------------------------------------
@@ -65,11 +23,11 @@ Gender bias in student evaluation of teachers
 There is growing evidence of gender bias in student evaluations of
 teaching. To address the question “Do students give higher ratings to
 male teachers?,” an online experiment was done with two professors, one
-male and one female \cite{macnell2014s}. Each professor taught two sections. In one
-section, they used a male name. In the other, they used a female name.
+male and one female \cite{macnell2014s}. Each professor taught two sections. In one section, they used a male name. In the other, they used a female name.
 The students didn’t know the teacher’s real gender. We test whether
-student evaluations of teaching are biased by comparing the ratings when
-the professor used a male name versus a female name.
+student evaluations of teaching are biased by comparing the ratings when one of the professors used a male name versus a female name.
+
+As an aside, note that we cannot simply pool the ratings for the two professors when they identified as male and when they identified as female. The "treatment" is the gender the instructor reports, but other things affect the ratings students give. For instance, the two instructors may have different teaching styles, thereby introducing differences in the ratings that are unrelated to their identified gender. This is why we choose to focus on one instructor.
 
 Parametric Approach
 ~~~~~~~~~~~~~~~~~~~
@@ -79,11 +37,11 @@ statistic is
 
 .. math::
 
-   t = \frac{\text{mean(rating for M-identified prof) - mean(rating for F-identified prof)}}{\sqrt{\text{pooled SD of ratings}}}
+   t = \frac{\text{mean(rating for M-identified) - mean(rating for F-identified )}}{\sqrt{\text{pooled SD of ratings}}}
 
 For the two-sample t-test, the null hypothesis is that the reported/perceived
-teacher gender has no effect on teacher ratings. The alternative hypothesis is
-that teacher ratings differ by reported/perceived teacher gender. For the
+instructor gender has no effect on ratings. The alternative hypothesis is
+that ratings differ by reported/perceived instructor gender. For the
 two-sample t-test to be valid, we require the following assumptions:
 
 -  Ratings are normally distributed. (But they are on a Likert 1-5
@@ -100,9 +58,7 @@ two-sample t-test to be valid, we require the following assumptions:
 Despite the problematic assumptions we are required to make, let’s temporarily
 assume they hold and calculate a “:math:`p`-value” anyway.
 
-.. plot::
-    :context:
-    :nofigs:
+.. code::
 
     >>> from __future__ import print_function
     >>> import numpy as np
@@ -111,14 +67,15 @@ assume they hold and calculate a “:math:`p`-value” anyway.
 
     >>> from permute.data import macnell2014
     >>> ratings = macnell2014()
-    >>> maleid = ratings.overall[ratings.taidgender==1]
-    >>> femaleid = ratings.overall[ratings.taidgender==0]
+    >>> prof1 = ratings[ratings.tagender==0]
+    >>> maleid = prof1.overall[prof1.taidgender==1]
+    >>> femaleid = prof1.overall[prof1.taidgender==0]
     >>> df = len(maleid) + len(femaleid) - 2
     >>> t, p = stats.ttest_ind(maleid, femaleid)
     >>> print('Test statistic:', np.round(t, 5))
-    Test statistic: 1.54059
+	Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.1311
+	P-value (two-sided): 0.20043
 
 Note that the computed “:math:`p`-value” is above the standard cut-offs for
 reporting significance in the literature.
@@ -129,31 +86,23 @@ Permutation approach
 For the permutation test we can use the same test statistic, but we will
 compute the :math:`p`-value by randomly sampling the exact distribution of the
 test statistics. The null hypothesis is that the ratings are uninfluenced by
-instructor---any particular student would assign the same rating to either
-instructor.  The alternative hypothesis is that the ratings differ by
-instructor---some students would assign different ratings to the two
-instructors.  The only assumption we need to make is that randomization is fair
-and independent across units. This can be verified directly from the
-experimental design.
+reported gender---any particular student would assign the same rating regardless of instructor gender.  The alternative hypothesis is that the ratings differ by instructor gender---some students would assign different ratings depending on reported instructor gender.  The only assumption we need to make is that the random assignment of students to instruction sections is fair and independent across individuals. This can be verified directly from the experimental design.
 
-.. plot::
-    :context:
-    :nofigs:
+.. code::
 
     >>> from permute.core import two_sample
-    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided')
+    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided', seed = 20)
     >>> print('Test statistic:', np.round(t, 5))
-    Test statistic: 1.82159
+    Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.04436
+    P-value (two-sided): 0.27824
 
-    >>> print('\n\nRuns faster, but there is more uncertainty around the p-value\n')
-    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided')
-    >>> print('Test statistic:', np.round(t, 5))
+.. code::
+
+    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided', seed = 20) 
     >>> print('P-value (two-sided):', np.round(p, 5))
+	P-value (two-sided): 0.28
 
-Not only is the use of this :math:`p`-value justified (since our assumptions
-are met), but its value is below the cut-off for significance commonly used.
 Since the permutation test also returns the approximately exact distribution of
 the test statistic, let’s compare the actual distribution with the
 :math:`t`-distribution.
@@ -165,15 +114,12 @@ the test statistic, let’s compare the actual distribution with the
     ...                          alternative='greater', keep_dist=True, seed=55)
     >>> n, bins, patches = plt.hist(distr, 25, histtype='bar', normed=True)
     >>> plt.title('Permutation Null Distribution')
-    >>> plt.axvline(x = -t, color = 'red')
+    >>> plt.axvline(x = t, color = 'red')
     >>> x = np.linspace(stats.t.ppf(0.0001, df),
     ...       stats.t.ppf(0.9999, df), 100)
     >>> plt.plot(x, stats.t.pdf(x, df), lw=2, alpha=0.6)
 
-The plot above shows the null distribution generated by 10,000 permutations of the data.
-The t distribution is superimposed for comparison.  The null distribution is much flatter
-around 0 than the t distribution.  This is the source of the difference in p-values between
-the two tests.
+The plot above shows the null distribution generated by 10,000 permutations of the data. The t distribution is superimposed for comparison.  The null distribution is much more concentrated around 0 than the t distribution, which has longer tails.  Furthermore, it is not perfectly symmetric around zero. This is the source of the difference in p-values between the two tests.
 
 
 Stratified Spearman correlation permutation test
@@ -189,9 +135,7 @@ for group-level effects.
 More on teaching evaluations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We established that one instructor got higher ratings from students, but the
-difference was not significant. Now we may ask, did students ratings differ
-according to the gender that the instructor claimed to be?
+We established that one instructor got higher ratings when they used a male name than when they used a female name, but the difference was not significant. Now we may ask, did ratings differ according in this way for either of the two instructors?
 
 If there is no gender bias in the ratings, then students should give the same
 rating to the male instructor regardless of the gender he claims to be and
@@ -208,19 +152,16 @@ instructor higher if they identified as male
 
 The test statistic we use within groups is the Spearman correlation. For each
 instructor, we compute the correlation between their rating and reported
-gender, then add the absolute values of the correlations for the instructors.
+gender, then add the absolute values of the correlations for the instructors. Because reported gender is just a binary indicator, the correlation is equivalent to using the mean rating for male-identified instructors as a test statistic.
 
-.. plot::
-    :context:
+.. code::
 
     >>> from permute.stratified import sim_corr
-    >>> evals = np.recfromcsv("SET2.csv")
-    >>> rho, plower, pupper, pboth, sim = sim_corr(x=evals.rating, y=evals.final,
-    ...                                            group=evals.prof_id)
-    >>> print 'Test statistic:', np.round(rho, 5)
-    Test statistic: 0.94787
-    >>> print 'One-sided (upper) P-value:', np.round(pupper, 5)
-    One-sided (upper) P-value: 0.18
+    >>> rho, plower, pupper, pboth, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
+    >>> print('Test statistic:', np.round(rho, 5))
+    Test statistic: 0.4459
+    >>> print('One-sided (upper) P-value:', np.round(pupper, 5))
+    One-sided (upper) P-value: 0.0896
 
 Finally, I plot the simulated distribution of the test statistics under
 the null conditioned on the observed data in Figure [fig:figure2].
