@@ -40,7 +40,7 @@ def corr(x, y, reps=10**4, seed=None):
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
     left_pv = np.sum(sims <= tst) / reps
     right_pv = np.sum(sims >= tst) / reps
-    two_sided_pv = 2 * np.min(left_pv, right_pv)
+    two_sided_pv = np.min([1, 2 * np.min([left_pv, right_pv])])
     return tst, left_pv, right_pv, two_sided_pv, sims
 
 
@@ -90,7 +90,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
     thePvalue = {
         'greater': lambda p: p,
         'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * min(p, 1 - p)
+        'two-sided': lambda p: 2 * np.min([p, 1 - p])
     }
 
     if keep_dist:
@@ -194,12 +194,6 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         tst_fun = stat
     else:
         tst_fun = stats[stat]
-
-#    theStat = {
-#        'greater': tst_fun,
-#        'less': lambda u,v: -tst_fun(u, v),
-#        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
-#    }
 
     nx = len(x)
     observed_tst = tst_fun(pot_out_all[:nx, 0], pot_out_all[nx:, 1])
@@ -314,12 +308,6 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
         tst_fun = stat
     else:
         tst_fun = stats[stat]
-
-#    theStat = {
-#        'greater': tst_fun,
-#        'less': lambda u,v: -tst_fun(u, v),
-#        'two-sided': lambda u,v: math.fabs(tst_fun(u, v))
-#    }
 
     nx = len(x)
     observed_tst = tst_fun(pot_out_all[:nx, 0], pot_out_all[nx:, 1])
@@ -529,7 +517,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     thePvalue = {
         'greater': lambda p: p,
         'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * min(p, 1 - p)
+        'two-sided': lambda p: 2 * np.min([p, 1 - p])
     }
     stats = {
         'mean': lambda u: np.mean(u),

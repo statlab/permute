@@ -115,8 +115,7 @@ def t2p(distr, alternative="greater"):
         plower = rankdata(distr, method = "min") / B
         pvalue = plower
     if alternative == "two-sided":
-        pvalue = np.apply_along_axis(min, 0, np.array([pupper, plower]))
-        pvalue = 2 * np.apply_along_axis(min, 0, np.array([pvalue, 1-pvalue]))
+        pvalue = np.min([np.ones(B), 2 * np.min([plower, pupper], 0)], 0)
     return pvalue
 
 
