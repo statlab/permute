@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, rankdata
 
 
 # Combining functions
@@ -89,15 +89,13 @@ def inverse_n_weight(pvalues, size):
 
 # Nonparametric combination of tests
 
-def t2p(stat, distr, alternative="greater"):
+def t2p(distr, alternative="greater"):
     '''
     Use the empirical distribution of a test statistic to compute
-    its p-value.
+    p-values for every value in the distribution.
 
     Parameters
     ----------
-    stat : float
-        Test statistic
     distr : array_like
         Empirical distribution of statistic
     alternative : {'greater', 'less', 'two-sided'}
@@ -111,13 +109,13 @@ def t2p(stat, distr, alternative="greater"):
 
     B = len(distr)
     if alternative != "less":
-        pupper = np.sum(distr >= stat) / B
+        pupper = 1 - (rankdata(distr, method = "min") / B) + 1/B
         pvalue = pupper
     if alternative != "greater":
-        plower = np.sum(distr <= stat) / B
+        plower = rankdata(distr, method = "min") / B
         pvalue = plower
     if alternative == "two-sided":
-        pvalue = 2 * min([pupper, plower])
+        pvalue = np.min([np.ones(B), 2 * np.min([plower, pupper], 0)], 0)
     return pvalue
 
 
@@ -180,18 +178,13 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
 
     # Convert test statistic distribution to p-values
     combined_stat_distr = [0] * B
-    for b in range(B):
-        pvalues_from_distr = [0] * n
-        for j in range(n):
-            pvalues_from_distr[j] = t2p(
-                distr[b, j], distr[:, j], alternatives[j])
-        pvalues_from_distr = np.array(pvalues_from_distr)
-        if combine == "liptak":
-            toosmall = np.where(pvalues_from_distr == 0)
-            pvalues_from_distr[toosmall] = 0.0001
-            toobig = np.where(pvalues_from_distr == 1)
-            pvalues_from_distr[toobig] = 0.9999
-        combined_stat_distr[b] = combine_func(pvalues_from_distr)
+    pvalues_from_distr = np.zeros((B, n))
+    for j in range(n):
+        pvalues_from_distr[:, j] = t2p(distr[:, j], alternatives[j])
+    if combine == "liptak":
+        toobig = np.where(pvalues_from_distr == 1)
+        pvalues_from_distr[toobig] = 0.9999
+    combined_stat_distr = np.apply_along_axis(combine_func, 1, pvalues_from_distr)
 
     observed_combined_stat = combine_func(pvalues)
     return np.sum(combined_stat_distr >= observed_combined_stat) / B

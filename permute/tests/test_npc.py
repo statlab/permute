@@ -47,9 +47,13 @@ def test_inverse_n_weight():
 def test_t2p():
     obs = 5
     distr = np.array(range(-10, 11))
-    np.testing.assert_equal(t2p(obs, distr, "greater"), 6 / 21)
-    np.testing.assert_equal(t2p(obs, distr, "less"), 16 / 21)
-    np.testing.assert_equal(t2p(obs, distr, "two-sided"), 12 / 21)
+    expected = np.linspace(21, 1, num=21)/21
+    np.testing.assert_array_almost_equal(t2p(distr, "greater"), expected)
+    np.testing.assert_array_almost_equal(t2p(distr, "less"), expected[::-1])
+    
+    expected2 = 2*np.concatenate([expected[::-1][:10], 
+        [0.5], expected[11:]])
+    np.testing.assert_array_almost_equal(t2p(distr, "two-sided"), expected2)
 
 
 def test_npc():
