@@ -57,6 +57,11 @@ def test_t2p():
     np.testing.assert_array_almost_equal(t2p(distr, "two-sided"), expected2)
 
 
+@raises(ValueError)
+def test_t2p_bad_alternative():
+    t2p(np.array([0.5, 0.25, 0.75]), "not a real alternative")
+
+
 def test_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
