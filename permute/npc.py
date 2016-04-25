@@ -119,6 +119,32 @@ def t2p(distr, alternative="greater"):
     return pvalue
 
 
+def check_combfunc_monotonic(pvalues, combfunc):
+    '''
+    Utility function to check that the combining function is monotonically
+    decreasing in each argument.
+    
+    Parameters
+    ----------
+    pvalues : array_like
+        Array of p-values to combine
+    combine : function
+        The combining function to use. 
+    
+    Returns
+    -------
+    ``True`` if the combining function passed the check, ``False`` otherwise.
+    '''
+    
+    obs_ts = combfunc(pvalues)
+    for i in range(len(pvalues)):
+        test_pvalues = pvalues.copy()
+        test_pvalues[i] = test_pvalues[i] + 0.1
+        if(obs_ts < combfunc(test_pvalues)):
+            return False
+    return True
+    
+
 def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     '''
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
@@ -140,10 +166,10 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         Array of dimension [B, n] where B is the number of permutations and n is
         the number of partial hypothesis tests. The $i$th column of distr contains
         the simulated null distribution of the $i$th test statistic under $H_{0i}$.
-    combine : {'fisher', 'liptak', 'tippett'}
-        The combining function to use. Default is "fisher"
-        TODO: allow user to pass in their own combining function; check that it
-        satifies the correct monotonicity. Describe the monotonicity!
+    combine : {'fisher', 'liptak', 'tippett'} or function
+        The combining function to use. Default is "fisher".
+        Valid combining functions must take in p-values as their argument and be
+        monotonically decreasing in each p-value.
     alternatives : array_like
         Optional, an array containing the alternatives for each partial test
         ('greater', 'less', 'two-sided') or a single alternative, if all tests
@@ -172,6 +198,8 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         "tippett": tippett
     }
     if callable(combine):
+        if not check_combfunc_monotonic(pvalues, combine):
+            raise ValueError("Bad combining function: must be monotonically decreasing in each p-value")
         combine_func = combine
     else:
         combine_func = combine_library[combine]
