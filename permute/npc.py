@@ -107,6 +107,8 @@ def t2p(distr, alternative="greater"):
         the estimated p-vlaue
     '''
 
+    if not alternative in ['greater', 'less', 'two-sided']:
+        raise ValueError('Bad alternative')
     B = len(distr)
     if alternative != "less":
         pupper = 1 - (rankdata(distr, method = "min") / B) + 1/B
@@ -190,7 +192,6 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         alternatives = np.array([alternatives] * n)
     elif len(alternatives) != n:
         raise ValueError("Mismatch in number of p-values and alternatives")
-    # check values of alternatives
 
     combine_library = {
         "fisher": fisher,
