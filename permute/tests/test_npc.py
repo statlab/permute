@@ -12,7 +12,8 @@ from ..npc import (fisher,
                    tippett,
                    inverse_n_weight,
                    t2p,
-                   npc)
+                   npc,
+                   check_combfunc_monotonic)
 
 
 def test_fisher():
@@ -105,3 +106,16 @@ def test_npc_bad_alternative():
 @raises(ValueError)
 def test_npc_single_pvalue():
     npc(np.array([1]), np.array([1, 2, 3]))
+    
+
+def test_monotonic_checker():
+    pvalues = np.array([0.1, 0.2, 0.3])
+    np.testing.assert_equal(check_combfunc_monotonic(pvalues, fisher), True)
+    np.testing.assert_equal(check_combfunc_monotonic(pvalues, liptak), True)
+    np.testing.assert_equal(check_combfunc_monotonic(pvalues, tippett), True)
+    
+    comb_function = lambda p: inverse_n_weight(p, np.array([2, 4, 6]))
+    np.testing.assert_equal(check_combfunc_monotonic(pvalues, comb_function), True)
+    
+    bad_comb_function = lambda p: -1*fisher(p)
+    np.testing.assert_equal(check_combfunc_monotonic(pvalues, bad_comb_function), False)
