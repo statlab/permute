@@ -199,13 +199,15 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         Input array of dimension S
         Each entry corresponds to the number of items, Ns,
         in the s-th stratum.
-    obs_ts : float
-        if ``None``, ``obs_npc`` is calculated as the value of the test
-        statistic for the original data
+    obs_ts : array_like
+        Optional input array of dimension S
+        The s-th entry is ``rho_s``, the concordance for the s-th stratum.
+        If not input, pvalues must be specified.       
     pvalues : array_like
-        Input array of dimension S
-        Each entry corresponds to the p-value for ``rho_s``, the
-        concordance for the s-th stratum.
+        Optional input array of dimension S
+        The s-th entry is the p-value corresponding to ``rho_s``, 
+        the concordance for the s-th stratum.
+        If not input, obs_ts must be specified.
 
     Returns
     -------
