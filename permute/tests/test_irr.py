@@ -103,8 +103,6 @@ def test_simulate_ts_dist_concordance():
     assert_equal(res_conc, expected_res_conc)
 
 
-pval = np.array([0.5, 0.25, 0.75])
-size = np.array([2, 4, 6])
 res1 = simulate_ts_dist(res, keep_dist=True, seed=42)
 res_conc = simulate_ts_dist(res2, keep_dist=True, seed=42)
 true_pvalue = np.array(
