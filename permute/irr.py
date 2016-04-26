@@ -199,13 +199,15 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         Input array of dimension S
         Each entry corresponds to the number of items, Ns,
         in the s-th stratum.
-    obs_ts : float
-        if ``None``, ``obs_npc`` is calculated as the value of the test
-        statistic for the original data
+    obs_ts : array_like
+        Optional input array of dimension S
+        The s-th entry is ``rho_s``, the concordance for the s-th stratum.
+        If not input, pvalues must be specified.       
     pvalues : array_like
-        Input array of dimension S
-        Each entry corresponds to the p-value for ``rho_s``, the
-        concordance for the s-th stratum.
+        Optional input array of dimension S
+        The s-th entry is the p-value corresponding to ``rho_s``, 
+        the concordance for the s-th stratum.
+        If not input, obs_ts must be specified.
 
     Returns
     -------
@@ -213,11 +215,11 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         A dictionary containing:
 
         obs_npc : float
-            observed value of the test statistic for the input data, or
+            observed value of the combined test statistic for the input data, or
             the input value of ``obs_ts`` if ``obs_ts`` was given as input
-        leq : int
-            number of iterations for which the NPC test statistic was less
-            than or equal to ``obs_npc``
+        pvalue : float
+            A single p-value for the global test. The number of times that obs_npc
+            was at least as extreme as the distribution of combined IRR statistics.
         num_perm : int
             number of permutations
     """
