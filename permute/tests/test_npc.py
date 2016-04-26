@@ -128,5 +128,8 @@ def test_monotonic_checker():
 
 @raises(ValueError)
 def test_mono_checker_in_npc():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     bad_comb_function = lambda p: -1*fisher(p)
-    npc(np.array([1]), np.array([0.5]), bad_comb_function)
+    npc(pvalues, distr, bad_comb_function)
