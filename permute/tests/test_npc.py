@@ -124,3 +124,9 @@ def test_monotonic_checker():
     
     bad_comb_function = lambda p: -1*fisher(p)
     np.testing.assert_equal(check_combfunc_monotonic(pvalues, bad_comb_function), False)
+    
+
+@raises(ValueError)
+def test_mono_checker_in_npc():
+    bad_comb_function = lambda p: -1*fisher(p)
+    npc(np.array([1]), np.array([0.5]), bad_comb_function)
