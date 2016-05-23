@@ -18,7 +18,7 @@ The source code for the plot may be included in one of three ways:
 
           This is the caption for the plot
 
-     Additionally, one my specify the name of a function to call (with
+     Additionally, one may specify the name of a function to call (with
      no arguments) immediately after importing the module::
 
        .. plot:: path/to/plot.py plot_function1
@@ -62,8 +62,11 @@ The ``plot`` directive supports the following options:
         If provided, the code will be run in the context of all
         previous plot directives for which the `:context:` option was
         specified.  This only applies to inline code plot directives,
-        not those run from files. If the ``:context: reset`` is specified,
-        the context is reset for this and future plots.
+        not those run from files. If the ``:context: reset`` option is
+        specified, the context is reset for this and future plots, and
+        previous figures are closed prior to running the code.
+        ``:context:close-figs`` keeps the context but closes previous figures
+        before running the code.
 
     nofigs : bool
         If specified, the code block will be run, but no figures will
@@ -100,7 +103,9 @@ The plot directive has the following configuration options:
             [(suffix, dpi), suffix, ...]
 
         that determine the file format and the DPI. For entries whose
-        DPI was omitted, sensible defaults are chosen.
+        DPI was omitted, sensible defaults are chosen. When passing from
+        the command line through sphinx_build the list should be passed as
+        suffix:dpi,suffix:dpi, ....
 
     plot_html_show_formats
         Whether to show links to the files in HTML.
@@ -128,12 +133,13 @@ The plot directive has the following configuration options:
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import six
-from six.moves import xrange
+from matplotlib.externals import six
+from matplotlib.externals.six.moves import xrange
 
 import sys, os, shutil, io, re, textwrap
 from os.path import relpath
 import traceback
+import warnings
 
 if not six.PY3:
     import cStringIO
@@ -161,8 +167,15 @@ except ImportError:
 
 import matplotlib
 import matplotlib.cbook as cbook
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+try:
+    with warnings.catch_warnings(record=True):
+        warnings.simplefilter("error", UserWarning)
+        matplotlib.use('Agg')
+except UserWarning:
+    import matplotlib.pyplot as plt
+    plt.switch_backend("Agg")
+else:
+    import matplotlib.pyplot as plt
 from matplotlib import _pylab_helpers
 
 __version__ = 2
@@ -190,11 +203,9 @@ def _option_boolean(arg):
 
 
 def _option_context(arg):
-    if arg in [None, 'reset']:
+    if arg in [None, 'reset', 'close-figs']:
         return arg
-    else:
-        raise ValueError("argument should be None or 'reset'")
-    return directives.choice(arg, ('None', 'reset'))
+    raise ValueError("argument should be None or 'reset' or 'close-figs'")
 
 
 def _option_format(arg):
@@ -269,6 +280,9 @@ def setup(app):
 
     app.connect(str('doctree-read'), mark_plot_labels)
 
+    metadata = {'parallel_read_safe': True, 'parallel_write_safe': True}
+    return metadata
+
 #------------------------------------------------------------------------------
 # Doctest handling
 #------------------------------------------------------------------------------
@@ -333,8 +347,8 @@ def remove_coding(text):
     """
     Remove the coding comment, which six.exec_ doesn't like.
     """
-    return re.sub(
-        "^#\s*-\*-\s*coding:\s*.*-\*-$", "", text, flags=re.MULTILINE)
+    sub_re = re.compile("^#\s*-\*-\s*coding:\s*.*-\*-$", flags=re.MULTILINE)
+    return sub_re.sub("", text)
 
 #------------------------------------------------------------------------------
 # Template
@@ -363,8 +377,8 @@ TEMPLATE = """
    {% endif %}
 
    {% for img in images %}
-   .. figure:: {{ build_dir }}/{{ img.basename }}.png
-      {%- for option in options %}
+   .. figure:: {{ build_dir }}/{{ img.basename }}.{{ default_fmt }}
+      {% for option in options -%}
       {{ option }}
       {% endfor %}
 
@@ -383,14 +397,21 @@ TEMPLATE = """
 {{ only_latex }}
 
    {% for img in images %}
-   .. image:: {{ build_dir }}/{{ img.basename }}.pdf
+   {% if 'pdf' in img.formats -%}
+   .. figure:: {{ build_dir }}/{{ img.basename }}.pdf
+      {% for option in options -%}
+      {{ option }}
+      {% endfor %}
+
+      {{ caption }}
+   {% endif -%}
    {% endfor %}
 
 {{ only_texinfo }}
 
    {% for img in images %}
    .. image:: {{ build_dir }}/{{ img.basename }}.png
-      {%- for option in options %}
+      {% for option in options -%}
       {{ option }}
       {% endfor %}
 
@@ -447,8 +468,10 @@ def run_code(code, code_path, ns=None, function_name=None):
     # Change the working directory to the directory of the example, so
     # it can get at its data files, if any.  Add its path to sys.path
     # so it can import any helper modules sitting beside it.
-
-    pwd = os.getcwd()
+    if six.PY2:
+        pwd = os.getcwdu()
+    else:
+        pwd = os.getcwd()
     old_sys_path = list(sys.path)
     if setup.config.plot_working_directory is not None:
         try:
@@ -519,34 +542,44 @@ def clear_state(plot_rcparams, close=True):
     matplotlib.rcParams.update(plot_rcparams)
 
 
-def render_figures(code, code_path, output_dir, output_base, context,
-                   function_name, config, context_reset=False):
-    """
-    Run a pyplot script and save the low and high res PNGs and a PDF
-    in outdir.
-
-    Save the images under *output_dir* with file names derived from
-    *output_base*
-    """
-    # -- Parse format list
+def get_plot_formats(config):
     default_dpi = {'png': 80, 'hires.png': 200, 'pdf': 200}
     formats = []
     plot_formats = config.plot_formats
     if isinstance(plot_formats, six.string_types):
-        plot_formats = eval(plot_formats)
+        # String Sphinx < 1.3, Split on , to mimic
+        # Sphinx 1.3 and later. Sphinx 1.3 always
+        # returns a list.
+        plot_formats = plot_formats.split(',')
     for fmt in plot_formats:
         if isinstance(fmt, six.string_types):
-            formats.append((fmt, default_dpi.get(fmt, 80)))
-        elif type(fmt) in (tuple, list) and len(fmt)==2:
+            if ':' in fmt:
+                suffix, dpi = fmt.split(':')
+                formats.append((str(suffix), int(dpi)))
+            else:
+                formats.append((fmt, default_dpi.get(fmt, 80)))
+        elif type(fmt) in (tuple, list) and len(fmt) == 2:
             formats.append((str(fmt[0]), int(fmt[1])))
         else:
             raise PlotError('invalid image format "%r" in plot_formats' % fmt)
+    return formats
+
+
+def render_figures(code, code_path, output_dir, output_base, context,
+                   function_name, config, context_reset=False,
+                   close_figs=False):
+    """
+    Run a pyplot script and save the images in *output_dir*.
+
+    Save the images under *output_dir* with file names derived from
+    *output_base*
+    """
+    formats = get_plot_formats(config)
 
     # -- Try to determine if all images already exist
 
     code_pieces = split_code_at_show(code)
 
-    # Look for single-figure output files first
     # Look for single-figure output files first
     all_exists = True
     img = ImageFile(output_base, output_dir)
@@ -597,12 +630,15 @@ def render_figures(code, code_path, output_dir, output_base, context,
 
     if context_reset:
         clear_state(config.plot_rcparams)
+        plot_context.clear()
+
+    close_figs = not context or close_figs
 
     for i, code_piece in enumerate(code_pieces):
 
         if not context or config.plot_apply_rcparams:
-            clear_state(config.plot_rcparams)
-        else:
+            clear_state(config.plot_rcparams, close_figs)
+        elif close_figs:
             plt.close('all')
 
         run_code(code_piece, code_path, ns, function_name)
@@ -634,17 +670,16 @@ def render_figures(code, code_path, output_dir, output_base, context,
 
 
 def run(arguments, content, options, state_machine, state, lineno):
-    # The user may provide a filename *or* Python code content, but not both
-    if arguments and content:
-        raise RuntimeError("plot:: directive can't have both args and content")
-
     document = state_machine.document
     config = document.settings.env.config
     nofigs = 'nofigs' in options
 
+    formats = get_plot_formats(config)
+    default_fmt = formats[0][0]
+
     options.setdefault('include-source', config.plot_include_source)
-    context = 'context' in options
-    context_reset = True if (context and options['context'] == 'reset') else False
+    keep_context = 'context' in options
+    context_opt = None if not keep_context else options['context']
 
     rst_file = document.attributes['source']
     rst_dir = os.path.dirname(rst_file)
@@ -723,14 +758,25 @@ def run(arguments, content, options, state_machine, state, lineno):
     # how to link to files from the RST file
     dest_dir_link = os.path.join(relpath(setup.confdir, rst_dir),
                                  source_rel_dir).replace(os.path.sep, '/')
-    build_dir_link = relpath(build_dir, rst_dir).replace(os.path.sep, '/')
+    try:
+        build_dir_link = relpath(build_dir, rst_dir).replace(os.path.sep, '/')
+    except ValueError:
+        # on Windows, relpath raises ValueError when path and start are on
+        # different mounts/drives
+        build_dir_link = build_dir
     source_link = dest_dir_link + '/' + output_base + source_ext
 
     # make figures
     try:
-        results = render_figures(code, source_file_name, build_dir, output_base,
-                                 context, function_name, config,
-                                 context_reset=context_reset)
+        results = render_figures(code,
+                                 source_file_name,
+                                 build_dir,
+                                 output_base,
+                                 keep_context,
+                                 function_name,
+                                 config,
+                                 context_reset=context_opt == 'reset',
+                                 close_figs=context_opt == 'close-figs')
         errors = []
     except PlotError as err:
         reporter = state.memo.reporter
@@ -779,6 +825,7 @@ def run(arguments, content, options, state_machine, state, lineno):
 
         result = format_template(
             config.plot_template or TEMPLATE,
+            default_fmt=default_fmt,
             dest_dir=dest_dir_link,
             build_dir=build_dir_link,
             source_link=src_link,
@@ -789,7 +836,7 @@ def run(arguments, content, options, state_machine, state, lineno):
             options=opts,
             images=images,
             source_code=source_code,
-            html_show_formats=config.plot_html_show_formats and not nofigs,
+            html_show_formats=config.plot_html_show_formats and len(images),
             caption=caption)
 
         total_lines.extend(result.split("\n"))
