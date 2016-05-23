@@ -1,6 +1,8 @@
 # vim ft=yaml
 language: python
 
+cache: pip
+
 env:
   global:
     - DEPENDS="requirements.txt"
