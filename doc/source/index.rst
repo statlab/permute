@@ -7,7 +7,6 @@ Permutation tests and confidence sets
       :maxdepth: 3
    
       user/index.rst
-      dev/index.rst
       api/index.rst
 
 .. only:: html
