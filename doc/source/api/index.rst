@@ -11,3 +11,5 @@ API Reference
    stratified.rst
    npc.rst
    irr.rst
+
+.. automodule:: permute
