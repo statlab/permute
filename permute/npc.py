@@ -5,6 +5,12 @@ import numpy as np
 from scipy.stats import norm, rankdata
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 # Combining functions
 
 def fisher(pvalues):
@@ -189,7 +195,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         raise ValueError("One p-value: nothing to combine!")
     if n != distr.shape[1]:
         raise ValueError("Mismatch in number of p-values and size of distr")
-    if isinstance(alternatives, str):
+    if isinstance(alternatives, basestring):
         alternatives = np.array([alternatives] * n)
     elif len(alternatives) != n:
         raise ValueError("Mismatch in number of p-values and alternatives")
