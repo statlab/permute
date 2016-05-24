@@ -478,7 +478,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         (c) If stat is a function (a callable object), the test statistic is
             that function.  The function should take a permutation of the
             data and compute the test function from it. For instance, if the
-            test statistic is the maximum absolute value, $max_i |z_i|$,
+            test statistic is the maximum absolute value, $\max_i |z_i|$,
             the test statistic could be written:
 
             f = lambda u: np.max(abs(u))

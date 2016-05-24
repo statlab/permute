@@ -203,10 +203,10 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
     obs_ts : array_like
         Optional input array of dimension S
         The s-th entry is $\rho_s$, the concordance for the s-th stratum.
-        If not input, pvalues must be specified.       
+        If not input, pvalues must be specified.
     pvalues : array_like
         Optional input array of dimension S
-        The s-th entry is the p-value corresponding to $\rho_s$, 
+        The s-th entry is the p-value corresponding to $\rho_s$,
         the concordance for the s-th stratum.
         If not input, obs_ts must be specified.
 

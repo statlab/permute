@@ -112,10 +112,10 @@ def t2p(distr, alternative="greater"):
         raise ValueError('Bad alternative')
     B = len(distr)
     if alternative != "less":
-        pupper = 1 - (rankdata(distr, method = "min") / B) + 1/B
+        pupper = 1 - (rankdata(distr, method="min") / B) + 1 / B
         pvalue = pupper
     if alternative != "greater":
-        plower = rankdata(distr, method = "min") / B
+        plower = rankdata(distr, method="min") / B
         pvalue = plower
     if alternative == "two-sided":
         pvalue = np.min([np.ones(B), 2 * np.min([plower, pupper], 0)], 0)
@@ -126,19 +126,19 @@ def check_combfunc_monotonic(pvalues, combfunc):
     r"""
     Utility function to check that the combining function is monotonically
     decreasing in each argument.
-    
+
     Parameters
     ----------
     pvalues : array_like
         Array of p-values to combine
     combine : function
-        The combining function to use. 
-    
+        The combining function to use.
+
     Returns
     -------
     ``True`` if the combining function passed the check, ``False`` otherwise.
     """
-    
+
     obs_ts = combfunc(pvalues)
     for i in range(len(pvalues)):
         test_pvalues = pvalues.copy()
@@ -146,7 +146,7 @@ def check_combfunc_monotonic(pvalues, combfunc):
         if(obs_ts < combfunc(test_pvalues)):
             return False
     return True
-    
+
 
 def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     r"""
@@ -201,7 +201,8 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     }
     if callable(combine):
         if not check_combfunc_monotonic(pvalues, combine):
-            raise ValueError("Bad combining function: must be monotonically decreasing in each p-value")
+            raise ValueError(
+                "Bad combining function: must be monotonically decreasing in each p-value")
         combine_func = combine
     else:
         combine_func = combine_library[combine]
@@ -214,7 +215,8 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     if combine == "liptak":
         toobig = np.where(pvalues_from_distr == 1)
         pvalues_from_distr[toobig] = 0.9999
-    combined_stat_distr = np.apply_along_axis(combine_func, 1, pvalues_from_distr)
+    combined_stat_distr = np.apply_along_axis(
+        combine_func, 1, pvalues_from_distr)
 
     observed_combined_stat = combine_func(pvalues)
     return np.sum(combined_stat_distr >= observed_combined_stat) / B
