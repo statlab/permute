@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-
 """
-Core.
+Core functions.
 """
 
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import numpy as np
 from scipy.optimize import brentq, fsolve
@@ -14,7 +13,7 @@ from .utils import get_prng, potential_outcomes
 
 
 def corr(x, y, reps=10**4, seed=None):
-    """
+    r"""
     Simulate permutation p-value for Spearman correlation coefficient
 
     Parameters
@@ -46,7 +45,7 @@ def corr(x, y, reps=10**4, seed=None):
 
 def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                     reps=10**5, keep_dist=False, seed=None):
-    '''
+    r"""
     Main workhorse function for two_sample and two_sample_shift
 
     Parameters
@@ -80,7 +79,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
     list
         The distribution of test statistics.
         These values are only returned if `keep_dist` == True
-    '''
+    """
     prng = get_prng(seed)
 
     rr = list(range(potential_outcomes_all.shape[0]))
@@ -112,7 +111,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None):
-    """
+    r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
     reps replications.
@@ -152,7 +151,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             that function.  The function should take a permutation of the pooled
             data and compute the test function from it. For instance, if the
             test statistic is the Kolmogorov-Smirnov distance between the
-            empirical distributions of the two samples, ``max_t |F_x(t) - F_y(t)|``,
+            empirical distributions of the two samples, $\max_t |F_x(t) - F_y(t)|$,
             the test statistic could be written:
 
             f = lambda u: np.max( \
@@ -209,7 +208,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
 def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
                      keep_dist=False, seed=None, shift=None):
-    """
+    r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
     reps replications.
@@ -249,7 +248,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             that function.  The function should take a permutation of the pooled
             data and compute the test function from it. For instance, if the
             test statistic is the Kolmogorov-Smirnov distance between the
-            empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
+            empirical distributions of the two samples, $\max_t |F_x(t) - F_y(t)|$,
             the test statistic could be written:
 
             f = lambda u: np.max( \
@@ -271,8 +270,8 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
 
         (a) A constant scalar shift in the distribution of y. That is, x is equal
             in distribution to y + shift.
-        (b) A tuple containing the function and its inverse (f, finverse), so
-            x_i = f(y_i) and y_i = finverse(x_i)
+        (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
+            $x_i = f(y_i)$ and $y_i = f^{-1}(x_i)$
 
     Returns
     -------
@@ -323,7 +322,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
                         reps=10**4, stat="mean", shift=None):
-    """
+    r"""
     One-sided or two-sided confidence interval for the parameter determining
     the treatment effect.  The default is the "shift model", where we are
     interested in the parameter d such that x is equal in distribution to
@@ -360,7 +359,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             that function.  The function should take a permutation of the pooled
             data and compute the test function from it. For instance, if the
             test statistic is the Kolmogorov-Smirnov distance between the
-            empirical distributions of the two samples, max_t |F_x(t) - F_y(t)|,
+            empirical distributions of the two samples, $\max_t |F_x(t) - F_y(t)|$,
             the test statistic could be written:
 
             f = lambda u: np.max( \
@@ -370,8 +369,8 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         The relationship between x and y under the null hypothesis.
 
         (a) If None, the relationship is assumed to be additive (e.g. x = y+d)
-        (b) A tuple containing the function and its inverse (f, finverse), so
-            x_i = f(y_i, d) and y_i = finverse(x_i, d)
+        (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
+            $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$
 
     Returns
     -------
@@ -436,7 +435,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None):
-    """
+    r"""
     One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
     reps replications.
@@ -479,7 +478,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         (c) If stat is a function (a callable object), the test statistic is
             that function.  The function should take a permutation of the
             data and compute the test function from it. For instance, if the
-            test statistic is the maximum absolute value, max_i |z_i|,
+            test statistic is the maximum absolute value, $max_i |z_i|$,
             the test statistic could be written:
 
             f = lambda u: np.max(abs(u))

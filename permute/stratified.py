@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-
 """
 Stratified permutation tests.
 """
 
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import numpy as np
 
@@ -12,7 +11,7 @@ from .utils import get_prng, permute_within_groups
 
 
 def corrcoef(x, y, group):
-    """
+    r"""
     Calculates sum of Spearman correlations between x and y,
     computed separately in each group.
 
@@ -39,7 +38,7 @@ def corrcoef(x, y, group):
 
 
 def sim_corr(x, y, group, reps=10**4, seed=None):
-    """
+    r"""
     Simulate permutation p-value of stratified Spearman correlation test.
 
     Parameters
@@ -83,7 +82,7 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
 
 def stratified_permutationtest_mean(group, condition, response,
                                     groups=None, conditions=None):
-    """
+    r"""
     Calculates variability in sample means between treatment conditions,
     within groups.
 
@@ -133,13 +132,13 @@ def stratified_permutationtest_mean(group, condition, response,
 def stratified_permutationtest(group, condition, response, reps=10**5,
                                testStatistic=stratified_permutationtest_mean,
                                seed=None):
-    """
+    r"""
     Stratified permutation test based on differences in means.
 
     The test statistic is
 
-    .. math:: \sum_{g \in \\text{groups}} [
-                 f(mean(\\text{response for cases in group $g$
+    .. math:: \sum_{g \in \text{groups}} [
+                 f(mean(\text{response for cases in group $g$
                                assigned to each condition}))].
 
     The function f is the difference if there are two conditions, and

@@ -1,4 +1,4 @@
-"""
+r"""
 A stratified permutation test for multi-rater inter-rater reliability.
 
 There are $S$ strata.
@@ -39,9 +39,9 @@ permuting independently across across raters and across strata.
 
 The test statistic within stratum $s$ is
 
-.. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+.. math:: \rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
               \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
-              = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+              = \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
                 (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)).
 
 That is, within each stratum, we count the number of concordant pairs of
@@ -49,7 +49,7 @@ assignments. If all $R$ raters agree whether item $i$ in stratum $s$
 belongs to category $c$, that contributes a term ${R \choose 2}$ to the
 sum.  If only half agree, the term for item $i$ contributes
 $2 {N/2 \choose 2}$ to the sum.  The normalization makes perfect
-agreement within stratum $s$ correspond to $\\rho_s = 1$.
+agreement within stratum $s$ correspond to $\rho_s = 1$.
 
 To combine the results across strata to get an overall p-value, we could
 use any of the methods we've discussed, or the NPC (nonparametric
@@ -63,21 +63,22 @@ where the nonnegative weights $\{w_s\}$ are chosen in some sensible manner
 (e.g., $w_s = N_s^{-1/2}$ would be reasonable).
 """
 
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import numpy as np
 
 from .utils import get_prng, permute_rows
-from.npc import inverse_n_weight, npc
+from .npc import inverse_n_weight, npc
 
 
 def compute_ts(ratings):
-    """
+    r"""
     Compute the test statistic
 
-    .. math:: \\rho_s \equiv \\frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+    .. math:: \rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
               \sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
-              = \\frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+              = \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
                 (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1)).
 
     Parameters
@@ -101,7 +102,7 @@ def compute_ts(ratings):
 
 def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
                      keep_dist=False, seed=None):
-    """
+    r"""
     Simulates the permutation distribution of the irr test statistic for
     a matrix of ratings ``ratings``
 
@@ -174,7 +175,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
 
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
                       pvalues=None):
-    """
+    r"""
     Simulates the permutation distribution of the combined NPC test
     statistic for S matrices of ratings ``ratings`` corresponding to
     S strata. The distribution comes from applying ``simulate_ts_dist``
@@ -193,7 +194,7 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
     ----------
     perm_distr : array_like
         Input array of dimension [B, S]
-        Column s is the permutation distribution of ``rho_s``,
+        Column s is the permutation distribution of $\rho_s$,
         for s=1,...,S
     size : array_like
         Input array of dimension S
@@ -201,11 +202,11 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         in the s-th stratum.
     obs_ts : array_like
         Optional input array of dimension S
-        The s-th entry is ``rho_s``, the concordance for the s-th stratum.
+        The s-th entry is $\rho_s$, the concordance for the s-th stratum.
         If not input, pvalues must be specified.       
     pvalues : array_like
         Optional input array of dimension S
-        The s-th entry is the p-value corresponding to ``rho_s``, 
+        The s-th entry is the p-value corresponding to $\rho_s$, 
         the concordance for the s-th stratum.
         If not input, obs_ts must be specified.
 

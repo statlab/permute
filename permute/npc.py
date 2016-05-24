@@ -1,4 +1,5 @@
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import numpy as np
 from scipy.stats import norm, rankdata
@@ -7,10 +8,10 @@ from scipy.stats import norm, rankdata
 # Combining functions
 
 def fisher(pvalues):
-    '''
+    r"""
     Apply Fisher's combining function
 
-    .. math:: \-2\sum_i \log(p_i)
+    .. math:: -2 \sum_i \log(p_i)
 
     Parameters
     ----------
@@ -21,15 +22,15 @@ def fisher(pvalues):
     -------
     float
         Fisher's combined test statistic
-    '''
+    """
     return -2 * np.log(np.prod(pvalues))
 
 
 def liptak(pvalues):
-    '''
+    r"""
     Apply Liptak's combining function
 
-    .. math:: \\sum_i \Phi^{-1}(1-p_i)
+    .. math:: \sum_i \Phi^{-1}(1-p_i)
 
     where $\Phi^{-1}$ is the inverse CDF of the standard normal distribution.
 
@@ -42,15 +43,15 @@ def liptak(pvalues):
     -------
     float
         Liptak's combined test statistic
-    '''
+    """
     return np.sum(norm.ppf(1 - pvalues))
 
 
 def tippett(pvalues):
-    '''
+    r"""
     Apply Tippett's combining function
 
-    .. math:: \\max_i \{1-p_i\}
+    .. math:: \max_i \{1-p_i\}
 
     Parameters
     ----------
@@ -61,15 +62,15 @@ def tippett(pvalues):
     -------
     float
         Tippett's combined test statistic
-    '''
+    """
     return np.max(1 - pvalues)
 
 
 def inverse_n_weight(pvalues, size):
-    """
+    r"""
     Compute the test statistic
 
-    .. math:: -\\sum_{s=1}^S\\frac{p_s}{\sqrt{N_s}}
+    .. math:: -\sum_{s=1}^S \frac{p_s}{\sqrt{N_s}}
 
     Parameters
     ----------
@@ -90,7 +91,7 @@ def inverse_n_weight(pvalues, size):
 # Nonparametric combination of tests
 
 def t2p(distr, alternative="greater"):
-    '''
+    r"""
     Use the empirical distribution of a test statistic to compute
     p-values for every value in the distribution.
 
@@ -105,7 +106,7 @@ def t2p(distr, alternative="greater"):
     -------
     float
         the estimated p-vlaue
-    '''
+    """
 
     if not alternative in ['greater', 'less', 'two-sided']:
         raise ValueError('Bad alternative')
@@ -122,7 +123,7 @@ def t2p(distr, alternative="greater"):
 
 
 def check_combfunc_monotonic(pvalues, combfunc):
-    '''
+    r"""
     Utility function to check that the combining function is monotonically
     decreasing in each argument.
     
@@ -136,7 +137,7 @@ def check_combfunc_monotonic(pvalues, combfunc):
     Returns
     -------
     ``True`` if the combining function passed the check, ``False`` otherwise.
-    '''
+    """
     
     obs_ts = combfunc(pvalues)
     for i in range(len(pvalues)):
@@ -148,15 +149,15 @@ def check_combfunc_monotonic(pvalues, combfunc):
     
 
 def npc(pvalues, distr, combine="fisher", alternatives="greater"):
-    '''
+    r"""
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
     $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
 
-    .. math:: \\cap_{i=1}^n H_{0i}
+    .. math:: \cap_{i=1}^n H_{0i}
 
     against the alternative
 
-    .. math:: \\cup_{i=1}^n H_{1i}
+    .. math:: \cup_{i=1}^n H_{1i}
 
     using an omnibus test statistic.
 
@@ -181,7 +182,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     -------
     float
         A single p-value for the global test
-    '''
+    """
     n = len(pvalues)
     B = distr.shape[0]
     if n < 2:
