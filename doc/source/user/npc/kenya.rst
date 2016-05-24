@@ -41,6 +41,3 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
     >>> plt.legend(['ol_molo', 'kamba'])
     [...]
 
-.. rubric:: References
-
-.. bibliography:: ../../permute.bib
