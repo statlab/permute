@@ -43,7 +43,7 @@ probability.
    two-sample.rst
    regression.rst
    npc/index.rst
-
+   references.rst
 
 .. rubric:: Footnotes
 

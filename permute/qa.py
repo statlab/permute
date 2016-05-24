@@ -1,19 +1,20 @@
 """ Quality assurance and data cleaning.
 """
 
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import numpy as np
 
 
 def find_duplicate_rows(x, as_string=False):
-    """ Find rows which are duplicated in x
+    r""" Find rows which are duplicated in x
 
     Notes
     -----
     If you load a file, for example `nsgk.csv`, as a 2D array, say `x`,
     then if you found '16,20,2,8' in the list returned by
-    ``find_duplicate_rows(x, as_string=True)`` you might do something like:
+    ``find_duplicate_rows(x, as_string=True)`` you might do something like::
 
         $ grep -n --context=1 '16,20,2,8' nsgk.csv
         12512-16,15,2,8
@@ -37,7 +38,7 @@ def find_duplicate_rows(x, as_string=False):
 
 
 def find_consecutive_duplicate_rows(x, as_string=False):
-    """ Find rows which are duplicated in x
+    r""" Find rows which are duplicated in x
     """
     indx = []
     prev = x[0]

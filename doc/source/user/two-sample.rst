@@ -2,24 +2,24 @@ Two sample permutation tests
 ============================
 
 Suppose that we have a completely randomized experiment, where people are
-assigned to two groups at random. Suppose we have :math:`N` individuals indexed
-by `i=1,\dots,N`. We assign them at random to one of two groups with a random
-treatment vector `Z`: if `Z_i = 1`, then individual `i` receives treatment (for
-example, a drug) and if `Z_i=0`, individual `i` receives no treatment (a
+assigned to two groups at random. Suppose we have $N$ individuals indexed
+by $i = 1, \dots, N$. We assign them at random to one of two groups with a random
+treatment vector $Z$: if $Z_i = 1$, then individual $i$ receives treatment (for
+example, a drug) and if $Z_i=0$, individual $i$ receives no treatment (a
 placebo). We'd like to test whether or not the drug has an effect on how often
 catches a cold. The outcome measure is the number of times somebody gets a cold
 wihin one year of starting to take the drug (for simplicity, assume that this
 can be measured perfectly). We can measure the difference in outcomes between
 the two groups with any statistic we'd like. The statistic will be a function
-of the treatment vector `Z` and the outcomes, `Y_i(1)` being the outcome under
-treatment and `Y_i(0)` being the outcome under no treatment. We'll use the
+of the treatment vector $Z$ and the outcomes, $Y_i(1)$ being the outcome under
+treatment and $Y_i(0)$ being the outcome under no treatment. We'll use the
 difference-in-means test statistic:
 
 .. math::
    T(Z, Y(1), Y(0)) = \frac{1}{N_t}\sum_{i : Z_i = 1}Y_i(1) - \frac{1}{N_c}\sum_{i : Z_i = 0}Y_i(0)
 
-Here, `N_t` is the number of treated individuals and `N_c` is the number of
-untreated individuals, so `N_t + N_c = N`. If the test statistic is negative,
+Here, $N_t$ is the number of treated individuals and $N_c$ is the number of
+untreated individuals, so $N_t + N_c = N$. If the test statistic is negative,
 then we may have evidence that the drug reduces colds. Conversely, if the test
 statistic is positive, we may believe that the drug actually makes people more
 vulnerable to getting sick. If we have no a priori belief about what the drug
@@ -31,24 +31,24 @@ would be the same whether he or she received the drug or the placebo. This is
 the *strong null hypothesis*: the drug has no effect on any individual. Under
 the strong null, we know both potential outcomes for each individual; namely,
 their number of colds would be the same regardless of which treatment group
-they were assigned. In mathematical notation, `Y_i(1) = Y_i(0)` for all `i`
+they were assigned. In mathematical notation, $Y_i(1) = Y_i(0)$ for all $i$
 under the strong null.
 
 The random assignment of people to treatment groups ensures that all possible
-assignments of `N_t` people to treatment are equally likely. Thus, we can find
-the null distribution of the test statistic by calculating `T(Z*, Y(1), Y(0))`
-for all possible treatment assignment vectors `Z*`. In general, this would not
-be possible, because for each individual we observe only `Y_i(1)` or `Y_i(0)`,
+assignments of $N_t$ people to treatment are equally likely. Thus, we can find
+the null distribution of the test statistic by calculating $T(Z^*, Y(1), Y(0))$
+for all possible treatment assignment vectors $Z^*$. In general, this would not
+be possible, because for each individual we observe only $Y_i(1)$ or $Y_i(0)$,
 but not both. However, the strong null hypothesis allows us to impute the
 missing potential outcome for each individual.
 
-There are `N \choose N_t` possible values of `Z*`.  In practice, this number is
-often too large to enumerate all possible values of `T(Z*, Y(1), Y(0))`.
-Instead, we simulate the distribution by taking a random subset of `B` of the
-`Z*`. Then, our estimated p-value for the test is
+There are $N \choose N_t$ possible values of $Z^*$.  In practice, this number is
+often too large to enumerate all possible values of $T(Z^*, Y(1), Y(0))$.
+Instead, we simulate the distribution by taking a random subset of $B$ of the
+$Z^*$. Then, our estimated p-value for the test is
 
 .. math::
-   P = 2\times \min\left( \frac{ \#\left\lbrace  T(Z*) <= T(Z)\right\rbrace}{B}, \frac{\# \left\lbrace T(Z*) >= T(Z)\right\rbrace}{B}\right)
+   P = 2\times \min\left( \frac{ \#\left\lbrace  T(Z^*) <= T(Z)\right\rbrace}{B}, \frac{\# \left\lbrace T(Z^*) >= T(Z)\right\rbrace}{B}\right)
 
 Gender bias in student evaluation of teachers
 ---------------------------------------------
@@ -97,7 +97,7 @@ t-test to be valid, we require the following assumptions:
    with their peers in the class, creating dependence.)
 
 Despite the problematic assumptions we are required to make, let’s temporarily
-assume they hold and calculate a ":math:`p`-value" anyway.
+assume they hold and calculate a "$p$-value" anyway.
 
 .. plot::
     :context:
@@ -120,14 +120,14 @@ assume they hold and calculate a ":math:`p`-value" anyway.
     >>> print('P-value (two-sided):', np.round(p, 5))
 	P-value (two-sided): 0.20043
 
-Note that the computed ":math:`p`-value" is above the standard cut-offs for
+Note that the computed "$p$-value" is above the standard cut-offs for
 reporting significance in the literature.
 
 Permutation approach
 ~~~~~~~~~~~~~~~~~~~~
 
 For the permutation test we can use the same test statistic, but we will
-compute the :math:`p`-value by randomly sampling the exact distribution of the
+compute the $p$-value by randomly sampling the exact distribution of the
 test statistics. The null hypothesis is that the ratings are uninfluenced by
 reported gender---any particular student would assign the same rating
 regardless of instructor gender.  The alternative hypothesis is that the
@@ -155,7 +155,7 @@ experimental design.
 
 Since the permutation test also returns the approximately exact distribution of
 the test statistic, let’s compare the actual distribution with the
-:math:`t`-distribution.
+$t$-distribution.
 
 .. plot::
     :context:
@@ -168,6 +168,7 @@ the test statistic, let’s compare the actual distribution with the
     >>> x = np.linspace(stats.t.ppf(0.0001, df),
     ...       stats.t.ppf(0.9999, df), 100)
     >>> plt.plot(x, stats.t.pdf(x, df), lw=2, alpha=0.6)
+    >>> plt.show()
 
 The plot above shows the null distribution generated by 10,000 permutations of
 the data. The t distribution is superimposed for comparison.  The null
@@ -229,7 +230,7 @@ Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
 
 .. plot::
-    :context:
+    :context: close-figs
 
     >>> n, bins, patches = plt.hist(sim, 40, histtype='bar')
     >>> plt.axvline(x=rho, color='red')

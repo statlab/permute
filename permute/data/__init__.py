@@ -6,6 +6,9 @@ For more information, see
 
 """
 
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+
 import os as _os
 
 import numpy as np
@@ -18,7 +21,7 @@ __all__ = ['load',
 
 
 def load(f):
-    """Load a data file located in the data directory.
+    r"""Load a data file located in the data directory.
 
     Parameters
     ----------
@@ -27,14 +30,14 @@ def load(f):
 
     Returns
     -------
-    x : ndarray (or Pandas' frame?)
+    x : array like
         Data loaded from permute.data_dir.
     """
     return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
 
 
 def nsgk():
-    """NSGK test data for irr.
+    r"""NSGK test data for irr.
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
                     delimiter=',', skiprows=1, dtype=np.int)
@@ -63,7 +66,7 @@ def nsgk():
 
 
 def macnell2014():
-    """Data from MacNell et alrom MacNell et alrom MacNell et al. 2014
+    r"""Data from MacNell et alrom MacNell et alrom MacNell et al. 2014
 
     .. Lillian MacNell, Adam Driscoll, and Andrea N Hunt, "What's
        in a Name: Exposing Gender Bias in Student Ratings of Teaching,"
@@ -87,14 +90,14 @@ def macnell2014():
 #
 
 def botulinum():
-    """The
+    r"""The
 
     """
     return load(_os.path.join("npc", "botulinum.csv"))
 
 
 def chrom17m():
-    """The
+    r"""The
 
     """
     return load(_os.path.join("npc", "chrom17m.csv"))

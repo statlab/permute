@@ -1,7 +1,9 @@
 """
 Various utilities and helper functions.
 """
-from __future__ import division, print_function, absolute_import
+
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 
 import math
 import numbers
@@ -307,9 +309,9 @@ def permute_incidence_fixed_sums(incidence, k=1):
 
 def potential_outcomes(x, y, f, finverse):
     """
-    Given observations x under treatment and y under control conditions,
+    Given observations $x$ under treatment and $y$ under control conditions,
     returns the potential outcomes for units under their unobserved condition
-    under the hypothesis that x_i = f(y_i) for all units.
+    under the hypothesis that $x_i = f(y_i)$ for all units.
 
     Parameters
     ----------

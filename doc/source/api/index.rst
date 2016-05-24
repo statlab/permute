@@ -1,4 +1,4 @@
-API reference
+API Reference
 =============
 
 .. toctree::
@@ -11,3 +11,5 @@ API reference
    stratified.rst
    npc.rst
    irr.rst
+
+.. automodule:: permute

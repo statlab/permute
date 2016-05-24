@@ -186,5 +186,6 @@ gitwash:
 
 github: html
 	touch $(BUILDDIR)/html/.nojekyll
+	cp -a $(BUILDDIR)/latex/permute.pdf $(BUILDDIR)/html/.
 	ghp-import $(BUILDDIR)/html
 	git push upstream gh-pages --force 
