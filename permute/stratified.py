@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import numpy as np
+import math
 
 from .utils import get_prng, permute_within_groups
 
@@ -119,7 +120,7 @@ def stratified_permutationtest_mean(group, condition, response,
     if len(groups) < 2:
         raise ValueError('Number of groups must be at least 2.')
     elif len(groups) == 2:
-        stat = lambda u: u[0] - u[1]
+        stat = lambda u: math.fabs(u[0] - u[1])
     elif len(groups) > 2:
         stat = np.std
     for g in groups:
