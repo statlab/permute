@@ -10,7 +10,6 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
 
 
 .. plot::
-    :context:
 
     >>> from __future__ import print_function
     >>> from matplotlib import mlab
@@ -40,4 +39,5 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
     >>> plt.plot(d['kamba'])
     >>> plt.legend(['ol_molo', 'kamba'])
     [...]
+    >>> plt.show()
 

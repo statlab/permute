@@ -4,11 +4,14 @@ descr = """Permutation tests and confidence sets for Python
 
 """
 
+import os
+
+
 DISTNAME = 'permute'
 DESCRIPTION = 'Permutation tests and confidence sets for Python'
 LONG_DESCRIPTION = descr
-MAINTAINER = 'Permute developers'
-MAINTAINER_EMAIL = 'permute@googlegroups.com'
+AUTHOR = 'K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark'
+AUTHOR_EMAIL = 'permute@googlegroups.com'
 URL = 'http://statlab.github.io/permute/'
 LICENSE = 'BSD License'
 DOWNLOAD_URL = 'http://github.com/statlab/permute'
@@ -25,8 +28,6 @@ TESTS_REQUIRE = [
     'nose',
     'flake8'
 ]
-
-import os
 
 
 def write_version_py(filename='permute/version.py'):
@@ -56,8 +57,8 @@ if __name__ == "__main__":
         license=LICENSE,
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        maintainer=MAINTAINER,
-        maintainer_email=MAINTAINER_EMAIL,
+        author=AUTHOR,
+        author_email=AUTHOR_EMAIL,
         url=URL,
         download_url=DOWNLOAD_URL,
 
@@ -81,6 +82,7 @@ if __name__ == "__main__":
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
 
-        packages=['permute', 'permute.data', 'permute.tests', 'permute.data.tests'],
+        packages=['permute', 'permute.tests',
+                  'permute.data', 'permute.data.tests'],
         package_data={'permute.data': ['*.csv', '*/*.csv', '*/*/*.csv']}
     )
