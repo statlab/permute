@@ -25,6 +25,7 @@ sys.path.append(os.path.abspath('_sphinxext'))
 
 # -- General configuration ------------------------------------------------
 
+permute_developers = "K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark"
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
 
@@ -38,8 +39,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.pngmath',
     'sphinx.ext.napoleon',
-    'dollarmath',
     'sphinxcontrib.bibtex',
+    'dollarmath',
     'plot_directive',
 ]
 
@@ -57,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Permutation tests and confidence sets'
-copyright = u'2015, permute developers'
+copyright = u'2015-2016, ' + permute_developers
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -193,7 +194,7 @@ html_show_sourcelink = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Permutationtestsandconfidencesets'
+htmlhelp_basename = 'permute'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -220,8 +221,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'Permutationtestsandconfidencesets.tex', u'Permutation tests and confidence sets',
-   u'permute developers', 'manual'),
+  ('index', 'permute.tex', u'Permutation tests and confidence sets',
+   permute_developers, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -250,8 +251,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'permutationtestsandconfidencesets', u'Permutation tests and confidence sets',
-     [u'permute developers'], 1)
+    ('index', 'permute', u'Permutation tests and confidence sets',
+     [permute_developers], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -264,8 +265,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Permutationtestsandconfidencesets', u'Permutation tests and confidence sets',
-   u'permute developers', 'Permutationtestsandconfidencesets', 'One line description of project.',
+  ('index', 'permute', u'Permutation tests and confidence sets',
+   permute_developers, 'permute',
+   u'Permutation tests and confidence sets permutation tests and confidence sets for a variety of nonparametric testing and estimation problems and for a variety of randomization designs.',
    'Miscellaneous'),
 ]
 
