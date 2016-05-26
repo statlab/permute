@@ -20,9 +20,12 @@ def test_stratified_permutationtest():
     response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
     res = spt(group, condition, response, reps=1000, seed=42)
-    res1 = spt(group, condition, response, reps=1000, seed=42)
+    res1 = spt(group, condition, response, alternative='less', reps=1000, seed=42)
     assert_less(res[0], 0.01)
-    assert_almost_equal(res[1], res1[1])
+    assert_equal(res[1], res1[1])
+    assert_almost_equal(res[0], 1-res1[0])
+    res2 = spt(group, condition, response, alternative='two-sided', reps=1000, seed=42)
+    assert_less(res2[0], 0.02)
 
     group = np.array([1, 1, 1])
     condition = np.array([2, 2, 2])
@@ -60,15 +63,20 @@ def test_corrcoef():
     group = prng.randint(3, size=10)
     res1 = corrcoef(x, y, group)
     res2 = corrcoef(x, y, group)
-    np.testing.assert_equal(res1, res2)
+    assert_equal(res1, res2)
 
 
-@attr('slow')
+#@attr('slow')
 def test_sim_corr():
     prng = RandomState(42)
     x = prng.rand(10)
     y = x
     group = prng.randint(3, size=10)
-    res1 = sim_corr(x, y, group, seed=prng)
-    res2 = sim_corr(x, y, group)
-    np.testing.assert_equal(res1[0], res2[0])
+    res1 = sim_corr(x, y, group, seed=prng, reps=100)
+    res2 = sim_corr(x, y, group, seed=prng, alternative='less', reps=100)
+    res3 = sim_corr(x, y, group, seed=prng, alternative='two-sided', reps=100)
+    
+    assert_almost_equal(res1[0], 1-res2[0])
+    assert_equal(res1[1], res2[1])
+    assert_equal(res1[1], res3[1])
+    assert_equal(res1[0], res3[0])
