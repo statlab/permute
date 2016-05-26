@@ -38,7 +38,7 @@ def corrcoef(x, y, group):
     return tst
 
 
-def sim_corr(x, y, group, reps=10**4, seed=None):
+def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None):
     r"""
     Simulate permutation p-value of stratified Spearman correlation test.
 
@@ -50,6 +50,8 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
         Variable 2, of the same length as x
     group : array-like
         Group memberships, of the same length as x
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
     reps : int
         Number of repetitions
     seed : RandomState instance or {None, int, RandomState instance}
@@ -61,11 +63,7 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
     Returns
     -------
     float
-      the left (lower) p-value
-    float
-      the right (upper) p-value
-    float
-      the two-sided p-value
+      the estimated p-value
     float
       the observed test statistic
     list
@@ -73,12 +71,16 @@ def sim_corr(x, y, group, reps=10**4, seed=None):
     """
     prng = get_prng(seed)
     tst = corrcoef(x, y, group)
-    sims = [corrcoef(permute_within_groups(x, group, prng), y, group)
+    dist = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
-    left_pv = np.sum(sims <= tst) / reps
-    right_pv = np.sum(sims >= tst) / reps
-    two_sided_pv = np.min([1, 2 * np.min([left_pv, right_pv])])
-    return tst, left_pv, right_pv, two_sided_pv, sims
+    right_pv = np.sum(dist >= tst) / reps
+    
+    thePvalue = {
+        'greater': lambda p: p,
+        'less': lambda p: 1 - p,
+        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+    }
+    return thePvalue[alternative](right_pv), tst, dist
 
 
 def stratified_permutationtest_mean(group, condition, response,
@@ -130,8 +132,8 @@ def stratified_permutationtest_mean(group, condition, response,
     return tst
 
 
-def stratified_permutationtest(group, condition, response, reps=10**5,
-                               testStatistic=stratified_permutationtest_mean,
+def stratified_permutationtest(group, condition, response, alternative='greater',
+                               reps=10**5, testStatistic='mean',
                                seed=None):
     r"""
     Stratified permutation test based on differences in means.
@@ -162,10 +164,22 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
         Treatment conditions, of the same length as group
     response : array-like
         Responses, of the same length as group
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
     reps : int
         Number of repetitions
     testStatistic : function
         Function to compute test statistic. By default, stratified_permutationtest_mean
+        The test statistic. Either a string or function.
+
+        (a) If stat == 'mean', the test statistic is stratified_permutationtest_mean (default).
+        (b) If stat is a function (a callable object), the test statistic is
+            that function.  The function should take a permutation of the
+            data and compute the test function from it. For instance, if the
+            test statistic is the maximum absolute value, $\max_i |z_i|$,
+            the test statistic could be written:
+
+            f = lambda u: np.max(abs(u))
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
         instance used by `np.random`;
@@ -175,11 +189,7 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
     Returns
     -------
     float
-      the left (lower) p-value
-    float
-      the right (upper) p-value
-    float
-      the two-sided p-value
+      the estimated p-value
     float
       the observed test statistic
     list
@@ -188,18 +198,28 @@ def stratified_permutationtest(group, condition, response, reps=10**5,
     prng = get_prng(seed)
     groups = np.unique(group)
     conditions = np.unique(condition)
-    if len(conditions) < 2:
-        return 1.0, 1.0, 1.0, np.nan, None
+    
+    stats = {
+        'mean': lambda u: stratified_permutationtest_mean(group, u,
+                                    response, groups, conditions)
+    }
+    if callable(testStatistic):
+        tst_fun = testStatistic
     else:
-        tst = testStatistic(group, condition, response, groups, conditions)
+        tst_fun = stats[testStatistic]
+    thePvalue = {
+        'greater': lambda p: p,
+        'less': lambda p: 1 - p,
+        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+    }
+    
+    if len(conditions) < 2:
+        return 1.0, np.nan, None
+    else:
+        tst = tst_fun(condition)
         dist = np.zeros(reps)
         for i in range(int(reps)):
-            dist[i] = testStatistic(group,
-                                    permute_within_groups(
-                                        condition, group, prng),
-                                    response, groups, conditions)
+            dist[i] = tst_fun(permute_within_groups(condition, group, prng))
 
-        conds = [dist <= tst, dist >= tst]
-        left_pv, right_pv = [np.count_nonzero(c) / reps for c in conds]
-        two_sided_pv = np.min([1, 2 * np.min([left_pv, right_pv])])
-        return left_pv, right_pv, two_sided_pv, tst, dist
+        right_pv = np.sum(dist >= tst) / reps
+        return thePvalue[alternative](right_pv), tst, dist
