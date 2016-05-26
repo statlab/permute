@@ -309,7 +309,7 @@ def stratified_two_sample(group, condition, response, stat='mean', alternative="
     response = response[ordering]
     condition = condition[ordering]
     group = group[ordering]
-    ntreat = np.bincount(condition)[0]
+    ntreat = np.sum(condition == condition[0])
 
     groups = np.unique(group)
     conditions = np.unique(condition)
