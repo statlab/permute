@@ -83,12 +83,32 @@ def test_sim_corr():
 
 
 def test_strat_tests_equal():
-    group = np.repeat([1, 2, 3], 9)
-    condition = np.repeat([1, 2, 3] * 3, 3)
+    group = np.repeat([1, 2, 3], 10)
+    condition = np.repeat([1, 2] * 3, 5)
     response = np.zeros_like(group)
     response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
     res1 = spt(group, condition, response, reps=100, seed=42)
     res2 = stratified_two_sample(group, condition, response, reps=100,
-                                stat='mean_within_strata')
-    assert_equal(res1[:2], res2)
+                                stat='mean_within_strata', seed=42)
+    assert_equal(res1[1], res2[1])
+    assert_less(math.fabs(res1[0]-res2[0]), 0.05)    
+    
+def test_stratified_two_sample():
+    group = np.repeat([1, 2, 3], 10)
+    condition = np.repeat([1, 2] * 3, 5)
+    response = np.zeros_like(group)
+    response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
+
+    res = stratified_two_sample(group, condition, response, reps=100,
+                                stat='mean', seed=42)
+    assert_equal(res, (0.19, 0.2))
+    
+    (p, t, dist) = stratified_two_sample(group, condition, response, reps=100,
+                                stat='mean', seed=42, keep_dist=True)
+    assert_equal(res, (p, t))
+    
+    stat_fun = lambda u: sptm(group, condition, u, np.unique(group), np.unique(condition))
+    res = stratified_two_sample(group, condition, response, reps=100,
+                                stat=stat_fun, seed=42)
+    assert_equal(res, (0.79, 0.30))
