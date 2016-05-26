@@ -10,7 +10,7 @@ from nose.plugins.attrib import attr
 
 from ..stratified import stratified_permutationtest as spt
 from ..stratified import stratified_permutationtest_mean as sptm
-from ..stratified import corrcoef, sim_corr
+from ..stratified import corrcoef, sim_corr, stratified_two_sample
 
 
 def test_stratified_permutationtest():
@@ -80,3 +80,15 @@ def test_sim_corr():
     assert_equal(res1[1], res2[1])
     assert_equal(res1[1], res3[1])
     assert_equal(res1[0], res3[0])
+
+
+def test_strat_tests_equal():
+    group = np.repeat([1, 2, 3], 9)
+    condition = np.repeat([1, 2, 3] * 3, 3)
+    response = np.zeros_like(group)
+    response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
+
+    res1 = spt(group, condition, response, reps=100, seed=42)
+    res2 = stratified_two_sample(group, condition, response, reps=100,
+                                stat='mean_within_strata')
+    assert_equal(res1[:2], res2)
