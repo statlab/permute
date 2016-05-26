@@ -1,5 +1,10 @@
+# Things specific to this project
 .DS_Store
 permute/old/Datasets_MATLAB_R_NPC/
+benchmarks/env
+benchmarks/results
+benchmarks/permute
+benchmarks/html
 
 # IPython notebooks
 *.ipynb
