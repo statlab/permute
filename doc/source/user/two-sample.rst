@@ -97,7 +97,7 @@ t-test to be valid, we require the following assumptions:
    with their peers in the class, creating dependence.)
 
 Despite the problematic assumptions we are required to make, let’s temporarily
-assume they hold and calculate a "p-value" anyway.
+a'.highlight-python .highlight,' +ssume they hold and calculate a "p-value" anyway.
 
 .. plot::
     :context:
@@ -120,14 +120,14 @@ assume they hold and calculate a "p-value" anyway.
     >>> print('P-value (two-sided):', np.round(p, 5))
 	P-value (two-sided): 0.20043
 
-Note that the computed "$p$-value" is above the standard cut-offs for
+Note that the computed "p-value" is above the standard cut-offs for
 reporting significance in the literature.
 
 Permutation approach
 ~~~~~~~~~~~~~~~~~~~~
 
 For the permutation test we can use the same test statistic, but we will
-compute the $p$-value by randomly sampling the exact distribution of the
+compute the p-value by randomly sampling the exact distribution of the
 test statistics. The null hypothesis is that the ratings are uninfluenced by
 reported gender---any particular student would assign the same rating
 regardless of instructor gender.  The alternative hypothesis is that the
