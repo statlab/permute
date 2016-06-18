@@ -97,7 +97,7 @@ t-test to be valid, we require the following assumptions:
    with their peers in the class, creating dependence.)
 
 Despite the problematic assumptions we are required to make, let’s temporarily
-assume they hold and calculate a "$p$-value" anyway.
+assume they hold and calculate a "p-value" anyway.
 
 .. plot::
     :context:
@@ -143,13 +143,13 @@ experimental design.
     :nofigs:
 
     >>> from permute.core import two_sample
-    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided', seed = 20)
+    >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided', seed=20)
     >>> print('Test statistic:', np.round(t, 5))
     Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
     P-value (two-sided): 0.27824
 
-    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided', seed = 20) 
+    >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided', seed=20) 
     >>> print('P-value (two-sided):', np.round(p, 5))
 	P-value (two-sided): 0.28
 
@@ -220,11 +220,11 @@ statistic.
     :nofigs:
 
     >>> from permute.stratified import sim_corr
-    >>> rho, plower, pupper, pboth, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
+    >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
     >>> print('Test statistic:', np.round(rho, 5))
     Test statistic: 0.4459
-    >>> print('One-sided (upper) P-value:', np.round(pupper, 5))
-    One-sided (upper) P-value: 0.0896
+    >>> print('P-value:', np.round(p, 5))
+    P-value: 0.0901
 
 Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
