@@ -38,6 +38,18 @@ def load(f):
 
 def nsgk():
     r"""NSGK test data for irr.
+
+    Notes
+    -----
+
+    Here is first 5 lines of `nsgk.csv`::
+
+        time_stamp,domain,video,rater
+        1,8,1,1
+        1,12,1,1
+        1,15,1,1
+        1,20,1,1
+
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
                     delimiter=',', skiprows=1, dtype=np.int)
