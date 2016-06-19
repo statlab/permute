@@ -97,7 +97,7 @@ t-test to be valid, we require the following assumptions:
    with their peers in the class, creating dependence.)
 
 Despite the problematic assumptions we are required to make, let’s temporarily
-a'.highlight-python .highlight,' +ssume they hold and calculate a "p-value" anyway.
+assume they hold and calculate a "p-value" anyway.
 
 .. plot::
     :context:
