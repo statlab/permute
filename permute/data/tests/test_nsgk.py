@@ -13,7 +13,7 @@ def test_nsgk():
     assert_equal(len(nsgk[0]), 8)
     assert_equal(nsgk[0][0].shape, (10, 36))
     assert_equal(nsgk[0][5].shape, (10, 35))
-    assert_equal(nsgk[0][0].dtype, np.dtype('int64'))
-    assert_equal(nsgk[6][2].dtype, np.dtype('int64'))
+    assert_equal(nsgk[0][0].dtype, np.dtype('int32'))
+    assert_equal(nsgk[6][2].dtype, np.dtype('int32'))
     yy = [x.sum() for y in nsgk for x in y]
     assert_equal(np.array(yy).sum(), 24713)

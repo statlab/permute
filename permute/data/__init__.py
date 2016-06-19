@@ -52,9 +52,9 @@ def nsgk():
 
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
-                    delimiter=',', skiprows=1, dtype=np.int)
+                    delimiter=',', skiprows=1, dtype=np.int32)
     shape = tuple(nz.max(axis=0))
-    x = np.zeros(shape, dtype=np.int)
+    x = np.zeros(shape, dtype=np.int32)
     nz -= 1
     for r in nz:
         x[tuple(r)] = 1

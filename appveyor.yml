@@ -1,0 +1,48 @@
+# AppVeyor.com is a Continuous Integration service to build and run tests under
+# Windows
+# https://ci.appveyor.com/project/sklearn-ci/permute
+
+environment:
+
+  matrix:
+
+    - PYTHON: "C:\\Miniconda"
+      PYTHON_VERSION: "2.7.10"
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Miniconda-x64"
+      PYTHON_VERSION: "2.7.10"
+      PYTHON_ARCH: "64"
+
+    - PYTHON: "C:\\Miniconda35"
+      PYTHON_VERSION: "3.5.0"
+      PYTHON_ARCH: "32"
+
+    - PYTHON: "C:\\Miniconda35-x64"
+      PYTHON_VERSION: "3.5.0"
+      PYTHON_ARCH: "64"
+
+install:
+
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "conda config --set always_yes yes --set changeps1 no"
+  - "conda update -q conda"
+  - "conda info -a"
+  - "conda create -q -n venv python=%PYTHON_VERSION%"
+  - "activate venv"
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+  - "pip --version"
+
+  # Install the build and runtime dependencies of the project.
+  - "conda install --file requirements/default.txt"
+  - "conda install --file requirements/test.txt"
+  - "pip install ."
+
+build: false
+
+test_script:
+
+  - "nosetests permute --ignore-files=^_test -v -s"
