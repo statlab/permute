@@ -1,5 +1,5 @@
 Sphinx==1.4.4
 ghp-import==0.4.1
-matplotlib==1.5.2
+matplotlib==2.0.0b3
 sphinx-bootstrap-theme==0.4.9
 sphinxcontrib-bibtex==0.3.4
