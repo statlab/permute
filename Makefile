@@ -6,6 +6,7 @@ all:
 clean:
 	find . -name "*.so" -o -name "*.pyc" -o -name "*.pyx.md5" | xargs rm -f
 	rm -rf build dist permute.egg-info
+	rm -rf .ipynb_checkpoints .coverage .cache
 
 test:
 	nosetests permute -A 'not slow' --ignore-files=^_test -v -s

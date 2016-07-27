@@ -38,11 +38,23 @@ def load(f):
 
 def nsgk():
     r"""NSGK test data for irr.
+
+    Notes
+    -----
+
+    Here is first 5 lines of `nsgk.csv`::
+
+        time_stamp,domain,video,rater
+        1,8,1,1
+        1,12,1,1
+        1,15,1,1
+        1,20,1,1
+
     """
     nz = np.loadtxt(_os.path.join(data_dir, "nsgk.csv"),
-                    delimiter=',', skiprows=1, dtype=np.int)
+                    delimiter=',', skiprows=1, dtype=np.int32)
     shape = tuple(nz.max(axis=0))
-    x = np.zeros(shape, dtype=np.int)
+    x = np.zeros(shape, dtype=np.int32)
     nz -= 1
     for r in nz:
         x[tuple(r)] = 1

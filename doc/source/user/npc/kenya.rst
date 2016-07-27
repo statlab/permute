@@ -36,8 +36,10 @@ Given :math:`X_1, X_2, \dots, X_n` and ...
 
     >>> import matplotlib.pyplot as plt
     >>> plt.plot(d['ol_molo'])
+    [<matplotlib.lines.Line2D object at ...>]
     >>> plt.plot(d['kamba'])
+    [<matplotlib.lines.Line2D object at ...>]
     >>> plt.legend(['ol_molo', 'kamba'])
-    [...]
+    <matplotlib.legend.Legend object at ...>
     >>> plt.show()
 

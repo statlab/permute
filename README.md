@@ -33,8 +33,7 @@ $ pip install .
 If you plan to develop the package, you may run it directly from source:
 
 ```
-$ python setup.py develop       # Do this once to add pkg to Python path
-$ python setup.py build_ext -i  # Build binary extensions
+$ pip install -e .       # Do this once to add pkg to Python path
 ```
 
 ## License information
