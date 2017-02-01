@@ -63,7 +63,7 @@ if __name__ == "__main__":
         download_url=DOWNLOAD_URL,
 
         classifiers=[
-            'Development Status :: 4 - Alpha',
+            'Development Status :: 3 - Alpha',
             'Environment :: Console',
             'Intended Audience :: Developers',
             'Intended Audience :: Science/Research',
