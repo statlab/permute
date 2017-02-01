@@ -1,7 +1,7 @@
-Announcement: permute 0.1.alpha4
-================================
+Announcement: permute 0.X.0
+===========================
 
-We're happy to announce the release of permute v0.1.alpha4!
+We're happy to announce the release of permute v0.X.0!
 
 permute is permutation testing and confidence set toolbox for Python.
 
@@ -13,16 +13,26 @@ http://statlab.github.io/permute/
 New Features
 ------------
 
-This is the first release so everything is new.  As we get closer to
-the actual v0.1.0 release we will expand this section.
 
+
+
+Improvements
+------------
+
+
+
+
+API Changes
+-----------
+
+
+
+
+Deprecations
+------------
 
 
 Contributors to this release
 ----------------------------
 (Listed alphabetically by last name)
 
-- Matthew Brett
-- Jarrod Millman
-- Kellie Ottoboni
-- Philip B. Stark
