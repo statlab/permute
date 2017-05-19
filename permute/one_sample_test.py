@@ -47,14 +47,13 @@ def median(lst):
 	leng = len(lst)
 
 	if leng % 2 != 0:
-			
-
+		
 		return lst[leng//2]
-
+	
 	else:
-
+		
 		second, first = lst[leng//2], lst[(leng//2) - 1]
-
+		
 		return (second + first) / 2
 
 
