@@ -11,14 +11,14 @@ def binomial_mean(n, p):
 	Parameters
 	----------
 	n : float or int
-		number of trials
+	   number of trials
 	p : float
-		probability of success on each trial (0 <= p <= 1)
+	   probability of success on each trial (0 <= p <= 1)
 
 	Returns
 	-------
 	float
-		mean of binomial(n, p)
+	   mean of binomial(n, p)
 	"""
 	
 	assert (p >= 0 and p <= 1), "Success probability p must be between 0 and 1, inclusive."
@@ -34,16 +34,16 @@ def hypergeometric_mean(n, N, G):
 	Parameters
 	----------
 	n : float or int
-		sample size
+	   sample size
 	N : float or int
-		total population size
+	   total population size
 	G : float or int
-		number of good elements in population
+	   number of good elements in population
 
 	Returns
 	-------
 	float
-		mean of hypergeometric(n, N, G)
+	   mean of hypergeometric(n, N, G)
 
 	"""
 
@@ -60,14 +60,14 @@ def uniform_mean(a, b):
 	Parameters
 	------------
 	a : float or int
-		lower bound
+	   lower bound
 	b : float or int
-		upper bound 
+	   upper bound 
 
 	Returns
 	------------
 	float 
-		mean of uniform distribution bounded by a & b
+	   mean of uniform distribution bounded by a & b
 
 	"""
 
@@ -81,12 +81,12 @@ def geometric_z_mean(p):
 	Parameters
 	-------------
 	p : float
-		success probability
+	   success probability
 
 	Returns
 	-------------
 	float
-		mean of geometric(p) on {0, 1, 2...}
+	   mean of geometric(p) on {0, 1, 2...}
 
 	"""
 	
@@ -100,12 +100,12 @@ def geometric_mean(p):
 	Parameters
 	----------
 	p: float
-		success probability
+	   success probability
 
 	Returns
 	-------
 	float
-		mean of geometric(p) on {1, 2, .....}
+	   mean of geometric(p) on {1, 2, .....}
 
 	"""
 
@@ -119,12 +119,12 @@ def exponential_mean(lam):
 	Parameters
 	----------
 	lam : float
-		the rate of an exponential random variable, (lam > 0)
+	   the rate of an exponential random variable, (lam > 0)
 
 	Returns
 	-------
 	float
-		mean of expential(lam)
+	   mean of expential(lam)
 
 	"""
 
@@ -140,15 +140,15 @@ def neg_binomial_mean(r, p):
 	Parameters
 	----------
 	p : float
-		success probability
+	   success probability
 
 	r : float or int
-		number of successes
+	   number of successes
 
 	Returns
 	-------
 	float
-		mean of negative binomial(r, p)
+	   mean of negative binomial(r, p)
 
 	"""
 
@@ -162,14 +162,14 @@ def gamma_mean(r, lam):
 	Parameters
 	----------
 	r : float 
-		shape, (r > 0)
+	   shape, (r > 0)
 	lam : float
-		rate or inverse scale, (lam > 0)
+	   rate or inverse scale, (lam > 0)
 
 	Returns
 	-------
 	float
-		mean of gamma(r, lam)
+	   mean of gamma(r, lam)
 
 	"""
 
@@ -187,14 +187,14 @@ def beta_mean(r, s):
 	Parameters
 	----------
 	r : int or float
-		shape
+	   shape
 	s: int or float
-		shape
+	   shape
 
 	Returns
 	-------
 	float
-		mean of beta(r, s)
+	   mean of beta(r, s)
 
 	"""
 
