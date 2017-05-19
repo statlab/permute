@@ -3,6 +3,54 @@ Mean of Univariate Bounded Distributions
 
 """
 
+def binomial_mean(n, p):
+
+	"""
+	Returns mean of binomial distribution on n trials and success probability p.
+
+	Parameters
+	----------
+	n : float or int
+		number of trials
+	p : float
+		probability of success on each trial (0 <= p <= 1)
+
+	Returns
+	-------
+	float
+		mean of binomial(n, p)
+	"""
+	
+	assert (p >= 0 and p <= 1), "Success probability p must be between 0 and 1, inclusive."
+	
+	return n * p
+
+
+def hypergeometric_mean(n, N, G):
+
+	"""
+	Returns mean of hypergeometric distribution with n sample size, N total population size, and G number of good elements in population.
+	
+	Parameters
+	----------
+	n : float or int
+		sample size
+	N : float or int
+		total population size
+	G : float or int
+		number of good elements in population
+
+	Returns
+	-------
+	float
+		mean of hypergeometric(n, N, G)
+
+	"""
+
+	return (n * G) / N
+
+
+
 def uniform_mean(a, b):
 
 	"""
@@ -28,7 +76,7 @@ def uniform_mean(a, b):
 def geometric_z_mean(p):
 
 	"""
-	Returns mean of geometric(p) on {0, 1, 2.....}.
+	Returns mean of geometric distribution with success probability p on {0, 1, 2.....}.
 
 	Parameters
 	-------------
