@@ -1,4 +1,6 @@
-
+"""
+One Sample Tests
+"""
 
 def mean(lst):
 	
