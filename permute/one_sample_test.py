@@ -12,12 +12,12 @@ def mean(lst):
 	Parameters
 	----------
 	lst : list
-		list of ints/floats
+	   list of ints/floats
 
 	Returns
 	-------
 	float
-		mean of elements in lst
+	   mean of elements in lst
 
 	"""
 	
@@ -33,12 +33,12 @@ def median(lst):
 	Parameters
 	----------
 	lst : list
-		list of ints/floats
+	   list of ints/floats
 
 	Returns
 	-------
 	float
-		median of elements in lst
+	   median of elements in lst
 
 	"""
 	
@@ -66,16 +66,16 @@ def quantile(lst, q):
 	Parameters
 	----------
 	lst : list
-		list of ints or floats
+	   list of ints or floats
 
 	q : float
-		desired quantile
+	   desired quantile
 
 	Returns
 	-------
 	list of length 2
-		index of element in lst : int
-		element value in lst: int or float
+	   index of element in lst : int
+	   element value in lst: int or float
 
 	"""
 
