@@ -15,14 +15,14 @@ def comb(n, r):
 	Parameters
 	----------
 	n : int
-		number of objects selected 
+	   number of objects selected 
 	r : int
-		total number of objects
+	   total number of objects
 
 	Returns
 	-------
 	int 
-		number of ways to select r objects from n objects in which order doesn't matter
+	   number of ways to select r objects from n objects in which order doesn't matter
 
 	Source
 	------
@@ -44,25 +44,25 @@ def binomial_test(n, p, y, t, a, Ho_sign):
 	Parameters
 	----------
 	n : int
-		number of trials
+	   number of trials
 	p : float
-		success probability
+	   success probability
 	y : int
-		number of successes in n trials
+	   number of successes in n trials
 	t : int
-		for one-tailed test, input 1
-		for two-tailed test, input 2
+	   for one-tailed test, input 1
+	   for two-tailed test, input 2
 	a : float
-		significance level
+	   significance level
 	Ho_sign : string of equality sign in null hypothesis
-		random variable Z is "==", "<=", "!=", ">", "<", or ">=" y
+	   random variable Z is "==", "<=", "!=", ">", "<", or ">=" y
 
 	Returns
 	-------
 	float
-		p-value of test
+	   p-value of test
 	string
-		conclusion of test
+	   conclusion of test
 
 	"""
 
