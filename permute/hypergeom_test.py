@@ -77,22 +77,22 @@ def hypergeom_test(n, N, G, g, a, Ho_sign):
 	prob, g_prob, s_prob = 0, 0, 0
 
 	if alt_sign == "==":
-		prob = (comb(G, g) * comb((N - G), (n - g))) / comb(N, n)
+		prob = (comb(G, g) * comb(N - G, n - g)) / comb(N, n)
 
 	elif alt_sign == "!=":
 		for i in range(0, g+1):
-			s_prob += (comb(G, i) * comb((N - G), (n - i))) / comb(N, n)
+			s_prob += (comb(G, i) * comb(N - G, n - i)) / comb(N, n)
 		for i in range(g, n+1):
-			g_prob += (comb(G, i) * comb((N - G), (n - i))) / comb(N, n)
+			g_prob += (comb(G, i) * comb(N - G, n - i)) / comb(N, n)
 		prob = min(s_prob, g_prob)
 
 	elif alt_sign == "<" or alt_sign == "<=": 
 		for i in range(0, g+1):
-			prob += (comb(G, i) * comb((N - G), (n - i))) / comb(N, n)
+			prob += (comb(G, i) * comb(N - G, n - i)) / comb(N, n)
 
 	elif alt_sign == ">" or alt_sign == ">=": 
 		for i in range(g, n+1):
-			prob += (comb(G, i) * comb((N - G), (n - i))) / comb(N, n)
+			prob += (comb(G, i) * comb(N - G, n - i)) / comb(N, n)
 
 	if prob <= a:
 		print("Reject the null hypothesis.")
