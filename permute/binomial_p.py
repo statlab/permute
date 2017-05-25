@@ -3,38 +3,10 @@ Binomial Probability Test
 
 """
 
-import operator as op
-from functools import reduce 
 
+import scipy
+from scipy.special import comb
 
-def comb(n, r):
-
-	"""
-	Computes combinatorial.
-
-	Parameters
-	----------
-	n : int
-	   number of objects selected 
-	r : int
-	   total number of objects
-
-	Returns
-	-------
-	int 
-	   number of ways to select r objects from n objects in which order doesn't matter
-
-	Source
-	------
-	http://stackoverflow.com/questions/4941753/is-there-a-math-ncr-function-in-python
-
-	"""
-	r = min(r, n-r)
-	if r == 0: 
-		return 1
-	num = reduce(op.mul, range(n, n-r, -1)) 
-	den = reduce(op.mul, range(1, r+1))
-	return num // den
 
 def binomial_test(n, p, y, t, a, Ho_sign):
 
@@ -48,7 +20,7 @@ def binomial_test(n, p, y, t, a, Ho_sign):
 	p : float
 	   success probability
 	y : int
-	   number of successes in n trials
+	   hypothesized number of successes in n trials
 	t : int
 	   for one-tailed test, input 1
 	   for two-tailed test, input 2
@@ -59,7 +31,7 @@ def binomial_test(n, p, y, t, a, Ho_sign):
 
 	Returns
 	-------
-	float
+	string
 	   p-value of test
 	string
 	   conclusion of test
@@ -111,7 +83,7 @@ def binomial_test(n, p, y, t, a, Ho_sign):
 		print("Reject the null hypothesis.")
 	else:
 		print("Fail to reject the null hypothesis.")
-	return prob
+	return "p-value: {}".format(prob)
 
 
 
