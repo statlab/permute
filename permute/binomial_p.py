@@ -2,11 +2,8 @@
 Binomial Probability Test
 
 """
-
-
 import scipy
 from scipy.special import comb
-
 
 def binomial_test(n, p, y, t, a, Ho_sign):
 
