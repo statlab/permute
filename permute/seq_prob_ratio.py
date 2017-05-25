@@ -3,17 +3,13 @@ Sequential Probability Ratio Tests
 
 """
 import math
-from decimal import Decimal
-
 import numpy as np
+import scipy
+from scipy.special import comb
 
-import operator as op
-from functools import reduce 
-
-
-def binomial_llh(ho, ha, s, n):
+def bernoulli_lh(ho, ha, s, n):
 	"""
-	Returns the log-likelihood ratio for independently distributed binomial variables.
+	Returns the likelihood ratio for independently distributed bernoulli random variables.
 
 	Parameters
 	----------
@@ -29,18 +25,18 @@ def binomial_llh(ho, ha, s, n):
 	Returns
 	-------
 	float
-	   log-likelihood of model
+	   likelihood ratio of model
 	"""
 
-	null_llh = comb(n, s) * (ho ** s) * (1 - ho)**(n - s)
-	alt_llh = comb(n, s) * (ha ** s) * (1 - ha)**(n - s)
+	null_lh = (ho ** s) * (1 - ho)**(n - s)
+	alt_lh = (ha ** s) * (1 - ha)**(n - s)
 
-	return null_llh / alt_llh
+	return alt_lh / null_lh
 
 
-def binomial_seq_ratio_test(ho, ha, a, b):
+def bernoulli_seq_ratio_test(ho, ha, a, b):
 	"""
-	Performs seqential probability ratio test on binomial random variables. 
+	Performs seqential probability ratio test on independently distributed bernoulli random variables. 
 
 	Parameters
 	----------
@@ -50,7 +46,7 @@ def binomial_seq_ratio_test(ho, ha, a, b):
 	   alternative hypothesis
 	a : float
 	   Type I Error
-	b  float
+	b : float
 	   Type II Error
 
 	Returns
@@ -61,7 +57,7 @@ def binomial_seq_ratio_test(ho, ha, a, b):
 	   [proportion of successes when test haults, sample size when test haults]
 	"""
 		
-	A, B = math.log(b / (1 - a)), math.log((1 - b) / a)
+	A, B = b / (1 - a), (1 - b) / a
 
 	assert (A < B)
 
@@ -82,7 +78,8 @@ def binomial_seq_ratio_test(ho, ha, a, b):
 		ss : int
 		   current sample size 
 		ts : float or int
-		   cumulative product of log-likelihood 
+		   current likelihood 
+
 		"""
 		successes = s
 
@@ -93,14 +90,12 @@ def binomial_seq_ratio_test(ho, ha, a, b):
 		if trial == 0:
 			successes += 1
 		
-		ts *= binomial_llh(ho, ha, successes, sample_size)
+		ts *= bernoulli_lh(ho, ha, successes, sample_size)
 
-		d = Decimal(ts)
-
-		if d.ln() > B:
+		if ts >= B:
 			print("Accept null hypothesis.")
 			return [successes / sample_size, sample_size]
-		elif d.ln() < A:
+		elif ts <= A:
 			print("Reject null hypothesis.")
 			return [successes / sample_size, sample_size]
 		else:
@@ -108,36 +103,34 @@ def binomial_seq_ratio_test(ho, ha, a, b):
 	
 	return test(ho, ha, 0, A, B, 0, 1)
 
-def normal_llh(ho, ha, o2, x):
+def normal_lh(ho, ha, x):
 
 	"""
-	Returns log-likelihood ratio for indepedently distributed normal variables.
+	Returns likelihood ratio for indepedently distributed normal variables.
 
 	Parameters
 	----------
 	ho : float
 	   null hypothesis 
 	ha : float
-	   alternative hypothesis 
-	o2 : float
-	   variance 
+	   alternative hypothesis  
 	x : float or int
 	   value of most recent sample
 
 	Returns
 	-------
 	float
-	   log-likelihood of model
+	   likelihood of model
 	"""
-	null_llh = (1 / math.sqrt(2 * math.pi * o2)) * math.exp(-((x - ho)**2) / (2 * o2))
-	alt_llh = (1 / math.sqrt(2 * math.pi * o2)) * math.exp(-((x - ha)**2) / (2 * o2))
+	null_lh = math.exp(-((x - ho)**2))
+	alt_lh = math.exp(-((x - ha)**2))
 
-	return math.log(null_llh / alt_llh)
+	return alt_lh / null_lh
 
-def normal_seq_ratio_test(ho, ha, a, b, n):
+def normal_seq_ratio_test(ho, ha, a, b, n, with_replacement=False):
 
 	"""
-	Performs sequential probability ratio test on normal random variables Xi. 
+	Performs sequential probability ratio test on independently distributed normal random variables Xi. 
 
 	Parameters
 	----------
@@ -151,70 +144,36 @@ def normal_seq_ratio_test(ho, ha, a, b, n):
 	   Type II Error
 	n : list
 	   list of all possible values of Xi for i = {1, 2, .....n}
+	with_replacement : boolean
+	   False: sample from n without replacement
+	   True: sample from n with replacement 
 
 	Returns
 	-------
 	string
 	   conclusion of test
 	list
-	   [sample size when test haults, mean when test haults, variance when test haults]
+	   [sample size when test haults, mean when test haults]
 	"""
-	A, B = math.log(b / (1 - a)), math.log((1 - b) / a)
+	A, B = b / (1 - a), (1 - b) / a
 
 	assert (A < B)
 
-	def first(ho, ha, s, u, o2, A, B, ss, ts, n):
-		"""
-		Handles exception for first sampling since a sample size of one would result in a variance of 0 by skipping
-		the step of calculating the likelihood statistic. 
-
-		Parameters
-		----------
-		ho : float
-		   null hypothesis
-		ha : float
-		   alternative hypothesis
-		s : list
-		   list of trial results
-		u : float or int
-		   current mean
-		o2 : float or int
-		   current variance 
-		A : float
-		   lower bound parameter
-		B : float
-		   upper bound parameter
-		ss : int
-		   current sample size
-		ts : float or int
-		   cumulative product of log-likelihood 
-		n : list
-		   list of all possible values of Xi for i = {1, 2, .....n}
-		"""
-
-		index = np.random.choice(len(n), 1, replace=True)[0]
-		trial = n[index]
-		s.append(trial)
-		ss += 1
-		u = sum(s) / ss
-
-		return test(ho, ha, s, u, 0, A, B, ss, 1, n)
-
-	def test(ho, ha, s, u, o2, A, B, ss, ts, n):
+	def test(ho, ha, s, u, A, B, ss, ts, n):
 		
 		"""
+		Samples from n with replacement.
+
 		Parameters
 		----------
 		ho : float
 		   null hypothesis
 		ha : float
 		   alternative hypothesis
-		s : list
-		   list of trial results
+		s : int or float
+		   cummulative sum of trial results
 		u : float or int
 		   current mean
-		o2 : float or int
-		   current variance 
 		A : float
 		   lower bound parameter
 		B : float
@@ -222,7 +181,7 @@ def normal_seq_ratio_test(ho, ha, a, b, n):
 		ss : int
 		   current sample size
 		ts : float or int
-		   cumulative product of log-likelihood 
+		   cumulative product of likelihood ratios
 		n : list
 		   list of all possible values of Xi where i = {1, 2....n}
 		"""
@@ -231,64 +190,245 @@ def normal_seq_ratio_test(ho, ha, a, b, n):
 		
 		trial = n[index]
 
-		s.append(trial)
+		s += trial
 
 		ss += 1
 
-		u = sum(s) / ss
+		u = s / ss
 
-		o2 = sum([(f - u)**2 for f in s]) * (1 / (ss - 1))
+		ts *= normal_lh(ho, ha, trial)
 
-		ts *= normal_llh(ho, ha, o2, trial)
-
-		d = Decimal(ts)
-
-		if d.ln() > B:
+		if ts >= B:
 			print("Accept null hypothesis.")
-			return [ss, u, o2]
-		elif d.ln() < A:
+			return [ss, u]
+		elif ts <= A:
 			print("Reject null hypothesis.")
-			return [ss, u, o2]
+			return [ss, u]
 		else:
-			test(ho, ha, s, u, o2, A, B, ss, ts, n)
+			test(ho, ha, s, u, A, B, ss, ts, n)
 
-	return first(ho, ha, [], 0, 0, A, B, 0, 1, n)
+	def test_wo(ho, ha, s, u, A, B, ss, ts, n):
+		
+		"""
+		Samples from n without replacement.
+
+		Parameters
+		----------
+		ho : float
+		   null hypothesis
+		ha : float
+		   alternative hypothesis
+		s : int or float
+		   cummulative sum of trial results
+		u : float or int
+		   current mean
+		A : float
+		   lower bound parameter
+		B : float
+		   upper bound parameter
+		ss : int
+		   current sample size
+		ts : float or int
+		   cumulative product of likelihood ratios
+		n : list
+		   list of all possible values of Xi where i = {1, 2....n}
+		"""
+		
+		index = np.random.choice(len(n), 1, replace=True)[0]
+		
+		trial = n[index]
+
+		n.pop(index) 
+
+		s += trial
+
+		ss += 1
+
+		u = s / ss
+
+		ts *= normal_lh(ho, ha, trial)
+
+		if ts >= B:
+			print("Accept null hypothesis.")
+			return [ss, u]
+		elif ts <= A:
+			print("Reject null hypothesis.")
+			return [ss, u]
+		else:
+			if ss == N:
+				print("No Decision")
+				return
+			test_wo(ho, ha, s, u, A, B, ss, ts, n)
+
+	if with_replacement == True:
+		
+		return test(ho, ha, 0, 0, A, B, 0, 1, n)
+	
+	return test_wo(ho, ha, 0, 0, A, B, 0, 1, n)
+
+	
 
 
-
-
-
-
-
-
-def comb(n, r):
-
+def hypergeom_lh(ho, ha, trial, n, g, N):
 	"""
-	Computes combinatorial.
-
+	Returns likelihood ratio for independently distributed hypergeometric random variables. 
+	
 	Parameters
 	----------
-	n : int
-	   number of objects selected 
-	r : int
-	   total number of objects
+	ho : float
+	   null hypothesis
+	ha : float
+	   alternative hypothesis
+	trial : float
+	   number of good elements in recent sample 
+	n : float or int
+	   sample size
+	g : float or int
+	   number of good elements in sample 
+	N : float or int
+	   total population size 
 
 	Returns
 	-------
-	int 
-	   number of ways to select r objects from n objects in which order doesn't matter
+	float
+	   likelihood ratio of model
+	
+	"""
+	ho_G, ha_G = ho * (N / n), ha * (N / n)
 
-	Source
-	------
-	http://stackoverflow.com/questions/4941753/is-there-a-math-ncr-function-in-python
+	null_lh = (comb(ho_G, g) * comb(N - ho_G, n - g)) 
+	alt_lh = (comb(ha_G, g) * comb(N - ha_G, n - g))
+
+	return alt_lh / null_lh
+
+
+
+def hypergeom_seq_ratio_test(ho, ha, N, with_replacement=True):
 
 	"""
-	r = min(r, n-r)
-	if r == 0: 
-		return 1
-	num = reduce(op.mul, range(n, n-r, -1)) 
-	den = reduce(op.mul, range(1, r+1))
-	return num // den
+	Performs sequential probability ratio test on independently distributed hypergeometric random variables.
+	
+	Parameters
+	----------
+	ho : float
+	   null hypothesis
+	ha : float
+	   alternative hypothesis
+	N : list
+	   list of elements in population 
+	with_replacement : boolean
+	   True: sample from N with replacement
+	   False: sample from N without replacement 
+
+	Returns
+	-------
+	float
+	   mean when test haults
+	string
+	   conclusion of test 
+
+	"""
+
+	A, B = b / (1 - a), (1 - b) / a
+
+	assert (A < B)
+
+	def test(ho, ha, g, n, N, ts):
+		"""
+		Samples from N with replacement.
+
+		Parameters
+		----------
+		ho : float
+		   null hypothesis
+		ha : float
+		   alternative hypothesis
+		g : float or int
+		   number of good elements in sample
+		n : float or int
+		   current sample size
+		N : list of {0, 1}
+		   list of elements in total population
+		ts : float 
+		   cumulative product of likelihood ratios
+
+		"""
+
+		index = np.random.choice(len(N), 1)[0]
+
+		trial = N[index]
+
+		n += 1
+
+		if trial == 0:
+			g += 1
+
+		ts *= hypergeom_lh(ho, ha, trial, n, g, len(N))
+
+
+		if ts >= B:
+			print("Accept null hypothesis.")
+			return n * (G/N)
+		elif ts <= A:
+			print("Reject null hypothesis.")
+			return n * (G/N)
+		else:
+			test(ho, ha, g, n, N, ts)
+
+	def test_wo(ho, ha, g, n, N, ts):
+		"""
+		Samples from N without replacement.
+
+		Parameters
+		----------
+		ho : float
+		   null hypothesis
+		ha : float
+		   alternative hypothesis
+		g : float or int
+		   number of good elements in sample
+		n : float or int
+		   current sample size
+		N : list of {0, 1}
+		   list of elements in total population
+		ts : float 
+		   cumulative product of likelihood ratios
+
+		"""
+
+		index = np.random.choice(len(N), 1)[0]
+
+		trial = N[index]
+
+		N.pop(index)
+
+		n += 1
+
+		if trial == 0:
+			g += 1
+
+		ts *= hypergeom_lh(ho, ha, trial, n, g, len(N))
+
+
+		if ts >= B:
+			print("Accept null hypothesis.")
+			return n * (G/N)
+		elif ts <= A:
+			print("Reject null hypothesis.")
+			return n * (G/N)
+		else:
+			if n == N:
+				print("No Decision")
+				return
+			test(ho, ha, g, n, N, ts)
+
+	if with_replacement == True:
+		return test(ho, ha, 0, 0, N, 1)
+	
+	return test_wo(ho, ha, 0, 0, N, 1)
+
+
+
 
 
 
