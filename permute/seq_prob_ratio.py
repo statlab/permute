@@ -10,7 +10,7 @@ from scipy.special import comb
 
 ############# User Function #################
 
-def seq_prob_ratio_test(ho, ha, n, a, b, with_replacement=True, distribution):
+def seq_prob_ratio_test(ho, ha, n, a, b, distribution, with_replacement=True):
 	"""
 	Performs sequential probability ratio test of desired distribution type. 
 
@@ -142,7 +142,7 @@ def bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement=True):
 		if trial == 0:
 			s += 1
 		
-		ts *= bernoulli_lh(ho, ha, s, sample_size)
+		ts *= bernoulli_lh(ho, ha, s, ss)
 
 		if ts >= B:
 			print("Accept null hypothesis.")
@@ -419,6 +419,10 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 	   null hypothesis
 	ha : float
 	   alternative hypothesis
+	a : float
+	   Type I Error
+	b : float 
+	   Type II Error 
 	N : list
 	   list of elements in population 
 	with_replacement : boolean
@@ -438,7 +442,7 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 
 	assert (A < B)
 
-	def test(ho, ha, g, n, N, ts):
+	def test(ho, ha, A, B, g, n, N, ts):
 		"""
 		Samples from N with replacement.
 
@@ -448,6 +452,10 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 		   null hypothesis
 		ha : float
 		   alternative hypothesis
+		A : float
+		   lower parameter
+		B : float
+		   upper parameter
 		g : float or int
 		   number of good elements in sample
 		n : float or int
@@ -477,9 +485,9 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 			print("Reject null hypothesis.")
 			return n * (G/N)
 		else:
-			test(ho, ha, g, n, N, ts)
+			test(ho, ha, A, B, g, n, N, ts)
 
-	def test_wo(ho, ha, g, n, N, ts):
+	def test_wo(ho, ha, A, B, g, n, N, ts):
 		"""
 		Samples from N without replacement.
 
@@ -523,12 +531,12 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 			if n == len(N):
 				print("No Decision")
 				return
-			test(ho, ha, g, n, N, ts)
+			test_wo(ho, ha, A, B, g, n, N, ts)
 
 	if with_replacement == True:
-		return test(ho, ha, 0, 0, N, 1)
+		return test(ho, ha, A, B, 0, 0, N, 1)
 	
-	return test_wo(ho, ha, 0, 0, N, 1)
+	return test_wo(ho, ha, A, B, 0, 0, N, 1)
 
 
 
