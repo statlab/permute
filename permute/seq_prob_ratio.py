@@ -17,20 +17,20 @@ def seq_prob_ratio_test(ho, ha, n, a, b, distribution, with_replacement=True):
 	Parameters
 	----------
 	ho : float or int
-       null hypothesis
-    ha : float or int
-       alternate hypothesis
-    a : float
-       Type I Error
-    b : float
-       Type II Error
-    n : list
-       list of population values 
-    with_replacement : boolean (default : True)
-       True: sample from n with replacement 
-       False: sample from n without replacement 
+           null hypothesis
+    	ha : float or int
+          alternate hypothesis
+    	a : float
+          Type I Error
+    	b : float
+          Type II Error
+    	n : list
+          list of population values 
+        with_replacement : boolean (default : True)
+           True: sample from n with replacement 
+           False: sample from n without replacement 
 	distribution : string
-		type of distribution : {"normal", "bernoulli", "hypergeometric"}
+	   type of distribution : {"normal", "bernoulli", "hypergeometric"}
 	
 	Returns
 	-------
