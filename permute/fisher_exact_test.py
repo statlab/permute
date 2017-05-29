@@ -17,6 +17,10 @@ def fisher(data, tail):
 	----------
 	data : list
 	   list of lists representing a 2 X 2 data table
+	   (for example, 
+		   1   2
+		   3   4
+	   would be represented as [[1, 2], [3, 4]]
 	tail : int
 	   one or two tailed 
 	
