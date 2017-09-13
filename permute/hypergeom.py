@@ -38,6 +38,7 @@ def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=Fal
 	   distribution of test statistics (only if keep_dist == True)
 	"""
 
+
 	original_ts = sum(population) / len(population)
 
 	prng = get_prng(seed)
@@ -57,13 +58,14 @@ def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=Fal
 		reps -= 1
 
 	simulations = list(permutations)
-	permutations2 = list(permutations) 
+
+	permutations2 = list(permutations)
+
 
 
 	alternative_func = {
 	'greater': lambda thing: thing > g,
-	'less': lambda thing: thing < g,
-
+	'less': lambda thing: thing < g
 	}
 
 	
@@ -90,6 +92,9 @@ def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=Fal
 			if alternative_func[alternative](val):
 				count += 1
 		p_value = count / len(simulations)
+
+	
+
 
 	if keep_dist == True:
 		return p_value, original_ts, simulations

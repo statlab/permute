@@ -59,17 +59,16 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 	
 	alternative_func = {
 	'greater': lambda thing: thing > y,
-	'less': lambda thing: thing < y, 
+	'less': lambda thing: thing < y,
 	}
 
-	
-	if alternative == "two-sided":
+	if alternative == 'two-sided':
 		count = 0
-		while len(permutations) > 0:
+		while len(permutations) >0:
 			val = permutations.pop()
 			if alternative_func['greater'](val):
 				count += 1
-		p_valueG = count /len(simulations)
+		p_valueG = counter / len(simulations)
 		counter = 0
 		while len(permutations2) > 0:
 			val = permutations2.pop()
@@ -79,7 +78,9 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 		p_value = 2 * min(p_valueG, p_valueL)
 
 
-	else :
+	
+	else:
+
 		count = 0
 		while len(permutations) >0:
 			val = permutations.pop()
@@ -87,8 +88,6 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 				count += 1
 		p_value = count / len(simulations)
 
-
-	
 
 	if keep_dist == True:
 		return p_value, original_ts, simulations
