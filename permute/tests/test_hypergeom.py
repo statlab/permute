@@ -16,7 +16,7 @@ def greater():
 	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, 'greater')[0], 0.50)
 
 def twoSided():
-	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, "two-sided")[0]. 0.8)
+	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, "two-sided")[0], 0.8)
 
 def lessWTS():
 	assert_less(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, 'less', True)[0], 1)
@@ -25,7 +25,7 @@ def greaterWTS():
 	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, 'greater', True)[0], 0.50)
 
 def twoSidedWTS():
-	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, "two-sided", True)[0]. 0.85)
+	assert_almost_equal(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, "two-sided", True)[0], 0.85)
 
 
 
