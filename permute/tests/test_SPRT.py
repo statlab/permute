@@ -9,13 +9,13 @@ from nose.plugins.attrib import attr
 
 
 
-from sprt import seq_prob_ratio_test
-from sprt import bernoulli_lh
-from sprt import bernoulli_seq_ratio_test
-from sprt import normal_lh
-from sprt import normal_seq_ratio_test
-from sprt import hypergeom_lh
-from sprt import hypergeom_seq_ratio_test
+from ..sprt import seq_prob_ratio_test
+from ..sprt import bernoulli_lh
+from ..sprt import bernoulli_seq_ratio_test
+from ..sprt import normal_lh
+from ..sprt import normal_seq_ratio_test
+from ..sprt import hypergeom_lh
+from ..sprt import hypergeom_seq_ratio_test
 
 import math
 import numpy as np 

@@ -38,6 +38,8 @@ def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=Fal
 	   distribution of test statistics (only if keep_dist == True)
 	"""
 
+	original_ts = sum(population) / len(population)
+
 	prng = get_prng(seed)
 
 	pop_G = sum(population)
@@ -55,31 +57,44 @@ def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=Fal
 		reps -= 1
 
 	simulations = list(permutations)
-
-
-
-	thePvalue = {'greater': lambda p: p, 'less': lambda p: 1-p, 'two-sided': lambda p: 2* np.min([p, 1-p])}
+	permutations2 = list(permutations) 
 
 
 	alternative_func = {
 	'greater': lambda thing: thing > g,
 	'less': lambda thing: thing < g,
-	'two-sided': lambda thing: thing != g
+
 	}
 
-	count = 0
-	while len(permutations) > 0:
-		val = permutations.pop()
-		if alternative_func[alternative](val):
-			count += 1
+	
+	if alternative == "two-sided":
+		count = 0
+		while len(permutations) > 0:
+			val = permutations.pop()
+			if alternative_func['greater'](val):
+				count += 1
+		p_valueG = count /len(simulations)
+		counter = 0
+		while len(permutations2) > 0:
+			val = permutations2.pop()
+			if alternative_func['less'](val):
+				counter += 1
+		p_valueL = counter / len(simulations)
+		p_value = 2 * min(p_valueG, p_valueL)
 
-	test_statistic = count 
-	p_value = count / len(simulations)
+
+	else:
+		count = 0
+		while len(permutations) > 0:
+			val = permutations.pop()
+			if alternative_func[alternative](val):
+				count += 1
+		p_value = count / len(simulations)
 
 	if keep_dist == True:
-		return thePvalue[alternative](p_value), test_statistic, simulations
+		return p_value, original_ts, simulations
 
-	return thePvalue[alternative](p_value), test_statistic
+	return p_value, original_ts
 
 
 

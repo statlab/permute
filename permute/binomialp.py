@@ -40,9 +40,7 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 	"""
 
 	original_ts, prng = sum([x for x in sample if x == 1]) / len(sample), get_prng(seed)
-	
 
-	thePvalue = {'greater': lambda p: p, 'less': lambda p: 1-p, 'two-sided': lambda p: 2* np.min([p, 1-p])}
 
 	def generate():
 
@@ -57,26 +55,45 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 		reps -= 1
 
 	simulations = list(permutations)
+	permutations2 = list(permutations)
 	
 	alternative_func = {
 	'greater': lambda thing: thing > y,
-	'less': lambda thing: thing < y,
-	'two-sided': lambda thing: thing != y
+	'less': lambda thing: thing < y, 
 	}
 
-	count = 0
-	while len(permutations) >0:
-		val = permutations.pop()
-		if alternative_func[alternative](val):
-			count += 1
+	
+	if alternative == "two-sided":
+		count = 0
+		while len(permutations) > 0:
+			val = permutations.pop()
+			if alternative_func['greater'](val):
+				count += 1
+		p_valueG = count /len(simulations)
+		counter = 0
+		while len(permutations2) > 0:
+			val = permutations2.pop()
+			if alternative_func['less'](val):
+				counter += 1
+		p_valueL = counter / len(simulations)
+		p_value = 2 * min(p_valueG, p_valueL)
 
-	test_statistic = count 
-	p_value = count / len(simulations)
+
+	else :
+		count = 0
+		while len(permutations) >0:
+			val = permutations.pop()
+			if alternative_func[alternative](val):
+				count += 1
+		p_value = count / len(simulations)
+
+
+	
 
 	if keep_dist == True:
-		return thePvalue[alternative](p_value), test_statistic, simulations
+		return p_value, original_ts, simulations
 
-	return p_value*thePvalue[alternative](p_value), test_statistic
+	return p_value, original_ts
 
 
 

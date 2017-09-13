@@ -6,7 +6,7 @@ import math
 from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
 
-from binomialp import binomialp
+from ..binomialp import binomialp
 
 def less():
 	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'greater')[0], 0.14)

@@ -7,7 +7,7 @@ import math
 from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
 
-from hypergeom import hypergeom
+from ..hypergeom import hypergeom
 
 def less():
 	assert_less(hypergeom([0, 1, 0, 1, 0, 1, 0, 1], 5, 2, 10**5, 'less')[0], 1)
