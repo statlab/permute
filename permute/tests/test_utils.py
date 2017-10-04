@@ -30,6 +30,14 @@ def test_binom_conf_interval():
     expected3 = (0.22244110100812578, 1.0)
     np.testing.assert_equal(res3, expected3)
 
+    res4 = binom_conf_interval(10, 5, cl=0.95, alternative="upper", p=1)
+    expected4 = (0.0, 0.7775588989918742)
+    np.testing.assert_equal(res4, expected4)
+
+    res5 = binom_conf_interval(10, 5, cl=0.95, alternative="lower", p=0)
+    expected5 = (0.22244110100812578, 1.0)
+    np.testing.assert_equal(res5, expected5)
+
 
 def test_hypergeom_conf_interval():
     res = hypergeom_conf_interval(2, 1, 5, cl=0.95, alternative="two-sided")
