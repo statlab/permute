@@ -4,7 +4,7 @@ Binomial Permutation Test
 import scipy
 import numpy as np
 from scipy.special import comb
-from utils import get_prng
+from .utils import get_prng
 
 
 def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False, seed=None):
@@ -39,7 +39,11 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
        distribution of test statistics (only if keep_dist == True)
 	"""
 
-	original_ts, prng = sum([x for x in sample if x == 1]) / len(sample), get_prng(seed)
+	original_ts = sum([x for x in sample if x == 1]) / len(sample)
+	
+	#sufficient for setting seed?
+
+	prng = get_prng(seed)
 
 
 	def generate():

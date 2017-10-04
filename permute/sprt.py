@@ -9,7 +9,7 @@ from scipy.special import comb
 
 ############# User Function #################
 
-def seq_prob_ratio_test(ho, ha, n, a, b, distribution, with_replacement=True):
+def seq_prob_ratio(ho, ha, n, a, b, distribution, with_replacement=True):
 	"""
 	Performs sequential probability ratio test of desired distribution type. 
 	Parameters
@@ -37,11 +37,11 @@ def seq_prob_ratio_test(ho, ha, n, a, b, distribution, with_replacement=True):
 	Other value types (different per type of test)
 	"""
 	if distribution == "normal":
-		return normal_seq_ratio_test(ho, ha, a, b, n, with_replacement) 
+		return normal_seq_ratio(ho, ha, a, b, n, with_replacement) 
 	elif distribution == "bernoulli":
-		return bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement)
+		return bernoulli_seq_ratio(ho, ha, n, a, b, with_replacement)
 	elif distribution == "hypergeometric":
-		return hypergeom_seq_ratio_test(ho, ha, a, b, n, with_replacement)
+		return hypergeom_seq_ratio(ho, ha, a, b, n, with_replacement)
 	else:
 		raise ValueError 
 
@@ -73,7 +73,7 @@ def bernoulli_lh(ho, ha, s, n):
 	return alt_lh / null_lh
 
 
-def bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement=True):
+def bernoulli_seq_ratio(ho, ha, n, a, b, with_replacement=True):
 	"""
 	Performs seqential probability ratio test on independently distributed bernoulli random variables. 
 	Parameters
@@ -93,7 +93,7 @@ def bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement=True):
 	String
 	   Conclusion of test
 	List
-	   [proportion of successes when test haults, sample size when test haults]
+	   [proportion of successes when test haults, sample size when test haults, string of conclusion]
 	"""
 		
 	A, B = b / (1 - a), (1 - b) / a
@@ -136,11 +136,9 @@ def bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement=True):
 		ts *= bernoulli_lh(ho, ha, s, ss)
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return [s / ss, ss]
+			return [s / ss, ss, "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return [s / ss, ss]
+			return [s / ss, ss, "Reject null hypothesis."]
 		else:
 			return test(ho, ha, n, s, A, B, ss, ts)
 
@@ -181,15 +179,12 @@ def bernoulli_seq_ratio_test(ho, ha, n, a, b, with_replacement=True):
 		ts *= bernoulli_lh(ho, ha, s, ss)
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return [s / ss, ss]
+			return [s / ss, ss, "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return [s / ss, ss]
+			return [s / ss, ss, "Reject null hypothesis."]
 		else:
 			if ss == len(n):
-				print("No Decision")
-				return
+				return [None, "No Decision."]
 			return test(ho, ha, n, s, A, B, ss, ts)
 	
 	if with_replacement == True:	
@@ -219,7 +214,7 @@ def normal_lh(ho, ha, x):
 
 	return alt_lh / null_lh
 
-def normal_seq_ratio_test(ho, ha, a, b, n, with_replacement=False):
+def normal_seq_ratio(ho, ha, a, b, n, with_replacement=False):
 
 	"""
 	Performs sequential probability ratio test on independently distributed normal random variables Xi. 
@@ -243,7 +238,7 @@ def normal_seq_ratio_test(ho, ha, a, b, n, with_replacement=False):
 	string
 	   conclusion of test
 	list
-	   [sample size when test haults, mean when test haults]
+	   [sample size when test haults, mean when test haults, string of conclusion]
 	"""
 	A, B = b / (1 - a), (1 - b) / a
 
@@ -288,11 +283,9 @@ def normal_seq_ratio_test(ho, ha, a, b, n, with_replacement=False):
 		ts *= normal_lh(ho, ha, trial)
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return [ss, u]
+			return [ss, u, "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return [ss, u]
+			return [ss, u, "Reject null hypothesis."]
 		else:
 			return test(ho, ha, s, u, A, B, ss, ts, n)
 
@@ -337,15 +330,12 @@ def normal_seq_ratio_test(ho, ha, a, b, n, with_replacement=False):
 		ts *= normal_lh(ho, ha, trial)
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return [ss, u]
+			return [ss, u, "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return [ss, u]
+			return [ss, u, "Reject null hypothesis."]
 		else:
-			if ss == len(N):
-				print("No Decision")
-				return
+			if ss == len(n):
+				return [None, "No Decision"]
 			return test_wo(ho, ha, s, u, A, B, ss, ts, n)
 
 	if with_replacement == True:
@@ -390,7 +380,7 @@ def hypergeom_lh(ho, ha, trial, n, g, N):
 
 
 
-def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
+def hypergeom_seq_ratio(ho, ha, a, b, N, with_replacement=True):
 
 	"""
 	Performs sequential probability ratio test on independently distributed hypergeometric random variables.
@@ -457,11 +447,9 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 		ts *= hypergeom_lh(ho, ha, trial, n, g, len(N))
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return n * (g/n)
+			return [n * (g/n), "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return n * (g/n)
+			return [n * (g/n), "Reject null hypothesis."]
 		else:
 			return test(ho, ha, A, B, g, n, N, ts)
 
@@ -498,15 +486,12 @@ def hypergeom_seq_ratio_test(ho, ha, a, b, N, with_replacement=True):
 		ts *= hypergeom_lh(ho, ha, trial, n, g, len(N))
 
 		if ts >= B:
-			print("Accept null hypothesis.")
-			return n * (g/n)
+			return [n * (g/n), "Accept null hypothesis."]
 		elif ts <= A:
-			print("Reject null hypothesis.")
-			return n * (g/n)
+			return [n * (g/n), "Reject null hypoethesis."]
 		else:
 			if n == len(N):
-				print("No Decision")
-				return
+				return [None, 'No Decision']
 			return test_wo(ho, ha, A, B, g, n, N, ts)
 
 	if with_replacement == True:

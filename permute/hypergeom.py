@@ -4,7 +4,7 @@ Hypergeometric Test
 import scipy
 import numpy as np
 from scipy.special import comb
-from utils import get_prng
+from .utils import get_prng
 
 def hypergeom(population, n, g, reps=10**5, alternative='greater', keep_dist=False, seed=None):
 	
