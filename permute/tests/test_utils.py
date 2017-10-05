@@ -66,6 +66,12 @@ def test_hypergeom_conf_interval():
     np.testing.assert_equal(lo, lot)
     np.testing.assert_equal(hi, hit)
 
+    res5 = hypergeom_conf_interval(2, 1, 5, cl=0.95, alternative="upper", G=5)
+    np.testing.assert_equal(res5, expected2)
+
+    res6 = hypergeom_conf_interval(2, 1, 5, cl=0.95, alternative="lower", G=0)
+    np.testing.assert_equal(res6, expected3)
+
 
 def test_get_random_state():
     prng1 = RandomState(42)
