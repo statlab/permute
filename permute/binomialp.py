@@ -7,17 +7,13 @@ from scipy.special import comb
 from .utils import get_prng
 
 
-def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False, seed=None):
+def binomial_p(sample, reps=10**5, alternative='greater', keep_dist=False, seed=None):
 	"""
 	Parameters
 	----------
 	sample : array-like
 	   list of elements consisting of x in {0, 1} where 0 represents a failure and
 	   1 represents a seccuess
-	y : int
-	   hypothesized number of successes in n trials
-	n : int
-	   number of trials 
 	reps : int
 	   number of repetitions (default: 10**5)
 	alternative : {'greater', 'less', 'two-sided'}
@@ -40,30 +36,28 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 	"""
 
 	original_ts = sum([x for x in sample if x == 1]) / len(sample)
-	
-	#sufficient for setting seed?
 
 	prng = get_prng(seed)
 
 
 	def generate():
 
-		return prng.binomial(n, original_ts, 1)
+		return prng.binomial(1, original_ts)
 
 
 	permutations = []
 
-	while reps >= 0:
+	while reps > 0:
 		ts = generate()
-		permutations.append(ts[0])
+		permutations.append(ts)
 		reps -= 1
 
 	simulations = list(permutations)
 	permutations2 = list(permutations)
 	
 	alternative_func = {
-	'greater': lambda thing: thing > y,
-	'less': lambda thing: thing < y,
+	'greater': lambda thing: thing > original_ts,
+	'less': lambda thing: thing < original_ts,
 	}
 
 	if alternative == 'two-sided':
@@ -72,7 +66,7 @@ def binomial_p(sample, n, y, reps=10**5, alternative='greater', keep_dist=False,
 			val = permutations.pop()
 			if alternative_func['greater'](val):
 				count += 1
-		p_valueG = counter / len(simulations)
+		p_valueG = count / len(simulations)
 		counter = 0
 		while len(permutations2) > 0:
 			val = permutations2.pop()
