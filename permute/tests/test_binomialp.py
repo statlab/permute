@@ -5,26 +5,16 @@ import math
 
 from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
+from scipy.stats import binom
 
 from ..binomialp import binomial_p
 
-def less():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'greater')[0], 0.14)
-
-def greater():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'less')[0], 0.23)
-
-def twoSided():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'two-sided')[0], 0.37)
-
-def lessWKD():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'greater')[0], 0.14)
-	assert_equal(len(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'greater', True)), 4)
-
-def greaterWKD():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'less')[0], 0.23)
-	assert_equal(len(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'less', True)), 4)
-
-def twoSidedWKD():
-	assert_almost_equal(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'two-sided', True)[0], 0.37)
-	assert_equal(len(binomial_p([0, 1, 0, 1], 10, 5, 10**5, 'two-sided', True)), 4)
+def test_binomial_p():
+    assert_almost_equal(binomial_p(5, 10, 0.5, 10**5, 'greater')[0], 1-binom.cdf(4, 10, 0.5), 2)
+    assert_almost_equal(binomial_p(5, 10, 0.5, 10**5, 'less')[0], binom.cdf(5, 10, 0.5), 2)
+    assert_almost_equal(binomial_p(5, 10, 0.5, 10**5, 'two-sided')[0], 1, 2)
+    assert_equal(len(binomial_p(5, 10, 0.5, 10, 'greater', keep_dist=True)), 2)
+    
+    res1 = binomial_p(5, 10, 0.5, 10**5, 'greater', keep_dist=True, seed=12345)
+    res2 = binomial_p(5, 10, 0.5, 10**5, 'greater', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
