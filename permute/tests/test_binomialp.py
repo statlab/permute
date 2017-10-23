@@ -15,8 +15,16 @@ def test_binomial_p():
     assert_almost_equal(binomial_p(5, 10, 0.5, 10**5, 'two-sided')[0], 1, 2)
     assert_equal(len(binomial_p(5, 10, 0.5, 10, 'greater', keep_dist=True)), 3)
     
-    res1 = binomial_p(5, 10, 0.5, 10**5, 'greater', keep_dist=True, seed=12345)
-    res2 = binomial_p(5, 10, 0.5, 10**5, 'greater', keep_dist=False, seed=12345)
+    res1 = binomial_p(5, 10, 0.5, 10**2, 'greater', keep_dist=True, seed=12345)
+    res2 = binomial_p(5, 10, 0.5, 10**2, 'greater', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
+    
+    res1 = binomial_p(5, 10, 0.5, 10**2, 'less', keep_dist=True, seed=12345)
+    res2 = binomial_p(5, 10, 0.5, 10**2, 'less', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
+    
+    res1 = binomial_p(5, 10, 0.5, 10**2, 'two-sided', keep_dist=True, seed=12345)
+    res2 = binomial_p(5, 10, 0.5, 10**2, 'two-sided', keep_dist=False, seed=12345)
     assert_equal(res1[0], res2[0])
     
 @raises(ValueError)
