@@ -10,6 +10,7 @@ from scipy.stats import hypergeom
 
 from ..hypergeom import hypergeometric
 
+
 def test_hypergeometric():
     assert_almost_equal(hypergeometric(4, 10, 5, 6, 10**5, 'greater')[0], 1-hypergeom.cdf(3, 10, 5, 6), 2)
     assert_almost_equal(hypergeometric(4, 10, 5, 6, 10**5, 'less')[0], hypergeom.cdf(4, 10, 5, 6), 2)
@@ -20,4 +21,18 @@ def test_hypergeometric():
     assert_equal(res1[0], res2[0])
 
 
+@raises(ValueError)
+def test_hypergeometric_badinput1():
+    hypergeometric(5, 10, 2, 6)
 
+@raises(ValueError)
+def test_hypergeometric_badinput2():
+    hypergeometric(5, 10, 18, 6)
+
+@raises(ValueError)
+def test_hypergeometric_badinput3():
+    hypergeometric(5, 10, 6, 16)
+
+@raises(ValueError)
+def test_hypergeometric_badinput4():
+    hypergeometric(5, 10, 6, 2)
