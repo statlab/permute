@@ -39,8 +39,10 @@ def binomial_p(x, n, p0, reps=10**5, alternative='greater', keep_dist=False, see
        distribution of test statistics (only if keep_dist == True)
     """
 
-    prng = get_prng(seed)
+    if n < x:
+        raise ValueError("Cannot observe more ones than the population size")
 
+    prng = get_prng(seed)
 
     def generate():
         return prng.binomial(n, p0, 1)[0]
@@ -68,7 +70,7 @@ def binomial_p(x, n, p0, reps=10**5, alternative='greater', keep_dist=False, see
             hits_low += (ts <= x)
         
         if alternative == 'two-sided':
-            p_value = 2*np.min(hits_up/reps, hits_low/reps, 0.5)
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
         elif alternative == 'greater':
             p_value = hits_up/reps
         else:
