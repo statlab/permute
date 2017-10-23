@@ -37,6 +37,14 @@ def hypergeometric(x, N, n, G, reps=10**5, alternative='greater', keep_dist=Fals
     list
        distribution of test statistics (only if keep_dist == True)
     """
+    if n < x:
+        raise ValueError("Cannot observe more good elements than the sample size")
+    if N < n:
+        raise ValueError("Population size cannot be smaller than sample")
+    if N < G:
+        raise ValueError("Number of good elements can't exceed the population size")
+    if G < x:
+        raise ValueError("Number of observed good elements can't exceed the number in the population")
 
     prng = get_prng(seed)
 
