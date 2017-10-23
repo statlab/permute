@@ -54,7 +54,7 @@ def binomial_p(x, n, p0, reps=10**5, alternative='greater', keep_dist=False, see
         if alternative == 'two-sided':
             hits_up = np.sum(permutations >= x)
             hits_low = np.sum(permutations <= x)
-            p_value = 2*np.min(hits_up/reps, hits_low/reps, 0.5)
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
         elif alternative == 'greater':
             p_value = np.mean(permutations >= x)
         else:
