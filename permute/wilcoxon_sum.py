@@ -40,18 +40,18 @@ def wilcoxon_sum(x, y, reps=10**5, tail="one", keep_dist=False, seed=None):
 	n = len(y)
 	mn = sorted(x + y)
 	values = set(mn)
-	ranks = [x for x in range(1, len(mn) + 1)]
+	ranks = [z for z in range(1, len(mn) + 1)]
 	duplicates = {}
 	if len(values) < len(mn):
 		#handles ties in ranks
 		for i in values:
-			dups = [y for y in mn if y == i]
+			dups = [s for s in mn if s == i]
 			counter = len(dups)
 			if counter > 1 and i not in duplicates.keys():
 				duplicates[i] = counter
 		for d in duplicates.keys():
 			ind = mn.index(d)
-			avg = sum([x for x in range(ind + 1, ind + 1 + duplicates[d])]) / duplicates[d]
+			avg = sum([e for e in range(ind + 1, ind + 1 + duplicates[d])]) / duplicates[d]
 			for i in range(ind, ind + duplicates[d]):
 				ranks[i] = avg
 	rankM = 0
