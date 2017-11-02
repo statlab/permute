@@ -60,9 +60,13 @@ def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
 
     if alternative != "upper" and x > 0:
         f = lambda q: cl - binom.cdf(x - 1, n, q)
+        while f(p) < 0:
+            p = (p+1)/2
         ci_low = brentq(f, 0.0, p, *kwargs)
     if alternative != "lower" and x < n:
         f = lambda q: binom.cdf(x, n, q) - (1 - cl)
+        while f(p) < 0:
+            p = p/2
         ci_upp = brentq(f, 1.0, p, *kwargs)
 
     return ci_low, ci_upp
@@ -119,10 +123,14 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
 
     if alternative != "upper" and x > 0:
         f = lambda q: cl - hypergeom.cdf(x - 1, N, q, n)
+        while f(G) < 0:
+            G = (G+N)/2
         ci_low = math.ceil(brentq(f, 0.0, G, *kwargs))
 
     if alternative != "lower" and x < n:
         f = lambda q: hypergeom.cdf(x, N, q, n) - (1 - cl)
+        while f(G) < 0:
+            G = G/2
         ci_upp = math.floor(brentq(f, G, N, *kwargs))
 
     return ci_low, ci_upp

@@ -13,7 +13,7 @@ from .utils import get_prng, potential_outcomes
 
 
 def corr(x, y, reps=10**4, seed=None):
-    r"""
+    """
     Simulate permutation p-value for Spearman correlation coefficient
 
     Parameters
