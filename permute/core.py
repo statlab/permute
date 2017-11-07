@@ -553,7 +553,7 @@ def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
     Alternatively, a permutation test for equality of means of two paired
     samples.
 
-    This function assumed a shift model.
+    This function assumed a shift model, assuming symmetry around a certain shifted mean.
 
     Tests the hypothesis that x is distributed symmetrically symmetric about 0
     (or x and y have the same center) against the alternative that x comes from
@@ -665,7 +665,7 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
                         reps=10**4, stat="mean"):
     """
     One-sided or two-sided confidence interval for the parameter determining
-    the treatment effect.  The default is the "shift model", where we are
+    a statistic of a univariate sample. The default is the "shift model", where we are
     interested in the parameter d such that x is equal in distribution to
     y + d. In general, if we have some family of invertible functions parameterized
     by d, we'd like to find d such that x is equal in distribution to f(y, d).
@@ -730,7 +730,7 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
     assert alternative in ("two-sided", "lower", "upper")
 
     if shift is None:
-        shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
+        shift_limit = np.max([np.max(x), np.max(-x)])
         # FIXME: unused observed
         # observed = np.mean(x) - np.mean(y)
     elif isinstance(shift, tuple):
