@@ -552,12 +552,8 @@ def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
     Alternatively, a permutation test for equality of means of two paired
     samples.
 
-<<<<<<< HEAD
-    This function assumed a shift model, assuming symmetry around a certain shifted mean.
-=======
     This function assumed a shift model. Given a shift (float), this test will
     find the 
->>>>>>> one-sample
 
     Tests the hypothesis that x is distributed symmetrically symmetric about 0
     (or x and y have the same center) against the alternative that x comes from
@@ -668,17 +664,8 @@ def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
 def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None,
                         reps=10**4, stat="mean", shift=None):
     """
-<<<<<<< HEAD
-    One-sided or two-sided confidence interval for the parameter determining
-    a statistic of a univariate sample. The default is the "shift model", where we are
-    interested in the parameter d such that x is equal in distribution to
-    y + d. In general, if we have some family of invertible functions parameterized
-    by d, we'd like to find d such that x is equal in distribution to f(y, d).
-=======
     One-sided or two-sided confidence interval for a test statistic of a sample with
     or paired sample.  The default is the two-sided confidence interval for the mean of a sample x.
-    Giving 
->>>>>>> one-sample
 
     Parameters
     ----------
@@ -747,13 +734,8 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
         z = np.array(x) - np.array(y)
 
     if shift is None:
-<<<<<<< HEAD
-        shift_limit = np.max([np.max(x), np.max(-x)])
-=======
         shift_limit = max(z) - min(z)
->>>>>>> one-sample
-        # FIXME: unused observed
-        # observed = np.mean(x) - np.mean(y)
+
     elif isinstance(shift, tuple):
         assert (callable(shift[0])), "Supply f and finverse in shift tuple"
         assert (callable(shift[1])), "Supply f and finverse in shift tuple"
