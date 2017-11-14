@@ -542,7 +542,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                        for i in range(reps)])
         return thePvalue[alternative](hits / reps), tst
 
-
 def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None, shift = None):
     r"""
@@ -553,7 +552,8 @@ def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
     Alternatively, a permutation test for equality of means of two paired
     samples.
 
-    This function assumed a shift model.
+    This function assumed a shift model. Given a shift (float), this test will
+    find the 
 
     Tests the hypothesis that x is distributed symmetrically symmetric about 0
     (or x and y have the same center) against the alternative that x comes from
@@ -662,13 +662,11 @@ def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
 
 
 def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**4, stat="mean"):
+                        reps=10**4, stat="mean", shift=None):
     """
-    One-sided or two-sided confidence interval for the parameter determining
-    the treatment effect.  The default is the "shift model", where we are
-    interested in the parameter d such that x is equal in distribution to
-    y + d. In general, if we have some family of invertible functions parameterized
-    by d, we'd like to find d such that x is equal in distribution to f(y, d).
+    One-sided or two-sided confidence interval for a test statistic of a sample with
+    or paired sample.  The default is the two-sided confidence interval for the mean of a sample x.
+    Giving 
 
     Parameters
     ----------
@@ -729,8 +727,15 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
     """
     assert alternative in ("two-sided", "lower", "upper")
 
+    if y is None:
+        z = x
+    elif len(x) != len(y):
+        raise ValueError('x and y must be pairs')
+    else:
+        z = np.array(x) - np.array(y)
+
     if shift is None:
-        shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
+        shift_limit = max(z) - min(z)
         # FIXME: unused observed
         # observed = np.mean(x) - np.mean(y)
     elif isinstance(shift, tuple):
@@ -740,17 +745,28 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
         finverse = shift[1]
         # Check that f is increasing in d; this is very ad hoc!
         assert (f(5, 1) < f(5, 2)), "f must be increasing in the parameter d"
-        shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)),
-                          abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
+
+        shift_limit = max(abs(fsolve(lambda d: f(max(z), d) - min(z), 0)),
+                          abs(fsolve(lambda d: f(min(z), d) - max(z), 0)))
         # FIXME: unused observed
         # observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
     else:
         raise ValueError("Bad input for shift")
-    ci_low = -shift_limit
-    ci_upp = shift_limit
-    max_around_zero = np.max([np.max(x), np.max(-x)])
-    ci_low = -max_around_zero
-    ci_upp = max_around_zero
+
+    stats = {
+        'mean': lambda u: np.mean(u),
+        't': lambda u: ttest_1samp(u, 0)[0],
+        'median': lambda u: np.median(u)
+    }
+    if callable(stat):
+        tst_fun = stat
+    else:
+        tst_fun = stats[stat]
+
+    tst = tst_fun(z)
+
+    ci_low = tst - shift_limit
+    ci_upp = tst + shift_limit
 
     if alternative == 'two-sided':
         cl = 1 - (1 - cl) / 2
@@ -759,17 +775,17 @@ def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None
         # if shift is None:
         #     g = lambda q: cl - one_sample_shift(x, y, alternative="less", seed=seed, reps=reps, stat=stat, shift=q)[0]
         # else:
-        g = lambda q: cl - one_sample_shift(x, y, alternative="less", seed=seed, \
+        g = lambda q: cl - one_sample_shift(z, alternative="less", seed=seed, \
             reps=reps, stat=stat, shift=q)[0]
-        ci_low = brentq(g, -2 * max_around_zero, 2 * max_around_zero)
+        ci_low = brentq(g, tst - 2 * shift_limit, tst + 2 * shift_limit)
 
     if alternative != "lower":
         # if shift is None:
         #     g = lambda q: cl - one_sample_shift(x, y, alternative="greater", seed=seed, reps=reps, stat=stat, shift=q)[0]
         # else:
-        g = lambda q: cl - one_sample_shift(x, y, alternative="greater", seed=seed, \
+        g = lambda q: cl - one_sample_shift(z, alternative="greater", seed=seed, \
             reps=reps, stat=stat, shift=q)[0]
-        ci_upp = brentq(g, -2 * max_around_zero, 2 * max_around_zero)
+        ci_upp = brentq(g, tst - 2 * shift_limit, tst + 2 * shift_limit)
 
     return ci_low, ci_upp
 

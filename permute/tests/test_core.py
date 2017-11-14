@@ -12,7 +12,9 @@ from ..core import (corr,
                     two_sample,
                     two_sample_shift,
                     two_sample_conf_int,
-                    one_sample)
+                    one_sample,
+                    one_sample_shift,
+                    one_sample_conf_int)
 
 
 def test_corr():
@@ -217,3 +219,65 @@ def test_one_sample():
     res = one_sample(x, y, seed=42, reps=100, stat="t", alternative="less")
     np.testing.assert_almost_equal(res[0], 0.05)
     np.testing.assert_almost_equal(res[1], -1.4491883)
+
+
+def test_one_sample_shift():
+    prng = RandomState(42)
+
+    x = np.array(range(10))
+    y = x - 1
+
+    # case 1: one sample without shift. should work the same as test_one_sample
+    res0 = one_sample_shift(x, seed=prng, reps=100, shift=3)
+    res1 = one_sample_shift(x, seed=prng, reps=100, shift=7)
+    np.testing.assert_almost_equal(res0[0], 0.07)
+    np.testing.assert_equal(res0[1], np.mean(x))
+    np.testing.assert_almost_equal(res1[0], 1)
+
+    # case 2: paired sample
+    res = one_sample_shift(x, y, seed=42, reps=100, shift=1, keep_dist=True)
+    np.testing.assert_almost_equal(res[0], 1)
+    np.testing.assert_equal(res[1], 1)
+    dist_unique = np.unique(res[2]) # Distribution should be all 1's
+    np.testing.assert_equal(len(dist_unique), 1)
+    np.testing.assert_equal(dist_unique[0], 1)
+
+    # case 3:
+    x = np.array(range(5))
+    res = one_sample_shift(x, seed=42, reps=100, stat="t", alternative="less", shift = 0.1)
+    np.testing.assert_almost_equal(res[0], 0.93999999999999995)
+    np.testing.assert_almost_equal(res[1], 2.8284271247461898)
+
+@attr('slow')
+def test_one_sample_conf_int():
+    prng = RandomState(42)
+
+    x = np.array(range(10))
+    res = one_sample_conf_int(x, seed=prng)
+    expected_ci = (2.2696168, 6.6684788)
+    np.testing.assert_almost_equal(res, expected_ci)
+    res = one_sample_conf_int(x, seed=prng, alternative="upper")
+    expected_ci = (-4.5, 6.255232305502077)
+    np.testing.assert_almost_equal(res, expected_ci)
+    res = one_sample_conf_int(x, seed=prng, alternative="lower")
+    expected_ci = (2.7680067828582393, 13.5)
+    np.testing.assert_almost_equal(res, expected_ci)
+
+    norm = prng.normal(0, 1, size=100)
+    shift = prng.normal(1, 1, size=100)
+    diff = norm - shift
+    res = one_sample_conf_int(norm, diff, seed=prng)
+    expected_ci = (0.8, 1.2)
+    np.testing.assert_almost_equal(res, expected_ci, decimal=1)
+    
+
+    # Specify shift with a function pair
+    shift = (lambda u, d: u + d, lambda u, d: u - d)
+    res = one_sample_conf_int(x, seed=5, shift=shift)
+    np.testing.assert_almost_equal(res, (2.333333333333319, 6.749999999999943))
+
+    # Specify shift with a multiplicative pair
+    shift = (lambda u, d: u * d, lambda u, d: u / d)
+    res = one_sample_conf_int(norm, seed=5, shift=shift)
+    np.testing.assert_almost_equal(res, (-0.0653441,  0.309073 ))
+
