@@ -248,6 +248,10 @@ def test_one_sample_shift():
     np.testing.assert_almost_equal(res[0], 0.93999999999999995)
     np.testing.assert_almost_equal(res[1], 2.8284271247461898)
 
+    # case 4: break it - supply x and y, but not paired
+    y = np.append(y, 10)
+    assert_raises(ValueError, one_sample_shift, x, y)
+
 @attr('slow')
 def test_one_sample_conf_int():
     prng = RandomState(42)
@@ -280,3 +284,7 @@ def test_one_sample_conf_int():
     shift = (lambda u, d: u * d, lambda u, d: u / d)
     res = one_sample_conf_int(norm, seed=5, shift=shift)
     np.testing.assert_almost_equal(res, (-0.0653441,  0.309073 ))
+
+    # case 3: break it - supply x and y, but not paired
+    y = np.append(x, 10)
+    assert_raises(ValueError, one_sample_conf_int, x, y)
