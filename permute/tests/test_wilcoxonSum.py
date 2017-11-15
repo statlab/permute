@@ -1,6 +1,8 @@
 """
 Unit Tests for wilcoxon_sum.py
 """
+from __future__ import (absolute_import, division, print_function, unicode_literals)
+
 import math
 import scipy.stats as stats
 
@@ -8,6 +10,8 @@ from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
 
 from ..wilcoxon_sum import wilcoxon_sum
+
+
 
 
 def testoneTail():
@@ -36,6 +40,13 @@ def testlargeOneSmallTWO():
 
 def testsmallOneLargeTWO():
 	assert_almost_equal(round(wilcoxon_sum([x for x in range(0, 10)], [x for x in range(0, 10**3)]), 3), 0.005)
+
+def testkeep_dist():
+	a = [x for x in range(0, 10**3)]
+	b = [y for y in range(5, 5 + 10**3)]
+	pval, lst = wilcoxon_sum(a, b, 10**5, "two", True)
+	assert_equal(len(lst), 10**5)
+	assert_almost_equal(round(pval, 1), 0.7)
 
 def testapproxNORMAL():
 	a = [x for x in range(0, 10**3)]
@@ -70,3 +81,10 @@ def testapproxNORMAL():
 	ts_for_norm = rankM
 	x = (ts_for_norm - meanNORM) / sdNORM
 	assert_almost_equal(round(stats.norm.cdf(x), 2), round(observed_ts, 2))
+
+
+
+
+
+
+	
