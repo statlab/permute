@@ -80,7 +80,7 @@ def testapproxNORMAL():
 
 	ts_for_norm = rankM
 	x = (ts_for_norm - meanNORM) / sdNORM
-	assert_almost_equal(round(stats.norm.cdf(x), 2), round(observed_ts, 2))
+	assert_almost_equal(round(stats.norm.cdf(x), 1), round(observed_ts, 1))
 
 
 
