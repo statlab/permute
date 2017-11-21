@@ -304,16 +304,15 @@ def test_one_sample_conf_int():
     assert_raises(ValueError, one_sample_conf_int, x, y)
 
     # Testing with sample statistic of median
-    res = one_sample_conf_int(x, seed=42, stat="median")
-    np.testing.assert_almost_equal(res, (2.499999999999531, 6.500000000000918))
+    res = one_sample_conf_int(x, seed=42, reps=100, stat="median")
+    np.testing.assert_almost_equal(res, (2.499999999999458, 6.999999999999045))
 
     # Testing with t statistic
     prng = RandomState(42)
     x = np.arange(20)
     y = x + prng.normal(size=20)
-    res = one_sample_conf_int(x, y, seed=prng, stat='t')
-    np.testing.assert_almost_equal(res[0], -0.27271209581516753)
-    np.testing.assert_almost_equal(res[1], 0.6217655068645991)
+    res = one_sample_conf_int(x, y, reps=100, seed=prng, stat='t')
+    np.testing.assert_almost_equal(res, (-0.3018817477447192, 0.6510547144565948))
 
 
 @raises(AssertionError)
