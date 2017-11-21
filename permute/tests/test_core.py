@@ -313,7 +313,7 @@ def test_one_sample_conf_int():
     y = x + prng.normal(size=20)
     res = one_sample_conf_int(x, y, seed=prng, stat='t')
     np.testing.assert_almost_equal(res[0], -0.27271209581516753)
-    np.testing.assert_almost_equal(res[0], 0.6217655068645991)
+    np.testing.assert_almost_equal(res[1], 0.6217655068645991)
 
 
 @raises(AssertionError)
