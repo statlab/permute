@@ -220,6 +220,11 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 0.05)
     np.testing.assert_almost_equal(res[1], -1.4491883)
 
+    # case 6: use median as test statistic
+    res = one_sample(x, seed=42, reps=100, stat="median")
+    np.testing.assert_almost_equal(res[0], 0.14)
+    np.testing.assert_equal(res[1], 2)
+
 
 def test_one_sample_shift():
     prng = RandomState(42)
@@ -242,9 +247,9 @@ def test_one_sample_shift():
     np.testing.assert_equal(len(dist_unique), 1)
     np.testing.assert_equal(dist_unique[0], 1)
 
-    # case 3:
+    # case 3: t test statistic
     x = np.array(range(5))
-    res = one_sample_shift(x, seed=42, reps=100, stat="t", alternative="less", shift = 0.1)
+    res = one_sample_shift(x, seed=42, reps=100, stat="t", alternative="less", shift=0.1)
     np.testing.assert_almost_equal(res[0], 0.93999999999999995)
     np.testing.assert_almost_equal(res[1], 2.8284271247461898)
 
@@ -252,10 +257,18 @@ def test_one_sample_shift():
     y = np.append(y, 10)
     assert_raises(ValueError, one_sample_shift, x, y)
 
+    # case 5: use median as test statistic
+    x = np.array(range(10))
+    res = one_sample_shift(x, seed=42, reps=100, stat="median", shift=4.5)
+    np.testing.assert_almost_equal(res[0], 0.53)
+    np.testing.assert_equal(res[1], 4.5)
+
+
 @attr('slow')
 def test_one_sample_conf_int():
     prng = RandomState(42)
 
+    # Standard confidenceinterval
     x = np.array(range(10))
     res = one_sample_conf_int(x, seed=prng)
     expected_ci = (2.2696168, 6.6684788)
@@ -267,6 +280,7 @@ def test_one_sample_conf_int():
     expected_ci = (2.7680067828582393, 13.5)
     np.testing.assert_almost_equal(res, expected_ci)
 
+    # Normal distribution shift centered at 1
     norm = prng.normal(0, 1, size=100)
     shift = prng.normal(1, 1, size=100)
     diff = norm - shift
@@ -285,6 +299,29 @@ def test_one_sample_conf_int():
     res = one_sample_conf_int(norm, seed=5, shift=shift)
     np.testing.assert_almost_equal(res, (-0.0653441,  0.309073 ))
 
-    # case 3: break it - supply x and y, but not paired
+    # break it - supply x and y, but not paired
     y = np.append(x, 10)
     assert_raises(ValueError, one_sample_conf_int, x, y)
+
+    # Testing with sample statistic of median
+    res = one_sample_conf_int(x, seed=42, stat="median")
+    np.testing.assert_almost_equal(res, (2.499999999999531, 6.500000000000918))
+
+    # Testing with t statistic
+    prng = RandomState(42)
+    x = np.arange(20)
+    y = x + prng.normal(size=20)
+    res = one_sample_conf_int(x, y, seed=prng, stat='t')
+    np.testing.assert_almost_equal(res[0], -0.27271209581516753)
+    np.testing.assert_almost_equal(res[0], 0.6217655068645991)
+
+
+@raises(AssertionError)
+def test_one_sample_conf_int_bad_shift():
+    # Break it with a bad shift
+    x = np.array(range(5))
+    y = np.array(range(1, 6))
+    shift = (lambda u, d: -d * u, lambda u, d: -u / d)
+    one_sample_conf_int(x, y, seed=5, shift=shift)
+
+

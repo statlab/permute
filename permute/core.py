@@ -10,6 +10,7 @@ from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
 
 from .utils import get_prng, potential_outcomes
+from .binomialp import binomial_p
 
 
 def corr(x, y, reps=10**4, seed=None):
@@ -432,6 +433,67 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
     return ci_low, ci_upp
 
+"""
+ROUGH DRAFT: One sample test for percentile.
+def one_sample_percentile(x, y=None, p=50, alternative="greater", keep_dist=False, seed=None):
+    One-sided or two-sided test for the percentile P of a population distribution.
+    assuming a there is an P/100 chance for each value of the sample to be within the
+    Pth percentile or not.
+
+    This test defaults to P=50, a test for a symmetrical distribution.
+    /"/"/"
+    Parameters
+    ----------
+    x : array-like
+        Sample 1
+    y : array-like
+        Sample 2. Must preserve the order of pairs with x.
+        If None, x is taken to be the one sample.
+    p: int in [0,100]
+        Percentile of interest to test.
+    reps : int
+        number of repetitions
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
+    keep_dist : bool
+        flag for whether to store and return the array of values
+        of the irr test statistic
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
+    Returns
+    -------
+    float
+        the estimated p-value
+    float
+        the test statistic
+    list
+        The distribution of test statistics.
+        These values are only returned if `keep_dist` == True
+    /"/"/"
+    prng = get_prng(seed)
+
+    if y is None:
+        z = x
+    elif len(x) != len(y):
+        raise ValueError('x and y must be pairs')
+    else:
+        z = np.array(x) - np.array(y)
+
+    if not 0 <= p <= 100:
+        raise ValueError('p must be between 0 and 100')
+
+    return binomial_p(np.sum(x < np.percentile(x, p)), len(x), p/100, alternative=alternative, keep_dist=keep_dist, seed=seed)
+"""
+
+"""
+ROUGH DRAFT: One sample confidence intervals for percentiles
+def one_sample_p_int(x, y=None, p=50, cl=0.95, alternative="two-sided", seed=None):
+    return binom_conf_interval(len(x), x, cl=0.95, alternative="two-sided", p=p/100)
+"""
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None):
@@ -518,11 +580,13 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         'less': lambda p: 1 - p,
         'two-sided': lambda p: 2 * np.min([p, 1 - p])
     }
+
     stats = {
         'mean': lambda u: np.mean(u),
         't': lambda u: ttest_1samp(u, 0)[0],
         'median': lambda u: np.median(u)
     }
+
     if callable(stat):
         tst_fun = stat
     else:
@@ -541,6 +605,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         hits = np.sum([(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
                        for i in range(reps)])
         return thePvalue[alternative](hits / reps), tst
+
 
 def one_sample_shift(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None, shift = None):
