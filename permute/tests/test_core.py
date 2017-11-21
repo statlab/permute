@@ -225,6 +225,12 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 0.14)
     np.testing.assert_equal(res[1], 2)
 
+    # case 7: Test statistic is a function
+    pcntl = lambda x: np.percentile(x, 20)
+    res = one_sample(x, seed=42, reps=100, stat=pcntl)
+    np.testing.assert_almost_equal(res[0], 0.059999999999)
+    np.testing.assert_almost_equal(res[1], 0.8)
+
 
 def test_one_sample_shift():
     prng = RandomState(42)
@@ -267,6 +273,12 @@ def test_one_sample_shift():
     res = one_sample_shift(x, seed=42, reps=100, stat="median", shift=4.5)
     np.testing.assert_almost_equal(res[0], 0.53)
     np.testing.assert_equal(res[1], 4.5)
+
+    # case 6: Test statistic is a function
+    pcntl = lambda x: np.percentile(x, 20)
+    res = one_sample_shift(x, seed=42, reps=100, stat=pcntl, shift=2)
+    np.testing.assert_almost_equal(res[0], 0.029999999999999999)
+    np.testing.assert_almost_equal(res[1], 1.8)
 
 
 @attr('slow')
@@ -318,6 +330,11 @@ def test_one_sample_conf_int():
     y = x + prng.normal(size=20)
     res = one_sample_conf_int(x, y, reps=100, seed=prng, stat='t')
     np.testing.assert_almost_equal(res, (-0.3018817477447192, 0.6510547144565948))
+
+    min_func = lambda x: np.min(x)
+    res = one_sample_conf_int(x, y, reps=100, seed=42, stat=min_func)
+    np.testing.assert_almost_equal(res, (-0.5084626431347878, 0.167033714575861))
+
 
 
 @raises(AssertionError)
