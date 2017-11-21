@@ -232,12 +232,17 @@ def test_one_sample_shift():
     x = np.array(range(10))
     y = x - 1
 
-    # case 1: one sample without shift. should work the same as test_one_sample
+    # case 1:
     res0 = one_sample_shift(x, seed=prng, reps=100, shift=3)
     res1 = one_sample_shift(x, seed=prng, reps=100, shift=7)
     np.testing.assert_almost_equal(res0[0], 0.07)
     np.testing.assert_equal(res0[1], np.mean(x))
     np.testing.assert_almost_equal(res1[0], 1)
+
+    # one_sample_shift with no shift is the same as a shift of 0
+    zero = one_sample_shift(x, seed=42, reps=100)
+    zero_reg = one_sample(x, seed=42, reps=100)
+    np.testing.assert_almost_equal(zero, zero_reg)
 
     # case 2: paired sample
     res = one_sample_shift(x, y, seed=42, reps=100, shift=1, keep_dist=True)
