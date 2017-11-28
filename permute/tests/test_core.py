@@ -136,7 +136,7 @@ def test_two_sample_shift():
 
     # Define a lambda function
     f = lambda u, v: np.max(u) - np.max(v)
-    res = two_sample_shift(x, y, seed=42, stat=f, reps=100)
+    res = two_sample(x, y, seed=42, stat=f, reps=100)
     expected = (1, -3.2730653690015465)
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
@@ -356,9 +356,9 @@ def test_one_sample_percentile():
     np.testing.assert_equal(res[1], 50)
 
     y = np.append(y, 10)
-    np.testing.assert_raises(ValueError, one_sample, x, y)
+    np.testing.assert_raises(ValueError, one_sample_percentile, x, y)
 
-    np.testing.assert_raises(ValueError, one_sample, x, p=101)
+    np.testing.assert_raises(ValueError, one_sample_percentile, x, p=101)
 
     # Skewed sample
     x_skew = np.array(list(x) + [80] * 50)
@@ -375,13 +375,13 @@ def test_one_sample_percentile_conf_int():
 
 
     y = np.append(x, 10)
-    np.testing.assert_raises(ValueError, one_sample, x, y)
+    np.testing.assert_raises(ValueError, one_sample_percentile_conf_int, x, y)
 
-    np.testing.assert_raises(ValueError, one_sample, x, p=101)
+    np.testing.assert_raises(ValueError, one_sample_percentile_conf_int, x, p=101)
 
     prng = RandomState(42)
     y = x + prng.normal(size=100)
-    res = one_sample_percentile_conf_int(x=x, y=y, p=20, seed=42, reps=100)
+    res = one_sample_percentile_conf_int(x=x, y=y, p=20, seed=42)
     expected_ci = (-0.94850907410172258, -0.34506992048853352)
     np.testing.assert_almost_equal(res, expected_ci)
 
