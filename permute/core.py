@@ -9,7 +9,7 @@ import numpy as np
 from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
 
-from .utils import get_prng, potential_outcomes
+from .utils import get_prng, potential_outcomes, binom_conf_interval
 from .binomialp import binomial_p
 
 
@@ -433,15 +433,19 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
     return ci_low, ci_upp
 
-"""
-ROUGH DRAFT: One sample test for percentile.
-def one_sample_percentile(x, y=None, p=50, alternative="greater", keep_dist=False, seed=None):
-    One-sided or two-sided test for the percentile P of a population distribution.
-    assuming a there is an P/100 chance for each value of the sample to be within the
-    Pth percentile or not.
 
-    This test defaults to P=50, a test for a symmetrical distribution.
-    /"/"/"
+#ROUGH DRAFT: One sample test for percentile.
+def one_sample_percentile(x, y=None, p=50, reps=10**5, alternative="greater", keep_dist=False, seed=None):
+    r"""
+    One-sided or two-sided test for the percentile P of a population distribution.
+    assuming there is an P/100 chance for each value of the sample to be in the
+    Pth percentile.
+
+    The null hypothesis is that there is an equal P/100 chance for any value of the 
+    sample to lie at or below the sample Pth percentile.
+
+    This test defaults to P=50.
+    
     Parameters
     ----------
     x : array-like
@@ -469,12 +473,10 @@ def one_sample_percentile(x, y=None, p=50, alternative="greater", keep_dist=Fals
     float
         the estimated p-value
     float
-        the test statistic
+        the test statistic: Number of values at or below percentile P of sample
     list
-        The distribution of test statistics.
-        These values are only returned if `keep_dist` == True
-    /"/"/"
-    prng = get_prng(seed)
+       distribution of test statistics (only if keep_dist == True)
+    """
 
     if y is None:
         z = x
@@ -486,14 +488,55 @@ def one_sample_percentile(x, y=None, p=50, alternative="greater", keep_dist=Fals
     if not 0 <= p <= 100:
         raise ValueError('p must be between 0 and 100')
 
-    return binomial_p(np.sum(x < np.percentile(x, p)), len(x), p/100, alternative=alternative, keep_dist=keep_dist, seed=seed)
-"""
+    return binomial_p(np.sum(z <= np.percentile(z, p)), len(z), p/100, reps=reps, \
+        alternative=alternative, keep_dist=keep_dist, seed=seed)
 
-"""
-ROUGH DRAFT: One sample confidence intervals for percentiles
-def one_sample_p_int(x, y=None, p=50, cl=0.95, alternative="two-sided", seed=None):
-    return binom_conf_interval(len(x), x, cl=0.95, alternative="two-sided", p=p/100)
-"""
+
+
+# ROUGH DRAFT: One sample confidence intervals for percentiles
+def one_sample_percentile_conf_int(x, y=None, p=50, cl=0.95, alternative="two-sided", seed=None):
+    """
+    Confidence intervals for a percentile P of the population distribution of a
+    univariate or paired sample.
+    
+    Compute a confidence interval for a binomial p, the probability of success in each trial.
+
+    Parameters
+    ----------
+    n : int
+        The number of Bernoulli trials.
+    x : int
+        The number of successes.
+    cl : float in (0, 1)
+        The desired confidence level.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    p : int in [0,100]
+        Desired percentile of interest to test.
+    kwargs : dict
+        Key word arguments
+
+    Returns
+    -------
+    tuple
+        lower and upper confidence level with coverage (approximately)
+        1-alpha.
+
+    """
+
+    if y is None:
+        z = x
+    elif len(x) != len(y):
+        raise ValueError('x and y must be pairs')
+    else:
+        z = np.array(x) - np.array(y)
+
+    if not 0 <= p <= 100:
+        raise ValueError('p must be between 0 and 100')
+
+    conf_int = binom_conf_interval(len(z), np.sum(z <= np.percentile(z, p)), cl=cl, alternative="two-sided", p=p/100)
+    return (np.percentile(z, conf_int[0]*100), np.percentile(z, conf_int[1]*100))
+
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None):

@@ -14,7 +14,9 @@ from ..core import (corr,
                     two_sample_conf_int,
                     one_sample,
                     one_sample_shift,
-                    one_sample_conf_int)
+                    one_sample_conf_int,
+                    one_sample_percentile,
+                    one_sample_percentile_conf_int)
 
 
 def test_corr():
@@ -134,7 +136,7 @@ def test_two_sample_shift():
 
     # Define a lambda function
     f = lambda u, v: np.max(u) - np.max(v)
-    res = two_sample(x, y, seed=42, stat=f, reps=100)
+    res = two_sample_shift(x, y, seed=42, stat=f, reps=100)
     expected = (1, -3.2730653690015465)
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
@@ -336,7 +338,6 @@ def test_one_sample_conf_int():
     np.testing.assert_almost_equal(res, (-0.5084626431347878, 0.167033714575861))
 
 
-
 @raises(AssertionError)
 def test_one_sample_conf_int_bad_shift():
     # Break it with a bad shift
@@ -345,4 +346,42 @@ def test_one_sample_conf_int_bad_shift():
     shift = (lambda u, d: -d * u, lambda u, d: -u / d)
     one_sample_conf_int(x, y, seed=5, shift=shift)
 
+
+def test_one_sample_percentile():
+    prng = RandomState(42)
+    x = np.arange(0, 100)
+    y = x + prng.normal(size=100)
+    res = one_sample_percentile(x=x, y=y, p=50, seed=42, reps=100)
+    np.testing.assert_almost_equal(res[0], 0.53925999999999996)
+    np.testing.assert_equal(res[1], 50)
+
+    y = np.append(y, 10)
+    np.testing.assert_raises(ValueError, one_sample, x, y)
+
+    np.testing.assert_raises(ValueError, one_sample, x, p=101)
+
+    # Skewed sample
+    x_skew = np.array(list(x) + [80] * 50)
+    res = one_sample_percentile(x=x_skew, p=80, seed=42, reps=100)
+    np.testing.assert_almost_equal(res[0], 0.01)
+    np.testing.assert_equal(res[1], 131)
+
+@attr('slow')
+def test_one_sample_percentile_conf_int():
+    x = np.arange(0, 100)
+    res = one_sample_percentile_conf_int(x, seed=42, p=50)
+    np.testing.assert_almost_equal(res[0], 39.43379182082676)
+    np.testing.assert_almost_equal(res[1], 59.56620817917322)
+
+
+    y = np.append(y, 10)
+    np.testing.assert_raises(ValueError, one_sample, x, y)
+
+    np.testing.assert_raises(ValueError, one_sample, x, p=101)
+
+    prng = RandomState(42)
+    y = x + prng.normal(size=100)
+    res = one_sample_percentile_conf_int(x=x, y=y, p=20, seed=42, reps=100)
+    expected_ci = (-0.94850907410172258, -0.34506992048853352)
+    np.testing.assert_almost_equal(res, expected_ci)
 
