@@ -352,7 +352,7 @@ def test_one_sample_percentile():
     x = np.arange(0, 100)
     y = x + prng.normal(size=100)
     res = one_sample_percentile(x=x, y=y, p=50, seed=42, reps=100)
-    np.testing.assert_almost_equal(res[0], 0.53925999999999996)
+    np.testing.assert_almost_equal(res[0], 0.52)
     np.testing.assert_equal(res[1], 50)
 
     y = np.append(y, 10)
@@ -374,7 +374,7 @@ def test_one_sample_percentile_conf_int():
     np.testing.assert_almost_equal(res[1], 59.56620817917322)
 
 
-    y = np.append(y, 10)
+    y = np.append(x, 10)
     np.testing.assert_raises(ValueError, one_sample, x, y)
 
     np.testing.assert_raises(ValueError, one_sample, x, p=101)
