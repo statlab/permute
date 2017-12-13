@@ -6,6 +6,7 @@ from nose.tools import assert_raises, raises
 
 import numpy as np
 from numpy.random import RandomState
+from scipy.stats import binom
 
 
 from ..core import (corr,
@@ -13,10 +14,10 @@ from ..core import (corr,
                     two_sample_shift,
                     two_sample_conf_int,
                     one_sample,
-                    one_sample_shift,
+                    one_sample,
                     one_sample_conf_int,
                     one_sample_percentile,
-                    one_sample_percentile_conf_int)
+                    one_sample_percentile_ci)
 
 
 def test_corr():
@@ -233,27 +234,20 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 0.059999999999)
     np.testing.assert_almost_equal(res[1], 0.8)
 
-
-def test_one_sample_shift():
     prng = RandomState(42)
 
     x = np.array(range(10))
     y = x - 1
 
     # case 1:
-    res0 = one_sample_shift(x, seed=prng, reps=100, shift=3)
-    res1 = one_sample_shift(x, seed=prng, reps=100, shift=7)
+    res0 = one_sample(x, seed=prng, reps=100, center=3)
+    res1 = one_sample(x, seed=prng, reps=100, center=7)
     np.testing.assert_almost_equal(res0[0], 0.07)
     np.testing.assert_equal(res0[1], np.mean(x))
     np.testing.assert_almost_equal(res1[0], 1)
 
-    # one_sample_shift with no shift is the same as a shift of 0
-    zero = one_sample_shift(x, seed=42, reps=100)
-    zero_reg = one_sample(x, seed=42, reps=100)
-    np.testing.assert_almost_equal(zero, zero_reg)
-
     # case 2: paired sample
-    res = one_sample_shift(x, y, seed=42, reps=100, shift=1, keep_dist=True)
+    res = one_sample(x, y, seed=42, reps=100, center=1, keep_dist=True)
     np.testing.assert_almost_equal(res[0], 1)
     np.testing.assert_equal(res[1], 1)
     dist_unique = np.unique(res[2]) # Distribution should be all 1's
@@ -262,23 +256,23 @@ def test_one_sample_shift():
 
     # case 3: t test statistic
     x = np.array(range(5))
-    res = one_sample_shift(x, seed=42, reps=100, stat="t", alternative="less", shift=0.1)
+    res = one_sample(x, seed=42, reps=100, stat="t", alternative="less", center=0.1)
     np.testing.assert_almost_equal(res[0], 0.93999999999999995)
     np.testing.assert_almost_equal(res[1], 2.8284271247461898)
 
     # case 4: break it - supply x and y, but not paired
     y = np.append(y, 10)
-    assert_raises(ValueError, one_sample_shift, x, y)
+    assert_raises(ValueError, one_sample, x, y)
 
     # case 5: use median as test statistic
     x = np.array(range(10))
-    res = one_sample_shift(x, seed=42, reps=100, stat="median", shift=4.5)
+    res = one_sample(x, seed=42, reps=100, stat="median", center=4.5)
     np.testing.assert_almost_equal(res[0], 0.53)
     np.testing.assert_equal(res[1], 4.5)
 
     # case 6: Test statistic is a function
     pcntl = lambda x: np.percentile(x, 20)
-    res = one_sample_shift(x, seed=42, reps=100, stat=pcntl, shift=2)
+    res = one_sample(x, seed=42, reps=100, stat=pcntl, center=2)
     np.testing.assert_almost_equal(res[0], 0.029999999999999999)
     np.testing.assert_almost_equal(res[1], 1.8)
 
@@ -287,7 +281,7 @@ def test_one_sample_shift():
 def test_one_sample_conf_int():
     prng = RandomState(42)
 
-    # Standard confidenceinterval
+    # Standard confidence interval
     x = np.array(range(10))
     res = one_sample_conf_int(x, seed=prng)
     expected_ci = (2.2696168, 6.6684788)
@@ -349,39 +343,43 @@ def test_one_sample_conf_int_bad_shift():
 
 def test_one_sample_percentile():
     prng = RandomState(42)
-    x = np.arange(0, 100)
-    y = x + prng.normal(size=100)
-    res = one_sample_percentile(x=x, y=y, p=50, seed=42, reps=100)
-    np.testing.assert_almost_equal(res[0], 0.52)
+    x = np.arange(1, 101)
+    res = one_sample_percentile(x, 50, p=50, alternative="less")
     np.testing.assert_equal(res[1], 50)
+    expected_pval = binom.cdf(res[1], len(x), 0.5)
+    np.testing.assert_equal(res[0], expected_pval)
 
-    y = np.append(y, 10)
-    np.testing.assert_raises(ValueError, one_sample_percentile, x, y)
+    res = one_sample_percentile(x, 75, p=70, alternative="greater")
+    np.testing.assert_equal(res[1], 75)
+    expected_pval = 1 - binom.cdf(res[1], len(x), 0.7)
+    np.testing.assert_equal(res[0], expected_pval)
 
-    np.testing.assert_raises(ValueError, one_sample_percentile, x, p=101)
+    res = one_sample_percentile(x, 20, p=30, alternative="two-sided")
+    np.testing.assert_equal(res[1], 20)
+    expected_pval = 2 * binom.cdf(res[1], len(x), 0.3)
+    np.testing.assert_equal(res[0], expected_pval)
 
-    # Skewed sample
-    x_skew = np.array(list(x) + [80] * 50)
-    res = one_sample_percentile(x=x_skew, p=80, seed=42, reps=100)
-    np.testing.assert_almost_equal(res[0], 0.01)
-    np.testing.assert_equal(res[1], 131)
+    np.testing.assert_raises(ValueError, one_sample_percentile, x, x_p = 50, p=101)
 
-@attr('slow')
-def test_one_sample_percentile_conf_int():
+def test_one_sample_percentile_ci():
     x = np.arange(0, 100)
-    res = one_sample_percentile_conf_int(x, seed=42, p=50)
-    np.testing.assert_almost_equal(res[0], 39.43379182082676)
-    np.testing.assert_almost_equal(res[1], 59.56620817917322)
+    res = one_sample_percentile_ci(x)
+    np.testing.assert_equal(res[0], 39)
+    np.testing.assert_almost_equal(res[1], 59)
 
+    res = one_sample_percentile_ci(x, p=50, alternative="upper")
+    np.testing.assert_equal(res[0], 0)
+    np.testing.assert_equal(res[1], 58)
+
+    res = one_sample_percentile_ci(x, p=50, alternative="lower")
+    np.testing.assert_equal(res[0], 40)
+    np.testing.assert_equal(res[1], 99)
 
     y = np.append(x, 10)
-    np.testing.assert_raises(ValueError, one_sample_percentile_conf_int, x, y)
-
-    np.testing.assert_raises(ValueError, one_sample_percentile_conf_int, x, p=101)
+    np.testing.assert_raises(ValueError, one_sample_percentile_ci, x, p=101)
 
     prng = RandomState(42)
-    y = x + prng.normal(size=100)
-    res = one_sample_percentile_conf_int(x=x, y=y, p=20, seed=42)
-    expected_ci = (-0.94850907410172258, -0.34506992048853352)
-    np.testing.assert_almost_equal(res, expected_ci)
+    z = prng.normal(0, 5, 100)
+    res = one_sample_percentile_ci(z, p=50)
+    expected_ci = (-1.546061879256073, 0.55461294854933041)
 
