@@ -436,35 +436,27 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
 def one_sample_percentile(x, x_p, p=50, alternative="less"):
     r"""
-    One-sided or two-sided test for the percentile P of a population distribution.
-    assuming there is an P/100 chance for each value of the sample to be in the
-    Pth percentile.
+    One-sided or two-sided test for the true Pth percentile of a population distribution.
 
-    The null hypothesis is that there is an equal P/100 chance for any value of the 
-    sample to lie at or below the sample Pth percentile.
+    The null hypothesis is that the given percentile is the true Pth percentile.
+    here is an equal P/100 chance for any value in a sample,of the same length of X,
+    and drawn from the population to lie at or below the Pth percentile.
 
-    This test defaults to P=50.
+    The P value returned would be the probability that the true population percentile is
+    as extreme as X_P.
+
+    This test defaults to P=50, the 50th percentile.
     
     Parameters
     ----------
     x : array-like
-        Sample 1
+        Sample
     x_p : numeric
-        Null Hypothesis
+        An inputted estimated pth percentile of the distribution.
     p: int in [0,100]
         Percentile of interest to test.
-    reps : int
-        number of repetitions
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
-    keep_dist : bool
-        flag for whether to store and return the array of values
-        of the irr test statistic
-    seed : RandomState instance or {None, int, RandomState instance}
-        If None, the pseudorandom number generator is the RandomState
-        instance used by `np.random`;
-        If int, seed is the seed used by the random number generator;
-        If RandomState instance, seed is the pseudorandom number generator
 
     Returns
     -------
@@ -472,8 +464,6 @@ def one_sample_percentile(x, x_p, p=50, alternative="less"):
         the estimated p-value
     float
         the test statistic: Number of values at or below x_p in the samples
-    list
-       distribution of test statistics (only if keep_dist == True)
     """
 
     if not 0 <= p <= 100:
@@ -491,27 +481,22 @@ def one_sample_percentile(x, x_p, p=50, alternative="less"):
     return thePvalue[alternative](p_value), num_under
 
 
-def one_sample_percentile_ci(x, p=50, cl=0.95, alternative="two-sided", seed=None, reps=10**5):
+def one_sample_percentile_ci(x, p=50, cl=0.95, alternative="two-sided"):
     """
     Confidence intervals for a percentile P of the population distribution of a
-    univariate or paired sample.
-    
-    Compute a confidence interval for a binomial p, the probability of success in each trial.
+    univariate or paired sample of a confidence level CL solely based on a given
+    sample X drawn from the population.
 
     Parameters
     ----------
-    n : int
-        The number of Bernoulli trials.
-    x : int
-        The number of successes.
+    x : array-like
+        The sample
     cl : float in (0, 1)
         The desired confidence level.
     alternative : {"two-sided", "lower", "upper"}
         Indicates the alternative hypothesis.
     p : int in [0,100]
-        Desired percentile of interest to test.
-    kwargs : dict
-        Key word arguments
+        Desired percentile of interest to get a confidence interval of.
 
     Returns
     -------
@@ -524,7 +509,6 @@ def one_sample_percentile_ci(x, p=50, cl=0.95, alternative="two-sided", seed=Non
     if not 0 <= p <= 100:
         raise ValueError('p must be between 0 and 100')
 
-    #shift_limit = np.max([np.max(x) - np.median(x), np.median(x) - np.min(x)]
     x = np.sort(x)
     ci_low = np.min(x)
     ci_upp = np.max(x)
@@ -546,9 +530,6 @@ def one_sample_percentile_ci(x, p=50, cl=0.95, alternative="two-sided", seed=Non
     return ci_low, ci_upp
 
 
-
-    # conf_int = binom_conf_interval(len(z), np.sum(z <= np.percentile(z, p)), cl=cl, alternative="two-sided", p=p/100)
-    # return (np.percentile(z, conf_int[0]*100), np.percentile(z, conf_int[1]*100))
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
                keep_dist=False, seed=None, center = None):
