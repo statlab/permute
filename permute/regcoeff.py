@@ -5,9 +5,7 @@ import numpy as np
 import math
 from scipy.stats import linregress
 
-from utils import get_prng
-
-def reg_coeff(x, y, reps=10**5, cl=0.95, alternative="one-sided", seed=None):
+def reg_coeff(x, y, reps=10**5, cl=0.95):
     r"""
     Testing the coefficients of a linear regression. The assumption of the linear regression
     is that 
@@ -34,7 +32,6 @@ def reg_coeff(x, y, reps=10**5, cl=0.95, alternative="one-sided", seed=None):
     """
     true_slope = abs(linregress(x, y)[0])
 
-    prng = get_prng(seed)
     slopes = []
     for _ in range(reps):
         shuffle_x = np.random.permutation(x)
