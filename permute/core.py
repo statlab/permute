@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import numpy as np
+import math
 from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp, binom
 
@@ -188,7 +189,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     # dictionary
     stats = {
         'mean': lambda u, v: np.mean(u) - np.mean(v),
-        't': lambda u, v: ttest_ind(u, v, equal_var=True)[0]
+        't': lambda u, v: ttest_ind(u, v, equal_var=True)[0],
+        'KS': lambda u, v: np.max([abs(sum(u <= a) / len(x) - sum(v <= a) / len(y))
+                                   for a in set(u).intersection(set(y))])
     }
     if callable(stat):
         tst_fun = stat
@@ -206,6 +209,36 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     else:
         return res, observed_tst
 
+def two_sample_fit(x, y, alpha, method='KS'):
+    '''
+    Apply permutation methods to find the fitness of distribution X and Y.
+    Currently the method only implemented the Kolmogorov-Smirnov (KS) test.
+       
+    Parameters
+    ----------
+    x: array-like. 
+        sample X
+    y: array-like. 
+        sample Y
+    alpha: float in [0, 1]
+            type I error
+       
+    Returns
+    -------
+    boolean
+        True means two samples come from the same underlying distribution.
+        Otherwise means they do not.
+
+    Notes
+    -----
+    method
+        This will be the interface function invoking two_sample
+        for all goodness of fit test statistics for future implementations.
+    '''
+    _, stats = two_sample(x, y, stat='KS')
+    c = math.sqrt((len(x) + len(y))) / (len(x) * len(y))
+    c *= math.sqrt(-0.5 * math.log(alpha * 0.5))
+    return stats <= c
 
 def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
                      keep_dist=False, seed=None, shift=None):
