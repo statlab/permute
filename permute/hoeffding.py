@@ -43,7 +43,7 @@ def hoeffding_conf_int(x, N, lower_bound, upper_bound, cl=0.95, alternative="one
             raise ValueError("Bad Bound Input Length")
         if np.sum(upper_bound >= lower_bound) != N:
             raise ValueError("Invalid Upper and Lower bounds")
-        if np.sum((x <= upper_bound) and (x >= lower_bound)) != N:
+        if np.sum((x <= upper_bound)) != N or np.sum((x >= lower_bound)) != N:
             raise ValueError("x values not contained in bounds")
         else:
             tau_sq = np.sum((upper_bound - lower_bound)**2)
