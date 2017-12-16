@@ -17,5 +17,5 @@ def test_regcoeff():
 	expected = 0
 	np.testing.assert_almost_equal(res, expected)
 
-	y.append(10)
+	y = np.array(range(11))
 	assert_raises(ValueError, reg_coeff, x, y)
