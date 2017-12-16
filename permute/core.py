@@ -191,7 +191,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         'mean': lambda u, v: np.mean(u) - np.mean(v),
         't': lambda u, v: ttest_ind(u, v, equal_var=True)[0],
         'KS': lambda u, v: np.max([abs(sum(u <= a) / len(x) - sum(v <= a) / len(y))
-                                   for a in set(u).intersection(set(y))])
+                                   for a in set(u).union(set(y))])
     }
     if callable(stat):
         tst_fun = stat

@@ -13,6 +13,7 @@ from ..core import (corr,
                     two_sample,
                     two_sample_shift,
                     two_sample_conf_int,
+                    two_sample_fit,
                     one_sample,
                     one_sample,
                     one_sample_conf_int,
@@ -95,6 +96,17 @@ def test_two_sample():
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
 
+def test_two_sample_fit():
+    x = np.array(range(10))
+    y = np.array(range(10))
+    alpha = 0.01
+    res = two_sample_fit(x, y, alpha)
+    np.testing.assert_equal(res, True)
+
+    y = np.array(range(10, 20))
+    alpha = 0.1
+    res = two_sample_fit(x, y, alpha)
+    np.testing.assert_equal(res, False)
 
 def test_two_sample_shift():
     prng = RandomState(42)
