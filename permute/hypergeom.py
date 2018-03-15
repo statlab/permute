@@ -48,12 +48,12 @@ def hypergeometric(x, N, n, G, reps=10**5, alternative='greater', keep_dist=Fals
         raise ValueError("Number of good elements can't exceed the population size")
     if G < x:
         raise ValueError("Number of observed good elements can't exceed the number in the population")
-
+    
     prng = get_prng(seed)
-
+    
     def generate():
         return prng.hypergeometric(G, N-G, n)
-
+    
     if keep_dist:
         permutations = np.empty(reps)
         for i in range(reps):
@@ -67,7 +67,7 @@ def hypergeometric(x, N, n, G, reps=10**5, alternative='greater', keep_dist=Fals
         else:
             p_value = np.mean(permutations <= x)
         return p_value, x, permutations
-
+    
     else:
         hits_up = 0
         hits_low = 0
@@ -82,8 +82,5 @@ def hypergeometric(x, N, n, G, reps=10**5, alternative='greater', keep_dist=Fals
             p_value = hits_up/reps
         else:
             p_value = hits_low/reps
-
+    
         return p_value, x
-
-
-
