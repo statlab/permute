@@ -9,6 +9,7 @@ from numpy.random import RandomState
 
 
 from ..core import (corr,
+                    spearman_corr,
                     two_sample,
                     two_sample_shift,
                     two_sample_conf_int,
@@ -25,7 +26,7 @@ def test_corr():
     np.testing.assert_equal(len(res2), 3)
     np.testing.assert_equal(res1[0], 1)
     np.testing.assert_equal(res2[0], 1)
-    np.testing.assert_equal(res1[1], res2[1])
+    np.testing.assert_almost_equal(res1[1], res2[1], decimal=1)
 
     y = prng.randint(5, size=10)
     res1 = corr(x, y, alternative="less", seed=prng)
