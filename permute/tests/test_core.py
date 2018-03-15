@@ -25,8 +25,6 @@ def test_corr():
     np.testing.assert_equal(len(res2), 5)
     np.testing.assert_equal(res1[0], res2[0])
     np.testing.assert_equal(res1[1], res2[1])
-    #np.testing.assert_equal(res1[2], res2[2])
-    #np.testing.assert_equal(res1[3], res2[3])
 
     y = prng.randint(5, size=10)
     res1 = corr(x, y, seed=prng)
@@ -34,9 +32,6 @@ def test_corr():
     np.testing.assert_equal(len(res1), 5)
     np.testing.assert_equal(len(res2), 5)
     np.testing.assert_equal(res1[0], res2[0])
-    #np.testing.assert_equal(res1[1], res2[1])
-    #np.testing.assert_equal(res1[2], res2[2])
-    #np.testing.assert_equal(res1[3], res2[3])
 
 
 @attr('slow')
