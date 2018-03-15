@@ -12,14 +12,16 @@ from scipy.stats import ttest_ind, ttest_1samp
 from .utils import get_prng, potential_outcomes
 
 
-def corr(x, y, reps=10**4, seed=None):
-    """
-    Simulate permutation p-value for Spearman correlation coefficient
+def corr(x, y, alternative='greater', reps=10**4, seed=None):
+    r"""
+    Simulate permutation p-value for Pearson correlation coefficient
 
     Parameters
     ----------
     x : array-like
     y : array-like
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
     reps : int
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
@@ -27,20 +29,51 @@ def corr(x, y, reps=10**4, seed=None):
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
 
-
     Returns
     -------
     tuple
-        Returns test statistic, left-sided p-value,
-        right-sided p-value, two-sided p-value, simulated distribution
+        Returns test statistic, p-value, simulated distribution
     """
     prng = get_prng(seed)
     tst = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
     left_pv = np.sum(sims <= tst) / reps
     right_pv = np.sum(sims >= tst) / reps
-    two_sided_pv = np.min([1, 2 * np.min([left_pv, right_pv])])
-    return tst, left_pv, right_pv, two_sided_pv, sims
+    if alternative == 'greater':
+        pvalue = right_pv
+    elif alternative == 'less':
+        pvalue = left_pv
+    elif alternative == 'two-sided':
+        pvalue = np.min([1, 2 * np.min([left_pv, right_pv])])
+    return tst, pvalue, sims
+
+
+def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None):
+    r"""
+    Simulate permutation p-value for Spearman correlation coefficient
+
+    Parameters
+    ----------
+    x : array-like
+    y : array-like
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
+    reps : int
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
+    Returns
+    -------
+    tuple
+        Returns test statistic, p-value, simulated distribution
+    """
+    
+    xnew = np.argsort(x)+1
+    ynew = np.argsort(y)+1
+    return corr(xnew, ynew, alternative=alternative, reps=reps, seed=seed)
 
 
 def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
