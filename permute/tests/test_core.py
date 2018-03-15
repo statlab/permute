@@ -21,17 +21,40 @@ def test_corr():
     y = x
     res1 = corr(x, y, seed=prng)
     res2 = corr(x, y)
-    np.testing.assert_equal(len(res1), 5)
-    np.testing.assert_equal(len(res2), 5)
-    np.testing.assert_equal(res1[0], res2[0])
+    np.testing.assert_equal(len(res1), 3)
+    np.testing.assert_equal(len(res2), 3)
+    np.testing.assert_equal(res1[0], 1)
+    np.testing.assert_equal(res2[0], 1)
     np.testing.assert_equal(res1[1], res2[1])
 
     y = prng.randint(5, size=10)
-    res1 = corr(x, y, seed=prng)
-    res2 = corr(x, y)
-    np.testing.assert_equal(len(res1), 5)
-    np.testing.assert_equal(len(res2), 5)
+    res1 = corr(x, y, alternative="less", seed=prng)
+    res2 = corr(x, y, alternative="less")
+    np.testing.assert_equal(len(res1), 3)
+    np.testing.assert_equal(len(res2), 3)
     np.testing.assert_equal(res1[0], res2[0])
+    np.testing.assert_almost_equal(res1[1], res2[1], decimal=1)
+
+    res1 = corr(x, y, alternative="two-sided", seed=prng)
+    res2 = corr(x, y, alternative="greater")
+    np.testing.assert_equal(len(res1), 3)
+    np.testing.assert_equal(len(res2), 3)
+    np.testing.assert_equal(res1[0], res2[0])
+    np.testing.assert_almost_equal(res1[1], res2[1]*2, decimal=1)
+
+
+def test_spearman_corr():
+    prng = RandomState(42)
+    x = np.array([2, 4, 6, 8, 10])
+    y = np.array([1, 3, 5, 6, 9])
+    xorder = np.array([1, 2, 3, 4, 5])
+    res1 = corr(xorder, xorder, seed=prng)
+    
+    prng = RandomState(42)
+    res2 = spearman_corr(x, y, seed=prng)
+    np.testing.assert_equal(res1[0], res2[0])
+    np.testing.assert_equal(res1[1], res2[1])
+    np.testing.assert_array_equal(res1[2], res2[2])
 
 
 @attr('slow')
