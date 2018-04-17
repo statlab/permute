@@ -78,13 +78,24 @@ def nsgk():
 
 
 def macnell2014():
-    r"""Data from MacNell et alrom MacNell et alrom MacNell et al. 2014
+    r"""Data from MacNell et al. 2014
 
     .. Lillian MacNell, Adam Driscoll, and Andrea N Hunt, "What's
        in a Name: Exposing Gender Bias in Student Ratings of Teaching,"
        Innovative Higher Education, pp. 1-13, 2014.
     """
     return load("MacNell2014.csv")
+
+
+def clinical_trial():
+    r"""Data from Ottoboni et al. 2018
+
+    .. Kellie Ottoboni, Fraser Lewis, and Luigi Salmaso, "An Empirical 
+       Comparison of Parametric and Permutation Tests for Regression 
+       Analysis of Randomized Experiments," Statistics in 
+       Biopharmaceutical Research, 2018.
+    """
+    return load("rb_clinical_trial.csv")
 
 
 # def another_poss():

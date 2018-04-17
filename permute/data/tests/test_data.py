@@ -16,6 +16,11 @@ def test_chrom17m():
     chrom17m = data.chrom17m()
     assert_equal((chrom17m.size, len(chrom17m.dtype)), (10, 3))
 
+def test_clinical_trial():
+    """ Test that "rb_clinical_trial" data can be loaded. """
+    clin = data.clinical_trial()
+    assert_equal((clin.size, len(clin.dtype)), (272, 15))
+
 
 def test_confocal():
     """ Test that "confocal" data can be loaded. """
