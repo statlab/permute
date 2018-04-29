@@ -6,10 +6,12 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import numpy as np
+import math
 from scipy.optimize import brentq, fsolve
-from scipy.stats import ttest_ind, ttest_1samp
+from scipy.stats import ttest_ind, ttest_1samp, binom
 
-from .utils import get_prng, potential_outcomes
+from .utils import get_prng, potential_outcomes, binom_conf_interval
+from .binomialp import binomial_p
 
 
 def corr(x, y, alternative='greater', reps=10**4, seed=None):
@@ -222,7 +224,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     # dictionary
     stats = {
         'mean': lambda u, v: np.mean(u) - np.mean(v),
-        't': lambda u, v: ttest_ind(u, v, equal_var=True)[0]
+        't': lambda u, v: ttest_ind(u, v, equal_var=True)[0],
+        'KS': lambda u, v: np.max([abs(sum(u <= a) / len(x) - sum(v <= a) / len(y))
+                                   for a in set(u).union(set(y))])
     }
     if callable(stat):
         tst_fun = stat
@@ -240,6 +244,36 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     else:
         return res, observed_tst
 
+def two_sample_fit(x, y, alpha, method='KS'):
+    '''
+    Apply permutation methods to find the fitness of distribution X and Y.
+    Currently the method only implemented the Kolmogorov-Smirnov (KS) test.
+       
+    Parameters
+    ----------
+    x: array-like. 
+        sample X
+    y: array-like. 
+        sample Y
+    alpha: float in [0, 1]
+            type I error
+       
+    Returns
+    -------
+    boolean
+        True means two samples come from the same underlying distribution.
+        Otherwise means they do not.
+
+    Notes
+    -----
+    method
+        This will be the interface function invoking two_sample
+        for all goodness of fit test statistics for future implementations.
+    '''
+    _, stats = two_sample(x, y, stat='KS')
+    c = math.sqrt((len(x) + len(y))) / (len(x) * len(y))
+    c *= math.sqrt(-0.5 * math.log(alpha * 0.5))
+    return stats <= c
 
 def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
                      keep_dist=False, seed=None, shift=None):
@@ -468,8 +502,105 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     return ci_low, ci_upp
 
 
+def one_sample_percentile(x, x_p, p=50, alternative="less"):
+    r"""
+    One-sided or two-sided test for the true Pth percentile of a population distribution.
+
+    The null hypothesis is that the given percentile is the true Pth percentile.
+    here is an equal P/100 chance for any value in a sample,of the same length of X,
+    and drawn from the population to lie at or below the Pth percentile.
+
+    The P value returned would be the probability that the true population percentile is
+    as extreme as X_P.
+
+    This test defaults to P=50, the 50th percentile.
+    
+    Parameters
+    ----------
+    x : array-like
+        Sample
+    x_p : numeric
+        An inputted estimated pth percentile of the distribution.
+    p: int in [0,100]
+        Percentile of interest to test.
+    alternative : {'greater', 'less', 'two-sided'}
+        The alternative hypothesis to test
+
+    Returns
+    -------
+    float
+        the estimated p-value
+    float
+        the test statistic: Number of values at or below x_p in the samples
+    """
+
+    if not 0 <= p <= 100:
+        raise ValueError('p must be between 0 and 100')
+
+    thePvalue = {
+        'greater': lambda p: 1 - p,
+        'less': lambda p: p,
+        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+    }
+
+    num_under = np.sum(x <= x_p)
+    p_value = binom.cdf(num_under, n=len(x), p=p/100)
+
+    return thePvalue[alternative](p_value), num_under
+
+
+def one_sample_percentile_ci(x, p=50, cl=0.95, alternative="two-sided"):
+    """
+    Confidence intervals for a percentile P of the population distribution of a
+    univariate or paired sample of a confidence level CL solely based on a given
+    sample X drawn from the population.
+
+    Parameters
+    ----------
+    x : array-like
+        The sample
+    cl : float in (0, 1)
+        The desired confidence level.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    p : int in [0,100]
+        Desired percentile of interest to get a confidence interval of.
+
+    Returns
+    -------
+    tuple
+        lower and upper confidence level with coverage (approximately)
+        1-alpha.
+
+    """
+
+    if not 0 <= p <= 100:
+        raise ValueError('p must be between 0 and 100')
+
+    x = np.sort(x)
+    ci_low = np.min(x)
+    ci_upp = np.max(x)
+
+    if alternative == 'two-sided':
+        cl = 1 - (1 - cl) / 2
+
+    if alternative != "upper":
+        g = lambda q: cl - one_sample_percentile(x, q, p=p, alternative="greater")[0]
+        ci_low = brentq(g, np.min(x), np.max(x))
+        ci_low = x[np.searchsorted(x, ci_low) - 1]
+
+    if alternative != "lower":
+        g = lambda q: cl - one_sample_percentile(x, q, p=p, alternative="less")[0]
+        ci_upp = brentq(g, np.min(x), np.max(x))
+        ci_upp = x[np.searchsorted(x, ci_upp)]
+
+
+    return ci_low, ci_upp
+
+
+
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None):
+               keep_dist=False, seed=None, center = None):
     r"""
     One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
@@ -478,15 +609,15 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     Alternatively, a permutation test for equality of means of two paired
     samples.
 
-    Tests the hypothesis that x is distributed symmetrically symmetric about 0
-    (or x and y have the same center) against the alternative that x comes from
+    Tests the hypothesis that x is distributed symmetrically symmetric about 
+    CENTER (or x and y have the same center) against the alternative that x comes from
     a population with mean
 
-    (a) greater than 0 (greater than that of the population from which y comes),
+    (a) greater than CENTER (greater than that of the population from which y comes),
         if side = 'greater'
-    (b) less than 0 (less than that of the population from which y comes),
+    (b) less than CENTER (less than that of the population from which y comes),
         if side = 'less'
-    (c) different from 0 (different from that of the population from which y comes),
+    (c) different from CENTER (different from that of the population from which y comes),
         if side = 'two-sided'
 
     If ``keep_dist``, return the distribution of values of the test statistic;
@@ -527,7 +658,8 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
-
+    center : float
+        Assumption of symmetry around this center.
 
     Returns
     -------
@@ -555,7 +687,8 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     }
     stats = {
         'mean': lambda u: np.mean(u),
-        't': lambda u: ttest_1samp(u, 0)[0]
+        't': lambda u: ttest_1samp(u, 0)[0],
+        'median': lambda u: np.median(u)
     }
     if callable(stat):
         tst_fun = stat
@@ -563,14 +696,144 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         tst_fun = stats[stat]
 
     tst = tst_fun(z)
+
+    if center is None:
+        center = float(0)
+
     n = len(z)
     if keep_dist:
         dist = []
         for i in range(reps):
-            dist.append(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n))))
+            dist.append(tst_fun(center + (z - center) * (1 - 2 * prng.binomial(1, .5, size=n))))
         hits = np.sum(dist >= tst)
         return thePvalue[alternative](hits / reps), tst, dist
     else:
-        hits = np.sum([(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
+        hits = np.sum([(tst_fun(center + (z - center) * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
                        for i in range(reps)])
         return thePvalue[alternative](hits / reps), tst
+
+
+
+
+def one_sample_conf_int(x, y = None, cl=0.95, alternative="two-sided", seed=None,
+                        reps=10**4, stat="mean", shift=None):
+    """
+    One-sided or two-sided confidence interval for a test statistic of a sample with
+    or paired sample.  The default is the two-sided confidence interval for the mean of a sample x.
+
+    Parameters
+    ----------
+    x : array-like
+        Sample 1
+    y : array-like
+        Sample 2
+    cl : float in (0, 1)
+        The desired confidence level. Default 0.95.
+    alternative : {"two-sided", "lower", "upper"}
+        Indicates the alternative hypothesis.
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+    reps : int
+        number of repetitions in two_sample
+    stat : {'mean', 't'} 
+        The test statistic.
+
+        (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
+            (equivalently, sum(x), since those are monotonically related)
+        (b) If stat == 't', the test statistic is the two-sample t-statistic--
+            but the p-value is still estimated by the randomization,
+            approximating the permutation distribution.
+            The t-statistic is computed using scipy.stats.ttest_ind
+        (c) If stat is a function (a callable object), the test statistic is
+            that function.  The function should take a permutation of the pooled
+            data and compute the test function from it. For instance, if the
+            test statistic is the Kolmogorov-Smirnov distance between the
+            empirical distributions of the two samples, $\max_t |F_x(t) - F_y(t)|$,
+            the test statistic could be written:
+
+            f = lambda u: np.max( \
+                [abs(sum(u[:len(x)]<=v)/len(x)-sum(u[len(x):]<=v)/len(y)) for v in u]\
+                )
+    shift : float
+        The relationship between x and y under the null hypothesis.
+
+        (a) If None, the relationship is assumed to be additive (e.g. x = y+d)
+        (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
+            $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$
+
+    Returns
+    -------
+    tuple
+        the estimated confidence limits
+
+    Notes
+    -----
+    xtol : float
+        Tolerance in brentq
+    rtol : float
+        Tolerance in brentq
+    maxiter : int
+        Maximum number of iterations in brentq
+    """
+    assert alternative in ("two-sided", "lower", "upper")
+
+    if y is None:
+        z = x
+    elif len(x) != len(y):
+        raise ValueError('x and y must be pairs')
+    else:
+        z = np.array(x) - np.array(y)
+
+    if shift is None:
+        shift_limit = max(z) - min(z)
+
+    elif isinstance(shift, tuple):
+        assert (callable(shift[0])), "Supply f and finverse in shift tuple"
+        assert (callable(shift[1])), "Supply f and finverse in shift tuple"
+        f = shift[0]
+        finverse = shift[1]
+        # Check that f is increasing in d; this is very ad hoc!
+        assert (f(5, 1) < f(5, 2)), "f must be increasing in the parameter d"
+
+        shift_limit = max(abs(fsolve(lambda d: f(max(z), d) - min(z), 0)),
+                          abs(fsolve(lambda d: f(min(z), d) - max(z), 0)))
+        # FIXME: unused observed
+        # observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
+    else:
+        raise ValueError("Bad input for shift")
+
+    stats = {
+        'mean': lambda u: np.mean(u),
+        't': lambda u: ttest_1samp(u, 0)[0],
+        'median': lambda u: np.median(u)
+    }
+    if callable(stat):
+        tst_fun = stat
+    else:
+        tst_fun = stats[stat]
+
+    tst = tst_fun(z)
+
+    ci_low = tst - shift_limit
+    ci_upp = tst + shift_limit
+
+    if alternative == 'two-sided':
+        cl = 1 - (1 - cl) / 2
+
+    if alternative != "upper":
+        g = lambda q: cl - one_sample(z, alternative="less", seed=seed, \
+            reps=reps, stat=stat, center=q)[0]
+        ci_low = brentq(g, tst - 2 * shift_limit, tst + 2 * shift_limit)
+
+    if alternative != "lower":
+        g = lambda q: cl - one_sample(z, alternative="greater", seed=seed, \
+            reps=reps, stat=stat, center=q)[0]
+        ci_upp = brentq(g, tst - 2 * shift_limit, tst + 2 * shift_limit)
+
+    return ci_low, ci_upp
+
+
+    
