@@ -38,7 +38,7 @@ def corrcoef(x, y, group):
     return tst
 
 
-def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None):
+def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=True):
     r"""
     Simulate permutation p-value of stratified Spearman correlation test.
 
@@ -59,6 +59,10 @@ def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None):
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator.
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -73,12 +77,13 @@ def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None):
     tst = corrcoef(x, y, group)
     dist = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
-    right_pv = np.sum(dist >= tst) / reps
+    right_pv = np.sum(dist >= tst) / (reps+plus1)
 
     thePvalue = {
-        'greater': lambda p: p,
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+        'greater': lambda p: p + plus1/(reps+plus1),
+        'less': lambda p: 1 - (p + plus1/(reps+plus1)),
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+                                           1 - (p + plus1/(reps+plus1))])
     }
     return thePvalue[alternative](right_pv), tst, dist
 
@@ -139,7 +144,8 @@ def stratified_permutationtest(
         alternative='greater',
         reps=10**5,
         testStatistic='mean',
-        seed=None):
+        seed=None,
+        plus1=True):
     r"""
     Stratified permutation test based on differences in means.
 
@@ -192,6 +198,10 @@ def stratified_permutationtest(
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -218,9 +228,10 @@ def stratified_permutationtest(
     else:
         tst_fun = stats[testStatistic]
     thePvalue = {
-        'greater': lambda p: p,
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+        'greater': lambda p: p + plus1/(reps+plus1),
+        'less': lambda p: 1 - (p + plus1/(reps+plus1)),
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+                                           1 - (p + plus1/(reps+plus1))])
     }
 
     if len(conditions) < 2:
@@ -231,7 +242,7 @@ def stratified_permutationtest(
         for i in range(int(reps)):
             dist[i] = tst_fun(permute_within_groups(condition, group, prng))
 
-        right_pv = np.sum(dist >= tst) / reps
+        right_pv = np.sum(dist >= tst) / (reps+plus1)
         return thePvalue[alternative](right_pv), tst, dist
 
 
@@ -243,7 +254,8 @@ def stratified_two_sample(
         alternative="greater",
         reps=10**5,
         keep_dist=False,
-        seed=None):
+        seed=None,
+        plus1=True):
     r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -309,6 +321,10 @@ def stratified_two_sample(
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator.
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -351,9 +367,10 @@ def stratified_two_sample(
         tst_fun = stats[stat]
 
     thePvalue = {
-        'greater': lambda p: p,
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+        'greater': lambda p: p + plus1/(reps+plus1),
+        'less': lambda p: 1 - (p + plus1/(reps+plus1)),
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+                                           1 - (p + plus1/(reps+plus1))])
     }
     observed_tst = tst_fun(response)
 
@@ -363,9 +380,9 @@ def stratified_two_sample(
             dist[i] = tst_fun(permute_within_groups(
                 response, group, seed=prng))
         hits = np.sum(dist >= observed_tst)
-        return thePvalue[alternative](hits / reps), observed_tst, dist
+        return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
     else:
         hits = np.sum([(tst_fun(permute_within_groups(
             response, group, seed=prng)) >= observed_tst)
             for i in range(reps)])
-        return thePvalue[alternative](hits / reps), observed_tst
+        return thePvalue[alternative](hits / (reps+plus1)), observed_tst

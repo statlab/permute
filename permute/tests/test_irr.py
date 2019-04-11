@@ -25,10 +25,6 @@ res = RNG.binomial(1, .5, (R, Ns))
 def test_irr():
     rho_s = compute_ts(res)
     assert_almost_equal(rho_s, 0.51936507)
-    #res = spt(group, condition, response, iterations=1000)
-    #res1 = spt(group, condition, response, iterations=1000)
-    #assert_less(res[1], 0.01)
-    #assert_almost_equal(res[3], res1[3])
 
 
 def test_simulate_ts_dist():
@@ -37,7 +33,7 @@ def test_simulate_ts_dist():
                      'obs_ts': 0.51936507936507936,
                      'pvalue': 0.0624,
                      'num_perm': 10000}
-    res1 = simulate_ts_dist(res, seed=42)
+    res1 = simulate_ts_dist(res, seed=42, plus1=False)
     assert_equal(res1, expected_res1)
     expected_res2 = {'geq': 9457,
                      'obs_ts': 0.46285714285714286,
@@ -49,13 +45,12 @@ def test_simulate_ts_dist():
     assert_equal(res2['dist'].shape, (10000,))
 
 
-@attr('slow')
 def test_with_naomi_data():
     """ Test irr functionality using Naomi data."""
     x = nsgk()
     t = x[1]
     y = t[0]
-    res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42)
+    res = simulate_ts_dist(y, num_perm=10, keep_dist=True, seed=42, plus1=False)
     expected_res = {'dist': np.array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]),
                     'geq': 10,
                     'num_perm': 10,
@@ -80,7 +75,7 @@ def test_simulate_ts_dist_concordance():
     expected_res_conc = {'dist': None,
                          'geq': 0,
                          'obs_ts': 0.70476190476190481,
-                         'pvalue': 0.0,
+                         'pvalue': 1/10001,
                          'num_perm': 10000}
     res_conc = simulate_ts_dist(res2, seed=42)
     assert_equal(res_conc, expected_res_conc)
@@ -122,11 +117,11 @@ def test_simulate_npc_perfect():
         pval.append(res['pvalue'])
     perm_distr = np.asarray(d).transpose()
     overall1 = simulate_npc_dist(
-        perm_distr, size=time_stamps, pvalues=np.array(pval))
+        perm_distr, size=time_stamps, pvalues=np.array(pval), plus1=False)
     overall2 = simulate_npc_dist(
         perm_distr, size=time_stamps, obs_ts=tst)
     expected_overall = {'num_perm': 10000,
-                        'obs_npc': -0.0076080098859340932,
+                        'obs_npc': -0.007709695302872763,
                         'pvalue': 0.0}
     assert_equal(overall1, expected_overall)
     assert_equal(overall2, expected_overall)

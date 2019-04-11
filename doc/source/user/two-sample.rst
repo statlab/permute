@@ -147,11 +147,11 @@ experimental design.
     >>> print('Test statistic:', np.round(t, 5))
     Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.27824
+    P-value (two-sided): 0.27826
 
     >>> p, t = two_sample(maleid, femaleid, reps=100, stat='t', alternative='two-sided', seed=20) 
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.28
+    P-value (two-sided): 0.29703
 
 Since the permutation test also returns the approximately exact distribution of
 the test statistic, let’s compare the actual distribution with the
@@ -227,7 +227,7 @@ statistic.
     >>> print('Test statistic:', np.round(rho, 5))
     Test statistic: 0.4459
     >>> print('P-value:', np.round(p, 5))
-    P-value: 0.0901
+    P-value: 0.08979
 
 Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
