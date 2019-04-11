@@ -67,6 +67,8 @@ def test_two_sample():
     y = prng.normal(4, size=20)
     res = two_sample(x, y, seed=42)
     expected = (1.0, -2.90532344604777)
+    np.testing.assert_almost_equal(res, expected, 5)
+    res = two_sample(x, y, seed=42, plus1=False)
     np.testing.assert_almost_equal(res, expected)
 
     # This one has keep_dist = True
@@ -104,7 +106,7 @@ def test_two_sample():
     f = lambda u, v: np.max(
         [abs(sum(u <= val) / len(u) - sum(v <= val) / len(v))
          for val in np.concatenate([u, v])])
-    res = two_sample(x, y, seed=42, stat=f, reps=100)
+    res = two_sample(x, y, seed=42, stat=f, reps=100, plus1=False)
     expected = (0.68, 0.20000000000000007)
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
@@ -123,11 +125,11 @@ def test_two_sample_shift():
     expected_ts = -2.9053234460477784
 
     # Test null with shift other than zero
-    res = two_sample_shift(x, y, seed=42, shift=2)
+    res = two_sample_shift(x, y, seed=42, shift=2, plus1=False)
     np.testing.assert_equal(res[0], 1)
     np.testing.assert_equal(res[1], expected_ts)
     res2 = two_sample_shift(x, y, seed=42, shift=2, keep_dist=True)
-    np.testing.assert_equal(res2[0], 1)
+    np.testing.assert_almost_equal(res2[0], 1, 4)
     np.testing.assert_equal(res2[1], expected_ts)
     np.testing.assert_almost_equal(res2[2][:3], np.array(
         [1.55886506,  0.87281296,  1.13611123]))
@@ -137,10 +139,10 @@ def test_two_sample_shift():
 
     # Test null with shift -3
     res = two_sample_shift(x, y, seed=42, shift=(f, finv))
-    np.testing.assert_equal(res[0], 0.38074999999999998)
+    np.testing.assert_almost_equal(res[0], 0.38074999999999998, 5)
     np.testing.assert_equal(res[1], expected_ts)
     res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
-    np.testing.assert_almost_equal(res[0], 0.61925)
+    np.testing.assert_almost_equal(res[0], 0.61925, 5)
     np.testing.assert_equal(res[1], expected_ts)
 
     # Test null with multiplicative shift
@@ -174,7 +176,7 @@ def test_two_sample_conf_int():
     x = np.array(range(5))
     y = np.array(range(1, 6))
     res = two_sample_conf_int(x, y, seed=prng)
-    expected_ci = (-3.5, 1.012957978810817)
+    expected_ci = (-3.4999449, 1.0000413)
     np.testing.assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
     expected_ci = (-5, 1)
@@ -210,12 +212,15 @@ def test_one_sample():
     y = x - 1
 
     # case 1: one sample only
-    res = one_sample(x, seed=42, reps=100)
+    res = one_sample(x, seed=42, reps=100, plus1=False)
     np.testing.assert_almost_equal(res[0], 0.05999999)
+    np.testing.assert_equal(res[1], 2)
+    res = one_sample(x, seed=42, reps=100, plus1=True)
+    np.testing.assert_almost_equal(res[0], 0.069306930)
     np.testing.assert_equal(res[1], 2)
 
     # case 2: paired sample
-    res = one_sample(x, y, seed=42, reps=100)
+    res = one_sample(x, y, seed=42, reps=100, plus1=False)
     np.testing.assert_equal(res[0], 0.02)
     np.testing.assert_equal(res[1], 1)
 
@@ -224,7 +229,7 @@ def test_one_sample():
     assert_raises(ValueError, one_sample, x, y)
 
     # case 4: say keep_dist=True
-    res = one_sample(x, seed=42, reps=100, keep_dist=True)
+    res = one_sample(x, seed=42, reps=100, keep_dist=True, plus1=False)
     np.testing.assert_almost_equal(res[0], 0.05999999)
     np.testing.assert_equal(res[1], 2)
     np.testing.assert_equal(min(res[2]), -2)
@@ -233,6 +238,6 @@ def test_one_sample():
 
     # case 5: use t as test statistic
     y = x + prng.normal(size=5)
-    res = one_sample(x, y, seed=42, reps=100, stat="t", alternative="less")
+    res = one_sample(x, y, seed=42, reps=100, stat="t", alternative="less", plus1=False)
     np.testing.assert_almost_equal(res[0], 0.05)
     np.testing.assert_almost_equal(res[1], -1.4491883)
