@@ -79,7 +79,7 @@ def test_sim_corr():
     assert_almost_equal(res1[0], 1-res2[0])
     assert_equal(res1[1], res2[1])
     assert_equal(res1[1], res3[1])
-    assert_equal(res1[0], res3[0])
+    assert_equal(2*res1[0], res3[0])
 
 
 def test_strat_tests_equal():
@@ -102,7 +102,8 @@ def test_stratified_two_sample():
 
     res = stratified_two_sample(group, condition, response, reps=100,
                                 stat='mean', seed=42)
-    assert_equal(res, (0.19, 0.2))
+    assert_almost_equal(res[0], 0.198, 3)
+    assert_equal(res[1], 0.2)
     
     (p, t, dist) = stratified_two_sample(group, condition, response, reps=100,
                                 stat='mean', seed=42, keep_dist=True)
@@ -111,4 +112,5 @@ def test_stratified_two_sample():
     stat_fun = lambda u: sptm(group, condition, u, np.unique(group), np.unique(condition))
     res = stratified_two_sample(group, condition, response, reps=100,
                                 stat=stat_fun, seed=42)
-    assert_equal(res, (0.79, 0.30))
+    assert_almost_equal(res[0], 0.792, 3)
+    assert_equal(res[1], 0.30)
