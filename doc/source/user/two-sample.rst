@@ -227,7 +227,7 @@ statistic.
     >>> print('Test statistic:', np.round(rho, 5))
     Test statistic: 0.4459
     >>> print('P-value:', np.round(p, 5))
-    P-value: 0.09019
+    P-value: 0.08979
 
 Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
