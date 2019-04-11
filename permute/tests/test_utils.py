@@ -81,6 +81,7 @@ def test_get_random_state():
     prng5 = get_prng()
     prng6 = get_prng(None)
     prng7 = get_prng(np.random)
+    prng8 = get_prng(SHA256(42))
     assert(isinstance(prng1, RandomState))
     assert(isinstance(prng2, SHA256))
     assert(isinstance(prng3, RandomState))
@@ -95,6 +96,8 @@ def test_get_random_state():
     x5 = prng5.randint(0, 5, size=10)
     x6 = prng6.randint(0, 5, size=10)
     x7 = prng7.randint(0, 5, size=10)
+    x8 = prng8.randint(0, 5, size=10)
+    assert_equal(x2, x8)
     assert_equal(prng2.counter, 1)
     assert_equal(prng2.baseseed, 42)
     assert_equal(prng2.baseseed, prng4.baseseed)
@@ -113,11 +116,9 @@ def test_permute_within_group():
     group = np.repeat([1, 2, 3], 9)
     #response = np.zeros_like(group)
     #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
-
-    prng1 = RandomState(42)
-    prng2 = RandomState(42)
-    res1 = permute_within_groups(x, group, prng1)
-    res2 = permute_within_groups(x, group, prng2)
+    
+    res1 = permute_within_groups(x, group, seed=42)
+    res2 = permute_within_groups(x, group, seed=SHA256(42))
     np.testing.assert_equal(res1, res2)
 
     res3 = permute_within_groups(x, group)

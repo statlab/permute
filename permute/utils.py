@@ -11,7 +11,7 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import binom, hypergeom
 from cryptorandom.cryptorandom import SHA256
-
+from cryptorandom.sample import random_sample, random_permutation
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
                         **kwargs):
@@ -187,10 +187,9 @@ def permute_within_groups(x, group, seed=None):
     prng = get_prng(seed)
     permuted = x.copy()
 
-    # (avoid additional flops) -- maybe memoize
     for g in np.unique(group):
         gg = group == g
-        permuted[gg] = prng.permutation(permuted[gg])
+        permuted[gg] = random_permutation(permuted[gg], prng=prng)
     return permuted
 
 
@@ -242,7 +241,7 @@ def permute_rows(m, seed=None):
         prng.shuffle(row)
 
 
-def permute_incidence_fixed_sums(incidence, k=1):
+def permute_incidence_fixed_sums(incidence, k=1, seed=None):
     """
     Permute elements of a (binary) incidence matrix, keeping the
     row and column sums in-tact.
@@ -253,6 +252,11 @@ def permute_incidence_fixed_sums(incidence, k=1):
         Incidence matrix to permute.
     k : int
         The number of successful pairwise swaps to perform.
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
 
     Notes
     -----
@@ -271,15 +275,15 @@ def permute_incidence_fixed_sums(incidence, k=1):
     if incidence.min() != 0 or incidence.max() != 1:
         raise ValueError("Incidence matrix must be binary")
 
-    incidence = incidence.copy()
+    prng = get_prng(seed)
 
+    incidence = incidence.copy()
     n, m = incidence.shape
     rows = np.arange(n)
     cols = np.arange(m)
-
     K, k = k, 0
-    while k < K:
 
+    while k < K:
         swappable = False
         while not swappable:
             chosen_rows = np.random.choice(rows, 2, replace=False)
@@ -296,8 +300,8 @@ def permute_incidence_fixed_sums(incidence, k=1):
             if (len(potential_cols0) == 0) or (len(potential_cols1) == 0):
                 continue
 
-            p0 = np.random.choice(potential_cols0)
-            p1 = np.random.choice(potential_cols1)
+            p0 = prng.choice(potential_cols0)
+            p1 = prng.choice(potential_cols1)
 
             # These statements should always be true, so we should
             # never raise an assertion here
@@ -305,15 +309,11 @@ def permute_incidence_fixed_sums(incidence, k=1):
             assert incidence[s0, p1] == 0
             assert incidence[s1, p0] == 0
             assert incidence[s1, p1] == 1
-
             swappable = True
-
         i0 = incidence.copy()
         incidence[[s0, s0, s1, s1],
                   [p0, p1, p0, p1]] = [0, 1, 1, 0]
-
         k += 1
-
     return incidence
 
 
