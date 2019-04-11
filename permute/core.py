@@ -12,7 +12,7 @@ from scipy.stats import ttest_ind, ttest_1samp
 from .utils import get_prng, potential_outcomes
 
 
-def corr(x, y, alternative='greater', reps=10**4, seed=None):
+def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     r"""
     Simulate permutation p-value for Pearson correlation coefficient
 
@@ -37,8 +37,8 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None):
     prng = get_prng(seed)
     tst = np.corrcoef(x, y)[0, 1]
     sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
-    left_pv = np.sum(sims <= tst) / reps
-    right_pv = np.sum(sims >= tst) / reps
+    left_pv = (np.sum(sims <= tst)+plus1) / (reps+plus1)
+    right_pv = (np.sum(sims >= tst)+plus1) / (reps+plus1)
     if alternative == 'greater':
         pvalue = right_pv
     elif alternative == 'less':
@@ -48,7 +48,7 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None):
     return tst, pvalue, sims
 
 
-def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None):
+def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     r"""
     Simulate permutation p-value for Spearman correlation coefficient
 
@@ -64,6 +64,10 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None):
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -77,7 +81,7 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None):
 
 
 def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
-                    reps=10**5, keep_dist=False, seed=None):
+                    reps=10**5, keep_dist=False, seed=None, plus1=True):
     r"""
     Main workhorse function for two_sample and two_sample_shift
 
@@ -96,12 +100,16 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
         The alternative hypothesis to test
     keep_dist : bool
         flag for whether to store and return the array of values
-        of the irr test statistic
+        of the test statistic. Default is False.
     seed : RandomState instance or {None, int, RandomState instance}
         If None, the pseudorandom number generator is the RandomState
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -120,9 +128,10 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                    potential_outcomes_all[nx:, 1])
 
     thePvalue = {
-        'greater': lambda p: p,
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+        'greater': lambda p: p+plus1/(reps+plus1),
+        'less': lambda p: 1 - (p+plus1/(reps+plus1)),
+        'two-sided': lambda p: 2 * np.min([p+plus1/(reps+plus1), \
+                                    1 - (p+plus1/(reps+plus1))])
     }
 
     if keep_dist:
@@ -132,18 +141,18 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
             pp = np.take(potential_outcomes_all, rr, axis=0)
             dist[i] = tst_stat(pp[:nx, 0], pp[nx:, 1])
         hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / reps), dist
+        return thePvalue[alternative](hits / (reps+plus1)), dist
     else:
         hits = 0
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
             hits += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
-        return thePvalue[alternative](hits / reps)
+        return thePvalue[alternative](hits / (reps+plus1))
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None):
+               keep_dist=False, seed=None, plus1=True):
     r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -203,6 +212,10 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -233,7 +246,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     observed_tst = tst_fun(pot_out_all[:nx, 0], pot_out_all[nx:, 1])
 
     res = two_sample_core(pot_out_all, nx, tst_fun, alternative=alternative,
-                          reps=reps, keep_dist=keep_dist, seed=seed)
+                          reps=reps, keep_dist=keep_dist, seed=seed, plus1=plus1)
 
     if keep_dist:
         return res[0], observed_tst, res[1]
@@ -242,7 +255,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
-                     keep_dist=False, seed=None, shift=None):
+                     keep_dist=False, seed=None, shift=None, plus1=True):
     r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -307,6 +320,10 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             in distribution to y + shift.
         (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
             $x_i = f(y_i)$ and $y_i = f^{-1}(x_i)$
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -347,7 +364,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
     observed_tst = tst_fun(pot_out_all[:nx, 0], pot_out_all[nx:, 1])
 
     res = two_sample_core(pot_out_all, nx, tst_fun, alternative=alternative,
-                          reps=reps, keep_dist=keep_dist, seed=seed)
+                          reps=reps, keep_dist=keep_dist, seed=seed, plus1=plus1)
 
     if keep_dist:
         return res[0], observed_tst, res[1]
@@ -356,7 +373,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**4, stat="mean", shift=None):
+                        reps=10**4, stat="mean", shift=None, plus1=True):
     r"""
     One-sided or two-sided confidence interval for the parameter determining
     the treatment effect.  The default is the "shift model", where we are
@@ -406,6 +423,10 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         (a) If None, the relationship is assumed to be additive (e.g. x = y+d)
         (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
             $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -450,26 +471,28 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     if alternative != "upper":
         if shift is None:
             g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,
-                                                shift=q, reps=reps, stat=stat)[0]
+                                                shift=q, reps=reps, stat=stat, plus1=plus1)[0]
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
+                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
+                                                reps=reps, stat=stat, plus1=plus1)[0]
         ci_low = brentq(g, -2 * shift_limit, 2 * shift_limit)
 
     if alternative != "lower":
         if shift is None:
             g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed,
-                                                shift=q, reps=reps, stat=stat)[0]
+                                                shift=q, reps=reps, stat=stat, plus1=plus1)[0]
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), reps=reps, stat=stat)[0]
+                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
+                                                reps=reps, stat=stat, plus1=plus1)[0]
         ci_upp = brentq(g, -2 * shift_limit, 2 * shift_limit)
 
     return ci_low, ci_upp
 
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None):
+               keep_dist=False, seed=None, plus1=True):
     r"""
     One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
@@ -527,7 +550,10 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
-
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -549,9 +575,10 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         z = np.array(x) - np.array(y)
 
     thePvalue = {
-        'greater': lambda p: p,
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([p, 1 - p])
+        'greater': lambda p: p+plus1/(reps+plus1),
+        'less': lambda p: 1 - (p+plus1/reps+plus1),
+        'two-sided': lambda p: 2 * np.min([p+plus1/reps+plus1, \
+                                    1 - (p+plus1/(reps+plus1))])
     }
     stats = {
         'mean': lambda u: np.mean(u),
@@ -569,8 +596,8 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         for i in range(reps):
             dist.append(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n))))
         hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / reps), tst, dist
+        return thePvalue[alternative](hits / (reps+plus1)), tst, dist
     else:
         hits = np.sum([(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
                        for i in range(reps)])
-        return thePvalue[alternative](hits / reps), tst
+        return thePvalue[alternative](hits / (reps+plus1)), tst
