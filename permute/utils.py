@@ -6,11 +6,11 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import math
-import numbers
 
 import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import binom, hypergeom
+from cryptorandom.cryptorandom import SHA256
 
 
 def binom_conf_interval(n, x, cl=0.975, alternative="two-sided", p=None,
@@ -137,28 +137,30 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
 
 
 def get_prng(seed=None):
-    """Turn seed into a np.random.RandomState instance
+    """Turn seed into a cryptorandom instance
 
     Parameters
     ----------
-    seed : {None, int, RandomState}
-        If seed is None, return the RandomState singleton used by np.random.
-        If seed is an int, return a new RandomState instance seeded with seed.
-        If seed is already a RandomState instance, return it.
+    seed : {None, int, str, RandomState}
+        If seed is None, return generate a pseudo-random 63-bit seed using np.random
+        and return a new SHA256 instance seeded with it.
+        If seed is a number or str, return a new cryptorandom instance seeded with seed.
+        If seed is already a numpy.random RandomState or SHA256 instance, return it.
         Otherwise raise ValueError.
 
     Returns
     -------
     RandomState
     """
-    if seed is None or seed is np.random:
+    if seed is None:
+        seed = np.random.randint(2**63)
+    if seed is np.random:
         return np.random.mtrand._rand
-    if isinstance(seed, (numbers.Integral, np.integer)):
-        return np.random.RandomState(seed)
-    if isinstance(seed, np.random.RandomState):
+    if isinstance(seed, (int, np.integer, float, str)):
+        return SHA256(seed)
+    if isinstance(seed, (np.random.RandomState, SHA256)):
         return seed
-    raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
-                     ' instance' % seed)
+    raise ValueError('%r cannot be used to seed cryptorandom' % seed)
 
 
 def permute_within_groups(x, group, seed=None):
