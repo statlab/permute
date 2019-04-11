@@ -101,7 +101,7 @@ def compute_ts(ratings):
 
 
 def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
-                     keep_dist=False, seed=None):
+                     keep_dist=False, seed=None, plus1=True):
     r"""
     Simulates the permutation distribution of the irr test statistic for
     a matrix of ratings ``ratings``
@@ -131,6 +131,10 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -170,11 +174,11 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
             permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
     return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm,
-            "pvalue": geq / num_perm, "dist": dist}
+            "pvalue": (geq+plus1) / (num_perm+plus1), "dist": dist}
 
 
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
-                      pvalues=None):
+                      pvalues=None, plus1=True):
     r"""
     Simulates the permutation distribution of the combined NPC test
     statistic for S matrices of ratings ``ratings`` corresponding to
@@ -209,6 +213,10 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         The s-th entry is the p-value corresponding to $\rho_s$,
         the concordance for the s-th stratum.
         If not input, obs_ts must be specified.
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -233,7 +241,7 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
     if pvalues is None:
         pvalues = np.zeros(S)
         for j in range(S):
-            pvalues[j] = np.mean(perm_distr[:, j] >= obs_ts[j])
+            pvalues[j] = (np.sum(perm_distr[:, j] >= obs_ts[j])+plus1)/(B+plus1)
 
     obs_npc = combine_func(pvalues)
     res = npc(pvalues, perm_distr, combine_func, alternatives="greater")
