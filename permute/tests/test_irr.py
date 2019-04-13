@@ -29,13 +29,13 @@ def test_irr():
 
 def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
-                     'geq': 624,
+                     'geq': 604,
                      'obs_ts': 0.51936507936507936,
-                     'pvalue': 0.0624,
+                     'pvalue': 0.0604,
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42, plus1=False)
     assert_equal(res1, expected_res1)
-    expected_res2 = {'geq': 9457,
+    expected_res2 = {'geq': 9460,
                      'obs_ts': 0.46285714285714286,
                      'num_perm': 10000}
     res2 = simulate_ts_dist(res[:5], seed=42, keep_dist=True)
@@ -94,7 +94,9 @@ def test_simulate_npc_dist():
                         'pvalue': 0.0016}
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
-    assert_equal(obs_npc_res, expected_npc_res)
+    assert_equal(obs_npc_res['num_perm'], expected_npc_res['num_perm'])
+    assert_almost_equal(obs_npc_res['obs_npc'], expected_npc_res['obs_npc'], 3)
+    assert_almost_equal(obs_npc_res['pvalue'], expected_npc_res['pvalue'], 3)
 
 
 @raises(ValueError)
@@ -123,5 +125,5 @@ def test_simulate_npc_perfect():
     expected_overall = {'num_perm': 10000,
                         'obs_npc': -0.007709695302872763,
                         'pvalue': 0.0}
-    assert_equal(overall1, expected_overall)
-    assert_equal(overall2, expected_overall)
+    assert_almost_equal(overall1['obs_npc'], expected_overall['obs_npc'], 3)
+    assert_almost_equal(overall2['obs_npc'], expected_overall['obs_npc'], 3)

@@ -6,6 +6,8 @@ from nose.tools import raises
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
+from cryptorandom.cryptorandom import SHA256
+from cryptorandom.sample import random_sample, random_permutation
 
 from ..utils import (binom_conf_interval,
                      hypergeom_conf_interval,

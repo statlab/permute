@@ -92,11 +92,7 @@ def test_two_sample():
     res = two_sample(x, y, seed=42, keep_dist=True)
     expected_pv = 0.66505000000000003
     expected_ts = -0.13990200413154097
-    exp_dist_firstfive = [0.08939649,
-                          -0.26323896,
-                          0.15428355,
-                          -0.0294264,
-                          0.03318078]
+    exp_dist_firstfive = [-0.1312181,  0.1289127, -0.3936627, -0.1439892,  0.7477683]
     np.testing.assert_approx_equal(res[0], expected_pv, 2)
     np.testing.assert_equal(res[1], expected_ts)
     np.testing.assert_equal(len(res[2]), 100000)
@@ -107,7 +103,7 @@ def test_two_sample():
         [abs(sum(u <= val) / len(u) - sum(v <= val) / len(v))
          for val in np.concatenate([u, v])])
     res = two_sample(x, y, seed=42, stat=f, reps=100, plus1=False)
-    expected = (0.68, 0.20000000000000007)
+    expected = (0.62, 0.20000000000000007)
     np.testing.assert_equal(res[0], expected[0])
     np.testing.assert_equal(res[1], expected[1])
 
@@ -132,17 +128,17 @@ def test_two_sample_shift():
     np.testing.assert_almost_equal(res2[0], 1, 4)
     np.testing.assert_equal(res2[1], expected_ts)
     np.testing.assert_almost_equal(res2[2][:3], np.array(
-        [1.55886506,  0.87281296,  1.13611123]))
+        [1.140174 , 2.1491466, 2.6169429]))
     res = two_sample_shift(x, y, seed=42, shift=2, alternative="less")
     np.testing.assert_equal(res[0], 0)
     np.testing.assert_equal(res[1], expected_ts)
 
     # Test null with shift -3
     res = two_sample_shift(x, y, seed=42, shift=(f, finv))
-    np.testing.assert_almost_equal(res[0], 0.38075, 4)
+    np.testing.assert_almost_equal(res[0], 0.37, 2)
     np.testing.assert_equal(res[1], expected_ts)
     res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
-    np.testing.assert_almost_equal(res[0], 0.61925, 4)
+    np.testing.assert_almost_equal(res[0], 0.622, 2)
     np.testing.assert_equal(res[1], expected_ts)
 
     # Test null with multiplicative shift

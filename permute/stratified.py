@@ -34,7 +34,6 @@ def corrcoef(x, y, group):
     for g in np.unique(group):
         gg = group == g
         tst += np.corrcoef(x[gg], y[gg])[0, 1]
-
     return tst
 
 
@@ -74,6 +73,8 @@ def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=Tr
       the null distribution
     """
     prng = get_prng(seed)
+    x = x.astype(float)
+    y = y.astype(float)
     tst = corrcoef(x, y, group)
     dist = [corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
