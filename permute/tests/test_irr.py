@@ -29,13 +29,13 @@ def test_irr():
 
 def test_simulate_ts_dist():
     expected_res1 = {'dist': None,
-                     'geq': 604,
+                     'geq': 591,
                      'obs_ts': 0.51936507936507936,
-                     'pvalue': 0.0604,
+                     'pvalue': 0.0591,
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42, plus1=False)
     assert_equal(res1, expected_res1)
-    expected_res2 = {'geq': 9460,
+    expected_res2 = {'geq': 9507,
                      'obs_ts': 0.46285714285714286,
                      'num_perm': 10000}
     res2 = simulate_ts_dist(res[:5], seed=42, keep_dist=True)

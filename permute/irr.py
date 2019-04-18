@@ -164,17 +164,20 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
     if keep_dist:
         dist = np.zeros(num_perm)
         for i in range(num_perm):
-            permute_rows(r, prng)
+            r = permute_rows(r, prng)
             dist[i] = compute_ts(r)
         geq = np.sum(dist >= obs_ts)
     else:
         dist = None
         geq = 0
         for i in range(num_perm):
-            permute_rows(r, prng)
+            r = permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
-    return {"obs_ts": obs_ts, "geq": geq, "num_perm": num_perm,
-            "pvalue": (geq+plus1) / (num_perm+plus1), "dist": dist}
+    return {"obs_ts": obs_ts, 
+            "geq": geq, 
+            "num_perm": num_perm,
+            "pvalue": (geq+plus1) / (num_perm+plus1), 
+            "dist": dist}
 
 
 def simulate_npc_dist(perm_distr, size, obs_ts=None,
@@ -245,4 +248,6 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
 
     obs_npc = combine_func(pvalues)
     res = npc(pvalues, perm_distr, combine_func, alternatives="greater")
-    return {"obs_npc": obs_npc, "pvalue": res, "num_perm": B}
+    return {"obs_npc": obs_npc, 
+            "pvalue": res, 
+            "num_perm": B}
