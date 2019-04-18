@@ -226,8 +226,8 @@ statistic.
     >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
     >>> print('Test statistic:', np.round(rho, 5))
     Test statistic: 0.4459
-    >>> print('P-value:', np.round(p, 5))
-    P-value: 0.08989
+    >>> print('P-value:', np.round(p, 3))
+    P-value: 0.089
 
 Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
