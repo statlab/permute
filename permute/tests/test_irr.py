@@ -90,7 +90,7 @@ rho_perm = np.transpose(np.vstack((res1['dist'], res_conc['dist'])))
 
 def test_simulate_npc_dist():
     expected_npc_res = {'num_perm': 10000,
-                        'obs_npc': -0.010547525099011886,
+                        'obs_npc': -0.00998,
                         'pvalue': 0.0016}
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)

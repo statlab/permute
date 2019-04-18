@@ -139,7 +139,7 @@ def test_two_sample_shift():
 
     # Test null with shift -3
     res = two_sample_shift(x, y, seed=42, shift=(f, finv))
-    assert_almost_equal(res[0], 0.37, 2)
+    assert_almost_equal(res[0], 0.377, 2)
     assert_equal(res[1], expected_ts)
     res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
     assert_almost_equal(res[0], 0.622, 2)
