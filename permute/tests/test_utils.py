@@ -130,31 +130,31 @@ def test_permute_within_group():
 
 
 def test_permute():
-    prng = RandomState(42)
+    prng = SHA256(42)
 
-    x = prng.randint(10, size=20)
-    permute(x, prng)
-    expected = np.array([3, 2, 7, 9, 6, 5, 1, 6, 4, 2,
-                         7, 7, 7, 4, 4, 3, 1, 5, 7, 6])
-    np.testing.assert_array_equal(x, expected)
+    x = prng.randint(0, 10, size=20)
+    actual = permute(x, prng)
+    expected = np.array([6, 9, 5, 1, 3, 1, 4, 7, 6, 9, 
+                         8, 7, 2, 1, 9, 7, 8, 1, 8, 1])
+    np.testing.assert_array_equal(actual, expected)
 
-    permute(x)
-    np.testing.assert_equal(x.max(), 9)
-    np.testing.assert_equal(x.min(), 1)
+    actual = permute(x)
+    np.testing.assert_equal(actual.max(), 9)
+    np.testing.assert_equal(actual.min(), 1)
 
 
 def test_permute_rows():
-    prng = RandomState(42)
+    prng = SHA256(42)
 
-    x = prng.randint(10, size=20).reshape(2, 10)
-    permute_rows(x, prng)
-    expected = np.array([[2, 7, 7, 6, 4, 9, 3, 4, 6, 6],
-                         [7, 4, 5, 5, 3, 7, 1, 2, 7, 1]])
-    np.testing.assert_array_equal(x, expected)
+    x = prng.randint(0, 10, size=20).reshape(2, 10)
+    actual = permute_rows(x, prng)
+    expected = np.array([[9, 1, 8, 6, 9, 1, 5, 4, 3, 6], 
+                         [1, 7, 2, 1, 9, 7, 8, 7, 8, 1]])
+    np.testing.assert_array_equal(actual, expected)
 
-    permute_rows(x)
-    np.testing.assert_equal(x.max(), 9)
-    np.testing.assert_equal(x.min(), 1)
+    a = permute_rows(x)
+    np.testing.assert_equal(a.max(), 9)
+    np.testing.assert_equal(a.min(), 1)
 
 
 def test_permute_incidence_fixed_sums():
