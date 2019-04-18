@@ -153,7 +153,7 @@ def get_prng(seed=None):
     RandomState
     """
     if seed is None:
-        seed = np.random.randint(2**63)
+        seed = np.random.randint(0, 10**10) # generate an integer
     if seed is np.random:
         return np.random.mtrand._rand
     if isinstance(seed, (int, np.integer, float, str)):
@@ -212,8 +212,7 @@ def permute(x, seed=None):
     None
         Original array is permuted in-place, nothing is returned.
     """
-    prng = get_prng(seed)
-    prng.shuffle(x)
+    return random_permutation(x, prng=seed)
 
 
 def permute_rows(m, seed=None):
@@ -237,9 +236,10 @@ def permute_rows(m, seed=None):
     """
     prng = get_prng(seed)
 
+    mprime = []
     for row in m:
-        prng.shuffle(row)
-
+        mprime.append(random_permutation(row, prng=prng))
+    return np.array(mprime)
 
 def permute_incidence_fixed_sums(incidence, k=1, seed=None):
     """
