@@ -6,14 +6,16 @@ from nose.tools import assert_raises, raises
 
 import numpy as np
 from numpy.random import RandomState
-
+from numpy.testing import assert_equal, assert_almost_equal, assert_array_equal
+from scipy.stats import hypergeom
 
 from ..core import (corr,
                     spearman_corr,
                     two_sample,
                     two_sample_shift,
                     two_sample_conf_int,
-                    one_sample)
+                    one_sample,
+                    hypergeometric)
 
 
 def test_corr():
@@ -22,26 +24,26 @@ def test_corr():
     y = x
     res1 = corr(x, y, seed=prng)
     res2 = corr(x, y)
-    np.testing.assert_equal(len(res1), 3)
-    np.testing.assert_equal(len(res2), 3)
-    np.testing.assert_equal(res1[0], 1)
-    np.testing.assert_equal(res2[0], 1)
-    np.testing.assert_almost_equal(res1[1], res2[1], decimal=1)
+    assert_equal(len(res1), 3)
+    assert_equal(len(res2), 3)
+    assert_equal(res1[0], 1)
+    assert_equal(res2[0], 1)
+    assert_almost_equal(res1[1], res2[1], decimal=1)
 
     y = prng.randint(5, size=10)
     res1 = corr(x, y, alternative="less", seed=prng)
     res2 = corr(x, y, alternative="less")
-    np.testing.assert_equal(len(res1), 3)
-    np.testing.assert_equal(len(res2), 3)
-    np.testing.assert_equal(res1[0], res2[0])
-    np.testing.assert_almost_equal(res1[1], res2[1], decimal=1)
+    assert_equal(len(res1), 3)
+    assert_equal(len(res2), 3)
+    assert_equal(res1[0], res2[0])
+    assert_almost_equal(res1[1], res2[1], decimal=1)
 
     res1 = corr(x, y, alternative="two-sided", seed=prng)
     res2 = corr(x, y, alternative="greater")
-    np.testing.assert_equal(len(res1), 3)
-    np.testing.assert_equal(len(res2), 3)
-    np.testing.assert_equal(res1[0], res2[0])
-    np.testing.assert_almost_equal(res1[1], res2[1]*2, decimal=1)
+    assert_equal(len(res1), 3)
+    assert_equal(len(res2), 3)
+    assert_equal(res1[0], res2[0])
+    assert_almost_equal(res1[1], res2[1]*2, decimal=1)
 
 
 def test_spearman_corr():
@@ -53,9 +55,9 @@ def test_spearman_corr():
     
     prng = RandomState(42)
     res2 = spearman_corr(x, y, seed=prng)
-    np.testing.assert_equal(res1[0], res2[0])
-    np.testing.assert_equal(res1[1], res2[1])
-    np.testing.assert_array_equal(res1[2], res2[2])
+    assert_equal(res1[0], res2[0])
+    assert_equal(res1[1], res2[1])
+    assert_array_equal(res1[2], res2[2])
 
 
 @attr('slow')
@@ -67,36 +69,36 @@ def test_two_sample():
     y = prng.normal(4, size=20)
     res = two_sample(x, y, seed=42)
     expected = (1.0, -2.90532344604777)
-    np.testing.assert_almost_equal(res, expected, 5)
+    assert_almost_equal(res, expected, 5)
     res = two_sample(x, y, seed=42, plus1=False)
-    np.testing.assert_almost_equal(res, expected)
+    assert_almost_equal(res, expected)
 
     # This one has keep_dist = True
     y = prng.normal(1.4, size=20)
     res = two_sample(x, y, seed=42)
     res2 = two_sample(x, y, seed=42, keep_dist=True)
     expected = (0.96975, -0.54460818906623765)
-    np.testing.assert_approx_equal(res[0], expected[0], 2)
-    np.testing.assert_equal(res[1], expected[1])
-    np.testing.assert_approx_equal(res2[0], expected[0], 2)
-    np.testing.assert_equal(res2[1], expected[1])
+    assert_approx_equal(res[0], expected[0], 2)
+    assert_equal(res[1], expected[1])
+    assert_approx_equal(res2[0], expected[0], 2)
+    assert_equal(res2[1], expected[1])
 
     # Normal-normal, same means
     y = prng.normal(1, size=20)
     res = two_sample(x, y, seed=42)
     expected = (0.66505000000000003, -0.13990200413154097)
-    np.testing.assert_approx_equal(res[0], expected[0], 2)
-    np.testing.assert_equal(res[1], expected[1])
+    assert_approx_equal(res[0], expected[0], 2)
+    assert_equal(res[1], expected[1])
 
     # Check the permutation distribution
     res = two_sample(x, y, seed=42, keep_dist=True)
     expected_pv = 0.66505000000000003
     expected_ts = -0.13990200413154097
     exp_dist_firstfive = [-0.1312181,  0.1289127, -0.3936627, -0.1439892,  0.7477683]
-    np.testing.assert_approx_equal(res[0], expected_pv, 2)
-    np.testing.assert_equal(res[1], expected_ts)
-    np.testing.assert_equal(len(res[2]), 100000)
-    np.testing.assert_almost_equal(res[2][:5], exp_dist_firstfive)
+    assert_approx_equal(res[0], expected_pv, 2)
+    assert_equal(res[1], expected_ts)
+    assert_equal(len(res[2]), 100000)
+    assert_almost_equal(res[2][:5], exp_dist_firstfive)
 
     # Define a lambda function (K-S test)
     f = lambda u, v: np.max(
@@ -104,8 +106,8 @@ def test_two_sample():
          for val in np.concatenate([u, v])])
     res = two_sample(x, y, seed=42, stat=f, reps=100, plus1=False)
     expected = (0.62, 0.20000000000000007)
-    np.testing.assert_equal(res[0], expected[0])
-    np.testing.assert_equal(res[1], expected[1])
+    assert_equal(res[0], expected[0])
+    assert_equal(res[1], expected[1])
 
 
 def test_two_sample_shift():
@@ -122,37 +124,37 @@ def test_two_sample_shift():
 
     # Test null with shift other than zero
     res = two_sample_shift(x, y, seed=42, shift=2, plus1=False)
-    np.testing.assert_equal(res[0], 1)
-    np.testing.assert_equal(res[1], expected_ts)
+    assert_equal(res[0], 1)
+    assert_equal(res[1], expected_ts)
     res2 = two_sample_shift(x, y, seed=42, shift=2, keep_dist=True)
-    np.testing.assert_almost_equal(res2[0], 1, 4)
-    np.testing.assert_equal(res2[1], expected_ts)
-    np.testing.assert_almost_equal(res2[2][:3], np.array(
+    assert_almost_equal(res2[0], 1, 4)
+    assert_equal(res2[1], expected_ts)
+    assert_almost_equal(res2[2][:3], np.array(
         [1.140174 , 2.1491466, 2.6169429]))
     res = two_sample_shift(x, y, seed=42, shift=2, alternative="less")
-    np.testing.assert_equal(res[0], 0)
-    np.testing.assert_equal(res[1], expected_ts)
+    assert_equal(res[0], 0)
+    assert_equal(res[1], expected_ts)
 
     # Test null with shift -3
     res = two_sample_shift(x, y, seed=42, shift=(f, finv))
-    np.testing.assert_almost_equal(res[0], 0.37, 2)
-    np.testing.assert_equal(res[1], expected_ts)
+    assert_almost_equal(res[0], 0.37, 2)
+    assert_equal(res[1], expected_ts)
     res = two_sample_shift(x, y, seed=42, shift=(f, finv), alternative="less")
-    np.testing.assert_almost_equal(res[0], 0.622, 2)
-    np.testing.assert_equal(res[1], expected_ts)
+    assert_almost_equal(res[0], 0.622, 2)
+    assert_equal(res[1], expected_ts)
 
     # Test null with multiplicative shift
     res = two_sample_shift(x, y, seed=42,
         shift=(f_err, f_err_inv), alternative="two-sided")
-    np.testing.assert_equal(res[0], 0)
-    np.testing.assert_equal(res[1], expected_ts)
+    assert_equal(res[0], 0)
+    assert_equal(res[1], expected_ts)
 
     # Define a lambda function
     f = lambda u, v: np.max(u) - np.max(v)
     res = two_sample(x, y, seed=42, stat=f, reps=100)
     expected = (1, -3.2730653690015465)
-    np.testing.assert_equal(res[0], expected[0])
-    np.testing.assert_equal(res[1], expected[1])
+    assert_equal(res[0], expected[0])
+    assert_equal(res[1], expected[1])
 
 
 @raises(ValueError)
@@ -173,23 +175,23 @@ def test_two_sample_conf_int():
     y = np.array(range(1, 6))
     res = two_sample_conf_int(x, y, seed=prng)
     expected_ci = (-3.4999449, 1.0000413)
-    np.testing.assert_almost_equal(res, expected_ci)
+    assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="upper")
     expected_ci = (-5, 1)
-    np.testing.assert_almost_equal(res, expected_ci)
+    assert_almost_equal(res, expected_ci)
     res = two_sample_conf_int(x, y, seed=prng, alternative="lower")
     expected_ci = (-3, 5)
-    np.testing.assert_almost_equal(res, expected_ci)
+    assert_almost_equal(res, expected_ci)
 
     # Specify shift with a function pair
     shift = (lambda u, d: u + d, lambda u, d: u - d)
     res = two_sample_conf_int(x, y, seed=5, shift=shift)
-    np.testing.assert_almost_equal(res, (-3.5, 1))
+    assert_almost_equal(res, (-3.5, 1))
 
     # Specify shift with a multiplicative pair
     shift = (lambda u, d: u * d, lambda u, d: u / d)
     res = two_sample_conf_int(x, y, seed=5, shift=shift)
-    np.testing.assert_almost_equal(res, (-1, -1))
+    assert_almost_equal(res, (-1, -1))
 
 
 @raises(AssertionError)
@@ -209,16 +211,16 @@ def test_one_sample():
 
     # case 1: one sample only
     res = one_sample(x, seed=42, reps=100, plus1=False)
-    np.testing.assert_almost_equal(res[0], 0.05999999)
-    np.testing.assert_equal(res[1], 2)
+    assert_almost_equal(res[0], 0.05999999)
+    assert_equal(res[1], 2)
     res = one_sample(x, seed=42, reps=100, plus1=True)
-    np.testing.assert_almost_equal(res[0], 0.069306930)
-    np.testing.assert_equal(res[1], 2)
+    assert_almost_equal(res[0], 0.069306930)
+    assert_equal(res[1], 2)
 
     # case 2: paired sample
     res = one_sample(x, y, seed=42, reps=100, plus1=False)
-    np.testing.assert_equal(res[0], 0.02)
-    np.testing.assert_equal(res[1], 1)
+    assert_equal(res[0], 0.02)
+    assert_equal(res[1], 1)
 
     # case 3: break it - supply x and y, but not paired
     y = np.append(y, 10)
@@ -226,14 +228,55 @@ def test_one_sample():
 
     # case 4: say keep_dist=True
     res = one_sample(x, seed=42, reps=100, keep_dist=True, plus1=False)
-    np.testing.assert_almost_equal(res[0], 0.05999999)
-    np.testing.assert_equal(res[1], 2)
-    np.testing.assert_equal(min(res[2]), -2)
-    np.testing.assert_equal(max(res[2]), 2)
-    np.testing.assert_equal(np.median(res[2]), 0)
+    assert_almost_equal(res[0], 0.05999999)
+    assert_equal(res[1], 2)
+    assert_equal(min(res[2]), -2)
+    assert_equal(max(res[2]), 2)
+    assert_equal(np.median(res[2]), 0)
 
     # case 5: use t as test statistic
     y = x + prng.normal(size=5)
     res = one_sample(x, y, seed=42, reps=100, stat="t", alternative="less", plus1=False)
-    np.testing.assert_almost_equal(res[0], 0.05)
-    np.testing.assert_almost_equal(res[1], -1.4491883)
+    assert_almost_equal(res[0], 0.05)
+    assert_almost_equal(res[1], -1.4491883)
+
+
+def test_hypergeometric():
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 10**5, 'greater')[0], 
+                        1-hypergeom.cdf(3, 10, 5, 6), 2)
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 10**5, 'less')[0], 
+                        hypergeom.cdf(4, 10, 5, 6), 2)
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 10**5, 'two-sided')[0], 
+                        2*(1-hypergeom.cdf(3, 10, 5, 6)), 1)
+    
+    res1 = hypergeometric(4, 10, 5, 6, 10**2, 'greater', keep_dist=True, seed=12345)
+    res2 = hypergeometric(4, 10, 5, 6, 10**2, 'greater', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
+    
+    res1 = hypergeometric(4, 10, 5, 6, 10**2, 'less', keep_dist=True, seed=12345)
+    res2 = hypergeometric(4, 10, 5, 6, 10**2, 'less', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
+    
+    res1 = hypergeometric(4, 10, 5, 6, 10**2, 'less', keep_dist=True, seed=12345)
+    res2 = hypergeometric(4, 10, 5, 6, 10**2, 'less', keep_dist=False, seed=12345)
+    assert_equal(res1[0], res2[0])
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput1():
+    hypergeometric(5, 10, 2, 6)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput2():
+    hypergeometric(5, 10, 18, 6)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput3():
+    hypergeometric(5, 10, 6, 16)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput4():
+    hypergeometric(5, 10, 6, 2)
