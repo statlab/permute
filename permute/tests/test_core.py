@@ -8,6 +8,7 @@ import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal, assert_almost_equal, assert_array_equal
 from scipy.stats import hypergeom, binom
+from cryptorandom.cryptorandom import SHA256
 
 from ..core import (corr,
                     spearman_corr,
@@ -20,8 +21,8 @@ from ..core import (corr,
 
 
 def test_corr():
-    prng = RandomState(42)
-    x = prng.randint(5, size=10)
+    prng = SHA256(42)
+    x = prng.randint(0, 5, size=10)
     y = x
     res1 = corr(x, y, seed=prng)
     res2 = corr(x, y)
@@ -31,7 +32,7 @@ def test_corr():
     assert_equal(res2[0], 1)
     assert_almost_equal(res1[1], res2[1], decimal=1)
 
-    y = prng.randint(5, size=10)
+    y = prng.randint(0, 5, size=10)
     res1 = corr(x, y, alternative="less", seed=prng)
     res2 = corr(x, y, alternative="less")
     assert_equal(len(res1), 3)
@@ -48,13 +49,13 @@ def test_corr():
 
 
 def test_spearman_corr():
-    prng = RandomState(42)
+    prng = SHA256(42)
     x = np.array([2, 4, 6, 8, 10])
     y = np.array([1, 3, 5, 6, 9])
     xorder = np.array([1, 2, 3, 4, 5])
     res1 = corr(xorder, xorder, seed=prng)
     
-    prng = RandomState(42)
+    prng = SHA256(42)
     res2 = spearman_corr(x, y, seed=prng)
     assert_equal(res1[0], res2[0])
     assert_equal(res1[1], res2[1])
@@ -79,16 +80,16 @@ def test_two_sample():
     res = two_sample(x, y, seed=42)
     res2 = two_sample(x, y, seed=42, keep_dist=True)
     expected = (0.96975, -0.54460818906623765)
-    assert_approx_equal(res[0], expected[0], 2)
+    assert_almost_equal(res[0], expected[0], 2)
     assert_equal(res[1], expected[1])
-    assert_approx_equal(res2[0], expected[0], 2)
+    assert_almost_equal(res2[0], expected[0], 2)
     assert_equal(res2[1], expected[1])
 
     # Normal-normal, same means
     y = prng.normal(1, size=20)
     res = two_sample(x, y, seed=42)
     expected = (0.66505000000000003, -0.13990200413154097)
-    assert_approx_equal(res[0], expected[0], 2)
+    assert_almost_equal(res[0], expected[0], 2)
     assert_equal(res[1], expected[1])
 
     # Check the permutation distribution
@@ -96,7 +97,7 @@ def test_two_sample():
     expected_pv = 0.66505000000000003
     expected_ts = -0.13990200413154097
     exp_dist_firstfive = [-0.1312181,  0.1289127, -0.3936627, -0.1439892,  0.7477683]
-    assert_approx_equal(res[0], expected_pv, 2)
+    assert_almost_equal(res[0], expected_pv, 2)
     assert_equal(res[1], expected_ts)
     assert_equal(len(res[2]), 100000)
     assert_almost_equal(res[2][:5], exp_dist_firstfive)
@@ -220,7 +221,7 @@ def test_one_sample():
 
     # case 2: paired sample
     res = one_sample(x, y, seed=42, reps=100, plus1=False)
-    assert_equal(res[0], 0.02)
+    assert_equal(res[0], 0.05)
     assert_equal(res[1], 1)
 
     # case 3: break it - supply x and y, but not paired
@@ -238,7 +239,7 @@ def test_one_sample():
     # case 5: use t as test statistic
     y = x + prng.normal(size=5)
     res = one_sample(x, y, seed=42, reps=100, stat="t", alternative="less", plus1=False)
-    assert_almost_equal(res[0], 0.05)
+    assert_almost_equal(res[0], 0.08)
     assert_almost_equal(res[1], -1.4491883)
 
 
