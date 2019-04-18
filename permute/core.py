@@ -10,7 +10,7 @@ from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
 from fractions import Fraction
 
-from .utils import get_prng, potential_outcomes
+from .utils import get_prng, potential_outcomes, permute
 
 
 def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
@@ -37,7 +37,7 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     """
     prng = get_prng(seed)
     tst = np.corrcoef(x, y)[0, 1]
-    sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
+    sims = [np.corrcoef(permute(x, prng), y)[0, 1] for i in range(reps)]
     left_pv = (np.sum(sims <= tst)+plus1) / (reps+plus1)
     right_pv = (np.sum(sims >= tst)+plus1) / (reps+plus1)
     if alternative == 'greater':
@@ -595,11 +595,11 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     if keep_dist:
         dist = []
         for i in range(reps):
-            dist.append(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n))))
+            dist.append(tst_fun(z * (1 - 2 * prng.randint(0, 2, n))))
         hits = np.sum(dist >= tst)
         return thePvalue[alternative](hits / (reps+plus1)), tst, dist
     else:
-        hits = np.sum([(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
+        hits = np.sum([(tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))) >= tst
                        for i in range(reps)])
         return thePvalue[alternative](hits / (reps+plus1)), tst
 
