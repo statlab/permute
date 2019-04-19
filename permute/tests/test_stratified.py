@@ -7,6 +7,7 @@ from numpy.random import RandomState
 
 from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
 from nose.plugins.attrib import attr
+from cryptorandom.cryptorandom import SHA256
 
 from ..stratified import stratified_permutationtest as spt
 from ..stratified import stratified_permutationtest_mean as sptm
@@ -68,10 +69,10 @@ def test_corrcoef():
 
 #@attr('slow')
 def test_sim_corr():
-    prng = RandomState(42)
-    x = prng.rand(10)
+    prng = SHA256(42)
+    x = prng.random(10)
     y = x
-    group = prng.randint(3, size=10)
+    group = prng.randint(0, 3, size=10)
     res1 = sim_corr(x, y, group, seed=prng, reps=100)
     res2 = sim_corr(x, y, group, seed=prng, alternative='less', reps=100)
     res3 = sim_corr(x, y, group, seed=prng, alternative='two-sided', reps=100)
@@ -92,7 +93,7 @@ def test_strat_tests_equal():
     res2 = stratified_two_sample(group, condition, response, reps=100,
                                 stat='mean_within_strata', seed=42)
     assert_equal(res1[1], res2[1])
-    assert_less(math.fabs(res1[0]-res2[0]), 0.05)    
+    assert_less(math.fabs(res1[0]-res2[0]), 0.05)
     
 def test_stratified_two_sample():
     group = np.repeat([1, 2, 3], 10)
@@ -100,17 +101,17 @@ def test_stratified_two_sample():
     response = np.zeros_like(group)
     response[[0, 1, 3, 9, 10, 11, 18, 19, 20]] = 1
 
-    res = stratified_two_sample(group, condition, response, reps=100,
+    res = stratified_two_sample(group, condition, response, reps=1000,
                                 stat='mean', seed=42)
-    assert_almost_equal(res[0], 0.198, 3)
+    assert_almost_equal(res[0], 0.245, 2)
     assert_equal(res[1], 0.2)
     
-    (p, t, dist) = stratified_two_sample(group, condition, response, reps=100,
+    (p, t, dist) = stratified_two_sample(group, condition, response, reps=1000,
                                 stat='mean', seed=42, keep_dist=True)
     assert_equal(res, (p, t))
     
     stat_fun = lambda u: sptm(group, condition, u, np.unique(group), np.unique(condition))
     res = stratified_two_sample(group, condition, response, reps=100,
                                 stat=stat_fun, seed=42)
-    assert_almost_equal(res[0], 0.792, 3)
+    assert_almost_equal(res[0], 0.8712, 3)
     assert_equal(res[1], 0.30)

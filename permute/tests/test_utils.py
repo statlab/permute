@@ -6,6 +6,8 @@ from nose.tools import raises
 import numpy as np
 from numpy.random import RandomState
 from numpy.testing import assert_equal
+from cryptorandom.cryptorandom import SHA256
+from cryptorandom.sample import random_sample, random_permutation
 
 from ..utils import (binom_conf_interval,
                      hypergeom_conf_interval,
@@ -81,20 +83,26 @@ def test_get_random_state():
     prng5 = get_prng()
     prng6 = get_prng(None)
     prng7 = get_prng(np.random)
+    prng8 = get_prng(SHA256(42))
     assert(isinstance(prng1, RandomState))
+    assert(isinstance(prng2, SHA256))
     assert(isinstance(prng3, RandomState))
-    assert(isinstance(prng5, RandomState))
-    assert(isinstance(prng6, RandomState))
+    assert(isinstance(prng4, SHA256))
+    assert(isinstance(prng5, SHA256))
+    assert(isinstance(prng6, SHA256))
     assert(isinstance(prng7, RandomState))
-    x1 = prng1.randint(5, size=10)
-    x2 = prng2.randint(5, size=10)
-    x3 = prng3.randint(5, size=10)
-    x4 = prng4.randint(5, size=10)
-    x5 = prng5.randint(5, size=10)
-    x6 = prng6.randint(5, size=10)
-    x7 = prng7.randint(5, size=10)
-    assert_equal(x1, x2)
-    assert_equal(x3, x4)
+    x1 = prng1.randint(0, 5, size=10)
+    x2 = prng2.randint(0, 5, size=10)
+    x3 = prng3.randint(0, 5, size=10)
+    x4 = prng4.randint(0, 5, size=10)
+    x5 = prng5.randint(0, 5, size=10)
+    x6 = prng6.randint(0, 5, size=10)
+    x7 = prng7.randint(0, 5, size=10)
+    x8 = prng8.randint(0, 5, size=10)
+    assert_equal(x2, x8)
+    assert_equal(prng2.counter, 1)
+    assert_equal(prng2.baseseed, 42)
+    assert_equal(prng2.baseseed, prng4.baseseed)
     assert_equal(len(x5), 10)
     assert_equal(len(x6), 10)
     assert_equal(len(x7), 10)
@@ -102,7 +110,7 @@ def test_get_random_state():
 
 @raises(ValueError)
 def test_get_random_state_error():
-    get_prng(1.11)
+    get_prng([1, 1.11])
 
 
 def test_permute_within_group():
@@ -110,11 +118,9 @@ def test_permute_within_group():
     group = np.repeat([1, 2, 3], 9)
     #response = np.zeros_like(group)
     #response[[0,  1,  3,  9, 10, 11, 18, 19, 20]] = 1
-
-    prng1 = RandomState(42)
-    prng2 = RandomState(42)
-    res1 = permute_within_groups(x, group, prng1)
-    res2 = permute_within_groups(x, group, prng2)
+    
+    res1 = permute_within_groups(x, group, seed=42)
+    res2 = permute_within_groups(x, group, seed=SHA256(42))
     np.testing.assert_equal(res1, res2)
 
     res3 = permute_within_groups(x, group)
@@ -124,31 +130,31 @@ def test_permute_within_group():
 
 
 def test_permute():
-    prng = RandomState(42)
+    prng = SHA256(42)
 
-    x = prng.randint(10, size=20)
-    permute(x, prng)
-    expected = np.array([3, 2, 7, 9, 6, 5, 1, 6, 4, 2,
-                         7, 7, 7, 4, 4, 3, 1, 5, 7, 6])
-    np.testing.assert_array_equal(x, expected)
+    x = prng.randint(0, 10, size=20)
+    actual = permute(x, prng)
+    expected = np.array([6, 9, 5, 1, 3, 1, 4, 7, 6, 9, 
+                         8, 7, 2, 1, 9, 7, 8, 1, 8, 1])
+    np.testing.assert_array_equal(actual, expected)
 
-    permute(x)
-    np.testing.assert_equal(x.max(), 9)
-    np.testing.assert_equal(x.min(), 1)
+    actual = permute(x)
+    np.testing.assert_equal(actual.max(), 9)
+    np.testing.assert_equal(actual.min(), 1)
 
 
 def test_permute_rows():
-    prng = RandomState(42)
+    prng = SHA256(42)
 
-    x = prng.randint(10, size=20).reshape(2, 10)
-    permute_rows(x, prng)
-    expected = np.array([[2, 7, 7, 6, 4, 9, 3, 4, 6, 6],
-                         [7, 4, 5, 5, 3, 7, 1, 2, 7, 1]])
-    np.testing.assert_array_equal(x, expected)
+    x = prng.randint(0, 10, size=20).reshape(2, 10)
+    actual = permute_rows(x, prng)
+    expected = np.array([[9, 1, 8, 6, 9, 1, 5, 4, 3, 6], 
+                         [1, 7, 2, 1, 9, 7, 8, 7, 8, 1]])
+    np.testing.assert_array_equal(actual, expected)
 
-    permute_rows(x)
-    np.testing.assert_equal(x.max(), 9)
-    np.testing.assert_equal(x.min(), 1)
+    a = permute_rows(x)
+    np.testing.assert_equal(a.max(), 9)
+    np.testing.assert_equal(a.min(), 1)
 
 
 def test_permute_incidence_fixed_sums():

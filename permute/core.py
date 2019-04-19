@@ -8,8 +8,9 @@ from __future__ import (absolute_import, division,
 import numpy as np
 from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
+from fractions import Fraction
 
-from .utils import get_prng, potential_outcomes
+from .utils import get_prng, potential_outcomes, permute
 
 
 def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
@@ -36,7 +37,7 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     """
     prng = get_prng(seed)
     tst = np.corrcoef(x, y)[0, 1]
-    sims = [np.corrcoef(prng.permutation(x), y)[0, 1] for i in range(reps)]
+    sims = [np.corrcoef(permute(x, prng), y)[0, 1] for i in range(reps)]
     left_pv = (np.sum(sims <= tst)+plus1) / (reps+plus1)
     right_pv = (np.sum(sims >= tst)+plus1) / (reps+plus1)
     if alternative == 'greater':
@@ -594,10 +595,168 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     if keep_dist:
         dist = []
         for i in range(reps):
-            dist.append(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n))))
+            dist.append(tst_fun(z * (1 - 2 * prng.randint(0, 2, n))))
         hits = np.sum(dist >= tst)
         return thePvalue[alternative](hits / (reps+plus1)), tst, dist
     else:
-        hits = np.sum([(tst_fun(z * (1 - 2 * prng.binomial(1, .5, size=n)))) >= tst
+        hits = np.sum([(tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))) >= tst
                        for i in range(reps)])
         return thePvalue[alternative](hits / (reps+plus1)), tst
+
+
+def hypergeometric(x, N, n, G, reps=10**5, alternative='greater', keep_dist=False, seed=None):
+    
+    """
+    Parameters
+    ----------
+    x : int
+        number of `good` elements observed in the sample
+    N : int
+        population size
+    n : int
+       sample size
+    G : int
+       hypothesized number of good elements in population
+    reps : int
+       number of repetitions (default: 10**5)
+    alternative : {'greater', 'less', 'two-sided'}
+       alternative hypothesis to test (default: 'greater')
+    keep_dist : boolean
+       flag for whether to store and return the array of values of the test statistics (default: false)
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+    Returns
+    -------
+    float
+       estimated p-value
+    float 
+       test statistic
+    list
+       distribution of test statistics (only if keep_dist == True)
+    """
+    if n < x:
+        raise ValueError("Cannot observe more good elements than the sample size")
+    if N < n:
+        raise ValueError("Population size cannot be smaller than sample")
+    if N < G:
+        raise ValueError("Number of good elements can't exceed the population size")
+    if G < x:
+        raise ValueError("Number of observed good elements can't exceed the number in the population")
+
+    prng = get_prng(seed)
+    pop = [1]*G + [0]*(N-G)
+
+    def generate():
+        return np.sum(prng.sample(pop, k=n))
+
+    if keep_dist:
+        permutations = np.empty(reps)
+        for i in range(reps):
+            permutations[i] = generate()
+        if alternative == 'two-sided':
+            hits_up = np.sum(permutations >= x)
+            hits_low = np.sum(permutations <= x)
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
+        elif alternative == 'greater':
+            p_value = np.mean(permutations >= x)
+        else:
+            p_value = np.mean(permutations <= x)
+        return p_value, x, permutations
+
+    else:
+        hits_up = 0
+        hits_low = 0
+        for i in range(reps):
+            ts = generate()
+            hits_up += (ts >= x)
+            hits_low += (ts <= x)
+        
+        if alternative == 'two-sided':
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
+        elif alternative == 'greater':
+            p_value = hits_up/reps
+        else:
+            p_value = hits_low/reps
+
+        return p_value, x
+
+
+def binomial_p(x, n, p0, reps=10**5, alternative='greater', keep_dist=False, seed=None):
+    """
+    Parameters
+    ----------
+    x : array-like
+       list of elements consisting of x in {0, 1} where 0 represents a failure and
+       1 represents a seccuess
+    p0 : int
+       hypothesized number of successes in n trials
+    n : int
+       number of trials 
+    reps : int
+       number of repetitions (default: 10**5)
+    alternative : {'greater', 'less', 'two-sided'}
+       alternative hypothesis to test (default: 'greater')
+    keep_dis : boolean
+       flag for whether to store and return the array of values of the test statistics (default: false)
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+    Returns
+    -------
+    float
+       estimated p-value 
+    float
+       test statistic
+    list
+       distribution of test statistics (only if keep_dist == True)
+    """
+
+    if n < x:
+        raise ValueError("Cannot observe more successes than the population size")
+
+    prng = get_prng(seed)
+
+    if p0 == 0.5:
+        def generate():
+            return np.sum(prng.randint(0, 2, n))
+    else:
+        frac = Fraction(p0).limit_denominator()
+        pop = np.array([1]*frac.numerator + [0]*(frac.denominator-frac.numerator))
+        def generate():
+            return np.sum(prng.choices(pop, k=n))
+    
+    if keep_dist:
+        permutations = np.empty(reps)
+        for i in range(reps):
+            permutations[i] = generate()
+        if alternative == 'two-sided':
+            hits_up = np.sum(permutations >= x)
+            hits_low = np.sum(permutations <= x)
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
+        elif alternative == 'greater':
+            p_value = np.mean(permutations >= x)
+        else:
+            p_value = np.mean(permutations <= x)
+        return p_value, x, permutations
+
+    else:
+        hits_up = 0
+        hits_low = 0
+        for i in range(reps):
+            ts = generate()
+            hits_up += (ts >= x)
+            hits_low += (ts <= x)
+        
+        if alternative == 'two-sided':
+            p_value = 2*np.min([hits_up/reps, hits_low/reps, 0.5])
+        elif alternative == 'greater':
+            p_value = hits_up/reps
+        else:
+            p_value = hits_low/reps
+
+        return p_value, x
