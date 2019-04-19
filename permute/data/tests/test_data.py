@@ -100,3 +100,38 @@ def test_waterfalls():
     waterfalls = data.waterfalls()
     assert_equal(waterfalls.size, 42)
     assert_equal(len(waterfalls.dtype), 17)
+
+
+def test_ipat():
+    """ Test that "ipat" data can be loaded. """
+    ipat = data.ipat()
+    assert_equal(ipat.size, 20)
+    assert_equal(len(ipat.dtype), 2)
+
+
+def test_job():
+    """ Test that "job" data can be loaded. """
+    job = data.job()
+    assert_equal(job.size, 20)
+    assert_equal(len(job.dtype), 2)
+
+
+def test_fly():
+    """ Test that "fly" data can be loaded. """
+    fly = data.fly()
+    assert_equal(fly.size, 70)
+    assert_equal(len(fly.dtype), 8)
+
+
+def test_testosterone():
+    """ Test that "testosterone" data can be loaded. """
+    testosterone = data.testosterone()
+    assert_equal(testosterone.size, 11)
+    assert_equal(len(testosterone.dtype), 5)
+
+
+def test_worms():
+    """ Test that "worms" data can be loaded. """
+    worms = data.worms()
+    assert_equal(worms.size, 18)
+    assert_equal(len(worms.dtype), 2)
