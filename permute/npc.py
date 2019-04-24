@@ -96,7 +96,7 @@ def inverse_n_weight(pvalues, size):
 
 # Nonparametric combination of tests
 
-def t2p(distr, alternative="greater"):
+def t2p(distr, alternative="greater", plus1=True):
     r"""
     Use the empirical distribution of a test statistic to compute
     p-values for every value in the distribution.
@@ -107,6 +107,10 @@ def t2p(distr, alternative="greater"):
         Empirical distribution of statistic
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test (default is 'greater')
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -118,10 +122,10 @@ def t2p(distr, alternative="greater"):
         raise ValueError('Bad alternative')
     B = len(distr)
     if alternative != "less":
-        pupper = 1 - (rankdata(distr, method="min") / B) + 1 / B
+        pupper = 1 - rankdata(distr, method="min")/(plus1+B) + (1 + plus1)/(plus1+B)
         pvalue = pupper
     if alternative != "greater":
-        plower = rankdata(distr, method="min") / B
+        plower = rankdata(distr, method="min") / (plus1+B) + plus1/(plus1+B)
         pvalue = plower
     if alternative == "two-sided":
         pvalue = np.min([np.ones(B), 2 * np.min([plower, pupper], 0)], 0)
@@ -154,7 +158,7 @@ def check_combfunc_monotonic(pvalues, combfunc):
     return True
 
 
-def npc(pvalues, distr, combine="fisher", alternatives="greater"):
+def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
     r"""
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
     $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
@@ -183,6 +187,10 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         Optional, an array containing the alternatives for each partial test
         ('greater', 'less', 'two-sided') or a single alternative, if all tests
         have the same alternative hypothesis. Default is "greater".
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -217,7 +225,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
     combined_stat_distr = [0] * B
     pvalues_from_distr = np.zeros((B, n))
     for j in range(n):
-        pvalues_from_distr[:, j] = t2p(distr[:, j], alternatives[j])
+        pvalues_from_distr[:, j] = t2p(distr[:, j], alternatives[j], plus1=plus1)
     if combine == "liptak":
         toobig = np.where(pvalues_from_distr == 1)
         pvalues_from_distr[toobig] = 0.9999
@@ -225,4 +233,4 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater"):
         combine_func, 1, pvalues_from_distr)
 
     observed_combined_stat = combine_func(pvalues)
-    return np.sum(combined_stat_distr >= observed_combined_stat) / B
+    return (plus1 + np.sum(combined_stat_distr >= observed_combined_stat)) / (plus1+B)
