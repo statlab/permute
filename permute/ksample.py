@@ -102,7 +102,7 @@ def one_way_anova(x, group, overall_mean):
     """
     Test statistic for one-way ANOVA
     """
-    K = len(np.unique(group))
+    x = np.array(x)
     tst = 0
     for k in np.unique(group):
         group_k = x[group == k]

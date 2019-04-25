@@ -112,6 +112,7 @@ def test_two_sample():
     assert_equal(res[1], expected[1])
 
 
+@attr('slow')
 def test_two_sample_shift():
     prng = RandomState(42)
 
