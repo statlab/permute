@@ -227,7 +227,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
     for j in range(n):
         pvalues_from_distr[:, j] = t2p(distr[:, j], alternatives[j], plus1=plus1)
     if combine == "liptak":
-        toobig = np.where(pvalues_from_distr == 1)
+        toobig = np.where(pvalues_from_distr >= 1)
         pvalues_from_distr[toobig] = 0.9999
     combined_stat_distr = np.apply_along_axis(
         combine_func, 1, pvalues_from_distr)
