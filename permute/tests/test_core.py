@@ -135,7 +135,7 @@ def test_two_sample_shift():
     assert_almost_equal(res2[2][:3], np.array(
         [1.140174 , 2.1491466, 2.6169429]))
     res = two_sample_shift(x, y, seed=42, shift=2, alternative="less")
-    assert_almost_equal(res[0], 0, 5)
+    assert_almost_equal(res[0], 0, 3)
     assert_equal(res[1], expected_ts)
 
     # Test null with shift -3
@@ -149,7 +149,7 @@ def test_two_sample_shift():
     # Test null with multiplicative shift
     res = two_sample_shift(x, y, seed=42,
         shift=(f_err, f_err_inv), alternative="two-sided")
-    assert_almost_equal(res[0], 0, 4)
+    assert_almost_equal(res[0], 0, 3)
     assert_equal(res[1], expected_ts)
 
     # Define a lambda function
