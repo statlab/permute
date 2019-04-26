@@ -101,6 +101,22 @@ def k_sample(x, group, reps=10**5, stat='one-way anova',
 def one_way_anova(x, group, overall_mean):
     """
     Test statistic for one-way ANOVA
+
+    Parameters
+    ----------
+    x : array-like
+        Sample values
+    group : array-like
+        Group labels for each observation
+    overall_mean : float
+        mean of x
+
+    Returns
+    -------
+    float
+        the one-way ANOVA statistic 
+        $\sum_{k=1}^K n_k(\overline{X_k} - \overline{X})^2$
+        where $k$ indexes the groups
     """
     x = np.array(x)
     tst = 0
@@ -140,11 +156,13 @@ def bivariate_k_sample(x, group1, group2, reps=10**5, stat='two-way anova',
         number of repetitions
     stat : {'two-way anova'}
         The test statistic.
-
-        (a) If stat == 'two-way anova', use the sum of squared 
-               distances between the group means and the overall mean
-               weighted by group size.
-               $\sum_{k=1}^K n_k(\overline{X_k} - \overline{X})^2$
+;
+        (a) If stat == 'two-way anova', use a simpler statistic that
+               is permutationally equivalent to the F statistic:
+               $SSB/(SST - SSB).$
+               $SSB$ is the sum of squared deviations from the
+               overall mean for the group 2 means and $SST$ is
+               the sum of squared deviations of all observations
     keep_dist : bool
         flag for whether to store and return the array of values
         of the irr test statistic
@@ -202,6 +220,30 @@ def bivariate_k_sample(x, group1, group2, reps=10**5, stat='two-way anova',
 
 
 def two_way_anova(x, group1, group2, overall_mean):
+    """
+    Test statistic for two-way ANOVA. The test statistic
+    is permutationally equivalent to the F statistic.
+
+    Parameters
+    ----------
+    x : array-like
+        Sample values
+    group1 : array-like
+        Fixed group labels for each observation
+    group2 : array-like
+        Group labels that, under the null, are exchangeable for each 
+        level of group1
+    overall_mean : float
+        mean of x
+
+    Returns
+    -------
+    float
+        the statistic $SSB/(SST - SSB),$ where
+        $SSB$ is the sum of squared deviations from the
+        overall mean for the group 2 means and $SST$ is
+        the sum of squared deviations of all observations
+    """
     sst = np.sum((x - overall_mean)**2)
     ss2 = 0
     for g in np.unique(group2):
