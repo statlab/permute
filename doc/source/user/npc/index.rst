@@ -7,4 +7,5 @@ Software" by F. Pesarin and L. Salmaso.
 .. toctree::
    :maxdepth: 2
 
-   kenya
+   kenya.rst
+   chap1-4.rst
