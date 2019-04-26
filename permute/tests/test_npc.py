@@ -50,12 +50,12 @@ def test_t2p():
     obs = 5
     distr = np.array(range(-10, 11))
     expected = np.linspace(21, 1, num=21)/21
-    np.testing.assert_array_almost_equal(t2p(distr, "greater"), expected)
-    np.testing.assert_array_almost_equal(t2p(distr, "less"), expected[::-1])
+    np.testing.assert_array_almost_equal(t2p(distr, "greater", plus1=False), expected)
+    np.testing.assert_array_almost_equal(t2p(distr, "less", plus1=False), expected[::-1])
     
     expected2 = 2*np.concatenate([expected[::-1][:10], 
         [0.5], expected[11:]])
-    np.testing.assert_array_almost_equal(t2p(distr, "two-sided"), expected2)
+    np.testing.assert_array_almost_equal(t2p(distr, "two-sided", plus1=False), expected2)
 
 
 @raises(ValueError)
@@ -67,19 +67,19 @@ def test_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
-    res = npc(pvalues, distr, "fisher", "greater")
+    res = npc(pvalues, distr, "fisher", "greater", plus1=False)
     np.testing.assert_almost_equal(res, 0.33)
-    res = npc(pvalues, distr, "fisher", "less")
+    res = npc(pvalues, distr, "fisher", "less", plus1=False)
     np.testing.assert_almost_equal(res, 0.33)
-    res = npc(pvalues, distr, "fisher", "two-sided")
+    res = npc(pvalues, distr, "fisher", "two-sided", plus1=False)
     np.testing.assert_almost_equal(res, 0.31)
-    res = npc(pvalues, distr, "liptak", "greater")
+    res = npc(pvalues, distr, "liptak", "greater", plus1=False)
     np.testing.assert_almost_equal(res, 0.35)
-    res = npc(pvalues, distr, "tippett", "greater")
+    res = npc(pvalues, distr, "tippett", "greater", plus1=False)
     np.testing.assert_almost_equal(res, 0.25)
     res = npc(pvalues, distr, "fisher",
               alternatives=np.array(["less", "greater", "less",
-                                     "greater", "two-sided"]))
+                                     "greater", "two-sided"]), plus1=False)
     np.testing.assert_almost_equal(res, 0.38)
 
 
@@ -89,7 +89,7 @@ def test_npc_callable_combine():
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     size = np.array([2, 4, 6, 4, 2])
     combine = lambda p: inverse_n_weight(p, size)
-    res = npc(pvalues, distr, combine, "greater")
+    res = npc(pvalues, distr, combine, "greater", plus1=False)
     np.testing.assert_equal(res, 0.39)
 
 

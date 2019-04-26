@@ -210,3 +210,33 @@ def waterfalls():
 
     """
     return load(_os.path.join("npc", "waterfalls.csv"))
+
+
+def ipat():
+    """The IPAT dataset from Pesarin and Salmaso Chapter 1
+    """
+    return load(_os.path.join("npc", "examples_chapters_1-4", "ipat.csv"))
+
+
+def job():
+    """The job satisfaction dataset from Pesarin and Salmaso Chapter 1
+    """
+    return load(_os.path.join("npc", "examples_chapters_1-4", "job.csv"))
+
+
+def fly():
+    """The fly dataset from Pesarin and Salmaso Chapter 4
+    """
+    return load(_os.path.join("npc", "examples_chapters_1-4", "fly.csv"))
+
+
+def testosterone():
+    """The testosterone dataset from Pesarin and Salmaso Chapter 2
+    """
+    return load(_os.path.join("npc", "examples_chapters_1-4", "testosterone.csv"))
+
+
+def worms():
+    """The worms dataset from Pesarin and Salmaso Chapter 1
+    """
+    return load(_os.path.join("npc", "examples_chapters_1-4", "worms.csv"))

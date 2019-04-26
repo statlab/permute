@@ -29,6 +29,10 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
+    plus1 : bool
+        flag for whether to add 1 to the numerator and denominator of the
+        p-value based on the empirical permutation distribution. 
+        Default is True.
 
     Returns
     -------
@@ -130,9 +134,10 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
 
     thePvalue = {
         'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - (p+plus1/(reps+plus1)),
-        'two-sided': lambda p: 2 * np.min([p+plus1/(reps+plus1), \
-                                    1 - (p+plus1/(reps+plus1))])
+        'less': lambda p: 1 - p,
+        'two-sided': lambda p: 2 * np.min([0.5, \
+                                    p+plus1/(reps+plus1), \
+                                    1 - p])
     }
 
     if keep_dist:
@@ -577,9 +582,10 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
 
     thePvalue = {
         'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - (p+plus1/reps+plus1),
-        'two-sided': lambda p: 2 * np.min([p+plus1/reps+plus1, \
-                                    1 - (p+plus1/(reps+plus1))])
+        'less': lambda p: 1 - p,
+        'two-sided': lambda p: 2 * np.min([0.5, \
+                                    p+plus1/(reps+plus1), \
+                                    1 - p])
     }
     stats = {
         'mean': lambda u: np.mean(u),
