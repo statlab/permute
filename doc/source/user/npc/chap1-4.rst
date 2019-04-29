@@ -90,8 +90,8 @@ This example is shown in Chapter 4.6, page 240.
 
     >>> npc_distr = np.vstack([first_moment[2], second_moment[2]]).T
     >>> global_p = npc(partial_pvalues, npc_distr, alternatives='two-sided')
-    >>> print("Global p-value:", global_p)
-    Global p-value: 0.0016
+    >>> print("Global p-value:", round(global_p, 4))
+    Global p-value: 0.0018
 
 Fly Data
 --------
