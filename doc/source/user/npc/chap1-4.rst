@@ -18,8 +18,8 @@ This example is shown in Chapter 1.9, page 33-34.
 
     >>> prng = get_prng(2019426)
     >>> ipat = data.ipat()
-    >>> res = one_sample(ipat.ya, ipat.yb, stat='mean', alternative='greater', seed=prng)
-    >>> print("P-value:", round(res[0], 4))
+    >>> ipat_res = one_sample(ipat.ya, ipat.yb, stat='mean', alternative='greater', seed=prng)
+    >>> print("P-value:", round(ipat_res[0], 4))
     P-value: 0.0002
 
 Job Satisfaction Data
@@ -32,8 +32,8 @@ This example is shown in Chapter 1.10.3, page 41-42.
     :nofigs:
 
     >>> job = data.job()
-    >>> res = two_sample(job.x[job.y == 1], job.x[job.y == 2], stat='mean', reps = 10**5, alternative='greater', seed=prng)
-    >>> print("P-value:", round(res[0], 4))
+    >>> job_res = two_sample(job.x[job.y == 1], job.x[job.y == 2], stat='mean', reps = 10**5, alternative='greater', seed=prng)
+    >>> print("P-value:", round(job_res[0], 4))
     P-value: 0.0003
 
 Worms Data
@@ -69,6 +69,30 @@ This example is shown in Cbapter 2.6.1, page 92-93.
     >>> print("ANOVA p-value:", round(res[0], 4))
     ANOVA p-value: 0.0002
 
+
+Massaro-Blair Data
+------------------
+This example is shown in Chapter 4.6, page 240.
+
+.. plot::
+    :context:
+    :nofigs:
+
+    >>> from permute.npc import npc
+    >>> mb = data.massaro_blair()
+    >>> sam1 = mb.y[mb.group == 1]
+    >>> sam2 = mb.y[mb.group == 2]
+    >>> first_moment = two_sample(sam1, sam2, alternative='two-sided', reps=5000, keep_dist=True, seed=42)
+    >>> second_moment = two_sample(sam1**2, sam2**2, alternative='two-sided', reps=5000, keep_dist=True, seed=423)
+    >>> partial_pvalues = np.array([first_moment[0], second_moment[0]])
+    >>> print("Partial p-values:", round(first_moment[0], 3), round(second_moment[0], 3))
+    Partial p-values: 0.017 0.009
+
+    >>> npc_distr = np.vstack([first_moment[2], second_moment[2]]).T
+    >>> global_p = npc(partial_pvalues, npc_distr, alternatives='two-sided')
+    >>> print("Global p-value:", round(global_p, 4))
+    Global p-value: 0.0018
+
 Fly Data
 --------
 
@@ -76,7 +100,6 @@ This example is shown in Chapter 4.6, page 253.
 
 ::
 
-    from permute.npc import npc
     fly = data.fly()
     vars = fly.dtype.names[1:]
     results = {}
@@ -104,3 +127,41 @@ This example is shown in Chapter 4.6, page 253.
     ak combined p-value: 0.0
     print("Tippett combined p-value:", tippett)
     Tippett combined p-value: 0.0
+
+
+Post-hoc conditional power analysis
+-----------------------------------
+
+These examples come from Chapter 3.2.1, pages 139-141.
+
+:: 
+
+    # IPAT data
+    alpha = 0.01
+    effect_est = ipat_res[1]
+    print("Estimated difference in means:", effect_est)
+    Estimated difference in means: 3.1
+    n1 = len(ipat.ya)
+    normalized_sam = np.hstack([ipat.ya - effect_est, ipat.yb])
+    simulated_pvalues = np.zeros(1000)
+    for i in range(1000):
+        prng.shuffle(normalized_sam)
+        simulated_pvalues[i] = one_sample(normalized_sam[:n1], normalized_sam[n1:], stat='mean', alternative='greater', seed=1234, reps=1000)[0]
+    power = np.mean(simulated_pvalues >= alpha)
+    print("Estimated power:", power)
+    Estimated power: 0.988
+
+    # Job data
+    effect_est = job_res[1]
+    print("Estimated difference in means:", effect_est)
+    Estimated difference in means: 17.29166666666667
+	
+    xnorm = job.x
+    xnorm[job.y == 1] = job.x[job.y == 1] - effect_est
+    simulated_pvalues = np.zeros(1000)
+    for i in range(1000):
+        prng.shuffle(xnorm)
+        simulated_pvalues[i] = two_sample(xnorm[job.y == 1], xnorm[job.y == 2], stat='mean', reps = 10**3, alternative='greater', seed=1234)[0]
+    power = np.mean(simulated_pvalues >= alpha)
+    print("Estimated power:", power)
+    Estimated power: 0.994
