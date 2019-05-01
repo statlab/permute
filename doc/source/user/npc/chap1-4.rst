@@ -53,7 +53,7 @@ This example is shown in Chapter 1.11.12, page 47-48.
 Testosterone Data
 -----------------
 
-This example is shown in Cbapter 2.6.1, page 92-93.
+This example is shown in Chapter 2.6.1, page 92-93.
 
 .. plot::
     :context:
@@ -138,30 +138,34 @@ These examples come from Chapter 3.2.1, pages 139-141.
 
     # IPAT data
     alpha = 0.01
+    prng = get_prng(78943501)
     effect_est = ipat_res[1]
     print("Estimated difference in means:", effect_est)
     Estimated difference in means: 3.1
-    n1 = len(ipat.ya)
-    normalized_sam = np.hstack([ipat.ya - effect_est, ipat.yb])
+
+    z = ipat.ya - ipat.yb - effect_est
     simulated_pvalues = np.zeros(1000)
     for i in range(1000):
-        prng.shuffle(normalized_sam)
-        simulated_pvalues[i] = one_sample(normalized_sam[:n1], normalized_sam[n1:], stat='mean', alternative='greater', seed=1234, reps=1000)[0]
-    power = np.mean(simulated_pvalues >= alpha)
+        prng.shuffle(z)
+        sim_sam = z.copy() + effect_est
+        simulated_pvalues[i] = one_sample(sim_sam, stat='mean', alternative='greater', seed=1234, reps=1000)[0]
+    power = np.mean(simulated_pvalues <= alpha)
     print("Estimated power:", power)
-    Estimated power: 0.988
+    Estimated power: 1.0
 
     # Job data
     effect_est = job_res[1]
     print("Estimated difference in means:", effect_est)
     Estimated difference in means: 17.29166666666667
-	
+
     xnorm = job.x
     xnorm[job.y == 1] = job.x[job.y == 1] - effect_est
     simulated_pvalues = np.zeros(1000)
     for i in range(1000):
         prng.shuffle(xnorm)
-        simulated_pvalues[i] = two_sample(xnorm[job.y == 1], xnorm[job.y == 2], stat='mean', reps = 10**3, alternative='greater', seed=1234)[0]
-    power = np.mean(simulated_pvalues >= alpha)
+        sim_sam = xnorm.copy()
+        sim_sam[job.y==1] = sim_sam[job.y==1] + effect_est
+        simulated_pvalues[i] = two_sample(sim_sam[job.y == 1], sim_sam[job.y == 2], stat='mean', reps = 10**3, alternative='greater', seed=1234)[0]
+    power = np.mean(simulated_pvalues <= alpha)
     print("Estimated power:", power)
-    Estimated power: 0.994
+    Estimated power: 0.96
