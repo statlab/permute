@@ -136,6 +136,84 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
     return ci_low, ci_upp
 
 
+def hypergeometric(x, N, n, G, alternative='greater'):
+    
+    """
+    Parameters
+    ----------
+    x : int
+        number of `good` elements observed in the sample
+    N : int
+        population size
+    n : int
+       sample size
+    G : int
+       hypothesized number of good elements in population
+    alternative : {'greater', 'less', 'two-sided'}
+       alternative hypothesis to test (default: 'greater')
+    Returns
+    -------
+    float
+       estimated p-value
+    """
+    if n < x:
+        raise ValueError("Cannot observe more good elements than the sample size")
+    if N < n:
+        raise ValueError("Population size cannot be smaller than sample")
+    if N < G:
+        raise ValueError("Number of good elements can't exceed the population size")
+    if G < x:
+        raise ValueError("Number of observed good elements can't exceed the number in the population")
+
+    assert alternative in ("two-sided", "less", "greater")
+    if n < x:
+        raise ValueError("Cannot observe more successes than the population size")
+
+    plower = hypergeom.cdf(x, N, G, n)
+    pupper = hypergeom.sf(x-1, N, G, n)
+    if alternative == 'two-sided':
+        pvalue = 2*np.min([plower, pupper, 0.5])
+    elif alternative == 'greater':
+        pvalue = pupper
+    elif alternative == 'less':
+        pvalue = plower
+    return pvalue
+
+
+def binomial_p(x, n, p, alternative='greater'):
+    """
+    Parameters
+    ----------
+    x : array-like
+       list of elements consisting of x in {0, 1} where 0 represents a failure and
+       1 represents a seccuess
+    p : int
+       hypothesized number of successes in n trials
+    n : int
+       number of trials 
+    alternative : {'greater', 'less', 'two-sided'}
+       alternative hypothesis to test (default: 'greater')
+    Returns
+    -------
+    float
+       estimated p-value 
+    """
+
+    assert alternative in ("two-sided", "less", "greater")
+    if n < x:
+        raise ValueError("Cannot observe more successes than the population size")
+
+    plower = binom.cdf(x, n, p)
+    pupper = binom.sf(x-1, n, p)
+    if alternative == 'two-sided':
+        pvalue = 2*np.min([plower, pupper, 0.5])
+    elif alternative == 'greater':
+        pvalue = pupper
+    elif alternative == 'less':
+        pvalue = plower
+    return pvalue
+
+
 def get_prng(seed=None):
     """Turn seed into a cryptorandom instance
 
