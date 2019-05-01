@@ -20,8 +20,8 @@ from permute.utils import get_prng
 
 def test_worms_ksample():
     worms = data.worms()
-    res = k_sample(worms.x, worms.y, stat='one-way anova', reps=1000)
-    assert_array_less(0.005, res[0])
+    res = k_sample(worms.x, worms.y, stat='one-way anova', reps=1000, seed=1234)
+    assert_array_less(0.006, res[0])
     assert_array_less(res[0], 0.02)
 
 
