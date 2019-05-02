@@ -116,9 +116,7 @@ assume they hold and calculate a "p-value" anyway.
     >>> df = len(maleid) + len(femaleid) - 2
     >>> t, p = stats.ttest_ind(maleid, femaleid)
     >>> print('Test statistic:', np.round(t, 5))
-    Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
-    P-value (two-sided): 0.20043
 
 Note that the computed "p-value" is above the standard cut-offs for
 reporting significance in the literature.
