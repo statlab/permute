@@ -33,7 +33,7 @@ def load(f):
     x : array like
         Data loaded from permute.data_dir.
     """
-    return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",")
+    return np.recfromcsv(_os.path.join(data_dir, f), delimiter=",", encoding=None)
 
 
 def nsgk():

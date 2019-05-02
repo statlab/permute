@@ -14,7 +14,8 @@ from ..npc import (fisher,
                    inverse_n_weight,
                    t2p,
                    npc,
-                   check_combfunc_monotonic)
+                   check_combfunc_monotonic,
+                   fwer_minp)
 
 
 def test_fisher():
@@ -134,3 +135,21 @@ def test_mono_checker_in_npc():
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     bad_comb_function = lambda p: -1*fisher(p)
     npc(pvalues, distr, bad_comb_function)
+
+
+@raises(ValueError)
+def test_minp_bad_distr():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
+    fwer_minp(pvalues, distr, "fisher", "greater")
+
+
+@raises(ValueError)
+def test_minp_one_pvalue():
+    prng = RandomState(55)
+    pvalues = np.array([1])
+    distr = prng.uniform(low=0, high=10, size=20).reshape(20, 1)
+    npc(pvalues, distr, "fisher", "greater")
+
+# TODO: more fwer_minp tests

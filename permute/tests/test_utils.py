@@ -5,12 +5,15 @@ from nose.tools import raises
 
 import numpy as np
 from numpy.random import RandomState
-from numpy.testing import assert_equal
+from numpy.testing import assert_equal, assert_almost_equal
+from scipy.stats import hypergeom, binom
 from cryptorandom.cryptorandom import SHA256
 from cryptorandom.sample import random_sample, random_permutation
 
 from ..utils import (binom_conf_interval,
                      hypergeom_conf_interval,
+                     hypergeometric,
+                     binomial_p,
                      get_prng,
                      permute,
                      permute_rows,
@@ -73,6 +76,48 @@ def test_hypergeom_conf_interval():
 
     res6 = hypergeom_conf_interval(2, 1, 5, cl=0.95, alternative="lower", G=0)
     np.testing.assert_equal(res6, expected3)
+
+
+def test_hypergeometric():
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'greater'), 
+                        1-hypergeom.cdf(3, 10, 5, 6))
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'less'), 
+                        hypergeom.cdf(4, 10, 5, 6))
+    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'two-sided'), 
+                        2*(1-hypergeom.cdf(3, 10, 5, 6)))
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput1():
+    hypergeometric(5, 10, 2, 6)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput2():
+    hypergeometric(5, 10, 18, 6)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput3():
+    hypergeometric(5, 10, 6, 16)
+
+
+@raises(ValueError)
+def test_hypergeometric_badinput4():
+    hypergeometric(5, 10, 6, 2)
+
+
+def test_binomial_p():
+    assert_almost_equal(binomial_p(5, 10, 0.5, 'greater'), 
+                        1-binom.cdf(4, 10, 0.5))
+    assert_almost_equal(binomial_p(5, 10, 0.5, 'less'), 
+                        binom.cdf(5, 10, 0.5))
+    assert_almost_equal(binomial_p(5, 10, 0.5, 'two-sided'), 1)
+
+
+@raises(ValueError)
+def test_binomial_badinput():
+    binomial_p(10, 5, 0.5)
 
 
 def test_get_random_state():

@@ -234,3 +234,57 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
 
     observed_combined_stat = combine_func(pvalues)
     return (plus1 + np.sum(combined_stat_distr >= observed_combined_stat)) / (plus1+B)
+
+
+def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater'):
+    """
+    Adjust p-values using the permutation "minP" variant of Holm's step-up method.
+    
+    When considering a closed testing procedure, the adjusted p-value 
+    $p_i$ for a given hypothesis $H_i$ is the maximum of all p-values for tests 
+    including $H_i$ as a special case (including the p-value for the $H_i$ 
+    test itself).
+    
+    Parameters
+    ----------
+    pvalues : array_like
+        Array of p-values to combine
+    distr : array_like
+        Array of dimension [B, n] where B is the number of permutations and n is
+        the number of partial hypothesis tests. The $i$th column of distr contains
+        the simulated null distribution of the $i$th test statistic under $H_{0i}$.
+    combine : {'fisher', 'liptak', 'tippett'} or function
+        The combining function to use. Default is "fisher".
+        Valid combining functions must take in p-values as their argument and be
+        monotonically decreasing in each p-value.
+    alternatives : array_like
+        Optional, an array containing the alternatives for each partial test
+        ('greater', 'less', 'two-sided') or a single alternative, if all tests
+        have the same alternative hypothesis. Default is "greater".
+
+    Returns
+    -------
+    array of adjusted p-values
+    """
+    j = len(pvalues)
+    if j < 2:
+        raise ValueError("One p-value: nothing to adjust!")
+    if j != distr.shape[1]:
+        raise ValueError("Mismatch in number of p-values and size of distr")
+
+    # Order the p-values
+    order = np.argsort(pvalues)
+    pvalues_ord = pvalues[order]
+    distr_ord = distr[:, order]
+
+    # Step down tree of combined hypotheses, from global test to test of the
+    # individual hypothesis with largest p-value
+    pvalues_adjusted = np.zeros(j)
+    pvalues_adjusted[0] = npc(pvalues_ord, distr_ord)
+    for jj in range(1, j-1):
+        next_pvalue = npc(pvalues_ord[jj:], distr_ord[:, jj:], combine=combine,
+                        alternatives=alternatives)
+        pvalues_adjusted[jj] = np.max([next_pvalue, pvalues_adjusted[jj-1]])
+    pvalues_adjusted[j-1] = np.max([pvalues_ord[j-1], pvalues_adjusted[j-2]])
+    pvalues_adjusted = pvalues_adjusted[np.argsort(pvalues)]
+    return pvalues_adjusted

@@ -219,26 +219,24 @@ equivalent to using the mean rating for male-identified instructors as a test
 statistic.
 
 .. plot::
-    :context:
-    :nofigs:
+    :context: close-figs
 
     >>> from permute.stratified import sim_corr
     >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
-    >>> print('Test statistic:', np.round(rho, 5))
-    Test statistic: 0.4459
-    >>> print('P-value:', np.round(p, 3))
-    P-value: 0.089
-
-Finally, I plot the simulated distribution of the test statistics under the
-null conditioned on the observed data in Figure [fig:figure2].
-
-.. plot::
-    :context: close-figs
-
     >>> n, bins, patches = plt.hist(sim, 40, histtype='bar')
     >>> plt.axvline(x=rho, color='red')
     <matplotlib.lines.Line2D object at ...>
     >>> plt.show()
+
+Finally, I plot the simulated distribution of the test statistics under the
+null conditioned on the observed data in Figure [fig:figure2].
+
+::
+
+    >>> print('Test statistic:', np.round(rho, 5))
+    Test statistic: 0.4459
+    >>> print('P-value:', np.round(p, 3))
+    P-value: 0.09
 
 At the 10% level, there is a significant difference in ratings between
 male-identified and female-identified instructors. We could not have computed
