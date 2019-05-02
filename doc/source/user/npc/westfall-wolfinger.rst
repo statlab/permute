@@ -26,6 +26,6 @@ When running the two sample test, use the same initial PRNG seed in order to kee
     >>> pvalues_adj_tippett = fwer_minp(pvalues, distr, alternatives="two-sided", combine="tippett")
     >>> print("Adjusted p-values \nFisher:", pvalues_adj_fisher, "\nLiptak:", pvalues_adj_liptak, "\nTippett:", pvalues_adj_tippett)
     Adjusted p-values 
-    Fisher: [0.08758248 0.04779044 0.00379924]
-    Liptak: [0.08758248 0.04619076 0.00379924]
+    Fisher: [0.08758248 0.04779044 0.00379924] 
+    Liptak: [0.08758248 0.04619076 0.00379924] 
     Tippett: [0.08758248 0.0619876  0.00379924]
