@@ -116,7 +116,9 @@ assume they hold and calculate a "p-value" anyway.
     >>> df = len(maleid) + len(femaleid) - 2
     >>> t, p = stats.ttest_ind(maleid, femaleid)
     >>> print('Test statistic:', np.round(t, 5))
+    Test statistic: 1.32905
     >>> print('P-value (two-sided):', np.round(p, 5))
+    P-value (two-sided): 0.20043
 
 Note that the computed "p-value" is above the standard cut-offs for
 reporting significance in the literature.
@@ -216,16 +218,14 @@ Because reported gender is just a binary indicator, the correlation is
 equivalent to using the mean rating for male-identified instructors as a test
 statistic.
 
-.. plot::
-    :context:
-    :nofigs:
+::
 
     >>> from permute.stratified import sim_corr
     >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
     >>> print('Test statistic:', np.round(rho, 5))
     Test statistic: 0.4459
     >>> print('P-value:', np.round(p, 3))
-    P-value: 0.089
+    P-value: 0.09
 
 Finally, I plot the simulated distribution of the test statistics under the
 null conditioned on the observed data in Figure [fig:figure2].
@@ -233,6 +233,7 @@ null conditioned on the observed data in Figure [fig:figure2].
 .. plot::
     :context: close-figs
 
+    >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)
     >>> n, bins, patches = plt.hist(sim, 40, histtype='bar')
     >>> plt.axvline(x=rho, color='red')
     <matplotlib.lines.Line2D object at ...>
