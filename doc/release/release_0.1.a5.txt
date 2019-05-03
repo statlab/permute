@@ -1,0 +1,39 @@
+Announcement: permute 0.1.a5
+===========================
+
+We're happy to announce the release of permute v0.1.a5!
+
+permute is permutation testing and confidence set toolbox for Python.
+
+For more information, examples, and documentation, please visit our website:
+
+http://statlab.github.io/permute/
+
+
+New Features
+------------
+
+k-sample tests and the minP familywise error rate correction
+
+
+Improvements
+------------
+
+Every permutation test has a `plus1` option to add 1 to the numerator and denominator of the p-value.
+
+The default PRNG is the SHA256-based CS-PRNG from `cryptorandom`, which should produce higher quality pseudo-random numbers.
+
+
+API Changes
+-----------
+`hypergeom` and `binomial_p` no longer use permutations to calculate p-values.
+
+The `seed` argument to functions is now used to seed a SHA256 PRNG instance, rather than np.random.
+
+Deprecations
+------------
+
+
+Contributors to this release
+----------------------------
+Kellie Ottoboni

@@ -15,7 +15,7 @@ AUTHOR_EMAIL = 'permute@googlegroups.com'
 URL = 'http://statlab.github.io/permute/'
 LICENSE = 'BSD License'
 DOWNLOAD_URL = 'http://github.com/statlab/permute'
-VERSION = '0.1.alpha4'
+VERSION = '0.1.alpha5'
 PYTHON_VERSION = (2, 7)
 
 INSTALL_REQUIRES = [
