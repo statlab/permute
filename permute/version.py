@@ -1,2 +1,2 @@
 # THIS FILE IS GENERATED FROM THE PERMUTE SETUP.PY
-version='0.1.alpha4'
+version='0.1.alpha5'
