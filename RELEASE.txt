@@ -21,7 +21,7 @@ How to make a new release of ``permute``
 
   - Update ``version`` and ``release`` in ``doc/source/conf.py`` and commit
   - Build a clean version of the docs.  Run ``python setup.py install`` in the
-    root dir, then ``make clean; make html`` in the docs.
+    root dir, then ``make clean; make html; make pdflatex`` in the docs.
   - Push upstream: ``make github``.
 
 - Add the version number as a tag in git::
@@ -33,13 +33,13 @@ How to make a new release of ``permute``
 
 - Push the new meta-data to github::
 
-   git push --tags origin master
+   git push --tags upstream master
 
 - Publish on PyPi::
 
-   python setup.py register
-   python setup.py sdist upload
-   python setup.py bdist_wheel upload
+   python setup.py sdist
+   python setup.py bdist_wheel
+   twine upload dist/*
 
 - Increase the version number
 
