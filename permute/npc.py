@@ -29,7 +29,7 @@ def fisher(pvalues):
     float
         Fisher's combined test statistic
     """
-    return -2 * np.log(np.prod(pvalues))
+    return -2 * np.sum(np.log(pvalues))
 
 
 def liptak(pvalues):

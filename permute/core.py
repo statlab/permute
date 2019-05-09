@@ -205,7 +205,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             the test statistic could be written:
 
             f = lambda u, v: np.max( \
-                [abs(sum(u<=v)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
+                [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
 
     alternative : {'greater', 'less', 'two-sided'}
