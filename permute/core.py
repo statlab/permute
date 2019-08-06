@@ -196,7 +196,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             approximating the permutation distribution.
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) If stat is a function (a callable object), the test statistic is
-            that function.  The function should take two arguments:
+            that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
@@ -204,7 +204,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
-                [abs(sum(u<=v)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
+                [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
 
     alternative : {'greater', 'less', 'two-sided'}
@@ -298,7 +298,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             approximating the permutation distribution.
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) If stat is a function (a callable object), the test statistic is
-            that function.The function should take two arguments:
+            that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
@@ -306,7 +306,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
-                [abs(sum(u<=v)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
+                [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
                 
     alternative : {'greater', 'less', 'two-sided'}
@@ -414,7 +414,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             approximating the permutation distribution.
             The t-statistic is computed using scipy.stats.ttest_ind
         (c) If stat is a function (a callable object), the test statistic is
-            that function.The function should take two arguments:
+            that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
@@ -422,7 +422,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
-                [abs(sum(u<=v)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
+                [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
                 
     shift : float
