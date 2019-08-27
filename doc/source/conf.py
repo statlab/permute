@@ -38,7 +38,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.doctest',
     'sphinx.ext.viewcode',
-    'sphinx.ext.pngmath',
+    'sphinx.ext.imgmath',
     'sphinx.ext.napoleon',
     'sphinxcontrib.bibtex',
     'dollarmath',
