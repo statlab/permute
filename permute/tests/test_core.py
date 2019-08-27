@@ -107,6 +107,23 @@ def test_two_sample():
     expected = (0.62, 0.20000000000000007)
     assert_equal(res[0], expected[0])
     assert_equal(res[1], expected[1])
+    
+    # check tail computations
+    x = np.ones(10)
+    y = np.ones(10)
+    res = two_sample(x, y, reps=10**2, stat='mean', alternative="greater",
+               keep_dist=False, seed=None, plus1=True)
+    assert_equal(res[0], 1)
+    assert_equal(res[1], 0)
+    res = two_sample(x, y, reps=10**2, stat='mean', alternative="less",
+               keep_dist=False, seed=None, plus1=True)
+    assert_equal(res[0], 1)
+    assert_equal(res[1], 0)
+    res = two_sample(x, y, reps=10**2, stat='mean', alternative="two-sided",
+               keep_dist=False, seed=None, plus1=True)
+    assert_equal(res[0], 1)
+    assert_equal(res[1], 0)
+    
 
 
 @attr('slow')
