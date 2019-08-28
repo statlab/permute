@@ -613,6 +613,8 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         pDn = np.sum(dist <= tst)/(reps + plus1)
         return thePvalue[alternative](pUp, pDn), tst, dist
     else:
+        hitsUp = 0
+        hitsDn = 0
         for i in range(reps):
             tv = tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))
             hitsUp += (tv >= tst)
