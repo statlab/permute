@@ -10,8 +10,7 @@ from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
 from fractions import Fraction
 
-from utils import get_prng, potential_outcomes, permute
-from scipy.special import binom
+from .utils import get_prng, potential_outcomes, permute
 
 
 def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
