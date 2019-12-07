@@ -16,7 +16,6 @@ from .utils import get_prng, potential_outcomes, permute
 def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     r"""
     Simulate permutation p-value for Pearson correlation coefficient
-
     Parameters
     ----------
     x : array-like
@@ -33,7 +32,6 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     tuple
@@ -56,7 +54,6 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
 def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     r"""
     Simulate permutation p-value for Spearman correlation coefficient
-
     Parameters
     ----------
     x : array-like
@@ -73,7 +70,6 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     tuple
@@ -89,7 +85,6 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                     reps=10**5, keep_dist=False, seed=None, plus1=True):
     r"""
     Main workhorse function for two_sample and two_sample_shift
-
     Parameters
     ----------
     potential_outcomes_all : array-like
@@ -115,7 +110,6 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     float
@@ -133,11 +127,11 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                    potential_outcomes_all[nx:, 1])
 
     thePvalue = {
-        'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([0.5, \
-                                    p+plus1/(reps+plus1), \
-                                    1 - p])
+        'greater': lambda pUp, pDn: pUp+plus1/(reps+plus1),
+        'less': lambda pUp, pDn: pDn+plus1/(reps+plus1),
+        'two-sided': lambda pUp, pDn: 2 * np.min([0.5, \
+                                    pUp+plus1/(reps+plus1), \
+                                    pDn+plus1/(reps+plus1)])
     }
 
     if keep_dist:
@@ -146,15 +140,20 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
             dist[i] = tst_stat(pp[:nx, 0], pp[nx:, 1])
-        hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / (reps+plus1)), dist
+        pUp = np.sum(dist >= tst)/(reps+plus1)
+        pDn = np.sum(dist <= tst)/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), dist
     else:
-        hits = 0
+        hitsUp = 0
+        hitsDn = 0
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
-            hits += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
-        return thePvalue[alternative](hits / (reps+plus1))
+            hitsUp += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
+            hitsDn += tst_stat(pp[:nx, 0], pp[nx:, 1]) <= tst
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn)
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
@@ -163,21 +162,17 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
     reps replications.
-
     Tests the hypothesis that x and y are a random partition of x,y
     against the alternative that x comes from a population with mean
-
     (a) greater than that of the population from which y comes,
         if side = 'greater'
     (b) less than that of the population from which y comes,
         if side = 'less'
     (c) different from that of the population from which y comes,
         if side = 'two-sided'
-
     If ``keep_dist``, return the distribution of values of the test statistic;
     otherwise, return only the number of permutations for which the value of
     the test statistic and p-value.
-
     Parameters
     ----------
     x : array-like
@@ -188,7 +183,6 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         number of repetitions
     stat : {'mean', 't'}
         The test statistic.
-
         (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
             (equivalently, sum(x), since those are monotonically related)
         (b) If stat == 't', the test statistic is the two-sample t-statistic--
@@ -202,11 +196,9 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
             between the empirical distributions of the two samples, 
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
-
             f = lambda u, v: np.max( \
                 [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
-
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
     keep_dist : bool
@@ -221,7 +213,6 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     float
@@ -265,21 +256,17 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
     reps replications.
-
     Tests the hypothesis that x and y are a random partition of x,y
     against the alternative that x comes from a population with mean
-
     (a) greater than that of the population from which y comes,
         if side = 'greater'
     (b) less than that of the population from which y comes,
         if side = 'less'
     (c) different from that of the population from which y comes,
         if side = 'two-sided'
-
     If ``keep_dist``, return the distribution of values of the test statistic;
     otherwise, return only the number of permutations for which the value of
     the test statistic and p-value.
-
     Parameters
     ----------
     x : array-like
@@ -290,7 +277,6 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
         number of repetitions
     stat : {'mean', 't'}
         The test statistic.
-
         (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
             (equivalently, sum(x), since those are monotonically related)
         (b) If stat == 't', the test statistic is the two-sample t-statistic--
@@ -304,7 +290,6 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
             between the empirical distributions of the two samples, 
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
-
             f = lambda u, v: np.max( \
                 [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
@@ -321,7 +306,6 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
         If RandomState instance, seed is the pseudorandom number generator
     shift : float
         The relationship between x and y under the null hypothesis.
-
         (a) A constant scalar shift in the distribution of y. That is, x is equal
             in distribution to y + shift.
         (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
@@ -330,7 +314,6 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     float
@@ -379,14 +362,17 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
 
 
 def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
-                        reps=10**4, stat="mean", shift=None, plus1=True):
+                        reps=10**5, stat="mean", shift=None, plus1=True):
+    
+    #unfinish for shift is tuple 
+    # we want to find the largest number such that the p-value is greater than or equal to alpha
+
     r"""
     One-sided or two-sided confidence interval for the parameter determining
     the treatment effect.  The default is the "shift model", where we are
     interested in the parameter d such that x is equal in distribution to
     y + d. In general, if we have some family of invertible functions parameterized
     by d, we'd like to find d such that x is equal in distribution to f(y, d).
-
     Parameters
     ----------
     x : array-like
@@ -406,7 +392,6 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         number of repetitions in two_sample
     stat : {'mean', 't'}
         The test statistic.
-
         (a) If stat == 'mean', the test statistic is (mean(x) - mean(y))
             (equivalently, sum(x), since those are monotonically related)
         (b) If stat == 't', the test statistic is the two-sample t-statistic--
@@ -420,14 +405,12 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             For instance, if the test statistic is the Kolmogorov-Smirnov distance 
             between the empirical distributions of the two samples, 
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
-
             f = lambda u, v: np.max( \
                 [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
                 
     shift : float
         The relationship between x and y under the null hypothesis.
-
         (a) If None, the relationship is assumed to be additive (e.g. x = y+d)
         (b) A tuple containing the function and its inverse $(f, f^{-1})$, so
             $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$
@@ -435,12 +418,10 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     tuple
         the estimated confidence limits
-
     Notes
     -----
     xtol : float
@@ -455,48 +436,72 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
 
     if shift is None:
         shift_limit = max(abs(max(x) - min(y)), abs(max(y) - min(x)))
-        # FIXME: unused observed
-        # observed = np.mean(x) - np.mean(y)
+        Delta = np.mean(x) - np.mean(y)
+        delta = max(Delta, np.sqrt(abs(np.mean(x-y))), 1)
     elif isinstance(shift, tuple):
         assert (callable(shift[0])), "Supply f and finverse in shift tuple"
         assert (callable(shift[1])), "Supply f and finverse in shift tuple"
         f = shift[0]
         finverse = shift[1]
         # Check that f is increasing in d; this is very ad hoc!
-        assert (f(5, 1) < f(5, 2)), "f must be increasing in the parameter d"
-        shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)),
-                          abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
-        # FIXME: unused observed
-        # observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)
+        shift_limit = max(abs(fsolve(lambda d: f(max(y), d) - min(x), 0)), abs(fsolve(lambda d: f(min(y), d) - max(x), 0)))
+        for i in range(len(y)):
+            last = f(i,0)
+            for d in range(min(y), max(y), 1): #step size???
+                temp = f(i, d)
+                assert temp >= last
+                assert last <= temp
+                last = temp
     else:
         raise ValueError("Bad input for shift")
     ci_low = -shift_limit
     ci_upp = shift_limit
-
+    
+    
     if alternative == 'two-sided':
         cl = 1 - (1 - cl) / 2
-
+        
     if alternative != "upper":
         if shift is None:
-            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,
-                                                shift=q, reps=reps, stat=stat, plus1=plus1)[0]
+            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed, 
+                                                    shift=q, reps=reps, stat=stat, plus1=plus1)[0]
+            if g(Delta)>0:
+                k = 1
+                while g(Delta-k*delta)>0:
+                    k=k+1
+                    if g(Delta - k*delta) <= 0:
+                        break
+                ci_low = brentq(g, Delta-(k-1)*delta , Delta-k*delta)
+            else:
+                ci_low = -shift_limit
+        
         else:
-            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
-                                                reps=reps, stat=stat, plus1=plus1)[0]
-        ci_low = brentq(g, -2 * shift_limit, 2 * shift_limit)
-
+            g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed, 
+                                                    shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
+                                                    reps=reps, stat=stat, plus1=plus1)[0]
+            ci_low = brentq(g, -2 * shift_limit, 2 * shift_limit)
+            
     if alternative != "lower":
         if shift is None:
-            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed,
-                                                shift=q, reps=reps, stat=stat, plus1=plus1)[0]
-        else:
-            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
-                                                reps=reps, stat=stat, plus1=plus1)[0]
-        ci_upp = brentq(g, -2 * shift_limit, 2 * shift_limit)
+            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed, 
+                                                    shift=q, reps=reps, stat=stat, plus1=plus1)[0]
+            if g(Delta) > 0:
+                k = 1
+                while g(Delta+k*delta)>0:
+                    k=k+1
+                    if g(Delta + k*delta) <= 0:
+                        break
+                ci_upp  = brentq(g, Delta+(k-1)*delta , Delta+k*delta)
+            else:
+                ci_upp = shift_limit
 
+        else:
+            g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed, 
+                                                    shift=(lambda u: f(u, q), lambda u: finverse(u, q)),
+                                                    reps=reps, stat=stat, plus1=plus1)[0]
+            ci_upp = brentq(g, -2 *shift_limit, 2 * shift_limit)     
     return ci_low, ci_upp
+
 
 
 def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
@@ -505,25 +510,20 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
     reps replications.
-
     Alternatively, a permutation test for equality of means of two paired
     samples.
-
     Tests the hypothesis that x is distributed symmetrically symmetric about 0
     (or x and y have the same center) against the alternative that x comes from
     a population with mean
-
     (a) greater than 0 (greater than that of the population from which y comes),
         if side = 'greater'
     (b) less than 0 (less than that of the population from which y comes),
         if side = 'less'
     (c) different from 0 (different from that of the population from which y comes),
         if side = 'two-sided'
-
     If ``keep_dist``, return the distribution of values of the test statistic;
     otherwise, return only the number of permutations for which the value of
     the test statistic and p-value.
-
     Parameters
     ----------
     x : array-like
@@ -536,7 +536,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     stat : {'mean', 't'}
         The test statistic. The statistic is computed based on either z = x or
         z = x - y, if y is specified.
-
         (a) If stat == 'mean', the test statistic is mean(z).
         (b) If stat == 't', the test statistic is the t-statistic--
             but the p-value is still estimated by the randomization,
@@ -546,7 +545,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
             data and compute the test function from it. For instance, if the
             test statistic is the maximum absolute value, $\max_i |z_i|$,
             the test statistic could be written:
-
             f = lambda u: np.max(abs(u))
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
@@ -562,7 +560,6 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-
     Returns
     -------
     float
@@ -583,11 +580,11 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         z = np.array(x) - np.array(y)
 
     thePvalue = {
-        'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([0.5, \
-                                    p+plus1/(reps+plus1), \
-                                    1 - p])
+        'greater': lambda pUp, pDn: pUp+plus1/(reps+plus1),
+        'less': lambda pUp, pDn: pDn+plus1/(reps+plus1),
+        'two-sided': lambda pUp, pDn: 2 * np.min([0.5, \
+                                    pUp+plus1/(reps+plus1), \
+                                    pDn+plus1/(reps+plus1)])
     }
     stats = {
         'mean': lambda u: np.mean(u),
@@ -604,9 +601,17 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         dist = []
         for i in range(reps):
             dist.append(tst_fun(z * (1 - 2 * prng.randint(0, 2, n))))
-        hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / (reps+plus1)), tst, dist
+        pUp = np.sum(dist >= tst)/(reps + plus1)
+        pDn = np.sum(dist <= tst)/(reps + plus1)
+        return thePvalue[alternative](pUp, pDn), tst, dist
     else:
-        hits = np.sum([(tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))) >= tst
-                       for i in range(reps)])
-        return thePvalue[alternative](hits / (reps+plus1)), tst
+        hitsUp = 0
+        hitsDn = 0
+        for i in range(reps):
+            tv = tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))
+            hitsUp += (tv >= tst)
+            hitsDn += (tv <= tst)
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), tst
+
