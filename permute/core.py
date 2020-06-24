@@ -601,9 +601,9 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
     tst = tst_fun(z)
     n = len(z)
     if keep_dist:
-        dist = []
+        dist = np.empty(reps)
         for i in range(reps):
-            dist.append(tst_fun(z * (1 - 2 * prng.randint(0, 2, n))))
+            dist[i] = tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))
         hits = np.sum(dist >= tst)
         return thePvalue[alternative](hits / (reps+plus1)), tst, dist
     else:
