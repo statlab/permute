@@ -86,7 +86,7 @@ This example is shown in Chapter 4.6, page 240.
     >>> second_moment = two_sample(sam1**2, sam2**2, alternative='two-sided', reps=5000, keep_dist=True, seed=423)
     >>> partial_pvalues = np.array([first_moment[0], second_moment[0]])
     >>> print("Partial p-values:", round(first_moment[0], 3), round(second_moment[0], 3))
-    Partial p-values: 0.017 0.009
+    Partial p-values: 0.022 0.01
 
     >>> npc_distr = np.vstack([first_moment[2], second_moment[2]]).T
     >>> global_p = npc(partial_pvalues, npc_distr, alternatives='two-sided')
@@ -112,19 +112,19 @@ This example is shown in Chapter 4.6, page 253.
             results[str(col)] = two_sample(sam1, sam2, keep_dist=True, alternative = 'less', seed=prng, plus1=True, reps=10**4)
     partial_pvalues = np.array(list(map(lambda col: results[col][0], vars)))
     print(np.round(partial_pvalues, 3))
-    [0.022 0.212 0.    0.337 0.    0.332 0.096]
+    [0.027 0.226 0.    0.391 0.    0.413 0.098]
 
     npc_distr = np.array(list(map(lambda col: results[col][2], vars))).T
     npc_distr.shape
-    000, 7)
+    (10000, 7)
     alternatives = ['greater']*6 + ['less']*1
     fisher = npc(partial_pvalues, npc_distr, alternatives=alternatives)
     liptak = npc(partial_pvalues, npc_distr, alternatives=alternatives, combine = 'liptak')
     tippett = npc(partial_pvalues, npc_distr, alternatives=alternatives, combine='tippett')
     print("Fisher combined p-value:", fisher)
-    er combined p-value: 0.0
+    Fisherer combined p-value: 0.0
     print("Liptak combined p-value:", liptak)
-    ak combined p-value: 0.0
+    Liptak combined p-value: 0.0
     print("Tippett combined p-value:", tippett)
     Tippett combined p-value: 0.0
 
