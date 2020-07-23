@@ -162,9 +162,9 @@ $t$-distribution.
 
     >>> p, t, distr = two_sample(maleid, femaleid, stat='t', reps=10000, 
     ...                          alternative='greater', keep_dist=True, seed=55)
-    >>> n, bins, patches = plt.hist(distr, 25, histtype='bar', normed=True)
+    >>> n, bins, patches = plt.hist(distr, 25, histtype='bar', density=True)
     >>> plt.title('Permutation Null Distribution')
-    <matplotlib.text.Text object at ...>
+    Text(0.5, 1.0, 'Permutation Null Distribution')
     >>> plt.axvline(x=t, color='red')
     <matplotlib.lines.Line2D object at ...>
     >>> x = np.linspace(stats.t.ppf(0.0001, df),
