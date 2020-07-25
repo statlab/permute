@@ -133,11 +133,11 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
                    potential_outcomes_all[nx:, 1])
 
     thePvalue = {
-        'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([0.5, \
-                                    p+plus1/(reps+plus1), \
-                                    1 - p])
+        'greater': lambda pUp, pDn: pUp+plus1/(reps+plus1),
+        'less': lambda pUp, pDn: pDn+plus1/(reps+plus1),
+        'two-sided': lambda pUp, pDn: 2 * np.min([0.5, \
+                                    pUp+plus1/(reps+plus1), \
+                                    pDn+plus1/(reps+plus1)])
     }
 
     if keep_dist:
@@ -146,15 +146,20 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
             dist[i] = tst_stat(pp[:nx, 0], pp[nx:, 1])
-        hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / (reps+plus1)), dist
+        pUp = np.sum(dist >= tst)/(reps+plus1)
+        pDn = np.sum(dist <= tst)/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), dist
     else:
-        hits = 0
+        hitsUp = 0
+        hitsDn = 0
         for i in range(reps):
             prng.shuffle(rr)
             pp = np.take(potential_outcomes_all, rr, axis=0)
-            hits += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
-        return thePvalue[alternative](hits / (reps+plus1))
+            hitsUp += tst_stat(pp[:nx, 0], pp[nx:, 1]) >= tst
+            hitsDn += tst_stat(pp[:nx, 0], pp[nx:, 1]) <= tst
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn)
 
 
 def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
@@ -583,11 +588,11 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         z = np.array(x) - np.array(y)
 
     thePvalue = {
-        'greater': lambda p: p+plus1/(reps+plus1),
-        'less': lambda p: 1 - p,
-        'two-sided': lambda p: 2 * np.min([0.5, \
-                                    p+plus1/(reps+plus1), \
-                                    1 - p])
+        'greater': lambda pUp, pDn: pUp+plus1/(reps+plus1),
+        'less': lambda pUp, pDn: pDn+plus1/(reps+plus1),
+        'two-sided': lambda pUp, pDn: 2 * np.min([0.5, \
+                                    pUp+plus1/(reps+plus1), \
+                                    pDn+plus1/(reps+plus1)])
     }
     stats = {
         'mean': lambda u: np.mean(u),
@@ -604,9 +609,16 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         dist = []
         for i in range(reps):
             dist.append(tst_fun(z * (1 - 2 * prng.randint(0, 2, n))))
-        hits = np.sum(dist >= tst)
-        return thePvalue[alternative](hits / (reps+plus1)), tst, dist
+        pUp = np.sum(dist >= tst)/(reps + plus1)
+        pDn = np.sum(dist <= tst)/(reps + plus1)
+        return thePvalue[alternative](pUp, pDn), tst, dist
     else:
-        hits = np.sum([(tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))) >= tst
-                       for i in range(reps)])
-        return thePvalue[alternative](hits / (reps+plus1)), tst
+        hitsUp = 0
+        hitsDn = 0
+        for i in range(reps):
+            tv = tst_fun(z * (1 - 2 * prng.randint(0, 2, n)))
+            hitsUp += (tv >= tst)
+            hitsDn += (tv <= tst)
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), tst

@@ -9,8 +9,9 @@ env:
     - COVERAGE=1
 
 python:
-  - 3.4
-  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
 
 before_install:
   - source tools/travis_tools.sh
