@@ -150,6 +150,20 @@ def test_minp_one_pvalue():
     prng = RandomState(55)
     pvalues = np.array([1])
     distr = prng.uniform(low=0, high=10, size=20).reshape(20, 1)
-    npc(pvalues, distr, "fisher", "greater")
+    fwer_minp(pvalues, distr, "fisher", "greater")
 
-# TODO: more fwer_minp tests
+    
+def test_fwer_minp():
+    prng = RandomState(55)
+    pvalues = np.linspace(0.05, 0.9, num=5)
+    distr = prng.uniform(low=0, high=10, size=100000).reshape(20000, 5)
+    res = fwer_minp(pvalues, distr, "fisher", "greater", plus1=False)
+    expected_res = np.array([0.348594, 0.744245, 0.874132, 0.915783, 0.915783])
+    np.testing.assert_almost_equal(res, expected_res, decimal=2)
+    res = fwer_minp(pvalues, distr, "fisher", alternatives="less", plus1=False)
+    np.testing.assert_almost_equal(res, expected_res, decimal=2)
+    res = fwer_minp(pvalues, distr, "fisher", alternatives="two-sided", plus1=False)
+    np.testing.assert_almost_equal(res, expected_res, decimal=2)
+    res = fwer_minp(pvalues, distr, "tippett", alternatives="greater", plus1=False)
+    expected_res = np.array([0.2262191, 0.704166, 0.8552969, 0.9023438, 0.9023438])
+    np.testing.assert_almost_equal(res, expected_res, decimal=2)

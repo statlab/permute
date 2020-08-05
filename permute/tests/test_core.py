@@ -258,7 +258,6 @@ def test_two_sample_conf_int_bad_shift():
 
 def test_one_sample():
     prng = RandomState(42)
-
     x = np.array(range(5))
     y = x - 1
 
@@ -274,9 +273,11 @@ def test_one_sample():
     print("finished test 2 in test_one_sample()")
 
     # case 2: paired sample
-    res = one_sample(x, y, seed=42, reps=10**5, plus1=False)
+    res = one_sample(x, y, seed=42, reps=10**5, keep_dist=True, plus1=False)
     assert_almost_equal(res[0], 1/32, decimal=2)
     assert_equal(res[1], 1)
+    assert_equal(min(res[2]), -1)
+    assert_equal(max(res[2]), 1)
     print("finished test 3 in test_one_sample()")
 
     # case 3: break it - supply x and y, but not paired
