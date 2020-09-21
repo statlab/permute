@@ -236,7 +236,7 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
     return (plus1 + np.sum(combined_stat_distr >= observed_combined_stat)) / (plus1+B)
 
 
-def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater'):
+def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater', plus1=True):
     """
     Adjust p-values using the permutation "minP" variant of Holm's step-up method.
     
@@ -280,10 +280,11 @@ def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater'):
     # Step down tree of combined hypotheses, from global test to test of the
     # individual hypothesis with largest p-value
     pvalues_adjusted = np.zeros(j)
-    pvalues_adjusted[0] = npc(pvalues_ord, distr_ord)
+    pvalues_adjusted[0] = npc(pvalues_ord, distr_ord, combine=combine, 
+        alternatives=alternatives, plus1=plus1)
     for jj in range(1, j-1):
         next_pvalue = npc(pvalues_ord[jj:], distr_ord[:, jj:], combine=combine,
-                        alternatives=alternatives)
+                        alternatives=alternatives, plus1=plus1)
         pvalues_adjusted[jj] = np.max([next_pvalue, pvalues_adjusted[jj-1]])
     pvalues_adjusted[j-1] = np.max([pvalues_ord[j-1], pvalues_adjusted[j-2]])
     pvalues_adjusted = pvalues_adjusted[np.argsort(pvalues)]
