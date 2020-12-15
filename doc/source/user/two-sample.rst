@@ -99,11 +99,8 @@ t-test to be valid, we require the following assumptions:
 Despite the problematic assumptions we are required to make, let’s temporarily
 assume they hold and calculate a "p-value" anyway.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
-    >>> from __future__ import print_function
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> from scipy import stats
@@ -138,9 +135,7 @@ fair and independent across individuals. This can be verified directly from the
 experimental design.
 
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> from permute.core import two_sample
     >>> p, t = two_sample(maleid, femaleid, stat='t', alternative='two-sided', seed=20)
@@ -157,8 +152,7 @@ Since the permutation test also returns the approximately exact distribution of
 the test statistic, let’s compare the actual distribution with the
 $t$-distribution.
 
-.. plot::
-    :context:
+.. nbplot::
 
     >>> p, t, distr = two_sample(maleid, femaleid, stat='t', reps=10000, 
     ...                          alternative='greater', keep_dist=True, seed=55)
@@ -218,8 +212,7 @@ Because reported gender is just a binary indicator, the correlation is
 equivalent to using the mean rating for male-identified instructors as a test
 statistic.
 
-.. plot::
-    :context: close-figs
+.. nbplot::
 
     >>> from permute.stratified import sim_corr
     >>> p, rho, sim = sim_corr(x=ratings.overall, y=ratings.taidgender, group=ratings.tagender, seed = 25)

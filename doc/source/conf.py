@@ -20,7 +20,7 @@ import sphinx_bootstrap_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
-sys.path.append(os.path.abspath('_sphinxext'))
+#sys.path.append(os.path.abspath('_sphinxext'))
 
 # -- General configuration ------------------------------------------------
 
@@ -40,8 +40,8 @@ extensions = [
     'sphinx.ext.imgmath',
     'sphinx.ext.napoleon',
     'sphinxcontrib.bibtex',
-    'dollarmath',
-    'plot_directive',
+    'nb2plots',
+    'texext',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Permutation tests and confidence sets'
-copyright = '2015-2019, ' + permute_developers
+copyright = '2015-2020, ' + permute_developers
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -274,6 +274,9 @@ texinfo_documents = [
 # Documents to append as an appendix to all manuals.
 #texinfo_appendices = []
 
+# sphinxcontrib-bibtex
+bibtex_bibfiles = ['permute.bib']
+
 # If false, no module index is generated.
 #texinfo_domain_indices = True
 
@@ -290,4 +293,4 @@ plot_html_show_source_link = False
 # Add the 'copybutton' javascript, to hide/show the prompt in code
 # examples
 def setup(app):
-    app.add_javascript('copybutton.js')
+    app.add_js_file('copybutton.js')
