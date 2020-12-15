@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-
 import permute.data as data
 import numpy as np
 from numpy.testing import assert_equal

@@ -98,8 +98,8 @@ else:
         if not run_all:
             args.extend(['-A', 'not slow'])
         if doctest:
-            args.extend(['--with-doctest', '--ignore-files=^\.',
-                         '--ignore-files=^setup\.py$$', '--ignore-files=test'])
+            args.extend(['--with-doctest', r'--ignore-files=^\.',
+                         r'--ignore-files=^setup\.py$$', '--ignore-files=test'])
             # Make sure warnings do not break the doc tests
             with _warnings.catch_warnings():
                 _warnings.simplefilter("ignore")

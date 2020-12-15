@@ -1,6 +1,3 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-
 import contextlib
 import sys
 
@@ -26,7 +23,7 @@ from nose.tools import raises
 #     sys.modules.update(module._mods)
 
 
-class DummyFile(object):
+class DummyFile:
 
     def write(self, x):
         pass

@@ -26,7 +26,7 @@ INSTALL_REQUIRES = parse_requirements_file("requirements/default.txt")
 TESTS_REQUIRE = parse_requirements_file("requirements/test.txt")
 
 
-with open("README.md", "r") as fh:
+with open("README.md") as fh:
     LONG_DESCRIPTION = fh.read()
 
 
@@ -39,8 +39,8 @@ version='%s'
         fname = os.path.join(os.path.dirname(__file__), filename)
         with open(fname, "w") as f:
             f.write(template % VERSION)
-    except IOError:
-        raise IOError(
+    except OSError:
+        raise OSError(
             "Could not open/write to permute/version.py - did you "
             "install using sudo in the past? If so, run\n"
             "sudo chown -R your_username ./*\n"
