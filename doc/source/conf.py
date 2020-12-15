@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Permutation tests and confidence sets build configuration file, created by
 # sphinx-quickstart on Thu Jan 29 09:59:22 2015.
@@ -58,8 +57,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Permutation tests and confidence sets'
-copyright = u'2015-2019, ' + permute_developers
+project = 'Permutation tests and confidence sets'
+copyright = '2015-2019, ' + permute_developers
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -222,7 +221,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'permute.tex', u'Permutation tests and confidence sets',
+  ('index', 'permute.tex', 'Permutation tests and confidence sets',
    permute_developers, 'manual'),
 ]
 
@@ -252,7 +251,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'permute', u'Permutation tests and confidence sets',
+    ('index', 'permute', 'Permutation tests and confidence sets',
      [permute_developers], 1)
 ]
 
@@ -266,9 +265,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'permute', u'Permutation tests and confidence sets',
+  ('index', 'permute', 'Permutation tests and confidence sets',
    permute_developers, 'permute',
-   u'Permutation tests and confidence sets permutation tests and confidence sets for a variety of nonparametric testing and estimation problems and for a variety of randomization designs.',
+   'Permutation tests and confidence sets permutation tests and confidence sets for a variety of nonparametric testing and estimation problems and for a variety of randomization designs.',
    'Miscellaneous'),
 ]
 

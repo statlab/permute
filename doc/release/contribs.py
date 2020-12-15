@@ -14,7 +14,7 @@ def call(cmd):
     return subprocess.check_output(shlex.split(cmd), universal_newlines=True).split('\n')
 
 tag_date = call("git show --format='%%ci' %s" % tag)[0]
-print("Release %s was on %s\n" % (tag, tag_date))
+print(f"Release {tag} was on {tag_date}\n")
 
 merges = call("git log --since='%s' --merges --format='>>>%%B' --reverse" % tag_date)
 merges = [m for m in merges if m.strip()]
