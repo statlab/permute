@@ -1,6 +1,5 @@
 # Permutation tests and confidence sets
 [![Build Status](https://github.com/statlab/permute/workflows/default/badge.svg?branch=master)](https://github.com/statlab/permute/actions?query=workflow%3Adefault+branch%3Amaster)
-[![Build Status](https://ci.appveyor.com/api/projects/status/uijsl9itml9uvjd8/branch/master?svg=true)](https://ci.appveyor.com/project/jarrodmillman/permute/branch/master)
 [![Coverage Status](https://coveralls.io/repos/statlab/permute/badge.svg?branch=master)](https://coveralls.io/r/statlab/permute?branch=master)
 
 Permutation tests and confidence sets for a variety of nonparametric

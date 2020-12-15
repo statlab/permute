@@ -38,3 +38,31 @@ jobs:
          cd doc && make html && cd ..
          cd doc && make doctest && cd ..
          #coveralls
+
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Before install
+      run: |
+        python -m venv venv
+        venv\Scripts\Activate.ps1
+
+    - name: Install packages
+      run: |
+        pip install --upgrade pip wheel setuptools
+        pip install -r requirements.txt
+        pip install .
+        pip list
+
+    - name: Test NetworkX
+      run: |
+        make test
