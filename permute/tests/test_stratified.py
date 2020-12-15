@@ -2,8 +2,7 @@ import numpy as np
 import math
 from numpy.random import RandomState
 
-from nose.tools import assert_equal, assert_almost_equal, assert_less, raises
-from nose.plugins.attrib import attr
+import pytest
 from cryptorandom.cryptorandom import SHA256
 
 from ..stratified import stratified_permutationtest as spt
@@ -19,17 +18,17 @@ def test_stratified_permutationtest():
 
     res = spt(group, condition, response, reps=1000, seed=42)
     res1 = spt(group, condition, response, alternative='less', reps=1000, seed=42)
-    assert_less(res[0], 0.01)
-    assert_equal(res[1], res1[1])
-    assert_almost_equal(res[0], 1-res1[0])
+    assert res[0] < 0.01
+    assert res[1] == res1[1]
+    np.testing.assert_almost_equal(res[0], 1-res1[0])
     res2 = spt(group, condition, response, alternative='two-sided', reps=1000, seed=42)
-    assert_less(res2[0], 0.02)
+    assert res2[0] < 0.02
 
     group = np.array([1, 1, 1])
     condition = np.array([2, 2, 2])
     response = np.zeros_like(group)
     res2 = spt(group, condition, response, reps=1000, seed=42)
-    assert_equal(res2, (1.0, np.nan, None))
+    assert res2 == (1.0, np.nan, None)
 
 
 def test_stratified_permutationtest_mean():
@@ -39,19 +38,18 @@ def test_stratified_permutationtest_mean():
     groups = np.unique(group)
     conditions = np.unique(condition)
     res = sptm(group, condition, response, groups, conditions)
-    assert_equal(res, 0.0)
+    assert res == 0.0
     res2 = sptm(group, condition, response)  # check defaults work
-    assert_equal(res2, 0.0)
+    assert res2 == 0.0
 
 
-@raises(ValueError)
 def test_stratified_permutationtest_mean_error():
     group = np.array([1, 1, 1])
     condition = np.array([2, 2, 2])
     response = np.zeros_like(group)
     groups = np.unique(group)
     conditions = np.unique(condition)
-    res = sptm(group, condition, response, groups, conditions)
+    pytest.raises(ValueError, sptm, group, condition, response, groups, conditions)
 
 
 def test_corrcoef():
@@ -61,10 +59,9 @@ def test_corrcoef():
     group = prng.randint(3, size=10)
     res1 = corrcoef(x, y, group)
     res2 = corrcoef(x, y, group)
-    assert_equal(res1, res2)
+    assert res1 == res2
 
 
-#@attr('slow')
 def test_sim_corr():
     prng = SHA256(42)
     x = prng.random(10)
@@ -74,10 +71,10 @@ def test_sim_corr():
     res2 = sim_corr(x, y, group, seed=prng, alternative='less', reps=100)
     res3 = sim_corr(x, y, group, seed=prng, alternative='two-sided', reps=100)
     
-    assert_almost_equal(res1[0], 1-res2[0])
-    assert_equal(res1[1], res2[1])
-    assert_equal(res1[1], res3[1])
-    assert_equal(2*res1[0], res3[0])
+    np.testing.assert_almost_equal(res1[0], 1-res2[0])
+    assert res1[1] == res2[1]
+    assert res1[1] == res3[1]
+    assert 2*res1[0] == res3[0]
 
 
 def test_strat_tests_equal():
@@ -89,8 +86,8 @@ def test_strat_tests_equal():
     res1 = spt(group, condition, response, reps=100, seed=42)
     res2 = stratified_two_sample(group, condition, response, reps=100,
                                 stat='mean_within_strata', seed=42)
-    assert_equal(res1[1], res2[1])
-    assert_less(math.fabs(res1[0]-res2[0]), 0.05)
+    assert res1[1] == res2[1]
+    assert math.fabs(res1[0]-res2[0]) < 0.05
     
 def test_stratified_two_sample():
     group = np.repeat([1, 2, 3], 10)
@@ -100,15 +97,15 @@ def test_stratified_two_sample():
 
     res = stratified_two_sample(group, condition, response, reps=1000,
                                 stat='mean', seed=42)
-    assert_almost_equal(res[0], 0.245, 2)
-    assert_equal(res[1], 0.2)
+    np.testing.assert_almost_equal(res[0], 0.245, 2)
+    assert res[1] == 0.2
     
     (p, t, dist) = stratified_two_sample(group, condition, response, reps=1000,
                                 stat='mean', seed=42, keep_dist=True)
-    assert_equal(res, (p, t))
+    assert res == (p, t)
     
     stat_fun = lambda u: sptm(group, condition, u, np.unique(group), np.unique(condition))
     res = stratified_two_sample(group, condition, response, reps=100,
                                 stat=stat_fun, seed=42)
-    assert_almost_equal(res[0], 0.8712, 3)
-    assert_equal(res[1], 0.30)
+    np.testing.assert_almost_equal(res[0], 0.8712, 3)
+    assert res[1] == 0.30
