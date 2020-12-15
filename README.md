@@ -1,5 +1,4 @@
 # Permutation tests and confidence sets
-[![Build Status](https://travis-ci.org/statlab/permute.svg?branch=master)](https://travis-ci.org/statlab/permute?branch=master)
 [![Build Status](https://ci.appveyor.com/api/projects/status/uijsl9itml9uvjd8/branch/master?svg=true)](https://ci.appveyor.com/project/jarrodmillman/permute/branch/master)
 [![Coverage Status](https://coveralls.io/repos/statlab/permute/badge.svg?branch=master)](https://coveralls.io/r/statlab/permute?branch=master)
 
