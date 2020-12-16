@@ -1,4 +1,4 @@
-name: default
+name: test
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}-latest
+
+  ubuntu:
+    runs-on: Ubuntu-latest
     strategy:
       matrix:
-        os: [Ubuntu, macOS]
         python-version: [3.6, 3.7, 3.8]
     steps:
     - uses: actions/checkout@v2
@@ -34,12 +34,39 @@ jobs:
 
     - name: Test NetworkX
       run: |
-         make coverage
-         cd doc && make html && cd ..
-         cd doc && make doctest && cd ..
-         #coveralls
+        make test-all
+        cd doc && make html && cd ..
+        cd doc && make doctest && cd ..
 
-  test-windows:
+  macos:
+    runs-on: macOS-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Before install
+      run: |
+        python3 -m venv ~/venv
+        source ~/venv/bin/activate
+
+    - name: Install packages
+      run: |
+        pip install --upgrade pip wheel setuptools
+        pip install -r requirements.txt
+        pip install .
+        pip list
+
+    - name: Test NetworkX
+      run: |
+        make test-all
+
+  windows:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -65,4 +92,4 @@ jobs:
 
     - name: Test NetworkX
       run: |
-        make test
+        make test-all

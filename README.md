@@ -1,6 +1,7 @@
 # Permutation tests and confidence sets
+[![PyPI](https://img.shields.io/pypi/v/permute.svg)](https://pypi.org/project/permute/)
 [![Build Status](https://github.com/statlab/permute/workflows/default/badge.svg?branch=master)](https://github.com/statlab/permute/actions?query=workflow%3Adefault+branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/statlab/permute/badge.svg?branch=master)](https://coveralls.io/r/statlab/permute?branch=master)
+[![Coverage Status](https://codecov.io/gh/statlab/permute/branch/master/graph/badge.svg)](https://codecov.io/gh/statlab/permute)
 
 Permutation tests and confidence sets for a variety of nonparametric
 testing and estimation problems, for a variety of randomization designs.

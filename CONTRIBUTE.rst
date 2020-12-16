@@ -70,11 +70,10 @@ For a more detailed discussion, read these :doc:`detailed documents
       and commit. As soon as those changes are pushed up (to the same branch as
       before) the pull request will update automatically.
 
-    * `Travis-CI <http://travis-ci.org/>`__, a continuous integration service,
-      is triggered after each Pull Request update to build the code, run unit
-      tests, measure code coverage and check coding style (PEP8) of your
-      branch. The Travis tests must pass before your PR can be merged. If
-      Travis fails, you can find out why by clicking on the "failed" icon (red
+    * Continuous integration services are triggered after each Pull Request update
+      to build the code, run unit tests, measure code coverage and check coding
+      style (PEP8) of your branch. These tests must pass before your PR can be merged.
+      If something fails, you can find out why by clicking on the "failed" icon (red
       cross) and inspecting the build and test log.
 
 5. Document changes

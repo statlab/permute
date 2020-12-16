@@ -177,13 +177,6 @@ pseudoxml:
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
-gitwash:
-	$(PYTHON) ../tools/gitwash_dumper.py dev permute \
-	--project-url=https://github.com/statlab/permute \
-	--repo-name=permute \
-	--github-user=statlab \
-	--project-ml-url=http://groups.google.com/group/permute 
-
 github: html
 	touch $(BUILDDIR)/html/.nojekyll
 	cp -a $(BUILDDIR)/latex/permute.pdf $(BUILDDIR)/html/.
