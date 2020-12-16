@@ -5,9 +5,7 @@ This example comes from Chapter 5.5.
 
 When running the two sample test, use the same initial PRNG seed in order to keep permutations correlated for each test. This is crucial for NPC.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> import permute.data as data
     >>> from permute.core import two_sample

@@ -6,9 +6,7 @@ IPAT Data
 
 This example is shown in Chapter 1.9, page 33-34.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> import permute.data as data
     >>> from permute.core import one_sample, two_sample
@@ -27,9 +25,7 @@ Job Satisfaction Data
 
 This example is shown in Chapter 1.10.3, page 41-42.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> job = data.job()
     >>> job_res = two_sample(job.x[job.y == 1], job.x[job.y == 2], stat='mean', reps = 10**5, alternative='greater', seed=prng)
@@ -41,9 +37,7 @@ Worms Data
 
 This example is shown in Chapter 1.11.12, page 47-48.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> worms = data.worms()
     >>> res = k_sample(worms.x, worms.y, stat='one-way anova', seed=prng)
@@ -55,9 +49,7 @@ Testosterone Data
 
 This example is shown in Chapter 2.6.1, page 92-93.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> testosterone = data.testosterone()
     >>> x = np.hstack(testosterone.tolist())
@@ -74,9 +66,7 @@ Massaro-Blair Data
 ------------------
 This example is shown in Chapter 4.6, page 240.
 
-.. plot::
-    :context:
-    :nofigs:
+.. nbplot::
 
     >>> from permute.npc import npc
     >>> mb = data.massaro_blair()
