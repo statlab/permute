@@ -34,8 +34,7 @@ jobs:
         pip list
 
     - name: Test permute
-      run: |
-        make test-all
+      run: make test-all
 
   macos:
     runs-on: macOS-latest
@@ -63,8 +62,7 @@ jobs:
         pip list
 
     - name: Test permute
-      run: |
-        make test-all
+      run: make test-all
 
   windows:
     runs-on: windows-latest
@@ -92,5 +90,4 @@ jobs:
         pip list
 
     - name: Test permute
-      run: |
-        make test-all
+      run: make test-all
