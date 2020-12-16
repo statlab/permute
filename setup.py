@@ -74,6 +74,7 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
             "Topic :: Scientific/Engineering",
             "Operating System :: Microsoft :: Windows",
             "Operating System :: POSIX",
@@ -82,6 +83,7 @@ if __name__ == "__main__":
         ],
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
+        python_requires=">=3.6",
         packages=["permute", "permute.tests", "permute.data", "permute.data.tests"],
         package_data={"permute.data": ["*.csv", "*/*.csv", "*/*/*.csv"]},
     )
