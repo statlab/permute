@@ -1,4 +1,4 @@
-name: coverage
+name: document
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
     branches: [ master ]
 
 jobs:
+
   ubuntu:
     runs-on: Ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.6, 3.7, 3.8]
     steps:
     - uses: actions/checkout@v2
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -28,11 +28,23 @@ jobs:
     - name: Install packages
       run: |
         pip install --upgrade pip wheel setuptools
-        pip install -r requirements.txt
+        pip install -r requirements/default.txt
+        pip install -r requirements/doc.txt
         pip install .
         pip list
 
-    - name: Coverage report for permute
+    - name: Move to doc directory
       run: |
-        make coverage
-        codecov
+        cd doc
+
+    - name: Build html
+      run: |
+        make html
+
+    - name: Build pdf
+      run: |
+        make latexpdf
+
+    - name: Run doctests
+      run: |
+        make doctest
