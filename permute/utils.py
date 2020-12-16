@@ -229,7 +229,8 @@ def get_prng(seed=None):
     RandomState
     """
     if seed is None:
-        seed = np.random.randint(0, 10**10) # generate an integer
+        # Need to specify dtype (Windows defaults to int32)
+        seed = np.random.randint(0, 10**10, dtype=np.int64) # generate an integer
     if seed is np.random:
         return np.random.mtrand._rand
     if isinstance(seed, (int, np.integer, float, str)):

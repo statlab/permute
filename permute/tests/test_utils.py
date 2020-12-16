@@ -1,3 +1,4 @@
+import sys
 import pytest
 
 import numpy as np
@@ -163,6 +164,7 @@ def test_permute_within_group():
     np.testing.assert_equal(group, res3)
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="need updated cryptorandom")
 def test_permute():
     prng = SHA256(42)
 
