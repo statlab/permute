@@ -9,13 +9,13 @@ clean:
 	rm -rf .ipynb_checkpoints .coverage .cache
 
 test:
-	nosetests permute -A 'not slow' --ignore-files=^_test -v -s
+	pytest --durations=10 --pyargs permute
 
 test-all:
-	nosetests permute --ignore-files=^_test -v -s
+	pytest --runslow --durations=10 --pyargs permute
 
 doctest:
-	nosetests permute --ignore-files=^_test -v -s --with-doctest --ignore-files=^\. --ignore-files=^setup\.py$$ --ignore-files=test
+	pytest --doctest-modules --durations=10 --pyargs permute
 
 coverage:
-	nosetests permute --with-coverage --cover-package=permute --ignore-files=^_test  -v -s
+	pytest --cov=permute --runslow --doctest-modules --durations=10 --pyargs permute

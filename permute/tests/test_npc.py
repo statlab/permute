@@ -1,5 +1,4 @@
-from nose.plugins.attrib import attr
-from nose.tools import assert_raises, raises
+import pytest
 
 import numpy as np
 from numpy.random import RandomState
@@ -56,9 +55,8 @@ def test_t2p():
     np.testing.assert_array_almost_equal(t2p(distr, "two-sided", plus1=False), expected2)
 
 
-@raises(ValueError)
 def test_t2p_bad_alternative():
-    t2p(np.array([0.5, 0.25, 0.75]), "not a real alternative")
+    pytest.raises(ValueError, t2p, np.array([0.5, 0.25, 0.75]), "not a real alternative")
 
 
 def test_npc():
@@ -91,25 +89,22 @@ def test_npc_callable_combine():
     np.testing.assert_equal(res, 0.39)
 
 
-@raises(ValueError)
 def test_npc_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    npc(pvalues, distr, "fisher", "greater")
+    pytest.raises(ValueError, npc, pvalues, distr, "fisher", "greater")
 
 
-@raises(ValueError)
 def test_npc_bad_alternative():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=50).reshape(10, 5)
-    npc(pvalues, distr, "fisher", np.array(["greater", "less"]))
+    pytest.raises(ValueError, npc, pvalues, distr, "fisher", np.array(["greater", "less"]))
 
 
-@raises(ValueError)
 def test_npc_single_pvalue():
-    npc(np.array([1]), np.array([1, 2, 3]))
+    pytest.raises(ValueError, npc, np.array([1]), np.array([1, 2, 3]))
     
 
 def test_monotonic_checker():
@@ -125,29 +120,26 @@ def test_monotonic_checker():
     np.testing.assert_equal(check_combfunc_monotonic(pvalues, bad_comb_function), False)
     
 
-@raises(ValueError)
 def test_mono_checker_in_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     bad_comb_function = lambda p: -1*fisher(p)
-    npc(pvalues, distr, bad_comb_function)
+    pytest.raises(ValueError, npc, pvalues, distr, bad_comb_function)
 
 
-@raises(ValueError)
 def test_minp_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    fwer_minp(pvalues, distr, "fisher", "greater")
+    pytest.raises(ValueError, fwer_minp, pvalues, distr, "fisher", "greater")
 
 
-@raises(ValueError)
 def test_minp_one_pvalue():
     prng = RandomState(55)
     pvalues = np.array([1])
     distr = prng.uniform(low=0, high=10, size=20).reshape(20, 1)
-    fwer_minp(pvalues, distr, "fisher", "greater")
+    pytest.raises(ValueError, fwer_minp, pvalues, distr, "fisher", "greater")
 
     
 def test_fwer_minp():
