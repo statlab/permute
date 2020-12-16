@@ -11,11 +11,11 @@ clean:
 test:
 	pytest --durations=10 --pyargs permute
 
-test-all:
-	pytest --runslow --durations=10 --pyargs permute
-
 doctest:
 	pytest --doctest-modules --durations=10 --pyargs permute
+
+test-all:
+	pytest --runslow --doctest-modules --durations=10 --pyargs permute
 
 coverage:
 	pytest --cov=permute --runslow --doctest-modules --durations=10 --pyargs permute
