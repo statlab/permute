@@ -28,15 +28,14 @@ jobs:
     - name: Install packages
       run: |
         pip install --upgrade pip wheel setuptools
-        pip install -r requirements.txt
+        pip install -r requirements/default.txt
+        pip install -r requirements/test.txt
         pip install .
         pip list
 
-    - name: Test NetworkX
+    - name: Test permute
       run: |
         make test-all
-        cd doc && make html && cd ..
-        cd doc && make doctest && cd ..
 
   macos:
     runs-on: macOS-latest
@@ -58,11 +57,12 @@ jobs:
     - name: Install packages
       run: |
         pip install --upgrade pip wheel setuptools
-        pip install -r requirements.txt
+        pip install -r requirements/default.txt
+        pip install -r requirements/test.txt
         pip install .
         pip list
 
-    - name: Test NetworkX
+    - name: Test permute
       run: |
         make test-all
 
@@ -86,10 +86,11 @@ jobs:
     - name: Install packages
       run: |
         pip install --upgrade pip wheel setuptools
-        pip install -r requirements.txt
+        pip install -r requirements\default.txt
+        pip install -r requirements\test.txt
         pip install .
         pip list
 
-    - name: Test NetworkX
+    - name: Test permute
       run: |
         make test-all
