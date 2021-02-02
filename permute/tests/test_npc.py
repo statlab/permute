@@ -1,8 +1,17 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
+import numpy as np
+from numpy.random import RandomState
+from scipy.stats import norm
 
-from nose.plugins.attrib import attr
-from nose.tools import assert_raises, raises
+from ..npc import (fisher,
+                   liptak,
+                   tippett,
+                   inverse_n_weight,
+                   npc,
+                   check_combfunc_monotonic,
+                   fwer_minp,
+                   Experiment)
+
+import pytest
 
 import numpy as np
 from numpy.random import RandomState
@@ -68,17 +77,15 @@ def test_npc_callable_combine():
     np.testing.assert_equal(res, 0.39)
 
 
-@raises(ValueError)
 def test_npc_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    npc(pvalues, distr, "fisher")
+    pytest.raises(ValueError, npc, pvalues, distr, "fisher")
 
 
-@raises(ValueError)
 def test_npc_single_pvalue():
-    npc(np.array([1]), np.array([1, 2, 3]))
+    pytest.raises(ValueError, npc, np.array([1]), np.array([1, 2, 3]))
     
 
 def test_monotonic_checker():
@@ -93,30 +100,27 @@ def test_monotonic_checker():
     bad_comb_function = lambda p: -1*fisher(p)
     np.testing.assert_equal(check_combfunc_monotonic(pvalues, bad_comb_function), False)
     
-
-@raises(ValueError)
+    
 def test_mono_checker_in_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     bad_comb_function = lambda p: -1*fisher(p)
-    npc(pvalues, distr, bad_comb_function)
+    pytest.raises(ValueError, npc, pvalues, distr, bad_comb_function)
 
 
-@raises(ValueError)
 def test_minp_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    fwer_minp(pvalues, distr, "fisher")
+    pytest.raises(ValueError, fwer_minp, pvalues, distr, "fisher")    
+    
 
-
-@raises(ValueError)
 def test_minp_one_pvalue():
     prng = RandomState(55)
     pvalues = np.array([1])
     distr = prng.uniform(low=0, high=10, size=20).reshape(20, 1)
-    fwer_minp(pvalues, distr, "fisher")
+    pytest.raises(ValueError, fwer_minp, pvalues, distr, "fisher")
 
 
 def test_sim_npc():

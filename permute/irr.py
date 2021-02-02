@@ -247,7 +247,7 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
             pvalues[j] = (np.sum(perm_distr[:, j] >= obs_ts[j])+plus1)/(B+plus1)
 
     obs_npc = combine_func(pvalues)
-    res = npc(pvalues, perm_distr, combine_func, alternatives="greater")
+    res = npc(pvalues, perm_distr, combine_func)
     return {"obs_npc": obs_npc, 
             "pvalue": res, 
             "num_perm": B}
