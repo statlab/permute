@@ -2,7 +2,10 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import numpy as np
-from scipy.stats import norm, rankdata
+import copy
+from scipy.stats import norm, rankdata, ttest_ind, ttest_1samp
+from cryptorandom.sample import random_sample
+from .utils import get_prng, permute
 
 
 try:
@@ -96,42 +99,6 @@ def inverse_n_weight(pvalues, size):
 
 # Nonparametric combination of tests
 
-def t2p(distr, alternative="greater", plus1=True):
-    r"""
-    Use the empirical distribution of a test statistic to compute
-    p-values for every value in the distribution.
-
-    Parameters
-    ----------
-    distr : array_like
-        Empirical distribution of statistic
-    alternative : {'greater', 'less', 'two-sided'}
-        The alternative hypothesis to test (default is 'greater')
-    plus1 : bool
-        flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
-        Default is True.
-
-    Returns
-    -------
-    float
-        the estimated p-vlaue
-    """
-
-    if not alternative in ['greater', 'less', 'two-sided']:
-        raise ValueError('Bad alternative')
-    B = len(distr)
-    if alternative != "less":
-        pupper = 1 - rankdata(distr, method="min")/(plus1+B) + (1 + plus1)/(plus1+B)
-        pvalue = pupper
-    if alternative != "greater":
-        plower = rankdata(distr, method="min") / (plus1+B) + plus1/(plus1+B)
-        pvalue = plower
-    if alternative == "two-sided":
-        pvalue = np.min([np.ones(B), 2 * np.min([plower, pupper], 0)], 0)
-    return pvalue
-
-
 def check_combfunc_monotonic(pvalues, combfunc):
     r"""
     Utility function to check that the combining function is monotonically
@@ -158,7 +125,7 @@ def check_combfunc_monotonic(pvalues, combfunc):
     return True
 
 
-def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
+def npc(pvalues, distr, combine="fisher", plus1=True):
     r"""
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
     $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
@@ -183,10 +150,6 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
         The combining function to use. Default is "fisher".
         Valid combining functions must take in p-values as their argument and be
         monotonically decreasing in each p-value.
-    alternatives : array_like
-        Optional, an array containing the alternatives for each partial test
-        ('greater', 'less', 'two-sided') or a single alternative, if all tests
-        have the same alternative hypothesis. Default is "greater".
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
@@ -203,10 +166,6 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
         raise ValueError("One p-value: nothing to combine!")
     if n != distr.shape[1]:
         raise ValueError("Mismatch in number of p-values and size of distr")
-    if isinstance(alternatives, basestring):
-        alternatives = np.array([alternatives] * n)
-    elif len(alternatives) != n:
-        raise ValueError("Mismatch in number of p-values and alternatives")
 
     combine_library = {
         "fisher": fisher,
@@ -225,10 +184,10 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
     combined_stat_distr = [0] * B
     pvalues_from_distr = np.zeros((B, n))
     for j in range(n):
-        pvalues_from_distr[:, j] = t2p(distr[:, j], alternatives[j], plus1=plus1)
+        pvalues_from_distr[:, j] = 1 - rankdata(distr[:, j], method="min")/(plus1+B) + (1 + plus1)/(plus1+B)
     if combine == "liptak":
         toobig = np.where(pvalues_from_distr >= 1)
-        pvalues_from_distr[toobig] = 0.9999
+        pvalues_from_distr[toobig] = 1 - np.finfo(float).eps
     combined_stat_distr = np.apply_along_axis(
         combine_func, 1, pvalues_from_distr)
 
@@ -236,7 +195,90 @@ def npc(pvalues, distr, combine="fisher", alternatives="greater", plus1=True):
     return (plus1 + np.sum(combined_stat_distr >= observed_combined_stat)) / (plus1+B)
 
 
-def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater', plus1=True):
+def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=None):
+    ''' 
+    Combines p-values from individual partial test hypotheses $H_{0i}$ against
+    $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
+
+    .. math:: \cap_{i=1}^n H_{0i}
+
+    against the alternative
+
+    .. math:: \cup_{i=1}^n H_{1i}
+
+    using an omnibus test statistic.
+    
+    Parameters
+    ----------
+    data : Experiment object
+    test : array_like
+        Array of functions to compute test statistic to apply to each column in cols
+    combine : {'fisher', 'liptak', 'tippett'} or function
+        The combining function to use. Default is "fisher".
+        Valid combining functions must take in p-values as their argument and be
+        monotonically decreasing in each p-value.
+    in_place : Boolean
+        whether randomize group in place, default False
+    reps : int
+        number of repetitions
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+    
+    Returns
+    -------
+    array
+        A single p-value for the global test, 
+        test statistic values on the original data,
+        partial p-values
+    '''
+    # check data is of type Experiment
+    if not isinstance(data, Experiment):
+        raise ValueError("data not of class Experiment")
+        
+    # if seed not none, reset seed
+    if seed is not None:
+        data.randomizer.reset_seed(seed)
+    
+    ts = {}
+    tv = {}
+    ps = {}
+
+    # get the test statistic for each column on the original data
+    for c in range(len(test)):
+        # apply test statistic function to column
+        ts[c] = test[c](data)
+        tv[c] = []
+        
+    # check if randomization in place
+    if in_place:
+        data_copy = data
+    else:
+        data_copy = copy.deepcopy(data)
+        
+    # get test statistics for random samples
+    for i in range(reps):
+        # randomly permute group
+        data_copy.randomize()
+        # calculate test statistics on permuted data
+        for c in range(len(test)):
+            # get test statistic for this permutation
+            tv[c].append(test[c](data_copy))
+    # get p-values for original data
+    for c in range(len(test)):
+        ps[c] = (np.sum(np.array(tv[c]) >= ts[c]) + 1)/(reps + 1)
+    # change format of dist to array
+    dist = np.array([tv[c] for c in range(len(test))]).T
+    # append test statistic from orignal data to dist
+    dist = np.append(dist, np.array([ts[c] for c in range(len(test))], ndmin=2), axis=0)
+    # run npc
+    p = npc(np.array([ps[c] for c in range(len(test))]), dist, combine=combine, plus1=False)
+    return p, ts, ps
+
+
+def fwer_minp(pvalues, distr, combine='fisher', plus1=True):
     """
     Adjust p-values using the permutation "minP" variant of Holm's step-up method.
     
@@ -257,10 +299,6 @@ def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater', plus1=Tr
         The combining function to use. Default is "fisher".
         Valid combining functions must take in p-values as their argument and be
         monotonically decreasing in each p-value.
-    alternatives : array_like
-        Optional, an array containing the alternatives for each partial test
-        ('greater', 'less', 'two-sided') or a single alternative, if all tests
-        have the same alternative hypothesis. Default is "greater".
 
     Returns
     -------
@@ -280,12 +318,153 @@ def fwer_minp(pvalues, distr, combine='fisher', alternatives='greater', plus1=Tr
     # Step down tree of combined hypotheses, from global test to test of the
     # individual hypothesis with largest p-value
     pvalues_adjusted = np.zeros(j)
-    pvalues_adjusted[0] = npc(pvalues_ord, distr_ord, combine=combine, 
-        alternatives=alternatives, plus1=plus1)
+    pvalues_adjusted[0] = npc(pvalues_ord, distr_ord, combine=combine, plus1=plus1)
     for jj in range(1, j-1):
-        next_pvalue = npc(pvalues_ord[jj:], distr_ord[:, jj:], combine=combine,
-                        alternatives=alternatives, plus1=plus1)
+        next_pvalue = npc(pvalues_ord[jj:], distr_ord[:, jj:], combine=combine, plus1=plus1)
         pvalues_adjusted[jj] = np.max([next_pvalue, pvalues_adjusted[jj-1]])
     pvalues_adjusted[j-1] = np.max([pvalues_ord[j-1], pvalues_adjusted[j-2]])
     pvalues_adjusted = pvalues_adjusted[np.argsort(pvalues)]
     return pvalues_adjusted
+
+
+# Randomization functions
+
+def randomize_group(data):
+    r"""
+    Unstratified randomization
+
+    Parameters
+    ----------
+    data : Experiment object
+
+    Returns
+    -------
+    Experiment object
+        Experiment object with randomized group assignments
+    """
+    data.group = random_sample(data.group, len(data.group), prng=data.randomizer.prng)
+    return data
+
+
+def randomize_in_strata(data):
+    r"""
+    Stratified randomization where first covariate is the stratum 
+
+    Parameters
+    ----------
+    data : Experiment object
+
+    Returns
+    -------
+    Experiment object
+        Experiment object with randomized group assignments
+    """
+    # first covariate is the stratum
+    strata = data.covariate[:, 0]
+    unique_strata = np.unique(strata)
+    for value in unique_strata:
+        data.group[strata == value] = random_sample(data.group[strata == value], 
+                                                    len(data.group[strata == value]), 
+                                                    prng=data.randomizer.prng)
+    return data
+
+
+# Experiment class
+
+class Experiment():
+    r"""
+    A class to represent an experiment.
+
+    Attributes
+    ----------
+    group : vector
+        group assignment for each observation
+    response : array_like
+        array of response values for each observation
+    covariate : array_like
+        array of covariate values for each observation
+    randomizer : Randomizer object
+        randomizer to use when randomizing group assignments.
+        default is unstratified randomization, randomize_group
+    """
+    def __init__(self, group = None, response = None, covariate = None, randomizer = None):
+        self.group = None if group is None else np.array(group, dtype = object)
+        self.response = None if response is None else np.array(response, dtype = object) 
+        self.covariate = None if covariate is None else np.array(covariate, dtype = object)
+        if randomizer is None:
+            self.randomizer = Experiment.Randomizer(randomize = randomize_group)
+        elif isinstance(randomizer, Experiment.Randomizer):
+            self.randomizer = randomizer
+        else:
+            raise ValueError("Not of class Randomizer")
+        
+        
+    def __str__(self):
+        return "This experiment has " + str(len(self.group)) + " subjects, " + str(len(self.response[0])) \
+    + " response variables, and " \
+    + (str(len(self.covariate[0])) if self.covariate is not None else str(0)) \
+    + " covariates."
+    
+    
+    def randomize(self, in_place = True, seed = None):
+        # reset seed, if seed not None
+        if seed is not None:
+            self.randomizer.reset_seed(seed)
+        if in_place:
+            randomized_self = self.randomizer.randomize(self)
+        else:
+            # make deep copy
+            randomized_self = copy.deepcopy(self)
+            randomized_self.randomizer.randomize(randomized_self)
+        return randomized_self
+
+    
+    @classmethod
+    def make_test_array(cls, func, indices):
+        def create_func(index):
+            def new_func(data):
+                return func(data, index)
+            return new_func
+        test = [create_func(index) for index in indices]
+        return test
+    
+    
+    class TestFunc:
+        def mean_diff(self, index):
+            # get unique groups
+            groups = np.unique(self.group)
+            if len(groups) != 2:
+                raise ValueError("Number of groups must be two")
+            # get mean for each group
+            mx = np.mean(self.response[:, index][self.group == groups[0]])
+            my = np.mean(self.response[:, index][self.group == groups[1]])
+            return mx-my
+        
+        def ttest(self, index):
+            # get unique groups
+            groups = np.unique(self.group)
+            if len(groups) != 2:
+                raise ValueError("Number of groups must be two")
+            t = ttest_ind(self.response[:, index][self.group == groups[0]], 
+                             self.response[:, index][self.group == groups[1]], equal_var=True)[0]
+            return t
+        
+        def one_way_anova(self, index):
+            tst = 0
+            overall_mean = np.mean(self.response[:, index])
+            for k in np.unique(self.group):
+                group_k = self.response[:, index][self.group == k]
+                group_mean = np.mean(group_k)
+                nk = len(group_k)
+                tst += (group_mean - overall_mean)**2 * nk
+            return tst
+    
+    
+    class Randomizer():
+        def __init__(self, randomize = randomize_group, seed = None):
+            self.randomize = randomize
+            self.prng = get_prng(seed) 
+            
+        # reset seed
+        def reset_seed(self, seed = None):
+            self.prng = get_prng(seed)

@@ -12,7 +12,6 @@ from ..npc import (fisher,
                    liptak,
                    tippett,
                    inverse_n_weight,
-                   t2p,
                    npc,
                    check_combfunc_monotonic,
                    fwer_minp)
@@ -47,41 +46,16 @@ def test_inverse_n_weight():
     np.testing.assert_almost_equal(expected_npc, res_npc)
 
 
-def test_t2p():
-    obs = 5
-    distr = np.array(range(-10, 11))
-    expected = np.linspace(21, 1, num=21)/21
-    np.testing.assert_array_almost_equal(t2p(distr, "greater", plus1=False), expected)
-    np.testing.assert_array_almost_equal(t2p(distr, "less", plus1=False), expected[::-1])
-    
-    expected2 = 2*np.concatenate([expected[::-1][:10], 
-        [0.5], expected[11:]])
-    np.testing.assert_array_almost_equal(t2p(distr, "two-sided", plus1=False), expected2)
-
-
-@raises(ValueError)
-def test_t2p_bad_alternative():
-    t2p(np.array([0.5, 0.25, 0.75]), "not a real alternative")
-
-
 def test_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
-    res = npc(pvalues, distr, "fisher", "greater", plus1=False)
+    res = npc(pvalues, distr, "fisher", plus1=False)
     np.testing.assert_almost_equal(res, 0.33)
-    res = npc(pvalues, distr, "fisher", "less", plus1=False)
-    np.testing.assert_almost_equal(res, 0.33)
-    res = npc(pvalues, distr, "fisher", "two-sided", plus1=False)
-    np.testing.assert_almost_equal(res, 0.31)
-    res = npc(pvalues, distr, "liptak", "greater", plus1=False)
+    res = npc(pvalues, distr, "liptak", plus1=False)
     np.testing.assert_almost_equal(res, 0.35)
-    res = npc(pvalues, distr, "tippett", "greater", plus1=False)
+    res = npc(pvalues, distr, "tippett", plus1=False)
     np.testing.assert_almost_equal(res, 0.25)
-    res = npc(pvalues, distr, "fisher",
-              alternatives=np.array(["less", "greater", "less",
-                                     "greater", "two-sided"]), plus1=False)
-    np.testing.assert_almost_equal(res, 0.38)
 
 
 def test_npc_callable_combine():
@@ -90,7 +64,7 @@ def test_npc_callable_combine():
     distr = prng.uniform(low=0, high=10, size=500).reshape(100, 5)
     size = np.array([2, 4, 6, 4, 2])
     combine = lambda p: inverse_n_weight(p, size)
-    res = npc(pvalues, distr, combine, "greater", plus1=False)
+    res = npc(pvalues, distr, combine, plus1=False)
     np.testing.assert_equal(res, 0.39)
 
 
@@ -99,15 +73,7 @@ def test_npc_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    npc(pvalues, distr, "fisher", "greater")
-
-
-@raises(ValueError)
-def test_npc_bad_alternative():
-    prng = RandomState(55)
-    pvalues = np.linspace(0.05, 0.9, num=5)
-    distr = prng.uniform(low=0, high=10, size=50).reshape(10, 5)
-    npc(pvalues, distr, "fisher", np.array(["greater", "less"]))
+    npc(pvalues, distr, "fisher")
 
 
 @raises(ValueError)
@@ -142,7 +108,7 @@ def test_minp_bad_distr():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=20).reshape(10, 2)
-    fwer_minp(pvalues, distr, "fisher", "greater")
+    fwer_minp(pvalues, distr, "fisher")
 
 
 @raises(ValueError)
@@ -150,20 +116,56 @@ def test_minp_one_pvalue():
     prng = RandomState(55)
     pvalues = np.array([1])
     distr = prng.uniform(low=0, high=10, size=20).reshape(20, 1)
-    fwer_minp(pvalues, distr, "fisher", "greater")
+    fwer_minp(pvalues, distr, "fisher")
 
+
+def test_sim_npc():
+    prng = RandomState(55)
+    # test Y always greater than X so p-value should be 1 
+    responses = np.array([[0, 1], [0, 1], [1, 2], [1, 2]])
+    group = np.array([1, 1, 2, 2])
+    my_randomizer = Experiment.Randomizer(randomize = randomize_group, seed = prng)
+    data = Experiment(group, responses)
+    
+    # create median test statistic to apply to every column
+    def med_diff(data, resp_index):
+        # get response variable for that index
+        resp = np.array([item[resp_index] for item in data.response])
+        # get unique groups
+        groups = np.unique(data.group)
+        # get mean for each group
+        mx = np.nanmean(resp[data.group == groups[0]])
+        my = np.nanmean(resp[data.group == groups[1]])
+        return mx-my
+    
+    test_array = Experiment.make_test_array(med_diff, [0, 1])
+    res = sim_npc(data, test_array, combine="fisher", seed=None, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 1)
+    
+    # test X = Y so p-value should be 1
+    responses = np.array([[0, 1], [0, 1], [0, 1], [0, 1]])
+    group = np.array([1, 1, 2, 2])
+    data = Experiment(group, responses, randomizer = my_randomizer)
+    res = sim_npc(data, test = Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]), 
+                  combine="fisher", seed=None, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 1)
+    
+    # test stat for cat_1 is smaller if X all 0s which about 0.015 chance so pvalue should be about 0.985
+    responses = np.array([[0, 1], [1, 1], [0, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1]])
+    group = np.array([1, 1, 1, 1, 2, 2, 2, 2])
+    data = Experiment(group, responses, randomizer = my_randomizer)
+    res = sim_npc(data, test = Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]),
+                  combine="fisher", seed=None, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 0.985, decimal = 2)
+    
     
 def test_fwer_minp():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
     distr = prng.uniform(low=0, high=10, size=100000).reshape(20000, 5)
-    res = fwer_minp(pvalues, distr, "fisher", "greater", plus1=False)
+    res = fwer_minp(pvalues, distr, "fisher", plus1=False)
     expected_res = np.array([0.348594, 0.744245, 0.874132, 0.915783, 0.915783])
     np.testing.assert_almost_equal(res, expected_res, decimal=2)
-    res = fwer_minp(pvalues, distr, "fisher", alternatives="less", plus1=False)
-    np.testing.assert_almost_equal(res, expected_res, decimal=2)
-    res = fwer_minp(pvalues, distr, "fisher", alternatives="two-sided", plus1=False)
-    np.testing.assert_almost_equal(res, expected_res, decimal=2)
-    res = fwer_minp(pvalues, distr, "tippett", alternatives="greater", plus1=False)
+    res = fwer_minp(pvalues, distr, "tippett", plus1=False)
     expected_res = np.array([0.2262191, 0.704166, 0.8552969, 0.9023438, 0.9023438])
     np.testing.assert_almost_equal(res, expected_res, decimal=2)

@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import numpy as np
+import warnings
 from scipy.optimize import brentq, fsolve
 from scipy.stats import ttest_ind, ttest_1samp
 from fractions import Fraction
@@ -455,7 +456,9 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     maxiter : int
         Maximum number of iterations in brentq
     """
-
+    # print warning
+    warnings.warn('This function is under construction and outputs may be unreliable.')
+    
     assert alternative in ("two-sided", "lower", "upper")
 
     if shift is None:
