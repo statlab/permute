@@ -1,16 +1,3 @@
-import numpy as np
-from numpy.random import RandomState
-from scipy.stats import norm
-
-from ..npc import (fisher,
-                   liptak,
-                   tippett,
-                   inverse_n_weight,
-                   npc,
-                   check_combfunc_monotonic,
-                   fwer_minp,
-                   Experiment)
-
 import pytest
 
 import numpy as np
@@ -23,7 +10,8 @@ from ..npc import (fisher,
                    inverse_n_weight,
                    npc,
                    check_combfunc_monotonic,
-                   fwer_minp)
+                   fwer_minp,
+                   Experiment)
 
 
 def test_fisher():
@@ -100,7 +88,7 @@ def test_monotonic_checker():
     bad_comb_function = lambda p: -1*fisher(p)
     np.testing.assert_equal(check_combfunc_monotonic(pvalues, bad_comb_function), False)
     
-    
+
 def test_mono_checker_in_npc():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)

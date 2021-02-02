@@ -2,8 +2,6 @@
 K-sample permutation tests.
 """
 
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
 
 import numpy as np
 from scipy.optimize import brentq, fsolve
@@ -99,7 +97,7 @@ def k_sample(x, group, reps=10**5, stat='one-way anova',
 
 
 def one_way_anova(x, group, overall_mean):
-    """
+    r"""
     Test statistic for one-way ANOVA
 
     Parameters
@@ -250,4 +248,3 @@ def two_way_anova(x, group1, group2, overall_mean):
         xx = x[group2 == g]
         ss2 += (np.mean(xx) - overall_mean)**2
     return ss2/(sst - ss2)
-    
