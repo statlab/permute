@@ -73,52 +73,43 @@ else:
 
 
 try:
-    _imp.import_module('nose')
+    _imp.import_module('pytest')
 except ImportError:
-    def _test(verbose=False):
-        """This would run all unit tests, but nose couldn't be
+    def test(verbose=False):
+        """This would run all unit tests, but pytest couldn't be
         imported so the test suite can not run.
         """
-        raise ImportError("Could not load nose. Unit tests not available.")
+        raise ImportError("Could not load pytest. Unit tests not available.")
 
     def _doctest(verbose=False):
-        """This would run all doc tests, but nose couldn't be
+        """This would run all doc tests, but pytest couldn't be
         imported so the test suite can not run.
         """
-        raise ImportError("Could not load nose. Doctests not available.")
+        raise ImportError("Could not load pytest. Doctests not available.")
 else:
-    def _test(doctest=False, verbose=False, dry_run=False, run_all=True):
+    def test(doctest=False, verbose=False, dry_run=False, run_all=True):
         """Run all unit tests."""
-        import nose
-        args = ['', pkg_dir, '--exe', '--ignore-files=^_test']
+        import pytest
+
+        pytest_args = ["-l"]
+
         if verbose:
-            args.extend(['-v', '-s'])
+            pytest_args += ["-v"]
+
         if dry_run:
-            args.extend(['--collect-only'])
-        if not run_all:
-            args.extend(['-A', 'not slow'])
+            pytest_args += ["--collect-only"]
+
+        if run_all:
+            pytest_args += ["--runslow"]
+
         if doctest:
-            args.extend(['--with-doctest', '--ignore-files=^\.',
-                         '--ignore-files=^setup\.py$$', '--ignore-files=test'])
-            # Make sure warnings do not break the doc tests
-            with _warnings.catch_warnings():
-                _warnings.simplefilter("ignore")
-                success = nose.run('permute', argv=args)
-        else:
-            success = nose.run('permute', argv=args)
-        # Return sys.exit code
-        if success:
-            return 0
-        else:
-            return 1
+            pytest_args += ["--doctest-modules"]
 
+        pytest_args += ["--pyargs", "permute"]
 
-# do not use `test` as function name as this leads to a recursion problem with
-# the nose test suite
-test = _test
-test_verbose = _functools.partial(test, verbose=True)
-test_verbose.__doc__ = test.__doc__
-doctest = _functools.partial(test, doctest=True)
-doctest.__doc__ = doctest.__doc__
-doctest_verbose = _functools.partial(test, doctest=True, verbose=True)
-doctest_verbose.__doc__ = doctest.__doc__
+        try:
+            code = pytest.main(pytest_args)
+        except SystemExit as exc:
+            code = exc.code
+    
+        return code == 0

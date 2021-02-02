@@ -1,12 +1,6 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-
-from nose.plugins.attrib import attr
-from nose.tools import raises
+import pytest
 
 import numpy as np
-from numpy.testing import (assert_equal,
-                           assert_almost_equal)
 
 from ..irr import (compute_ts,
                    simulate_ts_dist,
@@ -24,7 +18,7 @@ res = RNG.binomial(1, .5, (R, Ns))
 
 def test_irr():
     rho_s = compute_ts(res)
-    assert_almost_equal(rho_s, 0.51936507)
+    np.testing.assert_almost_equal(rho_s, 0.51936507)
 
 
 def test_simulate_ts_dist():
@@ -34,15 +28,15 @@ def test_simulate_ts_dist():
                      'pvalue': 0.0591,
                      'num_perm': 10000}
     res1 = simulate_ts_dist(res, seed=42, plus1=False)
-    assert_equal(res1, expected_res1)
+    np.testing.assert_equal(res1, expected_res1)
     expected_res2 = {'geq': 9507,
                      'obs_ts': 0.46285714285714286,
                      'num_perm': 10000}
     res2 = simulate_ts_dist(res[:5], seed=42, keep_dist=True)
-    assert_equal(res2['geq'], expected_res2['geq'])
-    assert_equal(res2['obs_ts'], expected_res2['obs_ts'])
-    assert_equal(res2['num_perm'], expected_res2['num_perm'])
-    assert_equal(res2['dist'].shape, (10000,))
+    assert res2['geq'] == expected_res2['geq']
+    assert res2['obs_ts'] == expected_res2['obs_ts']
+    assert res2['num_perm'] == expected_res2['num_perm']
+    assert res2['dist'].shape == (10000,)
 
 
 def test_with_naomi_data():
@@ -56,7 +50,7 @@ def test_with_naomi_data():
                     'num_perm': 10,
                     'pvalue': 1,
                     'obs_ts': 1.0}
-    assert_equal(res, expected_res)
+    np.testing.assert_equal(res, expected_res)
 
 
 freq = RNG.choice([0.2, 0.8], Ns)
@@ -68,7 +62,7 @@ for i in range(len(freq)):
 
 def test_irr_concordance():
     rho_s2 = compute_ts(res2)
-    assert_almost_equal(rho_s2, 0.70476190476190481)
+    np.testing.assert_almost_equal(rho_s2, 0.70476190476190481)
 
 
 def test_simulate_ts_dist_concordance():
@@ -78,7 +72,7 @@ def test_simulate_ts_dist_concordance():
                          'pvalue': 1/10001,
                          'num_perm': 10000}
     res_conc = simulate_ts_dist(res2, seed=42)
-    assert_equal(res_conc, expected_res_conc)
+    np.testing.assert_equal(res_conc, expected_res_conc)
 
 
 res1 = simulate_ts_dist(res, keep_dist=True, seed=42)
@@ -94,14 +88,13 @@ def test_simulate_npc_dist():
                         'pvalue': 0.0016}
     obs_npc_res = simulate_npc_dist(
         rho_perm, size=np.array([Ns, Ns]), pvalues=true_pvalue)
-    assert_equal(obs_npc_res['num_perm'], expected_npc_res['num_perm'])
-    assert_almost_equal(obs_npc_res['obs_npc'], expected_npc_res['obs_npc'], 3)
-    assert_almost_equal(obs_npc_res['pvalue'], expected_npc_res['pvalue'], 3)
+    assert obs_npc_res['num_perm'] == expected_npc_res['num_perm']
+    np.testing.assert_almost_equal(obs_npc_res['obs_npc'], expected_npc_res['obs_npc'], 3)
+    np.testing.assert_almost_equal(obs_npc_res['pvalue'], expected_npc_res['pvalue'], 3)
 
 
-@raises(ValueError)
 def test_simulate_npc_error():
-    simulate_npc_dist(rho_perm, size=np.array([Ns, Ns]))
+    pytest.raises(ValueError, simulate_npc_dist, rho_perm, size=np.array([Ns, Ns]))
 
 
 def test_simulate_npc_perfect():
@@ -125,5 +118,5 @@ def test_simulate_npc_perfect():
     expected_overall = {'num_perm': 10000,
                         'obs_npc': -0.007709695302872763,
                         'pvalue': 0.0}
-    assert_almost_equal(overall1['obs_npc'], expected_overall['obs_npc'], 3)
-    assert_almost_equal(overall2['obs_npc'], expected_overall['obs_npc'], 3)
+    np.testing.assert_almost_equal(overall1['obs_npc'], expected_overall['obs_npc'], 3)
+    np.testing.assert_almost_equal(overall2['obs_npc'], expected_overall['obs_npc'], 3)

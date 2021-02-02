@@ -9,7 +9,7 @@ phenotypic combinations in the samples selected from the two populations.
 Given :math:`X_1, X_2, \dots, X_n` and ...
 
 
-.. plot::
+.. nbplot::
 
     >>> from __future__ import print_function
     >>> from matplotlib import mlab

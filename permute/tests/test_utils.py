@@ -1,11 +1,7 @@
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
-
-from nose.tools import raises
+import sys
+import pytest
 
 import numpy as np
-from numpy.random import RandomState
-from numpy.testing import assert_equal, assert_almost_equal
 from scipy.stats import hypergeom, binom
 from cryptorandom.cryptorandom import SHA256
 from cryptorandom.sample import random_sample, random_permutation
@@ -79,49 +75,44 @@ def test_hypergeom_conf_interval():
 
 
 def test_hypergeometric():
-    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'greater'), 
+    np.testing.assert_almost_equal(hypergeometric(4, 10, 5, 6, 'greater'), 
                         1-hypergeom.cdf(3, 10, 5, 6))
-    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'less'), 
+    np.testing.assert_almost_equal(hypergeometric(4, 10, 5, 6, 'less'), 
                         hypergeom.cdf(4, 10, 5, 6))
-    assert_almost_equal(hypergeometric(4, 10, 5, 6, 'two-sided'), 
+    np.testing.assert_almost_equal(hypergeometric(4, 10, 5, 6, 'two-sided'), 
                         2*(1-hypergeom.cdf(3, 10, 5, 6)))
 
 
-@raises(ValueError)
 def test_hypergeometric_badinput1():
-    hypergeometric(5, 10, 2, 6)
+    pytest.raises(ValueError, hypergeometric, 5, 10, 2, 6)
 
 
-@raises(ValueError)
 def test_hypergeometric_badinput2():
-    hypergeometric(5, 10, 18, 6)
+    pytest.raises(ValueError, hypergeometric, 5, 10, 18, 6)
 
 
-@raises(ValueError)
 def test_hypergeometric_badinput3():
-    hypergeometric(5, 10, 6, 16)
+    pytest.raises(ValueError, hypergeometric, 5, 10, 6, 16)
 
 
-@raises(ValueError)
 def test_hypergeometric_badinput4():
-    hypergeometric(5, 10, 6, 2)
+    pytest.raises(ValueError, hypergeometric, 5, 10, 6, 2)
 
 
 def test_binomial_p():
-    assert_almost_equal(binomial_p(5, 10, 0.5, 'greater'), 
+    np.testing.assert_almost_equal(binomial_p(5, 10, 0.5, 'greater'), 
                         1-binom.cdf(4, 10, 0.5))
-    assert_almost_equal(binomial_p(5, 10, 0.5, 'less'), 
+    np.testing.assert_almost_equal(binomial_p(5, 10, 0.5, 'less'), 
                         binom.cdf(5, 10, 0.5))
-    assert_almost_equal(binomial_p(5, 10, 0.5, 'two-sided'), 1)
+    np.testing.assert_almost_equal(binomial_p(5, 10, 0.5, 'two-sided'), 1)
 
 
-@raises(ValueError)
 def test_binomial_badinput():
-    binomial_p(10, 5, 0.5)
+    pytest.raises(ValueError, binomial_p, 10, 5, 0.5)
 
 
 def test_get_random_state():
-    prng1 = RandomState(42)
+    prng1 = np.random.RandomState(42)
     prng2 = get_prng(42)
     prng3 = get_prng(prng1)
     prng4 = get_prng(prng2)
@@ -129,13 +120,13 @@ def test_get_random_state():
     prng6 = get_prng(None)
     prng7 = get_prng(np.random)
     prng8 = get_prng(SHA256(42))
-    assert(isinstance(prng1, RandomState))
+    assert(isinstance(prng1, np.random.RandomState))
     assert(isinstance(prng2, SHA256))
-    assert(isinstance(prng3, RandomState))
+    assert(isinstance(prng3, np.random.RandomState))
     assert(isinstance(prng4, SHA256))
     assert(isinstance(prng5, SHA256))
     assert(isinstance(prng6, SHA256))
-    assert(isinstance(prng7, RandomState))
+    assert(isinstance(prng7, np.random.RandomState))
     x1 = prng1.randint(0, 5, size=10)
     x2 = prng2.randint(0, 5, size=10)
     x3 = prng3.randint(0, 5, size=10)
@@ -144,18 +135,17 @@ def test_get_random_state():
     x6 = prng6.randint(0, 5, size=10)
     x7 = prng7.randint(0, 5, size=10)
     x8 = prng8.randint(0, 5, size=10)
-    assert_equal(x2, x8)
-    assert_equal(prng2.counter, 1)
-    assert_equal(prng2.baseseed, 42)
-    assert_equal(prng2.baseseed, prng4.baseseed)
-    assert_equal(len(x5), 10)
-    assert_equal(len(x6), 10)
-    assert_equal(len(x7), 10)
+    np.testing.assert_equal(x2, x8)
+    assert prng2.counter == 1
+    assert prng2.baseseed == 42
+    assert prng2.baseseed == prng4.baseseed
+    assert len(x5) == 10
+    assert len(x6) == 10
+    assert len(x7) == 10
 
 
-@raises(ValueError)
 def test_get_random_state_error():
-    get_prng([1, 1.11])
+    pytest.raises(ValueError, get_prng, [1, 1.11])
 
 
 def test_permute_within_group():
@@ -174,6 +164,7 @@ def test_permute_within_group():
     np.testing.assert_equal(group, res3)
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="need updated cryptorandom")
 def test_permute():
     prng = SHA256(42)
 
@@ -203,7 +194,7 @@ def test_permute_rows():
 
 
 def test_permute_incidence_fixed_sums():
-    prng = RandomState(42)
+    prng = np.random.RandomState(42)
     x0 = prng.randint(2, size=80).reshape((8, 10))
     x1 = permute_incidence_fixed_sums(x0)
 
@@ -223,14 +214,12 @@ def test_permute_incidence_fixed_sums():
                                           test_arr.sum(axis=axis))
 
 
-@raises(ValueError)
 def test_permute_incidence_fixed_sums_ND_arr():
-    permute_incidence_fixed_sums(np.random.random((1, 1, 1)))
+    pytest.raises(ValueError, permute_incidence_fixed_sums, np.random.random((1, 1, 1)))
 
 
-@raises(ValueError)
 def test_permute_incidence_fixed_sums_non_binary():
-    permute_incidence_fixed_sums(np.array([[1, 2], [3, 4]]))
+    pytest.raises(ValueError, permute_incidence_fixed_sums, np.array([[1, 2], [3, 4]]))
 
 
 def test_potential_outcomes():
@@ -268,8 +257,7 @@ def test_potential_outcomes():
     np.testing.assert_almost_equal(resg[5:, :], expectedg[5:, :], 1)
 
 
-@raises(AssertionError)
 def test_potential_outcomes_bad_inverse():
     f = lambda u: u + 3.5
     ginv = lambda u: np.log(u) / 2
-    potential_outcomes(np.array([1, 2]), np.array([3, 4]), f, ginv)
+    pytest.raises(AssertionError, potential_outcomes, np.array([1, 2]), np.array([3, 4]), f, ginv)

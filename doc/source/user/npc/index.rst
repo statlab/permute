@@ -9,3 +9,4 @@ Software" by F. Pesarin and L. Salmaso.
 
    kenya.rst
    chap1-4.rst
+   westfall-wolfinger.rst
