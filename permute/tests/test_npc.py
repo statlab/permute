@@ -11,6 +11,7 @@ from ..npc import (fisher,
                    npc,
                    check_combfunc_monotonic,
                    fwer_minp,
+                   randomize_group,
                    Experiment)
 
 
