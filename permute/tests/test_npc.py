@@ -10,6 +10,7 @@ from ..npc import (fisher,
                    inverse_n_weight,
                    npc,
                    check_combfunc_monotonic,
+                   sim_npc,
                    fwer_minp,
                    randomize_group,
                    Experiment)

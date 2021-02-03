@@ -76,12 +76,12 @@ This example is shown in Chapter 4.6, page 240.
     >>> second_moment = two_sample(sam1**2, sam2**2, alternative='two-sided', reps=5000, keep_dist=True, seed=423)
     >>> partial_pvalues = np.array([first_moment[0], second_moment[0]])
     >>> print("Partial p-values:", round(first_moment[0], 3), round(second_moment[0], 3))
-    Partial p-values: 0.017 0.009
+    Partial p-values: 0.022 0.01
 
     >>> npc_distr = np.vstack([first_moment[2], second_moment[2]]).T
     >>> global_p = npc(partial_pvalues, np.abs(npc_distr))
     >>> print("Global p-value:", round(global_p, 4))
-    Global p-value: 0.0014
+    Global p-value: 0.002
 
 Fly Data
 --------
