@@ -10,15 +10,6 @@ class DummyFile:
         pass
 
 
-def test_version():
-    from .. import __version__ as v
-    try:
-        from ..version import version as _v
-    except ImportError:
-        assert v == "unbuilt-dev"
-    else:
-        assert v == _v
-
 
 def test_pytest_import_error1():
     _tmp = sys.modules['pytest']
