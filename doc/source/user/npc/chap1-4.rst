@@ -79,9 +79,9 @@ This example is shown in Chapter 4.6, page 240.
     Partial p-values: 0.022 0.01
 
     >>> npc_distr = np.vstack([first_moment[2], second_moment[2]]).T
-    >>> global_p = npc(partial_pvalues, npc_distr, alternatives='two-sided')
+    >>> global_p = npc(partial_pvalues, np.abs(npc_distr))
     >>> print("Global p-value:", round(global_p, 4))
-    Global p-value: 0.0018
+    Global p-value: 0.002
 
 Fly Data
 --------

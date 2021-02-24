@@ -18,16 +18,16 @@ When running the two sample test, use the same initial PRNG seed in order to kee
     >>> p3 = two_sample(ww.y3[ww.x == 0], ww.y3[ww.x == 1], alternative="two-sided", seed=40929102, keep_dist=True, reps=5000)
     
     >>> pvalues = np.array([p1[0], p2[0], p3[0]])
-    >>> distr = np.vstack([p1[2], p2[2], p3[2]]).T
-    >>> pvalues_adj_fisher = fwer_minp(pvalues, distr, alternatives="two-sided", combine="fisher")
-    >>> pvalues_adj_liptak = fwer_minp(pvalues, distr, alternatives="two-sided", combine="liptak")
-    >>> pvalues_adj_tippett = fwer_minp(pvalues, distr, alternatives="two-sided", combine="tippett")
+    >>> distr = np.abs(np.vstack([p1[2], p2[2], p3[2]]).T)
+    >>> pvalues_adj_fisher = fwer_minp(pvalues, distr, combine="fisher")
+    >>> pvalues_adj_liptak = fwer_minp(pvalues, distr, combine="liptak")
+    >>> pvalues_adj_tippett = fwer_minp(pvalues, distr, combine="tippett")
 
 
 ::
 
     print("Adjusted p-values \nFisher:", pvalues_adj_fisher, "\nLiptak:", pvalues_adj_liptak, "\nTippett:", pvalues_adj_tippett)
-    Adjusted p-values
-    Fisher: [0.08758248 0.04779044 0.00379924]
-    Liptak: [0.08758248 0.04619076 0.00379924]
-    Tippett: [0.08758248 0.0619876  0.00379924]
+    Adjusted p-values 
+    Fisher: [0.08758248 0.04819036 0.0219956 ] 
+    Liptak: [0.08758248 0.0459908  0.02339532] 
+    Tippett: [0.08758248 0.06258748 0.02359528]
