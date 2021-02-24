@@ -25,32 +25,17 @@ def parse_requirements_file(filename):
 INSTALL_REQUIRES = parse_requirements_file("requirements/default.txt")
 TESTS_REQUIRE = parse_requirements_file("requirements/test.txt")
 
+with open("permute/__init__.py") as fid:
+    for line in fid:
+        if line.startswith("__version__"):
+            VERSION = line.strip().split()[-1][1:-1]
+            break
 
 with open("README.md") as fh:
     LONG_DESCRIPTION = fh.read()
 
 
-def write_version_py(filename="permute/version.py"):
-    template = """# THIS FILE IS GENERATED FROM THE PERMUTE SETUP.PY
-version='%s'
-"""
-
-    try:
-        fname = os.path.join(os.path.dirname(__file__), filename)
-        with open(fname, "w") as f:
-            f.write(template % VERSION)
-    except OSError:
-        raise OSError(
-            "Could not open/write to permute/version.py - did you "
-            "install using sudo in the past? If so, run\n"
-            "sudo chown -R your_username ./*\n"
-            "from package root to fix permissions, and try again."
-        )
-
-
 if __name__ == "__main__":
-
-    write_version_py()
 
     from setuptools import setup
 
