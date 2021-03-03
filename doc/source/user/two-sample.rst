@@ -56,7 +56,7 @@ Gender bias in student evaluation of teachers
 There is growing evidence of gender bias in student evaluations of teaching. To
 address the question “Do students give higher ratings to male teachers?,” an
 online experiment was done with two professors, one male and one female
-\cite{macnell2014s}. Each professor taught two sections. In one section, they
+:cite:`macnell2014s`. Each professor taught two sections. In one section, they
 used a male name. In the other, they used a female name.  The students didn’t
 know the teacher’s real gender. We test whether student evaluations of teaching
 are biased by comparing the ratings when one of the professors used a male name
