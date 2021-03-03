@@ -12,10 +12,16 @@
 # serve to show the default.
 
 from datetime import date
-import sys
 import os
+import sys
+import warnings
 
 import sphinx_bootstrap_theme
+
+# Remove matplotlib agg warnings from generated doc when using plt.show
+warnings.filterwarnings("ignore", category=UserWarning,
+                        message='Matplotlib is currently using agg, which is a'
+                                ' non-GUI backend, so cannot show the figure.')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -39,10 +45,10 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.viewcode',
     'sphinx.ext.imgmath',
-    'sphinx.ext.napoleon',
     'sphinxcontrib.bibtex',
     'nb2plots',
     'texext',
+    'numpydoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

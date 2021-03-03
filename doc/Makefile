@@ -48,7 +48,7 @@ help:
 	@echo "  github     to upload the web site via gh-pages"
 
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)/* source/bibtex.json
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
