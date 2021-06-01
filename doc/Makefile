@@ -177,7 +177,7 @@ pseudoxml:
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
 
-github: html
+github: html latexpdf
 	touch $(BUILDDIR)/html/.nojekyll
 	cp -a $(BUILDDIR)/latex/permute.pdf $(BUILDDIR)/html/.
 	ghp-import $(BUILDDIR)/html

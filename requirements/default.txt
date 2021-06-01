@@ -1,3 +1,3 @@
 numpy>=1.20
 scipy>=1.6
-cryptorandom>=0.3rc1
+cryptorandom>=0.3

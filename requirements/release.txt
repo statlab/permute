@@ -1,2 +1,2 @@
-wheel>=0.36.2
-twine>=3.3
+wheel>=0.36
+twine>=3.4
