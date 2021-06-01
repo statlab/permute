@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Interrater reliability &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Developer Guide" href="../dev/index.html" />
+    <link rel="prev" title="Nonparametric combination of tests" href="npc.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Interrater reliability</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="npc.html" title="Previous Chapter: Nonparametric combination of tests"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Nonparametric...</span>
+    </a>
+  </li>
+  <li>
+    <a href="../dev/index.html" title="Next Chapter: Developer Guide"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Developer Guide &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="module-permute.irr">
+<span id="interrater-reliability"></span><h1>Interrater reliability<a class="headerlink" href="#module-permute.irr" title="Permalink to this headline">¶</a></h1>
+<p>A stratified permutation test for multi-rater inter-rater reliability.</p>
+<p>There are <img class="math" src="../_images/math/b988975be41fd13b4d091c10202ba19374643586.png" alt="S"/> strata.
+There are <img class="math" src="../_images/math/5e39e6f9d54fdbac1a3cad42723c4487d23b7598.png" alt="N_s"/> items in stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>.
+There are <img class="math" src="../_images/math/a3c80ac4ded9340e32f74547cc564a9958b85d1c.png" alt="N = \sum_{s=1}^S N_s"/> items in all.</p>
+<p>There are <img class="math" src="../_images/math/4db5b6e16e06f929ce3f675c5e535d06ffb02ff7.png" alt="C"/> non-exclusive categories to which each of the <img class="math" src="../_images/math/3bfb3a64189a14b2704f4610827762d5e3145114.png" alt="N"/> items might
+belong; an item might belong to none of the categories.
+That is, each item might be “labeled” with any of the <img class="math" src="../_images/math/abd59b7b1f4740e6f67ee8c8006d0e78b4acc3cf.png" alt="2^C"/> subsets
+of the <img class="math" src="../_images/math/4db5b6e16e06f929ce3f675c5e535d06ffb02ff7.png" alt="C"/> labels, including the empty set.</p>
+<p>There are <img class="math" src="../_images/math/1ebe654cc7b8f2a0d8100aa5825cf2b9021adbbc.png" alt="R"/> “raters,” each of whom labels each of the <img class="math" src="../_images/math/3bfb3a64189a14b2704f4610827762d5e3145114.png" alt="N"/> items with zero
+or more elements of <img class="math" src="../_images/math/4db5b6e16e06f929ce3f675c5e535d06ffb02ff7.png" alt="C"/>.</p>
+<p>Define <img class="math" src="../_images/math/a3d2b391b679599e73bb6aec680b5f32e40980a4.png" alt="L_{s,i,c,r} = 1"/>, if rater <img class="math" src="../_images/math/79a3d439d28652c547386f39b555d90d3aaf102d.png" alt="r"/> assigns label <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/> to item <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> in
+stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>; and <img class="math" src="../_images/math/fe7483660b2ecddc71db7c2a85b77cf5d1e3c59f.png" alt="L_{s,i,c,r} = 0"/> if not.</p>
+<p>We observe <img class="math" src="../_images/math/9c9e954d49a40023df4ae40ef789af0201e251f6.png" alt="\{ L_{s,i,c,r} \}"/> for <img class="math" src="../_images/math/e673f315d7acb7edbbb0503ad9829726c3aebca3.png" alt="s=1...S"/>;  <img class="math" src="../_images/math/3820a6c37b1d5d8b7396da949f9b2741dc0f30a9.png" alt="i=1, ..., N_s"/>;
+<img class="math" src="../_images/math/1d4bdfc5b742ea402ac94799993f4b1621c41aa8.png" alt="c=1, ..., C"/>; and <img class="math" src="../_images/math/ccbdc101be925f8b260317cf933b2e5a6ecf1550.png" alt="r=1, ..., R"/>.</p>
+<p>We want to know whether the categorizations are “reliable,” in the sense
+that agreement among the raters is higher than would be expected
+“by chance.”  The reliability of each category <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/> is of interest,
+rather than an overall rating for all <img class="math" src="../_images/math/4db5b6e16e06f929ce3f675c5e535d06ffb02ff7.png" alt="C"/> categories.</p>
+<p>Fix <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/>, since we are considering only one category at a time.</p>
+<p>The null hypothesis for category <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/> is that, for each rater <img class="math" src="../_images/math/79a3d439d28652c547386f39b555d90d3aaf102d.png" alt="r"/>, and each
+stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>, the values <img class="math" src="../_images/math/9c9e954d49a40023df4ae40ef789af0201e251f6.png" alt="\{ L_{s,i,c,r} \}"/> are exchangeable; that for
+each rater <img class="math" src="../_images/math/79a3d439d28652c547386f39b555d90d3aaf102d.png" alt="r"/>, the values <img class="math" src="../_images/math/9c9e954d49a40023df4ae40ef789af0201e251f6.png" alt="\{ L_{s,i,c,r} \}"/> for different strata <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>
+are independent; and that the values are independent across raters.</p>
+<p>Our test conditions on the sets of labels each rater assigns
+within each stratum, but not on the items to which those labels are
+assigned.  The null distribution involves permuting the assignments each
+given rater makes of category <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/> to items within each stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>,
+permuting independently across across raters and across strata.</p>
+<p>The test statistic within stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> is</p>
+<div class="math">
+<p><img src="../_images/math/3da836eba937cf65db0c3e54f4a69ffc33980bd2.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+= \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+  (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1))."/></p>
+</div><p>That is, within each stratum, we count the number of concordant pairs of
+assignments. If all <img class="math" src="../_images/math/1ebe654cc7b8f2a0d8100aa5825cf2b9021adbbc.png" alt="R"/> raters agree whether item <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> in stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/>
+belongs to category <img class="math" src="../_images/math/d520a12f1579170834c32ad5f656de081bbb36fe.png" alt="c"/>, that contributes a term <img class="math" src="../_images/math/1ce430df6dd0c46c186a0703289391752fc52782.png" alt="{R \choose 2}"/> to the
+sum.  If only half agree, the term for item <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> contributes
+<img class="math" src="../_images/math/e51423f23d03e87b140355a72e8de0ea50023565.png" alt="2 {N/2 \choose 2}"/> to the sum.  The normalization makes perfect
+agreement within stratum <img class="math" src="../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> correspond to <img class="math" src="../_images/math/c3a8c30e66253e1f0cc044abc872dd45a5fb713e.png" alt="\rho_s = 1"/>.</p>
+<p>To combine the results across strata to get an overall p-value, we could
+use any of the methods we’ve discussed, or the NPC (nonparametric
+combination of test) methods described in Pesarin and Salmaso, based on
+the p-values in different strata.  For instance, Fisher’s combination
+statistic is</p>
+<div class="math">
+<p><img src="../_images/math/c8bca03d22cf1c655262bc568863717068f1a185.png" alt="\lambda = - \sum_{s=1}^S w_s \log \hat{p}_s,"/></p>
+</div><p>where the nonnegative weights <img class="math" src="../_images/math/e240aa61a5f4a8826288ad3ac9b3f2dcac0b6751.png" alt="\{w_s\}"/> are chosen in some sensible manner
+(e.g., <img class="math" src="../_images/math/ee1208e7b5793b389fd83c03b45d6c968745ff85.png" alt="w_s = N_s^{-1/2}"/> would be reasonable).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.irr.compute_ts">
+<span class="sig-prename descclassname"><span class="pre">permute.irr.</span></span><span class="sig-name descname"><span class="pre">compute_ts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/irr.html#compute_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.irr.compute_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<div class="math">
+<p><img src="../_images/math/3da836eba937cf65db0c3e54f4a69ffc33980bd2.png" alt="\rho_s \equiv \frac{1}{N_s {R \choose 2}} \sum_{i=1}^{N_s}
+\sum_{r=1}^{R-1} \sum_{v=r+1}^R 1(L_{s,i,r} = L_{s,i,v})
+= \frac{1}{N_s R(R-1)} \sum_{i=1}^{N_s}
+  (y_{si}(y_{si}-1) + (R-y_{si})(R-y_{si}-1))."/></p>
+</div><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ratings</strong><span class="classifier">array_like</span></dt><dd><p>Input array of dimension [R, Ns]
+Each row corresponds to the ratings given by a single rater;
+columns correspond to items rated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rho_s</strong><span class="classifier">float</span></dt><dd><p>concordance of the ratings, where perfect concordance is 1.0</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.irr.simulate_npc_dist">
+<span class="sig-prename descclassname"><span class="pre">permute.irr.</span></span><span class="sig-name descname"><span class="pre">simulate_npc_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perm_distr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pvalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/irr.html#simulate_npc_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.irr.simulate_npc_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates the permutation distribution of the combined NPC test
+statistic for S matrices of ratings <code class="docutils literal notranslate"><span class="pre">ratings</span></code> corresponding to
+S strata. The distribution comes from applying <code class="docutils literal notranslate"><span class="pre">simulate_ts_dist</span></code>
+to each of the S strata.</p>
+<p>If obs_ts is not null, computes the reference value of the test
+statistic before the first permutation. Otherwise, uses the value
+<code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> for comparison.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test
+statistic; otherwise, return only the number of permutations
+for which the value of the irr test statistic is at least
+as large as <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>perm_distr</strong><span class="classifier">array_like</span></dt><dd><p>Input array of dimension [B, S]
+Column s is the permutation distribution of <img class="math" src="../_images/math/8b40d1995676d97733c644bf09e192b93f5d146b.png" alt="\rho_s"/>,
+for s=1,…,S</p>
+</dd>
+<dt><strong>size</strong><span class="classifier">array_like</span></dt><dd><p>Input array of dimension S
+Each entry corresponds to the number of items, Ns,
+in the s-th stratum.</p>
+</dd>
+<dt><strong>obs_ts</strong><span class="classifier">array_like</span></dt><dd><p>Optional input array of dimension S
+The s-th entry is <img class="math" src="../_images/math/8b40d1995676d97733c644bf09e192b93f5d146b.png" alt="\rho_s"/>, the concordance for the s-th stratum.
+If not input, pvalues must be specified.</p>
+</dd>
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Optional input array of dimension S
+The s-th entry is the p-value corresponding to <img class="math" src="../_images/math/8b40d1995676d97733c644bf09e192b93f5d146b.png" alt="\rho_s"/>,
+the concordance for the s-th stratum.
+If not input, obs_ts must be specified.</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt>dict</dt><dd><p>A dictionary containing:</p>
+<dl class="simple">
+<dt>obs_npc<span class="classifier">float</span></dt><dd><p>observed value of the combined test statistic for the input data, or
+the input value of <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> if <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> was given as input</p>
+</dd>
+<dt>pvalue<span class="classifier">float</span></dt><dd><p>A single p-value for the global test. The number of times that obs_npc
+was at least as extreme as the distribution of combined IRR statistics.</p>
+</dd>
+<dt>num_perm<span class="classifier">int</span></dt><dd><p>number of permutations</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.irr.simulate_ts_dist">
+<span class="sig-prename descclassname"><span class="pre">permute.irr.</span></span><span class="sig-name descname"><span class="pre">simulate_ts_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_perm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/irr.html#simulate_ts_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.irr.simulate_ts_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulates the permutation distribution of the irr test statistic for
+a matrix of ratings <code class="docutils literal notranslate"><span class="pre">ratings</span></code></p>
+<p>If <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, computes the reference value of the test
+statistic before the first permutation. Otherwise, uses the value
+<code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> for comparison.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test statistic;
+otherwise, return only the number of permutations for which the value of
+the irr test statistic is at least as large as <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ratings</strong><span class="classifier">array_like</span></dt><dd><p>Input array of dimension [R, Ns]</p>
+</dd>
+<dt><strong>obs_ts</strong><span class="classifier">float</span></dt><dd><p>if None, <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> is calculated as the value of the test
+statistic for the original data</p>
+</dd>
+<dt><strong>num_perm</strong><span class="classifier">int</span></dt><dd><p>number of random permutation of the elements of each row of ratings</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values of
+the irr test statistic</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt>dict</dt><dd><p>A dictionary containing:</p>
+<dl class="simple">
+<dt>obs_ts<span class="classifier">int</span></dt><dd><p>observed value of the test statistic for the input data, or
+the input value of <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> if <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code> was given as input</p>
+</dd>
+<dt>geq<span class="classifier">int</span></dt><dd><p>number of iterations for which the test statistic was greater
+than or equal to <code class="docutils literal notranslate"><span class="pre">obs_ts</span></code></p>
+</dd>
+<dt>num_perm<span class="classifier">int</span></dt><dd><p>number of permutations</p>
+</dd>
+<dt>pvalue<span class="classifier">float</span></dt><dd><p>geq / num_perm</p>
+</dd>
+<dt>dist<span class="classifier">array-like</span></dt><dd><p>if <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, the array of values of the irr test statistic
+from the <code class="docutils literal notranslate"><span class="pre">num_perm</span></code> iterations.  Otherwise, <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

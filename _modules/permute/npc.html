@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>permute.npc &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for permute.npc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">rankdata</span><span class="p">,</span> <span class="n">ttest_ind</span><span class="p">,</span> <span class="n">ttest_1samp</span>
+<span class="kn">from</span> <span class="nn">cryptorandom.sample</span> <span class="kn">import</span> <span class="n">random_sample</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_prng</span><span class="p">,</span> <span class="n">permute</span>
+
+
+<span class="c1"># Combining functions</span>
+
+<div class="viewcode-block" id="fisher"><a class="viewcode-back" href="../../api/npc.html#permute.npc.fisher">[docs]</a><span class="k">def</span> <span class="nf">fisher</span><span class="p">(</span><span class="n">pvalues</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Fisher&#39;s combining function</span>
+
+<span class="sd">    .. math:: -2 \sum_i \log(p_i)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Fisher&#39;s combined test statistic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">pvalues</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="liptak"><a class="viewcode-back" href="../../api/npc.html#permute.npc.liptak">[docs]</a><span class="k">def</span> <span class="nf">liptak</span><span class="p">(</span><span class="n">pvalues</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Liptak&#39;s combining function</span>
+
+<span class="sd">    .. math:: \sum_i \Phi^{-1}(1-p_i)</span>
+
+<span class="sd">    where $\Phi^{-1}$ is the inverse CDF of the standard normal distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Liptak&#39;s combined test statistic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pvalues</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="tippett"><a class="viewcode-back" href="../../api/npc.html#permute.npc.tippett">[docs]</a><span class="k">def</span> <span class="nf">tippett</span><span class="p">(</span><span class="n">pvalues</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Tippett&#39;s combining function</span>
+
+<span class="sd">    .. math:: \max_i \{1-p_i\}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Tippett&#39;s combined test statistic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pvalues</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="inverse_n_weight"><a class="viewcode-back" href="../../api/npc.html#permute.npc.inverse_n_weight">[docs]</a><span class="k">def</span> <span class="nf">inverse_n_weight</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the test statistic</span>
+
+<span class="sd">    .. math:: -\sum_{s=1}^S \frac{p_s}{\sqrt{N_s}}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+<span class="sd">    size : array_like</span>
+<span class="sd">        The $i$th entry is the sample size used for the $i$th test</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        combined test statistic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">size</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">pvalues</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span></div>
+
+
+<span class="c1"># Nonparametric combination of tests</span>
+
+<div class="viewcode-block" id="check_combfunc_monotonic"><a class="viewcode-back" href="../../api/npc.html#permute.npc.check_combfunc_monotonic">[docs]</a><span class="k">def</span> <span class="nf">check_combfunc_monotonic</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">combfunc</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility function to check that the combining function is monotonically</span>
+<span class="sd">    decreasing in each argument.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+<span class="sd">    combine : function</span>
+<span class="sd">        The combining function to use.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ``True`` if the combining function passed the check, ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">obs_ts</span> <span class="o">=</span> <span class="n">combfunc</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)):</span>
+        <span class="n">test_pvalues</span> <span class="o">=</span> <span class="n">pvalues</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">test_pvalues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_pvalues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.1</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">obs_ts</span> <span class="o">&lt;</span> <span class="n">combfunc</span><span class="p">(</span><span class="n">test_pvalues</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="npc"><a class="viewcode-back" href="../../api/npc.html#permute.npc.npc">[docs]</a><span class="k">def</span> <span class="nf">npc</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;fisher&quot;</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines p-values from individual partial test hypotheses $H_{0i}$ against</span>
+<span class="sd">    $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis</span>
+
+<span class="sd">    .. math:: \cap_{i=1}^n H_{0i}</span>
+
+<span class="sd">    against the alternative</span>
+
+<span class="sd">    .. math:: \cup_{i=1}^n H_{1i}</span>
+
+<span class="sd">    using an omnibus test statistic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+<span class="sd">    distr : array_like</span>
+<span class="sd">        Array of dimension [B, n] where B is the number of permutations and n is</span>
+<span class="sd">        the number of partial hypothesis tests. The $i$th column of distr contains</span>
+<span class="sd">        the simulated null distribution of the $i$th test statistic under $H_{0i}$.</span>
+<span class="sd">    combine : {&#39;fisher&#39;, &#39;liptak&#39;, &#39;tippett&#39;} or function</span>
+<span class="sd">        The combining function to use. Default is &quot;fisher&quot;.</span>
+<span class="sd">        Valid combining functions must take in p-values as their argument and be</span>
+<span class="sd">        monotonically decreasing in each p-value.</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        A single p-value for the global test</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One p-value: nothing to combine!&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">distr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mismatch in number of p-values and size of distr&quot;</span><span class="p">)</span>
+
+    <span class="n">combine_library</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fisher&quot;</span><span class="p">:</span> <span class="n">fisher</span><span class="p">,</span>
+        <span class="s2">&quot;liptak&quot;</span><span class="p">:</span> <span class="n">liptak</span><span class="p">,</span>
+        <span class="s2">&quot;tippett&quot;</span><span class="p">:</span> <span class="n">tippett</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">combine</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_combfunc_monotonic</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">combine</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Bad combining function: must be monotonically decreasing in each p-value&quot;</span><span class="p">)</span>
+        <span class="n">combine_func</span> <span class="o">=</span> <span class="n">combine</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">combine_func</span> <span class="o">=</span> <span class="n">combine_library</span><span class="p">[</span><span class="n">combine</span><span class="p">]</span>
+
+    <span class="c1"># Convert test statistic distribution to p-values</span>
+    <span class="n">combined_stat_distr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span>
+    <span class="n">pvalues_from_distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">B</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">pvalues_from_distr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">rankdata</span><span class="p">(</span><span class="n">distr</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;min&quot;</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">plus1</span><span class="o">+</span><span class="n">B</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">plus1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">plus1</span><span class="o">+</span><span class="n">B</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">combine</span> <span class="o">==</span> <span class="s2">&quot;liptak&quot;</span><span class="p">:</span>
+        <span class="n">toobig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pvalues_from_distr</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pvalues_from_distr</span><span class="p">[</span><span class="n">toobig</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+    <span class="n">combined_stat_distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span>
+        <span class="n">combine_func</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pvalues_from_distr</span><span class="p">)</span>
+
+    <span class="n">observed_combined_stat</span> <span class="o">=</span> <span class="n">combine_func</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">plus1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">combined_stat_distr</span> <span class="o">&gt;=</span> <span class="n">observed_combined_stat</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">plus1</span><span class="o">+</span><span class="n">B</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sim_npc"><a class="viewcode-back" href="../../api/npc.html#permute.npc.sim_npc">[docs]</a><span class="k">def</span> <span class="nf">sim_npc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;fisher&quot;</span><span class="p">,</span> <span class="n">in_place</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&#39;&#39;&#39; </span>
+<span class="sd">    Combines p-values from individual partial test hypotheses $H_{0i}$ against</span>
+<span class="sd">    $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis</span>
+
+<span class="sd">    .. math:: \cap_{i=1}^n H_{0i}</span>
+
+<span class="sd">    against the alternative</span>
+
+<span class="sd">    .. math:: \cup_{i=1}^n H_{1i}</span>
+
+<span class="sd">    using an omnibus test statistic.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : Experiment object</span>
+<span class="sd">    test : array_like</span>
+<span class="sd">        Array of functions to compute test statistic to apply to each column in cols</span>
+<span class="sd">    combine : {&#39;fisher&#39;, &#39;liptak&#39;, &#39;tippett&#39;} or function</span>
+<span class="sd">        The combining function to use. Default is &quot;fisher&quot;.</span>
+<span class="sd">        Valid combining functions must take in p-values as their argument and be</span>
+<span class="sd">        monotonically decreasing in each p-value.</span>
+<span class="sd">    in_place : Boolean</span>
+<span class="sd">        whether randomize group in place, default False</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array</span>
+<span class="sd">        A single p-value for the global test, </span>
+<span class="sd">        test statistic values on the original data,</span>
+<span class="sd">        partial p-values</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># check data is of type Experiment</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;data not of class Experiment&quot;</span><span class="p">)</span>
+        
+    <span class="c1"># if seed not none, reset seed</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">reset_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    
+    <span class="n">ts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">tv</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># get the test statistic for each column on the original data</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+        <span class="c1"># apply test statistic function to column</span>
+        <span class="n">ts</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">tv</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+    <span class="c1"># check if randomization in place</span>
+    <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
+        <span class="n">data_copy</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        
+    <span class="c1"># get test statistics for random samples</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+        <span class="c1"># randomly permute group</span>
+        <span class="n">data_copy</span><span class="o">.</span><span class="n">randomize</span><span class="p">()</span>
+        <span class="c1"># calculate test statistics on permuted data</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+            <span class="c1"># get test statistic for this permutation</span>
+            <span class="n">tv</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">data_copy</span><span class="p">))</span>
+    <span class="c1"># get p-values for original data</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+        <span class="n">ps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tv</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">ts</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># change format of dist to array</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tv</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># append test statistic from orignal data to dist</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ts</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">))],</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># run npc</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">))]),</span> <span class="n">dist</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="n">combine</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">ps</span></div>
+
+
+<div class="viewcode-block" id="fwer_minp"><a class="viewcode-back" href="../../api/npc.html#permute.npc.fwer_minp">[docs]</a><span class="k">def</span> <span class="nf">fwer_minp</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s1">&#39;fisher&#39;</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adjust p-values using the permutation &quot;minP&quot; variant of Holm&#39;s step-up method.</span>
+<span class="sd">    </span>
+<span class="sd">    When considering a closed testing procedure, the adjusted p-value </span>
+<span class="sd">    $p_i$ for a given hypothesis $H_i$ is the maximum of all p-values for tests </span>
+<span class="sd">    including $H_i$ as a special case (including the p-value for the $H_i$ </span>
+<span class="sd">    test itself).</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvalues : array_like</span>
+<span class="sd">        Array of p-values to combine</span>
+<span class="sd">    distr : array_like</span>
+<span class="sd">        Array of dimension [B, n] where B is the number of permutations and n is</span>
+<span class="sd">        the number of partial hypothesis tests. The $i$th column of distr contains</span>
+<span class="sd">        the simulated null distribution of the $i$th test statistic under $H_{0i}$.</span>
+<span class="sd">    combine : {&#39;fisher&#39;, &#39;liptak&#39;, &#39;tippett&#39;} or function</span>
+<span class="sd">        The combining function to use. Default is &quot;fisher&quot;.</span>
+<span class="sd">        Valid combining functions must take in p-values as their argument and be</span>
+<span class="sd">        monotonically decreasing in each p-value.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array of adjusted p-values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One p-value: nothing to adjust!&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">distr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mismatch in number of p-values and size of distr&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Order the p-values</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="n">pvalues_ord</span> <span class="o">=</span> <span class="n">pvalues</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">distr_ord</span> <span class="o">=</span> <span class="n">distr</span><span class="p">[:,</span> <span class="n">order</span><span class="p">]</span>
+
+    <span class="c1"># Step down tree of combined hypotheses, from global test to test of the</span>
+    <span class="c1"># individual hypothesis with largest p-value</span>
+    <span class="n">pvalues_adjusted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">pvalues_ord</span><span class="p">,</span> <span class="n">distr_ord</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="n">combine</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">next_pvalue</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">pvalues_ord</span><span class="p">[</span><span class="n">jj</span><span class="p">:],</span> <span class="n">distr_ord</span><span class="p">[:,</span> <span class="n">jj</span><span class="p">:],</span> <span class="n">combine</span><span class="o">=</span><span class="n">combine</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">next_pvalue</span><span class="p">,</span> <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="n">jj</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">pvalues_ord</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">2</span><span class="p">]])</span>
+    <span class="n">pvalues_adjusted</span> <span class="o">=</span> <span class="n">pvalues_adjusted</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">pvalues_adjusted</span></div>
+
+
+<span class="c1"># Randomization functions</span>
+
+<div class="viewcode-block" id="randomize_group"><a class="viewcode-back" href="../../api/npc.html#permute.npc.randomize_group">[docs]</a><span class="k">def</span> <span class="nf">randomize_group</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unstratified randomization</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : Experiment object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Experiment object</span>
+<span class="sd">        Experiment object with randomized group assignments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">random_sample</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">group</span><span class="p">),</span> <span class="n">prng</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">prng</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="randomize_in_strata"><a class="viewcode-back" href="../../api/npc.html#permute.npc.randomize_in_strata">[docs]</a><span class="k">def</span> <span class="nf">randomize_in_strata</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stratified randomization where first covariate is the stratum </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : Experiment object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Experiment object</span>
+<span class="sd">        Experiment object with randomized group assignments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first covariate is the stratum</span>
+    <span class="n">strata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">covariate</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">unique_strata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">strata</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">unique_strata</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">strata</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_sample</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">strata</span> <span class="o">==</span> <span class="n">value</span><span class="p">],</span> 
+                                                    <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">strata</span> <span class="o">==</span> <span class="n">value</span><span class="p">]),</span> 
+                                                    <span class="n">prng</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">prng</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="c1"># Experiment class</span>
+
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../api/npc.html#permute.npc.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent an experiment.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    group : vector</span>
+<span class="sd">        group assignment for each observation</span>
+<span class="sd">    response : array_like</span>
+<span class="sd">        array of response values for each observation</span>
+<span class="sd">    covariate : array_like</span>
+<span class="sd">        array of covariate values for each observation</span>
+<span class="sd">    randomizer : Randomizer object</span>
+<span class="sd">        randomizer to use when randomizing group assignments.</span>
+<span class="sd">        default is unstratified randomization, randomize_group</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">covariate</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">randomizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">object</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">object</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">covariate</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">covariate</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">covariate</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">object</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">randomizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">Randomizer</span><span class="p">(</span><span class="n">randomize</span> <span class="o">=</span> <span class="n">randomize_group</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">randomizer</span><span class="p">,</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">Randomizer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span> <span class="o">=</span> <span class="n">randomizer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not of class Randomizer&quot;</span><span class="p">)</span>
+        
+        
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;This experiment has &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; subjects, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> \
+    <span class="o">+</span> <span class="s2">&quot; response variables, and &quot;</span> \
+    <span class="o">+</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covariate</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covariate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> \
+    <span class="o">+</span> <span class="s2">&quot; covariates.&quot;</span>
+    
+    
+    <span class="k">def</span> <span class="nf">randomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_place</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># reset seed, if seed not None</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">reset_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">in_place</span><span class="p">:</span>
+            <span class="n">randomized_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># make deep copy</span>
+            <span class="n">randomized_self</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">randomized_self</span><span class="o">.</span><span class="n">randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">randomized_self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">randomized_self</span>
+
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_test_array</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">create_func</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">new_func</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_func</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="p">[</span><span class="n">create_func</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">test</span>
+    
+    
+    <span class="k">class</span> <span class="nc">TestFunc</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">mean_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+            <span class="c1"># get unique groups</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of groups must be two&quot;</span><span class="p">)</span>
+            <span class="c1"># get mean for each group</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">groups</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="k">return</span> <span class="n">mx</span><span class="o">-</span><span class="n">my</span>
+        
+        <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+            <span class="c1"># get unique groups</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of groups must be two&quot;</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> 
+                             <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">groups</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">t</span>
+        
+        <span class="k">def</span> <span class="nf">one_way_anova</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+            <span class="n">tst</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">overall_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">):</span>
+                <span class="n">group_k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">[:,</span> <span class="n">index</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">k</span><span class="p">]</span>
+                <span class="n">group_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">group_k</span><span class="p">)</span>
+                <span class="n">nk</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_k</span><span class="p">)</span>
+                <span class="n">tst</span> <span class="o">+=</span> <span class="p">(</span><span class="n">group_mean</span> <span class="o">-</span> <span class="n">overall_mean</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nk</span>
+            <span class="k">return</span> <span class="n">tst</span>
+    
+    
+    <span class="k">class</span> <span class="nc">Randomizer</span><span class="p">():</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">randomize</span> <span class="o">=</span> <span class="n">randomize_group</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">randomize</span> <span class="o">=</span> <span class="n">randomize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> 
+            
+        <span class="c1"># reset seed</span>
+        <span class="k">def</span> <span class="nf">reset_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

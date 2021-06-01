@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Nonparametric combination of tests &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Interrater reliability" href="irr.html" />
+    <link rel="prev" title="Stratified testing" href="stratified.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Nonparametric combination of tests</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="stratified.html" title="Previous Chapter: Stratified testing"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Stratified testing</span>
+    </a>
+  </li>
+  <li>
+    <a href="irr.html" title="Next Chapter: Interrater reliability"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Interrater re... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="module-permute.npc">
+<span id="nonparametric-combination-of-tests"></span><h1>Nonparametric combination of tests<a class="headerlink" href="#module-permute.npc" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="permute.npc.Experiment">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#Experiment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to represent an experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">vector</span></dt><dd><p>group assignment for each observation</p>
+</dd>
+<dt><strong>response</strong><span class="classifier">array_like</span></dt><dd><p>array of response values for each observation</p>
+</dd>
+<dt><strong>covariate</strong><span class="classifier">array_like</span></dt><dd><p>array of covariate values for each observation</p>
+</dd>
+<dt><strong>randomizer</strong><span class="classifier">Randomizer object</span></dt><dd><p>randomizer to use when randomizing group assignments.
+default is unstratified randomization, randomize_group</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66%" />
+<col style="width: 34%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Randomizer</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>TestFunc</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>make_test_array</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>randomize</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.check_combfunc_monotonic">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">check_combfunc_monotonic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combfunc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#check_combfunc_monotonic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.check_combfunc_monotonic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function to check that the combining function is monotonically
+decreasing in each argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+<dt><strong>combine</strong><span class="classifier">function</span></dt><dd><p>The combining function to use.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">True</span></code> if the combining function passed the check, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.fisher">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">fisher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#fisher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.fisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Fisher’s combining function</p>
+<div class="math">
+<p><img src="../_images/math/eddf4ab758e4b1d9e4ae2e8f30b2e782fc59dd2f.png" alt="-2 \sum_i \log(p_i)"/></p>
+</div><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>Fisher’s combined test statistic</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.fwer_minp">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">fwer_minp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fisher'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#fwer_minp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.fwer_minp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust p-values using the permutation “minP” variant of Holm’s step-up method.</p>
+<p>When considering a closed testing procedure, the adjusted p-value 
+<img class="math" src="../_images/math/5247131b3b1b9cc457d29a9b08a19c2062ed3d16.png" alt="p_i"/> for a given hypothesis <img class="math" src="../_images/math/1ab46710f2d6f72b0cab1393040bed9393b2113a.png" alt="H_i"/> is the maximum of all p-values for tests 
+including <img class="math" src="../_images/math/1ab46710f2d6f72b0cab1393040bed9393b2113a.png" alt="H_i"/> as a special case (including the p-value for the <img class="math" src="../_images/math/1ab46710f2d6f72b0cab1393040bed9393b2113a.png" alt="H_i"/> 
+test itself).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+<dt><strong>distr</strong><span class="classifier">array_like</span></dt><dd><p>Array of dimension [B, n] where B is the number of permutations and n is
+the number of partial hypothesis tests. The <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/>.</p>
+</dd>
+<dt><strong>combine</strong><span class="classifier">{‘fisher’, ‘liptak’, ‘tippett’} or function</span></dt><dd><p>The combining function to use. Default is “fisher”.
+Valid combining functions must take in p-values as their argument and be
+monotonically decreasing in each p-value.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>array of adjusted p-values</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.inverse_n_weight">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">inverse_n_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#inverse_n_weight"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.inverse_n_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the test statistic</p>
+<div class="math">
+<p><img src="../_images/math/d6d5324c9544a9c75abde3ab2fe9640b7f8d8ab9.png" alt="-\sum_{s=1}^S \frac{p_s}{\sqrt{N_s}}"/></p>
+</div><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+<dt><strong>size</strong><span class="classifier">array_like</span></dt><dd><p>The :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>i`th entry is the sample size used for the :math:<a href="#id3"><span class="problematic" id="id4">`</span></a>i`th test</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>combined test statistic</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.liptak">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">liptak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#liptak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.liptak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Liptak’s combining function</p>
+<div class="math">
+<p><img src="../_images/math/4bca2400dee1824abef7a800199c038057786a92.png" alt="\sum_i \Phi^{-1}(1-p_i)"/></p>
+</div><p>where <img class="math" src="../_images/math/2bf7d59fe2ecd30074d48feb7da561ea838ea61f.png" alt="\Phi^{-1}"/> is the inverse CDF of the standard normal distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>Liptak’s combined test statistic</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.npc">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">npc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fisher'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#npc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.npc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines p-values from individual partial test hypotheses <img class="math" src="../_images/math/c37036fae49c888cfbc29d1d5ad2ac4f79584d9f.png" alt="H_{0i}"/> against
+<img class="math" src="../_images/math/fff38000d3185510d9356da471a56ac7270450d9.png" alt="H_{1i}"/>, <img class="math" src="../_images/math/c9fd4fff698fa5e13635a672c85926038628afe0.png" alt="i=1,\dots,n"/> to test the global null hypothesis</p>
+<div class="math">
+<p><img src="../_images/math/924ba4a85a056a7821cfd9392a7bcdb6a374ae9d.png" alt="\cap_{i=1}^n H_{0i}"/></p>
+</div><p>against the alternative</p>
+<div class="math">
+<p><img src="../_images/math/91a02015dd0ebf8af0f0702284071c07fc8ed520.png" alt="\cup_{i=1}^n H_{1i}"/></p>
+</div><p>using an omnibus test statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+<dt><strong>distr</strong><span class="classifier">array_like</span></dt><dd><p>Array of dimension [B, n] where B is the number of permutations and n is
+the number of partial hypothesis tests. The <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/>.</p>
+</dd>
+<dt><strong>combine</strong><span class="classifier">{‘fisher’, ‘liptak’, ‘tippett’} or function</span></dt><dd><p>The combining function to use. Default is “fisher”.
+Valid combining functions must take in p-values as their argument and be
+monotonically decreasing in each p-value.</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>A single p-value for the global test</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.randomize_group">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">randomize_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#randomize_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.randomize_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unstratified randomization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">Experiment object</span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Experiment object</dt><dd><p>Experiment object with randomized group assignments</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.randomize_in_strata">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">randomize_in_strata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#randomize_in_strata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.randomize_in_strata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stratified randomization where first covariate is the stratum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">Experiment object</span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Experiment object</dt><dd><p>Experiment object with randomized group assignments</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.sim_npc">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">sim_npc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fisher'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#sim_npc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.sim_npc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines p-values from individual partial test hypotheses <img class="math" src="../_images/math/c37036fae49c888cfbc29d1d5ad2ac4f79584d9f.png" alt="H_{0i}"/> against
+<img class="math" src="../_images/math/fff38000d3185510d9356da471a56ac7270450d9.png" alt="H_{1i}"/>, <img class="math" src="../_images/math/c9fd4fff698fa5e13635a672c85926038628afe0.png" alt="i=1,\dots,n"/> to test the global null hypothesis</p>
+<div class="math">
+<p><img src="../_images/math/924ba4a85a056a7821cfd9392a7bcdb6a374ae9d.png" alt="\cap_{i=1}^n H_{0i}"/></p>
+</div><p>against the alternative</p>
+<div class="math">
+<p><img src="../_images/math/91a02015dd0ebf8af0f0702284071c07fc8ed520.png" alt="\cup_{i=1}^n H_{1i}"/></p>
+</div><p>using an omnibus test statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">Experiment object</span></dt><dd></dd>
+<dt><strong>test</strong><span class="classifier">array_like</span></dt><dd><p>Array of functions to compute test statistic to apply to each column in cols</p>
+</dd>
+<dt><strong>combine</strong><span class="classifier">{‘fisher’, ‘liptak’, ‘tippett’} or function</span></dt><dd><p>The combining function to use. Default is “fisher”.
+Valid combining functions must take in p-values as their argument and be
+monotonically decreasing in each p-value.</p>
+</dd>
+<dt><strong>in_place</strong><span class="classifier">Boolean</span></dt><dd><p>whether randomize group in place, default False</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>array</dt><dd><p>A single p-value for the global test, 
+test statistic values on the original data,
+partial p-values</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.npc.tippett">
+<span class="sig-prename descclassname"><span class="pre">permute.npc.</span></span><span class="sig-name descname"><span class="pre">tippett</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pvalues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/npc.html#tippett"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.npc.tippett" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Tippett’s combining function</p>
+<div class="math">
+<p><img src="../_images/math/e9af92b0c4eace01c9101897208e304f54d66b8d.png" alt="\max_i \{1-p_i\}"/></p>
+</div><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pvalues</strong><span class="classifier">array_like</span></dt><dd><p>Array of p-values to combine</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>Tippett’s combined test statistic</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

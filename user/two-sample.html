@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Two sample permutation tests &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Regression" href="regression.html" />
+    <link rel="prev" title="Paired permutation tests" href="one-sample.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Two sample permutation tests</a><ul>
+<li><a class="reference internal" href="#gender-bias-in-student-evaluation-of-teachers">Gender bias in student evaluation of teachers</a><ul>
+<li><a class="reference internal" href="#parametric-approach">Parametric Approach</a></li>
+<li><a class="reference internal" href="#permutation-approach">Permutation approach</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stratified-spearman-correlation-permutation-test">Stratified Spearman correlation permutation test</a><ul>
+<li><a class="reference internal" href="#more-on-teaching-evaluations">More on teaching evaluations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="one-sample.html" title="Previous Chapter: Paired permutation tests"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Paired permut...</span>
+    </a>
+  </li>
+  <li>
+    <a href="regression.html" title="Next Chapter: Regression"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Regression &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="two-sample-permutation-tests">
+<h1>Two sample permutation tests<a class="headerlink" href="#two-sample-permutation-tests" title="Permalink to this headline">¶</a></h1>
+<p>Suppose that we have a completely randomized experiment, where people are
+assigned to two groups at random. Suppose we have <img class="math" src="../_images/math/3bfb3a64189a14b2704f4610827762d5e3145114.png" alt="N"/> individuals indexed
+by <img class="math" src="../_images/math/35f2586c805a310b0e6a7e8ac91db9f5b1b80b8a.png" alt="i = 1, \dots, N"/>. We assign them at random to one of two groups with a random
+treatment vector <img class="math" src="../_images/math/95f028ab2b20b895fa12d986e0d9f40f7b6e52d3.png" alt="Z"/>: if <img class="math" src="../_images/math/3183716056d548a84082081cc71c131f9c723b78.png" alt="Z_i = 1"/>, then individual <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> receives treatment (for
+example, a drug) and if <img class="math" src="../_images/math/6bc215e4ee39ac5a37771f8502dfa34252a17fad.png" alt="Z_i=0"/>, individual <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> receives no treatment (a
+placebo). We’d like to test whether or not the drug has an effect on how often
+catches a cold. The outcome measure is the number of times somebody gets a cold
+wihin one year of starting to take the drug (for simplicity, assume that this
+can be measured perfectly). We can measure the difference in outcomes between
+the two groups with any statistic we’d like. The statistic will be a function
+of the treatment vector <img class="math" src="../_images/math/95f028ab2b20b895fa12d986e0d9f40f7b6e52d3.png" alt="Z"/> and the outcomes, <img class="math" src="../_images/math/1bd8c2c2d032393d1bdb8eba2fd0d9720681b3c7.png" alt="Y_i(1)"/> being the outcome under
+treatment and <img class="math" src="../_images/math/72295646177be19d42333021f408559e3a8f743e.png" alt="Y_i(0)"/> being the outcome under no treatment. We’ll use the
+difference-in-means test statistic:</p>
+<div class="math">
+<p><img src="../_images/math/4e51a04b86d978b208a3b36675343cef3babf65c.png" alt="T(Z, Y(1), Y(0)) = \frac{1}{N_t}\sum_{i : Z_i = 1}Y_i(1) - \frac{1}{N_c}\sum_{i : Z_i = 0}Y_i(0)"/></p>
+</div><p>Here, <img class="math" src="../_images/math/4c222db3aec2a7da51e33162103ab5c2f224284d.png" alt="N_t"/> is the number of treated individuals and <img class="math" src="../_images/math/8d0067474da41c6b6ea83c32a8c09ee100470583.png" alt="N_c"/> is the number of
+untreated individuals, so <img class="math" src="../_images/math/3384345f11f5a9ca30f70de23c914ce9db6b4727.png" alt="N_t + N_c = N"/>. If the test statistic is negative,
+then we may have evidence that the drug reduces colds. Conversely, if the test
+statistic is positive, we may believe that the drug actually makes people more
+vulnerable to getting sick. If we have no a priori belief about what the drug
+may do, we simply want to know if it has any effect at all. How extreme does
+the statistic need to be to indicate that there is likely an effect?</p>
+<p>If the drug has no effect on colds, then the number of colds that somebody has
+would be the same whether he or she received the drug or the placebo. This is
+the <em>strong null hypothesis</em>: the drug has no effect on any individual. Under
+the strong null, we know both potential outcomes for each individual; namely,
+their number of colds would be the same regardless of which treatment group
+they were assigned. In mathematical notation, <img class="math" src="../_images/math/572f916647368c1c967772d54138e18443ec4beb.png" alt="Y_i(1) = Y_i(0)"/> for all <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/>
+under the strong null.</p>
+<p>The random assignment of people to treatment groups ensures that all possible
+assignments of <img class="math" src="../_images/math/4c222db3aec2a7da51e33162103ab5c2f224284d.png" alt="N_t"/> people to treatment are equally likely. Thus, we can find
+the null distribution of the test statistic by calculating <img class="math" src="../_images/math/2315fb8b347db9620d706a7253472b234e7f1852.png" alt="T(Z^*, Y(1), Y(0))"/>
+for all possible treatment assignment vectors <img class="math" src="../_images/math/8b8f7cbd047ee6bc4e6d3ff1731121954eaa9179.png" alt="Z^*"/>. In general, this would not
+be possible, because for each individual we observe only <img class="math" src="../_images/math/1bd8c2c2d032393d1bdb8eba2fd0d9720681b3c7.png" alt="Y_i(1)"/> or <img class="math" src="../_images/math/72295646177be19d42333021f408559e3a8f743e.png" alt="Y_i(0)"/>,
+but not both. However, the strong null hypothesis allows us to impute the
+missing potential outcome for each individual.</p>
+<p>There are <img class="math" src="../_images/math/583368ce43816791ad448bb9337b060bca93c7eb.png" alt="N \choose N_t"/> possible values of <img class="math" src="../_images/math/8b8f7cbd047ee6bc4e6d3ff1731121954eaa9179.png" alt="Z^*"/>.  In practice, this number is
+often too large to enumerate all possible values of <img class="math" src="../_images/math/2315fb8b347db9620d706a7253472b234e7f1852.png" alt="T(Z^*, Y(1), Y(0))"/>.
+Instead, we simulate the distribution by taking a random subset of <img class="math" src="../_images/math/4bc3e94a67870b41b7c20179693e889251e2c136.png" alt="B"/> of the
+<img class="math" src="../_images/math/8b8f7cbd047ee6bc4e6d3ff1731121954eaa9179.png" alt="Z^*"/>. Then, our estimated p-value for the test is</p>
+<div class="math">
+<p><img src="../_images/math/9f48ce1a69800f3b3b8fb5472a1b65f7536ec9ec.png" alt="P = 2\times \min\left( \frac{ \#\left\lbrace  T(Z^*) &lt;= T(Z)\right\rbrace}{B}, \frac{\# \left\lbrace T(Z^*) &gt;= T(Z)\right\rbrace}{B}\right)"/></p>
+</div><section id="gender-bias-in-student-evaluation-of-teachers">
+<h2>Gender bias in student evaluation of teachers<a class="headerlink" href="#gender-bias-in-student-evaluation-of-teachers" title="Permalink to this headline">¶</a></h2>
+<p>There is growing evidence of gender bias in student evaluations of teaching. To
+address the question “Do students give higher ratings to male teachers?,” an
+online experiment was done with two professors, one male and one female
+<span id="id1">[<a class="reference internal" href="references.html#id4" title="Lillian MacNell, Adam Driscoll, and Andrea N Hunt. What's in a name: exposing gender bias in student ratings of teaching. Innovative Higher Education, pages 1–13, 2014.">MDH14</a>]</span>. Each professor taught two sections. In one section, they
+used a male name. In the other, they used a female name.  The students didn’t
+know the teacher’s real gender. We test whether student evaluations of teaching
+are biased by comparing the ratings when one of the professors used a male name
+versus a female name.</p>
+<p>As an aside, note that we cannot simply pool the ratings for the two professors
+when they identified as male and when they identified as female. The
+“treatment” is the gender the instructor reports, but other things affect the
+ratings students give. For instance, the two instructors may have different
+teaching styles, thereby introducing differences in the ratings that are
+unrelated to their identified gender. This is why we choose to focus on one
+instructor.</p>
+<section id="parametric-approach">
+<h3>Parametric Approach<a class="headerlink" href="#parametric-approach" title="Permalink to this headline">¶</a></h3>
+<p>First let us consider the parametric two-sample t-test. In this case, our test
+statistic is</p>
+<div class="math">
+<p><img src="../_images/math/e3877cc7a39fb29ba23708d645a358c75cd621af.png" alt="t = \frac{\text{mean(rating for M-identified) - mean(rating for F-identified )}}{\sqrt{\text{pooled SD of ratings}}}"/></p>
+</div><p>For the two-sample t-test, the null hypothesis is that the reported/perceived
+instructor gender has no effect on ratings. The alternative hypothesis is that
+ratings differ by reported/perceived instructor gender. For the two-sample
+t-test to be valid, we require the following assumptions:</p>
+<ul class="simple">
+<li><p>Ratings are normally distributed. (But they are on a Likert 1-5
+scale, which is definitely not normal.)</p></li>
+<li><p>Noise is zero-mean and constant variance across raters. (How should
+we interpret “noise” in this context? Besides constant variance is
+not plausible: some raters might give a range of scores, other raters
+might always give 5.)</p></li>
+<li><p>Independence between observations. (Students might talk about ratings
+with their peers in the class, creating dependence.)</p></li>
+</ul>
+<p>Despite the problematic assumptions we are required to make, let’s temporarily
+assume they hold and calculate a “p-value” anyway.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.data</span> <span class="kn">import</span> <span class="n">macnell2014</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratings</span> <span class="o">=</span> <span class="n">macnell2014</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prof1</span> <span class="o">=</span> <span class="n">ratings</span><span class="p">[</span><span class="n">ratings</span><span class="o">.</span><span class="n">tagender</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maleid</span> <span class="o">=</span> <span class="n">prof1</span><span class="o">.</span><span class="n">overall</span><span class="p">[</span><span class="n">prof1</span><span class="o">.</span><span class="n">taidgender</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">femaleid</span> <span class="o">=</span> <span class="n">prof1</span><span class="o">.</span><span class="n">overall</span><span class="p">[</span><span class="n">prof1</span><span class="o">.</span><span class="n">taidgender</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">maleid</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">femaleid</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ttest_ind</span><span class="p">(</span><span class="n">maleid</span><span class="p">,</span> <span class="n">femaleid</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test statistic:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">Test statistic: 1.32905</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P-value (two-sided):&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">P-value (two-sided): 0.20043</span>
+</pre></div>
+</div>
+<p>Note that the computed “p-value” is above the standard cut-offs for
+reporting significance in the literature.</p>
+</section>
+<section id="permutation-approach">
+<h3>Permutation approach<a class="headerlink" href="#permutation-approach" title="Permalink to this headline">¶</a></h3>
+<p>For the permutation test we can use the same test statistic, but we will
+compute the p-value by randomly sampling the exact distribution of the
+test statistics. The null hypothesis is that the ratings are uninfluenced by
+reported gender—any particular student would assign the same rating
+regardless of instructor gender.  The alternative hypothesis is that the
+ratings differ by instructor gender—some students would assign different
+ratings depending on reported instructor gender.  The only assumption we need
+to make is that the random assignment of students to instruction sections is
+fair and independent across individuals. This can be verified directly from the
+experimental design.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.core</span> <span class="kn">import</span> <span class="n">two_sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">maleid</span><span class="p">,</span> <span class="n">femaleid</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test statistic:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">Test statistic: 1.32905</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P-value (two-sided):&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">P-value (two-sided): 0.27918</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">maleid</span><span class="p">,</span> <span class="n">femaleid</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P-value (two-sided):&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">P-value (two-sided): 0.41584</span>
+</pre></div>
+</div>
+<p>Since the permutation test also returns the approximately exact distribution of
+the test statistic, let’s compare the actual distribution with the
+<img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-distribution.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">distr</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">maleid</span><span class="p">,</span> <span class="n">femaleid</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">55</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">distr</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Permutation Null Distribution&#39;</span><span class="p">)</span>
+<span class="go">Text(0.5, 1.0, &#39;Permutation Null Distribution&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.lines.Line2D object at ...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span>
+<span class="gp">... </span>      <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.9999</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="go">[&lt;matplotlib.lines.Line2D object at ...&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../user/two-sample-3.png">png</a>, <a class="reference external" href="../user/two-sample-3.hires.png">hires.png</a>, <a class="reference external" href="../user/two-sample-3.pdf">pdf</a>)</p>
+<figure class="align-default">
+<img alt="../_images/two-sample-3.png" src="../_images/two-sample-3.png" />
+</figure>
+<p>The plot above shows the null distribution generated by 10,000 permutations of
+the data. The t distribution is superimposed for comparison.  The null
+distribution is much more concentrated around 0 than the t distribution, which
+has longer tails.  Furthermore, it is not perfectly symmetric around zero. This
+is the source of the difference in p-values between the two tests.</p>
+</section>
+</section>
+<section id="stratified-spearman-correlation-permutation-test">
+<h2>Stratified Spearman correlation permutation test<a class="headerlink" href="#stratified-spearman-correlation-permutation-test" title="Permalink to this headline">¶</a></h2>
+<p>Some experimental designs have natural groupings. It makes sense to estimate
+effects within groups, then combine within-group estimates.</p>
+<p>To turn this idea into a permutation test, we carry out permutations within
+groups, then aggregate the test statistics across groups. This helps control
+for group-level effects.</p>
+<section id="more-on-teaching-evaluations">
+<h3>More on teaching evaluations<a class="headerlink" href="#more-on-teaching-evaluations" title="Permalink to this headline">¶</a></h3>
+<p>We established that one instructor got higher ratings when they used a male
+name than when they used a female name, but the difference was not significant.
+Now we may ask, did ratings differ according in this way for either of the two
+instructors?</p>
+<p>If there is no gender bias in the ratings, then students should give the same
+rating to the male instructor regardless of the gender he claims to be and
+students should give the same rating to the female instructor regardless of the
+gender she claims to be. However, we don’t necessarily believe that students
+would rate the two instructors the same, since there may be some difference in
+their teaching styles.</p>
+<p>Null hypothesis: student by student, the instructor would receive the same
+rating regardless of reported gender</p>
+<p>Alternative hypothesis: there is at least one student who would rate their
+instructor higher if they identified as male</p>
+<p>The test statistic we use within groups is the Spearman correlation. For each
+instructor, we compute the correlation between their rating and reported
+gender, then add the absolute values of the correlations for the instructors.
+Because reported gender is just a binary indicator, the correlation is
+equivalent to using the mean rating for male-identified instructors as a test
+statistic.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.stratified</span> <span class="kn">import</span> <span class="n">sim_corr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">sim</span> <span class="o">=</span> <span class="n">sim_corr</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ratings</span><span class="o">.</span><span class="n">overall</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ratings</span><span class="o">.</span><span class="n">taidgender</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">ratings</span><span class="o">.</span><span class="n">tagender</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="go">&lt;matplotlib.lines.Line2D object at ...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../user/two-sample-4.png">png</a>, <a class="reference external" href="../user/two-sample-4.hires.png">hires.png</a>, <a class="reference external" href="../user/two-sample-4.pdf">pdf</a>)</p>
+<figure class="align-default">
+<img alt="../_images/two-sample-4.png" src="../_images/two-sample-4.png" />
+</figure>
+<p>Finally, I plot the simulated distribution of the test statistics under the
+null conditioned on the observed data in Figure [fig:figure2].</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test statistic:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="go">Test statistic: 0.4459</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;P-value:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">P-value: 0.09</span>
+</pre></div>
+</div>
+<p>At the 10% level, there is a significant difference in ratings between
+male-identified and female-identified instructors. We could not have computed
+this p-value with any common distribution, since the null hypothesis assumes
+some observations (ratings for a single instructor) are exchangeable but others
+are not.</p>
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

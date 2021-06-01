@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>permute.core &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for permute.core</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">brentq</span><span class="p">,</span> <span class="n">fsolve</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ttest_ind</span><span class="p">,</span> <span class="n">ttest_1samp</span>
+<span class="kn">from</span> <span class="nn">fractions</span> <span class="kn">import</span> <span class="n">Fraction</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_prng</span><span class="p">,</span> <span class="n">potential_outcomes</span><span class="p">,</span> <span class="n">permute</span>
+
+
+<div class="viewcode-block" id="corr"><a class="viewcode-back" href="../../api/core.html#permute.core.corr">[docs]</a><span class="k">def</span> <span class="nf">corr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate permutation p-value for Pearson correlation coefficient</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    reps : int</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Returns test statistic, p-value, simulated distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">sims</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">permute</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">prng</span><span class="p">),</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">)]</span>
+    <span class="n">left_pv</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+    <span class="n">right_pv</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sims</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;greater&#39;</span><span class="p">:</span>
+        <span class="n">pvalue</span> <span class="o">=</span> <span class="n">right_pv</span>
+    <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;less&#39;</span><span class="p">:</span>
+        <span class="n">pvalue</span> <span class="o">=</span> <span class="n">left_pv</span>
+    <span class="k">elif</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;two-sided&#39;</span><span class="p">:</span>
+        <span class="n">pvalue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">left_pv</span><span class="p">,</span> <span class="n">right_pv</span><span class="p">])])</span>
+    <span class="k">return</span> <span class="n">tst</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">,</span> <span class="n">sims</span></div>
+
+
+<div class="viewcode-block" id="spearman_corr"><a class="viewcode-back" href="../../api/core.html#permute.core.spearman_corr">[docs]</a><span class="k">def</span> <span class="nf">spearman_corr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate permutation p-value for Spearman correlation coefficient</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    reps : int</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Returns test statistic, p-value, simulated distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">corr</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="n">ynew</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alternative</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="two_sample_core"><a class="viewcode-back" href="../../api/core.html#permute.core.two_sample_core">[docs]</a><span class="k">def</span> <span class="nf">two_sample_core</span><span class="p">(</span><span class="n">potential_outcomes_all</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">tst_stat</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span>
+                    <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main workhorse function for two_sample and two_sample_shift</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    potential_outcomes_all : array-like</span>
+<span class="sd">        2D array of potential outcomes under treatment (1st column)</span>
+<span class="sd">        and control (2nd column). To be passed in from potential_outcomes</span>
+<span class="sd">    nx : int</span>
+<span class="sd">        Size of the treatment group x</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions</span>
+<span class="sd">    tst_stat: function</span>
+<span class="sd">        The test statistic</span>
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    keep_dist : bool</span>
+<span class="sd">        flag for whether to store and return the array of values</span>
+<span class="sd">        of the test statistic. Default is False.</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        the estimated p-value</span>
+<span class="sd">    float</span>
+<span class="sd">        the test statistic</span>
+<span class="sd">    list</span>
+<span class="sd">        The distribution of test statistics.</span>
+<span class="sd">        These values are only returned if `keep_dist` == True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="n">rr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">potential_outcomes_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">tst</span> <span class="o">=</span> <span class="n">tst_stat</span><span class="p">(</span><span class="n">potential_outcomes_all</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                   <span class="n">potential_outcomes_all</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">thePvalue</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;greater&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="n">pUp</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span>
+        <span class="s1">&#39;less&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="n">pDn</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span>
+        <span class="s1">&#39;two-sided&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> \
+                                    <span class="n">pUp</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span> \
+                                    <span class="n">pDn</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)])</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">keep_dist</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">reps</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+            <span class="n">prng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">potential_outcomes_all</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tst_stat</span><span class="p">(</span><span class="n">pp</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pp</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">pUp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="n">pDn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thePvalue</span><span class="p">[</span><span class="n">alternative</span><span class="p">](</span><span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">),</span> <span class="n">dist</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hitsUp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">hitsDn</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+            <span class="n">prng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+            <span class="n">pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">potential_outcomes_all</span><span class="p">,</span> <span class="n">rr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">hitsUp</span> <span class="o">+=</span> <span class="n">tst_stat</span><span class="p">(</span><span class="n">pp</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pp</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">tst</span>
+            <span class="n">hitsDn</span> <span class="o">+=</span> <span class="n">tst_stat</span><span class="p">(</span><span class="n">pp</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pp</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">tst</span>
+        <span class="n">pUp</span> <span class="o">=</span> <span class="n">hitsUp</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="n">pDn</span> <span class="o">=</span> <span class="n">hitsDn</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thePvalue</span><span class="p">[</span><span class="n">alternative</span><span class="p">](</span><span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="two_sample"><a class="viewcode-back" href="../../api/core.html#permute.core.two_sample">[docs]</a><span class="k">def</span> <span class="nf">two_sample</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">,</span>
+               <span class="n">keep_dist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One-sided or two-sided, two-sample permutation test for equality of</span>
+<span class="sd">    two means, with p-value estimated by simulated random sampling with</span>
+<span class="sd">    reps replications.</span>
+
+<span class="sd">    Tests the hypothesis that x and y are a random partition of x,y</span>
+<span class="sd">    against the alternative that x comes from a population with mean</span>
+
+<span class="sd">    (a) greater than that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;greater&#39;</span>
+<span class="sd">    (b) less than that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;less&#39;</span>
+<span class="sd">    (c) different from that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;two-sided&#39;</span>
+
+<span class="sd">    If ``keep_dist``, return the distribution of values of the test statistic;</span>
+<span class="sd">    otherwise, return only the number of permutations for which the value of</span>
+<span class="sd">    the test statistic and p-value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Sample 1</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">        Sample 2</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions</span>
+<span class="sd">    stat : {&#39;mean&#39;, &#39;t&#39;}</span>
+<span class="sd">        The test statistic.</span>
+
+<span class="sd">        (a) If stat == &#39;mean&#39;, the test statistic is (mean(x) - mean(y))</span>
+<span class="sd">            (equivalently, sum(x), since those are monotonically related)</span>
+<span class="sd">        (b) If stat == &#39;t&#39;, the test statistic is the two-sample t-statistic--</span>
+<span class="sd">            but the p-value is still estimated by the randomization,</span>
+<span class="sd">            approximating the permutation distribution.</span>
+<span class="sd">            The t-statistic is computed using scipy.stats.ttest_ind</span>
+<span class="sd">        (c) If stat is a function (a callable object), the test statistic is</span>
+<span class="sd">            that function. The function should take two arguments:</span>
+<span class="sd">            given a permutation of the pooled data, the first argument is the</span>
+<span class="sd">            &quot;new&quot; x and the second argument is the &quot;new&quot; y.</span>
+<span class="sd">            For instance, if the test statistic is the Kolmogorov-Smirnov distance </span>
+<span class="sd">            between the empirical distributions of the two samples, </span>
+<span class="sd">            $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:</span>
+
+<span class="sd">            f = lambda u, v: np.max( \</span>
+<span class="sd">                [abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])]\</span>
+<span class="sd">                )</span>
+
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    keep_dist : bool</span>
+<span class="sd">        flag for whether to store and return the array of values</span>
+<span class="sd">        of the irr test statistic</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        the estimated p-value</span>
+<span class="sd">    float</span>
+<span class="sd">        the test statistic</span>
+<span class="sd">    list</span>
+<span class="sd">        The distribution of test statistics.</span>
+<span class="sd">        These values are only returned if `keep_dist` == True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set up potential outcomes; under the null, all units are exchangeable</span>
+    <span class="n">pot_out_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])])</span>
+
+    <span class="c1"># If stat is callable, use it as the test function. Otherwise, look in the</span>
+    <span class="c1"># dictionary</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">stat</span><span class="p">):</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stat</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">stat</span><span class="p">]</span>
+
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">observed_tst</span> <span class="o">=</span> <span class="n">tst_fun</span><span class="p">(</span><span class="n">pot_out_all</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pot_out_all</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">two_sample_core</span><span class="p">(</span><span class="n">pot_out_all</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">tst_fun</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alternative</span><span class="p">,</span>
+                          <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="n">keep_dist</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">keep_dist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">observed_tst</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">observed_tst</span></div>
+
+
+<div class="viewcode-block" id="two_sample_shift"><a class="viewcode-back" href="../../api/core.html#permute.core.two_sample_shift">[docs]</a><span class="k">def</span> <span class="nf">two_sample_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">,</span>
+                     <span class="n">keep_dist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One-sided or two-sided, two-sample permutation test for equality of</span>
+<span class="sd">    two means, with p-value estimated by simulated random sampling with</span>
+<span class="sd">    reps replications.</span>
+
+<span class="sd">    Tests the hypothesis that x and y are a random partition of x,y</span>
+<span class="sd">    against the alternative that x comes from a population with mean</span>
+
+<span class="sd">    (a) greater than that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;greater&#39;</span>
+<span class="sd">    (b) less than that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;less&#39;</span>
+<span class="sd">    (c) different from that of the population from which y comes,</span>
+<span class="sd">        if side = &#39;two-sided&#39;</span>
+
+<span class="sd">    If ``keep_dist``, return the distribution of values of the test statistic;</span>
+<span class="sd">    otherwise, return only the number of permutations for which the value of</span>
+<span class="sd">    the test statistic and p-value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Sample 1</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">        Sample 2</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions</span>
+<span class="sd">    stat : {&#39;mean&#39;, &#39;t&#39;}</span>
+<span class="sd">        The test statistic.</span>
+
+<span class="sd">        (a) If stat == &#39;mean&#39;, the test statistic is (mean(x) - mean(y))</span>
+<span class="sd">            (equivalently, sum(x), since those are monotonically related)</span>
+<span class="sd">        (b) If stat == &#39;t&#39;, the test statistic is the two-sample t-statistic--</span>
+<span class="sd">            but the p-value is still estimated by the randomization,</span>
+<span class="sd">            approximating the permutation distribution.</span>
+<span class="sd">            The t-statistic is computed using scipy.stats.ttest_ind</span>
+<span class="sd">        (c) If stat is a function (a callable object), the test statistic is</span>
+<span class="sd">            that function. The function should take two arguments:</span>
+<span class="sd">            given a permutation of the pooled data, the first argument is the</span>
+<span class="sd">            &quot;new&quot; x and the second argument is the &quot;new&quot; y.</span>
+<span class="sd">            For instance, if the test statistic is the Kolmogorov-Smirnov distance </span>
+<span class="sd">            between the empirical distributions of the two samples, </span>
+<span class="sd">            $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:</span>
+
+<span class="sd">            f = lambda u, v: np.max( \</span>
+<span class="sd">                [abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])]\</span>
+<span class="sd">                )</span>
+<span class="sd">                </span>
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    keep_dist : bool</span>
+<span class="sd">        flag for whether to store and return the array of values</span>
+<span class="sd">        of the irr test statistic</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    shift : float</span>
+<span class="sd">        The relationship between x and y under the null hypothesis.</span>
+
+<span class="sd">        (a) A constant scalar shift in the distribution of y. That is, x is equal</span>
+<span class="sd">            in distribution to y + shift.</span>
+<span class="sd">        (b) A tuple containing the function and its inverse $(f, f^{-1})$, so</span>
+<span class="sd">            $x_i = f(y_i)$ and $y_i = f^{-1}(x_i)$</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        the estimated p-value</span>
+<span class="sd">    float</span>
+<span class="sd">        the test statistic</span>
+<span class="sd">    list</span>
+<span class="sd">        The distribution of test statistics.</span>
+<span class="sd">        These values are only returned if `keep_dist` == True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set up potential outcomes according to shift</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="c1"># Potential outcomes for all units under treatment</span>
+        <span class="n">pot_outx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">shift</span><span class="p">])</span>
+        <span class="c1"># Potential outcomes for all units under control</span>
+        <span class="n">pot_outy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span> <span class="o">-</span> <span class="n">shift</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+        <span class="n">pot_out_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">pot_outx</span><span class="p">,</span> <span class="n">pot_outy</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="s2">&quot;Supply f and finverse in shift tuple&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="s2">&quot;Supply f and finverse in shift tuple&quot;</span>
+        <span class="n">pot_out_all</span> <span class="o">=</span> <span class="n">potential_outcomes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad input for shift&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If stat is callable, use it as the test function. Otherwise, look in the</span>
+    <span class="c1"># dictionary</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">stat</span><span class="p">):</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stat</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">stat</span><span class="p">]</span>
+
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">observed_tst</span> <span class="o">=</span> <span class="n">tst_fun</span><span class="p">(</span><span class="n">pot_out_all</span><span class="p">[:</span><span class="n">nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pot_out_all</span><span class="p">[</span><span class="n">nx</span><span class="p">:,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">two_sample_core</span><span class="p">(</span><span class="n">pot_out_all</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">tst_fun</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alternative</span><span class="p">,</span>
+                          <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="n">keep_dist</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">keep_dist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">observed_tst</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">observed_tst</span></div>
+
+
+<div class="viewcode-block" id="two_sample_conf_int"><a class="viewcode-back" href="../../api/core.html#permute.core.two_sample_conf_int">[docs]</a><span class="k">def</span> <span class="nf">two_sample_conf_int</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cl</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One-sided or two-sided confidence interval for the parameter determining</span>
+<span class="sd">    the treatment effect.  The default is the &quot;shift model&quot;, where we are</span>
+<span class="sd">    interested in the parameter d such that x is equal in distribution to</span>
+<span class="sd">    y + d. In general, if we have some family of invertible functions parameterized</span>
+<span class="sd">    by d, we&#39;d like to find d such that x is equal in distribution to f(y, d).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Sample 1</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">        Sample 2</span>
+<span class="sd">    cl : float in (0, 1)</span>
+<span class="sd">        The desired confidence level. Default 0.95.</span>
+<span class="sd">    alternative : {&quot;two-sided&quot;, &quot;lower&quot;, &quot;upper&quot;}</span>
+<span class="sd">        Indicates the alternative hypothesis.</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions in two_sample</span>
+<span class="sd">    stat : {&#39;mean&#39;, &#39;t&#39;}</span>
+<span class="sd">        The test statistic.</span>
+
+<span class="sd">        (a) If stat == &#39;mean&#39;, the test statistic is (mean(x) - mean(y))</span>
+<span class="sd">            (equivalently, sum(x), since those are monotonically related)</span>
+<span class="sd">        (b) If stat == &#39;t&#39;, the test statistic is the two-sample t-statistic--</span>
+<span class="sd">            but the p-value is still estimated by the randomization,</span>
+<span class="sd">            approximating the permutation distribution.</span>
+<span class="sd">            The t-statistic is computed using scipy.stats.ttest_ind</span>
+<span class="sd">        (c) If stat is a function (a callable object), the test statistic is</span>
+<span class="sd">            that function. The function should take two arguments:</span>
+<span class="sd">            given a permutation of the pooled data, the first argument is the</span>
+<span class="sd">            &quot;new&quot; x and the second argument is the &quot;new&quot; y.</span>
+<span class="sd">            For instance, if the test statistic is the Kolmogorov-Smirnov distance </span>
+<span class="sd">            between the empirical distributions of the two samples, </span>
+<span class="sd">            $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:</span>
+
+<span class="sd">            f = lambda u, v: np.max( \</span>
+<span class="sd">                [abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])]\</span>
+<span class="sd">                )</span>
+<span class="sd">                </span>
+<span class="sd">    shift : float</span>
+<span class="sd">        The relationship between x and y under the null hypothesis.</span>
+
+<span class="sd">        (a) If None, the relationship is assumed to be additive (e.g. x = y+d)</span>
+<span class="sd">        (b) A tuple containing the function and its inverse $(f, f^{-1})$, so</span>
+<span class="sd">            $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        the estimated confidence limits</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    xtol : float</span>
+<span class="sd">        Tolerance in brentq</span>
+<span class="sd">    rtol : float</span>
+<span class="sd">        Tolerance in brentq</span>
+<span class="sd">    maxiter : int</span>
+<span class="sd">        Maximum number of iterations in brentq</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># print warning</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;This function is under construction and outputs may be unreliable.&#39;</span><span class="p">)</span>
+    
+    <span class="k">assert</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shift</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">shift_limit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="c1"># FIXME: unused observed</span>
+        <span class="c1"># observed = np.mean(x) - np.mean(y)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span> <span class="s2">&quot;Supply f and finverse in shift tuple&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="s2">&quot;Supply f and finverse in shift tuple&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">finverse</span> <span class="o">=</span> <span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Check that f is increasing in d; this is very ad hoc!</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="s2">&quot;f must be increasing in the parameter d&quot;</span>
+        <span class="n">shift_limit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">fsolve</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">)),</span>
+                          <span class="nb">abs</span><span class="p">(</span><span class="n">fsolve</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">)))</span>
+        <span class="c1"># FIXME: unused observed</span>
+        <span class="c1"># observed = fsolve(lambda d: np.mean(x) - np.mean(f(y, d)), 0)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad input for shift&quot;</span><span class="p">)</span>
+    <span class="n">ci_low</span> <span class="o">=</span> <span class="o">-</span><span class="n">shift_limit</span>
+    <span class="n">ci_upp</span> <span class="o">=</span> <span class="n">shift_limit</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;two-sided&#39;</span><span class="p">:</span>
+        <span class="n">cl</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cl</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="o">!=</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shift</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">cl</span> <span class="o">-</span> <span class="n">two_sample_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                                <span class="n">shift</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">cl</span> <span class="o">-</span> <span class="n">two_sample_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                                <span class="n">shift</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">q</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">finverse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">q</span><span class="p">)),</span> 
+                                                <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ci_low</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">shift_limit</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">shift_limit</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="o">!=</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shift</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">cl</span> <span class="o">-</span> <span class="n">two_sample_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                                <span class="n">shift</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">cl</span> <span class="o">-</span> <span class="n">two_sample_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                                <span class="n">shift</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">q</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">finverse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">q</span><span class="p">)),</span> 
+                                                <span class="n">reps</span><span class="o">=</span><span class="n">reps</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="n">plus1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ci_upp</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">shift_limit</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">shift_limit</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ci_low</span><span class="p">,</span> <span class="n">ci_upp</span></div>
+
+
+<div class="viewcode-block" id="one_sample"><a class="viewcode-back" href="../../api/core.html#permute.core.one_sample">[docs]</a><span class="k">def</span> <span class="nf">one_sample</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;greater&quot;</span><span class="p">,</span>
+               <span class="n">keep_dist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One-sided or two-sided, one-sample permutation test for the mean,</span>
+<span class="sd">    with p-value estimated by simulated random sampling with</span>
+<span class="sd">    reps replications.</span>
+
+<span class="sd">    Alternatively, a permutation test for equality of means of two paired</span>
+<span class="sd">    samples.</span>
+
+<span class="sd">    Tests the hypothesis that x is distributed symmetrically symmetric about 0</span>
+<span class="sd">    (or x and y have the same center) against the alternative that x comes from</span>
+<span class="sd">    a population with mean</span>
+
+<span class="sd">    (a) greater than 0 (greater than that of the population from which y comes),</span>
+<span class="sd">        if side = &#39;greater&#39;</span>
+<span class="sd">    (b) less than 0 (less than that of the population from which y comes),</span>
+<span class="sd">        if side = &#39;less&#39;</span>
+<span class="sd">    (c) different from 0 (different from that of the population from which y comes),</span>
+<span class="sd">        if side = &#39;two-sided&#39;</span>
+
+<span class="sd">    If ``keep_dist``, return the distribution of values of the test statistic;</span>
+<span class="sd">    otherwise, return only the number of permutations for which the value of</span>
+<span class="sd">    the test statistic and p-value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Sample 1</span>
+<span class="sd">    y : array-like</span>
+<span class="sd">        Sample 2. Must preserve the order of pairs with x.</span>
+<span class="sd">        If None, x is taken to be the one sample.</span>
+<span class="sd">    reps : int</span>
+<span class="sd">        number of repetitions</span>
+<span class="sd">    stat : {&#39;mean&#39;, &#39;t&#39;}</span>
+<span class="sd">        The test statistic. The statistic is computed based on either z = x or</span>
+<span class="sd">        z = x - y, if y is specified.</span>
+
+<span class="sd">        (a) If stat == &#39;mean&#39;, the test statistic is mean(z).</span>
+<span class="sd">        (b) If stat == &#39;t&#39;, the test statistic is the t-statistic--</span>
+<span class="sd">            but the p-value is still estimated by the randomization,</span>
+<span class="sd">            approximating the permutation distribution.</span>
+<span class="sd">        (c) If stat is a function (a callable object), the test statistic is</span>
+<span class="sd">            that function.  The function should take a permutation of the</span>
+<span class="sd">            data and compute the test function from it. For instance, if the</span>
+<span class="sd">            test statistic is the maximum absolute value, $\max_i |z_i|$,</span>
+<span class="sd">            the test statistic could be written:</span>
+
+<span class="sd">            f = lambda u: np.max(abs(u))</span>
+<span class="sd">    alternative : {&#39;greater&#39;, &#39;less&#39;, &#39;two-sided&#39;}</span>
+<span class="sd">        The alternative hypothesis to test</span>
+<span class="sd">    keep_dist : bool</span>
+<span class="sd">        flag for whether to store and return the array of values</span>
+<span class="sd">        of the irr test statistic</span>
+<span class="sd">    seed : RandomState instance or {None, int, RandomState instance}</span>
+<span class="sd">        If None, the pseudorandom number generator is the RandomState</span>
+<span class="sd">        instance used by `np.random`;</span>
+<span class="sd">        If int, seed is the seed used by the random number generator;</span>
+<span class="sd">        If RandomState instance, seed is the pseudorandom number generator</span>
+<span class="sd">    plus1 : bool</span>
+<span class="sd">        flag for whether to add 1 to the numerator and denominator of the</span>
+<span class="sd">        p-value based on the empirical permutation distribution. </span>
+<span class="sd">        Default is True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        the estimated p-value</span>
+<span class="sd">    float</span>
+<span class="sd">        the test statistic</span>
+<span class="sd">    list</span>
+<span class="sd">        The distribution of test statistics.</span>
+<span class="sd">        These values are only returned if `keep_dist` == True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;x and y must be pairs&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">thePvalue</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;greater&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="n">pUp</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span>
+        <span class="s1">&#39;less&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="n">pDn</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span>
+        <span class="s1">&#39;two-sided&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> \
+                                    <span class="n">pUp</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">),</span> \
+                                    <span class="n">pDn</span><span class="o">+</span><span class="n">plus1</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)])</span>
+    <span class="p">}</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">u</span><span class="p">),</span>
+        <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">ttest_1samp</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">stat</span><span class="p">):</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stat</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tst_fun</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="n">stat</span><span class="p">]</span>
+
+    <span class="n">tst</span> <span class="o">=</span> <span class="n">tst_fun</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">keep_dist</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+            <span class="n">dist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tst_fun</span><span class="p">(</span><span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">prng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">))))</span>
+        <span class="n">pUp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span> <span class="o">+</span> <span class="n">plus1</span><span class="p">)</span>
+        <span class="n">pDn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span> <span class="o">+</span> <span class="n">plus1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thePvalue</span><span class="p">[</span><span class="n">alternative</span><span class="p">](</span><span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">),</span> <span class="n">tst</span><span class="p">,</span> <span class="n">dist</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hitsUp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">hitsDn</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">reps</span><span class="p">):</span>
+            <span class="n">tv</span> <span class="o">=</span> <span class="n">tst_fun</span><span class="p">(</span><span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">prng</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
+            <span class="n">hitsUp</span> <span class="o">+=</span> <span class="p">(</span><span class="n">tv</span> <span class="o">&gt;=</span> <span class="n">tst</span><span class="p">)</span>
+            <span class="n">hitsDn</span> <span class="o">+=</span> <span class="p">(</span><span class="n">tv</span> <span class="o">&lt;=</span> <span class="n">tst</span><span class="p">)</span>
+        <span class="n">pUp</span> <span class="o">=</span> <span class="n">hitsUp</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="n">pDn</span> <span class="o">=</span> <span class="n">hitsDn</span><span class="o">/</span><span class="p">(</span><span class="n">reps</span><span class="o">+</span><span class="n">plus1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">thePvalue</span><span class="p">[</span><span class="n">alternative</span><span class="p">](</span><span class="n">pUp</span><span class="p">,</span> <span class="n">pDn</span><span class="p">),</span> <span class="n">tst</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

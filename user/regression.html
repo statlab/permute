@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Regression &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Permutation Tests for Complex Data" href="npc/index.html" />
+    <link rel="prev" title="Two sample permutation tests" href="two-sample.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Regression</a><ul>
+<li><a class="reference internal" href="#derivation">Derivation</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="two-sample.html" title="Previous Chapter: Two sample permutation tests"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Two sample pe...</span>
+    </a>
+  </li>
+  <li>
+    <a href="npc/index.html" title="Next Chapter: Permutation Tests for Complex Data"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Permutation T... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="regression">
+<h1>Regression<a class="headerlink" href="#regression" title="Permalink to this headline">¶</a></h1>
+<p>Given <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/> observations of two scalars <img class="math" src="../_images/math/4a867d4fba128a0014546f1de76c44e28403b2f1.png" alt="(x_i, y_i)"/> for
+<img class="math" src="../_images/math/cd4e4c0548db382838f54161b142003003eceb79.png" alt="i = 1, 2, \dots, n"/>, consider the simple linear regression model</p>
+<div class="math">
+<p><img src="../_images/math/ad47b344752b61d965f30336408273180198dab3.png" alt="y_i = a + bx_i + \epsilon_i."/></p>
+</div><p>Assume that <img class="math" src="../_images/math/a2e457f1adf7ea4ecde0a5ef306711b2ec29eb99.png" alt="\{\epsilon_i\}_{i=1}^{n}"/> are exchangeable.</p>
+<p>You are interested in testing whether the slope of the population
+regression line is non-zero; hence, your null hypothesis is
+<img class="math" src="../_images/math/9b88e4b6324783ad3b12ecb93961fe8efd4bb8eb.png" alt="b = 0"/>. If <img class="math" src="../_images/math/9b88e4b6324783ad3b12ecb93961fe8efd4bb8eb.png" alt="b = 0"/>, then the model reduces to
+<img class="math" src="../_images/math/224de2c3799eea79edb05e342b0f999d0d0e5980.png" alt="y_i = a + \epsilon_i"/> for all <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/>. If this is true, the
+<img class="math" src="../_images/math/04080613febbffa06137aac400507100fca74f4d.png" alt="\{y_i\}_{i=1}^{n}"/> are exchangeable since they are just shifted
+versions of the exchangeable <img class="math" src="../_images/math/a2e457f1adf7ea4ecde0a5ef306711b2ec29eb99.png" alt="\{\epsilon_i\}_{i=1}^{n}"/>. Thus
+every permutation of the <img class="math" src="../_images/math/04080613febbffa06137aac400507100fca74f4d.png" alt="\{y_i\}_{i=1}^{n}"/> has the same
+conditional probability regardless of the <img class="math" src="../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/>s. Hence every
+pairing <img class="math" src="../_images/math/24f4a4d13d537622d3212839c55130d6feff776b.png" alt="(x_i, y_j)"/> for any fixed <img class="math" src="../_images/math/5aa339d4daf45a810dda332e3c80a0698e526e04.png" alt="i"/> and for
+<img class="math" src="../_images/math/ef6ae2981e78571a2fbec6418095af94b50f0cc9.png" alt="j = 1, 2, \dots, n"/> is equally likely.</p>
+<p>Using the least squares estimate of the slope as the test statistic, you can
+find its exact distribution under the null given the observed data by computing
+the test statistic on all possible pairs formed by permuting the <img class="math" src="../_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/>
+values, keeping the original order of the <img class="math" src="../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> values. From the
+distribution of the test statistic under the null conditioned on the observed
+data, the is the ratio of the count of the <em>as extreme</em> or <em>more extreme</em> test
+statistics to the total number of such test statistics. You might in principle
+enumerate all <img class="math" src="../_images/math/a0ddbb94aa7b2c35447fa1353061b63cbf21808e.png" alt="n!"/> equally likely pairings and then compute the exact p-value.
+For sufficiently large <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/>, enumeration becomes infeasible; in which
+case, you could approximate the exact p-value using a uniform random sample of the
+equally likely pairings.</p>
+<p>A parametric approach to this problem would begin by imposing additional
+assumptions on the noise <img class="math" src="../_images/math/0ad7b30534898f253002222f998f38001e604648.png" alt="\epsilon"/>. For example, if we assume
+that <img class="math" src="../_images/math/4bed934266a8368e3b1ab60e7e423cb983a52a3f.png" alt="\{\epsilon_i\}"/> are iid Gaussians with mean zero, then the
+the least squares estimate of the slope normalized by its standard
+error has a <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-distribution with <img class="math" src="../_images/math/7046228257af6ebbbde8ef7c8f944119e0a768d0.png" alt="n-2"/> degrees of
+freedom. If this additional assumption holds, then we can read the off a
+table. Note that, unlike in the permutation test, we were only able to
+calculate the p-value (even with the additional assumptions) because we happened
+to be able to derive the distribution of this specific test statistic.</p>
+<section id="derivation">
+<h2>Derivation<a class="headerlink" href="#derivation" title="Permalink to this headline">¶</a></h2>
+<p>Given <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/> observations</p>
+<div class="math">
+<p><img src="../_images/math/50eebfda22fcf6b8140bc2bb8bdf166503a6838a.png" alt="y_i = a + bx_i + \epsilon_i,"/></p>
+</div><p>the least square solution is</p>
+<div class="math">
+<p><img src="../_images/math/c7db1bbe3eb8bf3f50923a67b4324b12dac45e58.png" alt="\min_{a, b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2"/></p>
+</div><p>Taking the partial derivative with respect to <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.png" alt="a"/></p>
+<div class="math">
+<p><img src="../_images/math/fdad346b5f9ed516eba33ca5fceee88c4d61745f.png" alt="\frac{\partial }{\partial b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2
+ &amp;= -2 \sum_{i=1}^n \left(y_i - a - bx_i \right) \\
+ &amp;= -2 \left(\sum_{i=1}^n y_i - na - b \sum_{i=1}^n x_i \right) \\
+ &amp;= -2n \left( \bar{y} - a - b \bar{x} \right)."/></p>
+</div><p>Setting this to <img class="math" src="../_images/math/31fdf41b39df23c95e52c5aef07f59d9adf82f3c.png" alt="0"/> and solving for <img class="math" src="../_images/math/b3e65e3b6408fcfa00452530b73f55d1755f9965.png" alt="a"/> yields our estimate <img class="math" src="../_images/math/1b1a2b99575ee3eedd6e311fa15461e9c49012cb.png" alt="\hat{a}"/></p>
+<div class="math">
+<p><img src="../_images/math/e4b4318f0e9f5d28f3c182c076100240482b8c59.png" alt="\hat{a} = \bar{y} - b \bar{x}."/></p>
+</div><p>Taking the partial derivative with respect to <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.png" alt="b"/></p>
+<div class="math">
+<p><img src="../_images/math/8d21192f4451bd51b830d3311239ec72fa3bcc66.png" alt="\frac{\partial }{\partial b} \sum_{i=1}^n \left(y_i - a - bx_i \right)^2
+ &amp;= -2 \sum_{i=1}^n \left(y_i - a - bx_i \right) x_i \\
+ &amp;= -2 \left(\sum_{i=1}^n y_ix_i - a \sum_{i=1}^n x_i - b \sum_{i=1}^n x_ix_i \right) \\
+ &amp;= -2n \left( \overline{xy} - a \bar{x} - b \overline{xx} \right)."/></p>
+</div><p>Plugging in <img class="math" src="../_images/math/1b1a2b99575ee3eedd6e311fa15461e9c49012cb.png" alt="\hat{a}"/>, setting the result to <img class="math" src="../_images/math/31fdf41b39df23c95e52c5aef07f59d9adf82f3c.png" alt="0"/>, and solving for <img class="math" src="../_images/math/68c7c8c65602677ab56cf7fd88002023f0edc575.png" alt="b"/> yields</p>
+<div class="math">
+<p><img src="../_images/math/836e3ba0cc79ea44601e1c375813781150f35cda.png" alt="\hat{b} &amp;= \frac{\overline{xy} - \bar{x}\bar{y}}{\overline{xx} - \bar{x}\bar{x}}
+  = \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)} = \mathrm{Cor}(x, y)\left(\frac{\mathrm{Std}(y)}{\mathrm{Std}(x)}\right)."/></p>
+</div><p>Since <img class="math" src="../_images/math/f15fd22d06dd04ec76b3c69847ab1aa8bb4f27fb.png" alt="\frac{\mathrm{Std}(y)}{\mathrm{Std}(x)}"/> is constant under the
+permutation of <img class="math" src="../_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/>, we can calculate the p-value using the permutation
+test of the correlation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_integers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.15</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">epsilon</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.core</span> <span class="kn">import</span> <span class="n">corr</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">,</span> <span class="n">pv_left</span><span class="p">,</span> <span class="n">pv_right</span><span class="p">,</span> <span class="n">pv_both</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">corr</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">0.998692462616</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_both</span><span class="p">)</span>
+<span class="go">0.0007</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_right</span><span class="p">)</span>
+<span class="go">0.0007</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_left</span><span class="p">)</span>
+<span class="go">1.0</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">,</span> <span class="n">pv_both</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">corr</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">0.103891027265</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_both</span><span class="p">)</span>
+<span class="go">0.765</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_right</span><span class="p">)</span>
+<span class="go">0.3818</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pv_left</span><span class="p">)</span>
+<span class="go">0.619</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

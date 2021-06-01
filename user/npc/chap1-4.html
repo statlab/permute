@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Chapter 1-4 examples &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Westfall-Wolfinger “mult” data" href="westfall-wolfinger.html" />
+    <link rel="prev" title="Kenya" href="kenya.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Chapter 1-4 examples</a><ul>
+<li><a class="reference internal" href="#ipat-data">IPAT Data</a></li>
+<li><a class="reference internal" href="#job-satisfaction-data">Job Satisfaction Data</a></li>
+<li><a class="reference internal" href="#worms-data">Worms Data</a></li>
+<li><a class="reference internal" href="#testosterone-data">Testosterone Data</a></li>
+<li><a class="reference internal" href="#massaro-blair-data">Massaro-Blair Data</a></li>
+<li><a class="reference internal" href="#fly-data">Fly Data</a></li>
+<li><a class="reference internal" href="#post-hoc-conditional-power-analysis">Post-hoc conditional power analysis</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="kenya.html" title="Previous Chapter: Kenya"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Kenya</span>
+    </a>
+  </li>
+  <li>
+    <a href="westfall-wolfinger.html" title="Next Chapter: Westfall-Wolfinger “mult” data"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Westfall-Wolf... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="chapter-1-4-examples">
+<h1>Chapter 1-4 examples<a class="headerlink" href="#chapter-1-4-examples" title="Permalink to this headline">¶</a></h1>
+<section id="ipat-data">
+<h2>IPAT Data<a class="headerlink" href="#ipat-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 1.9, page 33-34.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">permute.data</span> <span class="k">as</span> <span class="nn">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.core</span> <span class="kn">import</span> <span class="n">one_sample</span><span class="p">,</span> <span class="n">two_sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.ksample</span> <span class="kn">import</span> <span class="n">k_sample</span><span class="p">,</span> <span class="n">bivariate_k_sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.utils</span> <span class="kn">import</span> <span class="n">get_prng</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="mi">2019426</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ipat</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ipat_res</span> <span class="o">=</span> <span class="n">one_sample</span><span class="p">(</span><span class="n">ipat</span><span class="o">.</span><span class="n">ya</span><span class="p">,</span> <span class="n">ipat</span><span class="o">.</span><span class="n">yb</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">ipat_res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">P-value: 0.0002</span>
+</pre></div>
+</div>
+</section>
+<section id="job-satisfaction-data">
+<h2>Job Satisfaction Data<a class="headerlink" href="#job-satisfaction-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 1.10.3, page 41-42.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">job</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_res</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">job</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">],</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">5</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">job_res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">P-value: 0.0003</span>
+</pre></div>
+</div>
+</section>
+<section id="worms-data">
+<h2>Worms Data<a class="headerlink" href="#worms-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 1.11.12, page 47-48.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">worms</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">worms</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">k_sample</span><span class="p">(</span><span class="n">worms</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">worms</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;one-way anova&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ANOVA p-value:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">ANOVA p-value: 0.0107</span>
+</pre></div>
+</div>
+</section>
+<section id="testosterone-data">
+<h2>Testosterone Data<a class="headerlink" href="#testosterone-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 2.6.1, page 92-93.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">testosterone</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">testosterone</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">testosterone</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">group1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">testosterone</span><span class="p">))])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">group2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">testosterone</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">group2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="go">55 55 55</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">bivariate_k_sample</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ANOVA p-value:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">ANOVA p-value: 0.0002</span>
+</pre></div>
+</div>
+</section>
+<section id="massaro-blair-data">
+<h2>Massaro-Blair Data<a class="headerlink" href="#massaro-blair-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 4.6, page 240.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.npc</span> <span class="kn">import</span> <span class="n">npc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mb</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">massaro_blair</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sam1</span> <span class="o">=</span> <span class="n">mb</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">mb</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sam2</span> <span class="o">=</span> <span class="n">mb</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">mb</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">first_moment</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">sam1</span><span class="p">,</span> <span class="n">sam2</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">second_moment</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">sam1</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">sam2</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">423</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">partial_pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">first_moment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">second_moment</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Partial p-values:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">first_moment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">second_moment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">Partial p-values: 0.022 0.01</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">npc_distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">first_moment</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">second_moment</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">global_p</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">partial_pvalues</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">npc_distr</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Global p-value:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">global_p</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="go">Global p-value: 0.002</span>
+</pre></div>
+</div>
+</section>
+<section id="fly-data">
+<h2>Fly Data<a class="headerlink" href="#fly-data" title="Permalink to this headline">¶</a></h2>
+<p>This example is shown in Chapter 4.6, page 253.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fly</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">fly</span><span class="p">()</span>
+<span class="nb">vars</span> <span class="o">=</span> <span class="n">fly</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">:</span>
+    <span class="n">sam1</span> <span class="o">=</span> <span class="n">fly</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">fly</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">sam2</span> <span class="o">=</span> <span class="n">fly</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">fly</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="s1">&#39;x7&#39;</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">sam1</span><span class="p">,</span> <span class="n">sam2</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">sam1</span><span class="p">,</span> <span class="n">sam2</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s1">&#39;less&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">,</span> <span class="n">plus1</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">partial_pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">vars</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">partial_pvalues</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="p">[</span><span class="mf">0.027</span> <span class="mf">0.226</span> <span class="mf">0.</span>    <span class="mf">0.391</span> <span class="mf">0.</span>    <span class="mf">0.413</span> <span class="mf">0.098</span><span class="p">]</span>
+
+<span class="n">npc_distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="nb">vars</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span>
+<span class="n">npc_distr</span><span class="o">.</span><span class="n">shape</span>
+<span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">alternatives</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;greater&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;less&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span>
+<span class="n">fisher</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">partial_pvalues</span><span class="p">,</span> <span class="n">npc_distr</span><span class="p">,</span> <span class="n">alternatives</span><span class="o">=</span><span class="n">alternatives</span><span class="p">)</span>
+<span class="n">liptak</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">partial_pvalues</span><span class="p">,</span> <span class="n">npc_distr</span><span class="p">,</span> <span class="n">alternatives</span><span class="o">=</span><span class="n">alternatives</span><span class="p">,</span> <span class="n">combine</span> <span class="o">=</span> <span class="s1">&#39;liptak&#39;</span><span class="p">)</span>
+<span class="n">tippett</span> <span class="o">=</span> <span class="n">npc</span><span class="p">(</span><span class="n">partial_pvalues</span><span class="p">,</span> <span class="n">npc_distr</span><span class="p">,</span> <span class="n">alternatives</span><span class="o">=</span><span class="n">alternatives</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s1">&#39;tippett&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fisher combined p-value:&quot;</span><span class="p">,</span> <span class="n">fisher</span><span class="p">)</span>
+<span class="n">Fisherer</span> <span class="n">combined</span> <span class="n">p</span><span class="o">-</span><span class="n">value</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Liptak combined p-value:&quot;</span><span class="p">,</span> <span class="n">liptak</span><span class="p">)</span>
+<span class="n">Liptak</span> <span class="n">combined</span> <span class="n">p</span><span class="o">-</span><span class="n">value</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tippett combined p-value:&quot;</span><span class="p">,</span> <span class="n">tippett</span><span class="p">)</span>
+<span class="n">Tippett</span> <span class="n">combined</span> <span class="n">p</span><span class="o">-</span><span class="n">value</span><span class="p">:</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</section>
+<section id="post-hoc-conditional-power-analysis">
+<h2>Post-hoc conditional power analysis<a class="headerlink" href="#post-hoc-conditional-power-analysis" title="Permalink to this headline">¶</a></h2>
+<p>These examples come from Chapter 3.2.1, pages 139-141.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># IPAT data</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">prng</span> <span class="o">=</span> <span class="n">get_prng</span><span class="p">(</span><span class="mi">78943501</span><span class="p">)</span>
+<span class="n">effect_est</span> <span class="o">=</span> <span class="n">ipat_res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated difference in means:&quot;</span><span class="p">,</span> <span class="n">effect_est</span><span class="p">)</span>
+<span class="n">Estimated</span> <span class="n">difference</span> <span class="ow">in</span> <span class="n">means</span><span class="p">:</span> <span class="mf">3.1</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">ipat</span><span class="o">.</span><span class="n">ya</span> <span class="o">-</span> <span class="n">ipat</span><span class="o">.</span><span class="n">yb</span> <span class="o">-</span> <span class="n">effect_est</span>
+<span class="n">simulated_pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">prng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">sim_sam</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="n">effect_est</span>
+    <span class="n">simulated_pvalues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_sample</span><span class="p">(</span><span class="n">sim_sam</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">simulated_pvalues</span> <span class="o">&lt;=</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated power:&quot;</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+<span class="n">Estimated</span> <span class="n">power</span><span class="p">:</span> <span class="mf">1.0</span>
+
+<span class="c1"># Job data</span>
+<span class="n">effect_est</span> <span class="o">=</span> <span class="n">job_res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated difference in means:&quot;</span><span class="p">,</span> <span class="n">effect_est</span><span class="p">)</span>
+<span class="n">Estimated</span> <span class="n">difference</span> <span class="ow">in</span> <span class="n">means</span><span class="p">:</span> <span class="mf">17.29166666666667</span>
+
+<span class="n">xnorm</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">x</span>
+<span class="n">xnorm</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">effect_est</span>
+<span class="n">simulated_pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">prng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">xnorm</span><span class="p">)</span>
+    <span class="n">sim_sam</span> <span class="o">=</span> <span class="n">xnorm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">sim_sam</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_sam</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">effect_est</span>
+    <span class="n">simulated_pvalues</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">sim_sam</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sim_sam</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="mi">2</span><span class="p">],</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;greater&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">simulated_pvalues</span> <span class="o">&lt;=</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated power:&quot;</span><span class="p">,</span> <span class="n">power</span><span class="p">)</span>
+<span class="n">Estimated</span> <span class="n">power</span><span class="p">:</span> <span class="mf">0.96</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

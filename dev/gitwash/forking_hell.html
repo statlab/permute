@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Making your own copy (fork) of permute &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Set up your fork" href="set_up_fork.html" />
+    <link rel="prev" title="Git for development" href="git_development.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Making your own copy (fork) of permute</a><ul>
+<li><a class="reference internal" href="#set-up-and-configure-a-github-account">Set up and configure a github account</a></li>
+<li><a class="reference internal" href="#create-your-own-forked-copy-of-permute">Create your own forked copy of permute</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="git_development.html" title="Previous Chapter: Git for development"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Git for development</span>
+    </a>
+  </li>
+  <li>
+    <a href="set_up_fork.html" title="Next Chapter: Set up your fork"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Set up your fork &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="making-your-own-copy-fork-of-permute">
+<span id="forking"></span><h1>Making your own copy (fork) of permute<a class="headerlink" href="#making-your-own-copy-fork-of-permute" title="Permalink to this headline">¶</a></h1>
+<p>You need to do this only once.  The instructions here are very similar
+to the instructions at <a class="reference external" href="http://help.github.com/forking/">http://help.github.com/forking/</a> — please see
+that page for more detail.  We’re repeating some of it here just to give the
+specifics for the <a class="reference external" href="https://github.com/statlab/permute">permute</a> project, and to suggest some default names.</p>
+<section id="set-up-and-configure-a-github-account">
+<h2>Set up and configure a github account<a class="headerlink" href="#set-up-and-configure-a-github-account" title="Permalink to this headline">¶</a></h2>
+<p>If you don’t have a github account, go to the github page, and make one.</p>
+<p>You then need to configure your account to allow write access — see
+the <code class="docutils literal notranslate"><span class="pre">Generating</span> <span class="pre">SSH</span> <span class="pre">keys</span></code> help on <a class="reference external" href="http://help.github.com">github help</a>.</p>
+</section>
+<section id="create-your-own-forked-copy-of-permute">
+<h2>Create your own forked copy of <a class="reference external" href="https://github.com/statlab/permute">permute</a><a class="headerlink" href="#create-your-own-forked-copy-of-permute" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p>Log into your github account.</p></li>
+<li><p>Go to the <a class="reference external" href="https://github.com/statlab/permute">permute</a> github home at <a class="reference external" href="http://github.com/statlab/permute">permute github</a>.</p></li>
+<li><p>Click on the <em>fork</em> button:</p>
+<img alt="../../_images/forking_button.png" src="../../_images/forking_button.png" />
+<p>Now, after a short pause and some ‘Hardcore forking action’, you
+should find yourself at the home page for your own forked copy of <a class="reference external" href="https://github.com/statlab/permute">permute</a>.</p>
+</li>
+</ol>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

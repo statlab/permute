@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>User Guide &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Paired permutation tests" href="one-sample.html" />
+    <link rel="prev" title="Permutation tests and confidence sets" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">User Guide</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../index.html" title="Previous Chapter: Permutation tests and confidence sets"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Permutation t...</span>
+    </a>
+  </li>
+  <li>
+    <a href="one-sample.html" title="Next Chapter: Paired permutation tests"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Paired permut... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="user-guide">
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<p>Permutation tests (sometimes referred to as randomization, re-randomization, or
+exact tests) are a nonparametric approach to statistical significance testing.
+They were first introduced by R. A. Fisher in 1935 <span id="id1">[<a class="reference internal" href="references.html#id8" title="Ronald A Fisher. The design of experiments. Oliver &amp; Boyd, 1935.">Fis35</a>]</span> and
+further developed by E. J. G. Pitman
+<span id="id2">[<a class="reference internal" href="references.html#id9" title="Edwin JG Pitman. Significance tests which may be applied to samples from any populations (parts i and ii). Supplement to the Journal of the Royal Statistical Society, 4(1):119–130; 225–232, 1937.">Pit37</a>, <a class="reference internal" href="references.html#id11" title="Edwin JG Pitman. Significance tests which may be applied to samples from any populations: iii. the analysis of variance test. Biometrika, pages 322–335, 1938.">Pit38</a>]</span>.  After the introduction of the
+bootstrap, the ideas were extended in the 1980’s by J. Romano
+<span id="id3">[<a class="reference internal" href="references.html#id7" title="Joseph P Romano. A bootstrap revival of some nonparametric distance tests. Journal of the American Statistical Association, 83(403):698–708, 1988.">Rom88</a>, <a class="reference internal" href="references.html#id6" title="Joseph P Romano. Bootstrap and randomization tests of some nonparametric hypotheses. The Annals of Statistics, 17(1):141–159, 1989.">Rom89</a>]</span>.</p>
+<p>Permutation tests were developed to test hypotheses for which relabeling the
+observed data was justified by
+exchangeability <a class="footnote-reference brackets" href="#f1" id="id4">1</a>
+of the observed random variables.  In these situations, the
+conditional distribution of the test statistic under the null hypothesis is completely
+determined by the fact that all relabelings of the data are equally likely.
+That distribution might be calculable in closed form; if not, it can be simulated
+with arbitrary accuracy by generating relabelings uniformly at random.
+In contrast to approximate parametric methods or asymptotic methods, the accuracy
+of the simulation for any finite (re)sample size is known, and can be made
+arbitrarily small at the expense of computing time.</p>
+<p>More generally, permutation tests are possible whenever the null
+distribution of the data is invariant under the action of some group
+(see Appendix [app:def] for background). Then, a subset of outcomes is
+conditionally equally likely, given that the data fall in a particular
+<em>orbit</em> of the group (all potential observations that result from
+applying elements of the group to the observed value of the data). That
+makes it possible to determine the conditional distribution of any test
+statistic, given the orbit of the data. Since the conditional
+distribution is uniform on the orbit of the original data, the
+probability of any event is the proportion of possible outcomes that lie
+in the event. If tests are performed conditionally at level
+<img class="math" src="../_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/> regardless of the observed data, the resulting overall
+test has unconditional level <img class="math" src="../_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/>, by the law of total
+probability.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="one-sample.html">Paired permutation tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="one-sample.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="two-sample.html">Two sample permutation tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="two-sample.html#gender-bias-in-student-evaluation-of-teachers">Gender bias in student evaluation of teachers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="two-sample.html#stratified-spearman-correlation-permutation-test">Stratified Spearman correlation permutation test</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="regression.html">Regression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regression.html#derivation">Derivation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="npc/index.html">Permutation Tests for Complex Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="npc/kenya.html">Kenya</a></li>
+<li class="toctree-l2"><a class="reference internal" href="npc/chap1-4.html">Chapter 1-4 examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="npc/westfall-wolfinger.html">Westfall-Wolfinger “mult” data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+<p class="rubric">Footnotes</p>
+<dl class="footnote brackets">
+<dt class="label" id="f1"><span class="brackets"><a class="fn-backref" href="#id4">1</a></span></dt>
+<dd><p>A sequence <img class="math" src="../_images/math/99716e8a3af1b8ec06365ba0a95a5b11f4309435.png" alt="X_1, X_2, X_3, \dots, X_n"/> of random variables is
+<em>exchangeable</em> if their joint distribution is invariant to
+permutations of the indices; that is,</p>
+<div class="math">
+<p><img src="../_images/math/7bc995708cab7a4b7af1aa954b17ae90d7dd3ad4.png" alt="p(x_1, \dots, x_n) = p(x_{\pi(1)}, \dots, x_{\pi(n)})"/></p>
+</div><p>for all permutations <img class="math" src="../_images/math/9cc8517129c87252edd7fe2e4532af9dcf7a54d9.png" alt="\pi"/> of <img class="math" src="../_images/math/dce9fba8b22ba93823e3f8ea9aa5d330fd085490.png" alt="\{1, 2, \dots, n\}"/>.  It is closely related to the
+notion of <em>independent and identically-distributed</em> random variables.
+Independent and identically-distributed random variables are exchangeable.
+However, simple random sampling <em>without</em> replacement produces an
+exchangeable, but not independent, sequence of random variables.</p>
+</dd>
+</dl>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

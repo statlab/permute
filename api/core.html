@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Core functions &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Stratified testing" href="stratified.html" />
+    <link rel="prev" title="Quality assurance" href="qa.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Core functions</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="qa.html" title="Previous Chapter: Quality assurance"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Quality assurance</span>
+    </a>
+  </li>
+  <li>
+    <a href="stratified.html" title="Next Chapter: Stratified testing"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Stratified testing &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="module-permute.core">
+<span id="core-functions"></span><h1>Core functions<a class="headerlink" href="#module-permute.core" title="Permalink to this headline">¶</a></h1>
+<p>Core functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.corr">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate permutation p-value for Pearson correlation coefficient</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd></dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd></dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>Returns test statistic, p-value, simulated distribution</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.one_sample">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">one_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#one_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.one_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, one-sample permutation test for the mean,
+with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Alternatively, a permutation test for equality of means of two paired
+samples.</p>
+<p>Tests the hypothesis that x is distributed symmetrically symmetric about 0
+(or x and y have the same center) against the alternative that x comes from
+a population with mean</p>
+<ol class="loweralpha simple">
+<li><p>greater than 0 (greater than that of the population from which y comes),
+if side = ‘greater’</p></li>
+<li><p>less than 0 (less than that of the population from which y comes),
+if side = ‘less’</p></li>
+<li><p>different from 0 (different from that of the population from which y comes),
+if side = ‘two-sided’</p></li>
+</ol>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test statistic;
+otherwise, return only the number of permutations for which the value of
+the test statistic and p-value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Sample 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Sample 2. Must preserve the order of pairs with x.
+If None, x is taken to be the one sample.</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions</p>
+</dd>
+<dt><strong>stat</strong><span class="classifier">{‘mean’, ‘t’}</span></dt><dd><p>The test statistic. The statistic is computed based on either z = x or
+z = x - y, if y is specified.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is mean(z).</p></li>
+<li><p>If stat == ‘t’, the test statistic is the t-statistic–
+but the p-value is still estimated by the randomization,
+approximating the permutation distribution.</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function.  The function should take a permutation of the
+data and compute the test function from it. For instance, if the
+test statistic is the maximum absolute value, <img class="math" src="../_images/math/342cb9cacf7f726c4654e3e4285edbdbc18ff76d.png" alt="\max_i |z_i|"/>,
+the test statistic could be written:</p>
+<p>f = lambda u: np.max(abs(u))</p>
+</li>
+</ol>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values
+of the irr test statistic</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the test statistic</p>
+</dd>
+<dt>list</dt><dd><p>The distribution of test statistics.
+These values are only returned if <cite>keep_dist</cite> == True</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.spearman_corr">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">spearman_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#spearman_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.spearman_corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate permutation p-value for Spearman correlation coefficient</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd></dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd></dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>Returns test statistic, p-value, simulated distribution</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.two_sample">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">two_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#two_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.two_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, two-sample permutation test for equality of
+two means, with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Tests the hypothesis that x and y are a random partition of x,y
+against the alternative that x comes from a population with mean</p>
+<ol class="loweralpha simple">
+<li><p>greater than that of the population from which y comes,
+if side = ‘greater’</p></li>
+<li><p>less than that of the population from which y comes,
+if side = ‘less’</p></li>
+<li><p>different from that of the population from which y comes,
+if side = ‘two-sided’</p></li>
+</ol>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test statistic;
+otherwise, return only the number of permutations for which the value of
+the test statistic and p-value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Sample 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Sample 2</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions</p>
+</dd>
+<dt><strong>stat</strong><span class="classifier">{‘mean’, ‘t’}</span></dt><dd><p>The test statistic.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related)</p></li>
+<li><p>If stat == ‘t’, the test statistic is the two-sample t-statistic–
+but the p-value is still estimated by the randomization,
+approximating the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function. The function should take two arguments:
+given a permutation of the pooled data, the first argument is the
+“new” x and the second argument is the “new” y.
+For instance, if the test statistic is the Kolmogorov-Smirnov distance 
+between the empirical distributions of the two samples, 
+<img class="math" src="../_images/math/2a0b73129480b2335fca9f67eefd719a89eaf7a6.png" alt="\max_t |F_x(t) - F_y(t)|"/>, the test statistic could be written:</p>
+<dl class="simple">
+<dt>f = lambda u, v: np.max( </dt><dd><p>[abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])])</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values
+of the irr test statistic</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the test statistic</p>
+</dd>
+<dt>list</dt><dd><p>The distribution of test statistics.
+These values are only returned if <cite>keep_dist</cite> == True</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.two_sample_conf_int">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">two_sample_conf_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'two-sided'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#two_sample_conf_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.two_sample_conf_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided confidence interval for the parameter determining
+the treatment effect.  The default is the “shift model”, where we are
+interested in the parameter d such that x is equal in distribution to
+y + d. In general, if we have some family of invertible functions parameterized
+by d, we’d like to find d such that x is equal in distribution to f(y, d).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Sample 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Sample 2</p>
+</dd>
+<dt><strong>cl</strong><span class="classifier">float in (0, 1)</span></dt><dd><p>The desired confidence level. Default 0.95.</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{“two-sided”, “lower”, “upper”}</span></dt><dd><p>Indicates the alternative hypothesis.</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions in two_sample</p>
+</dd>
+<dt><strong>stat</strong><span class="classifier">{‘mean’, ‘t’}</span></dt><dd><p>The test statistic.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related)</p></li>
+<li><p>If stat == ‘t’, the test statistic is the two-sample t-statistic–
+but the p-value is still estimated by the randomization,
+approximating the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function. The function should take two arguments:
+given a permutation of the pooled data, the first argument is the
+“new” x and the second argument is the “new” y.
+For instance, if the test statistic is the Kolmogorov-Smirnov distance 
+between the empirical distributions of the two samples, 
+<img class="math" src="../_images/math/2a0b73129480b2335fca9f67eefd719a89eaf7a6.png" alt="\max_t |F_x(t) - F_y(t)|"/>, the test statistic could be written:</p>
+<dl class="simple">
+<dt>f = lambda u, v: np.max( </dt><dd><p>[abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])])</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt><strong>shift</strong><span class="classifier">float</span></dt><dd><p>The relationship between x and y under the null hypothesis.</p>
+<ol class="loweralpha simple">
+<li><p>If None, the relationship is assumed to be additive (e.g. x = y+d)</p></li>
+<li><p>A tuple containing the function and its inverse <img class="math" src="../_images/math/a6d71dc5d84b970fb16d9656195bab89b8bb48e1.png" alt="(f, f^{-1})"/>, so
+<img class="math" src="../_images/math/ac96d6072b1f4748398b799551a2a18c9e52b21e.png" alt="x_i = f(y_i, d)"/> and <img class="math" src="../_images/math/426228d4d1c84a8fae54b1b0eb6949906defe085.png" alt="y_i = f^{-1}(x_i, d)"/></p></li>
+</ol>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>the estimated confidence limits</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>xtol<span class="classifier">float</span></dt><dd><p>Tolerance in brentq</p>
+</dd>
+<dt>rtol<span class="classifier">float</span></dt><dd><p>Tolerance in brentq</p>
+</dd>
+<dt>maxiter<span class="classifier">int</span></dt><dd><p>Maximum number of iterations in brentq</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.two_sample_core">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">two_sample_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">potential_outcomes_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tst_stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#two_sample_core"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.two_sample_core" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main workhorse function for two_sample and two_sample_shift</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>potential_outcomes_all</strong><span class="classifier">array-like</span></dt><dd><p>2D array of potential outcomes under treatment (1st column)
+and control (2nd column). To be passed in from potential_outcomes</p>
+</dd>
+<dt><strong>nx</strong><span class="classifier">int</span></dt><dd><p>Size of the treatment group x</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions</p>
+</dd>
+<dt><strong>tst_stat: function</strong></dt><dd><p>The test statistic</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values
+of the test statistic. Default is False.</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the test statistic</p>
+</dd>
+<dt>list</dt><dd><p>The distribution of test statistics.
+These values are only returned if <cite>keep_dist</cite> == True</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.core.two_sample_shift">
+<span class="sig-prename descclassname"><span class="pre">permute.core.</span></span><span class="sig-name descname"><span class="pre">two_sample_shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/core.html#two_sample_shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.core.two_sample_shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, two-sample permutation test for equality of
+two means, with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Tests the hypothesis that x and y are a random partition of x,y
+against the alternative that x comes from a population with mean</p>
+<ol class="loweralpha simple">
+<li><p>greater than that of the population from which y comes,
+if side = ‘greater’</p></li>
+<li><p>less than that of the population from which y comes,
+if side = ‘less’</p></li>
+<li><p>different from that of the population from which y comes,
+if side = ‘two-sided’</p></li>
+</ol>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test statistic;
+otherwise, return only the number of permutations for which the value of
+the test statistic and p-value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Sample 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Sample 2</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>number of repetitions</p>
+</dd>
+<dt><strong>stat</strong><span class="classifier">{‘mean’, ‘t’}</span></dt><dd><p>The test statistic.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related)</p></li>
+<li><p>If stat == ‘t’, the test statistic is the two-sample t-statistic–
+but the p-value is still estimated by the randomization,
+approximating the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function. The function should take two arguments:
+given a permutation of the pooled data, the first argument is the
+“new” x and the second argument is the “new” y.
+For instance, if the test statistic is the Kolmogorov-Smirnov distance 
+between the empirical distributions of the two samples, 
+<img class="math" src="../_images/math/2a0b73129480b2335fca9f67eefd719a89eaf7a6.png" alt="\max_t |F_x(t) - F_y(t)|"/>, the test statistic could be written:</p>
+<dl class="simple">
+<dt>f = lambda u, v: np.max( </dt><dd><p>[abs(sum(u&lt;=val)/len(u)-sum(v&lt;=val)/len(v)) for val in np.concatenate([u, v])])</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values
+of the irr test statistic</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>shift</strong><span class="classifier">float</span></dt><dd><p>The relationship between x and y under the null hypothesis.</p>
+<ol class="loweralpha simple">
+<li><p>A constant scalar shift in the distribution of y. That is, x is equal
+in distribution to y + shift.</p></li>
+<li><p>A tuple containing the function and its inverse <img class="math" src="../_images/math/a6d71dc5d84b970fb16d9656195bab89b8bb48e1.png" alt="(f, f^{-1})"/>, so
+<img class="math" src="../_images/math/9315c36f1a91ad29df47e01575fb93715ec50b18.png" alt="x_i = f(y_i)"/> and <img class="math" src="../_images/math/d033a669c636cc85c49683d0c62bc1eca7d98122.png" alt="y_i = f^{-1}(x_i)"/></p></li>
+</ol>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the test statistic</p>
+</dd>
+<dt>list</dt><dd><p>The distribution of test statistics.
+These values are only returned if <cite>keep_dist</cite> == True</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

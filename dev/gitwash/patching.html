@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Making a patch &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Git for development" href="git_development.html" />
+    <link rel="prev" title="Following the latest source" href="following_latest.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Making a patch</a><ul>
+<li><a class="reference internal" href="#making-patches">Making patches</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#in-detail">In detail</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#moving-from-patching-to-development">Moving from patching to development</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="following_latest.html" title="Previous Chapter: Following the latest source"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Following the...</span>
+    </a>
+  </li>
+  <li>
+    <a href="git_development.html" title="Next Chapter: Git for development"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Git for development &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="making-a-patch">
+<h1>Making a patch<a class="headerlink" href="#making-a-patch" title="Permalink to this headline">¶</a></h1>
+<p>You’ve discovered a bug or something else you want to change
+in <a class="reference external" href="https://github.com/statlab/permute">permute</a> .. — excellent!</p>
+<p>You’ve worked out a way to fix it — even better!</p>
+<p>You want to tell us about it — best of all!</p>
+<p>The easiest way is to make a <em>patch</em> or set of patches.  Here
+we explain how.  Making a patch is the simplest and quickest,
+but if you’re going to be doing anything more than simple
+quick things, please consider following the
+<a class="reference internal" href="git_development.html#git-development"><span class="std std-ref">Git for development</span></a> model instead.</p>
+<section id="making-patches">
+<span id="id1"></span><h2>Making patches<a class="headerlink" href="#making-patches" title="Permalink to this headline">¶</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># tell git who you are</span>
+<span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="n">you</span><span class="nd">@yourdomain</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+<span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="s2">&quot;Your Name Comes Here&quot;</span>
+<span class="c1"># get the repository if you don&#39;t have it</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">statlab</span><span class="o">/</span><span class="n">permute</span><span class="o">.</span><span class="n">git</span>
+<span class="c1"># make a branch for your patching</span>
+<span class="n">cd</span> <span class="n">permute</span>
+<span class="n">git</span> <span class="n">branch</span> <span class="n">the</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="n">im</span><span class="o">-</span><span class="n">thinking</span><span class="o">-</span><span class="n">of</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">the</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="n">im</span><span class="o">-</span><span class="n">thinking</span><span class="o">-</span><span class="n">of</span>
+<span class="c1"># hack, hack, hack</span>
+<span class="c1"># Tell git about any new files you&#39;ve made</span>
+<span class="n">git</span> <span class="n">add</span> <span class="n">somewhere</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_my_bug</span><span class="o">.</span><span class="n">py</span>
+<span class="c1"># commit work in progress as you go</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">am</span> <span class="s1">&#39;BF - added tests for Funny bug&#39;</span>
+<span class="c1"># hack hack, hack</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">am</span> <span class="s1">&#39;BF - added fix for Funny bug&#39;</span>
+<span class="c1"># make the patch files</span>
+<span class="n">git</span> <span class="nb">format</span><span class="o">-</span><span class="n">patch</span> <span class="o">-</span><span class="n">M</span> <span class="o">-</span><span class="n">C</span> <span class="n">master</span>
+</pre></div>
+</div>
+<p>Then, send the generated patch files to the <a class="reference external" href="http://groups.google.com/group/permute">permute
+mailing list</a> — where we will thank you warmly.</p>
+</section>
+<section id="in-detail">
+<h3>In detail<a class="headerlink" href="#in-detail" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p>Tell git who you are so it can label the commits you’ve
+made:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="n">you</span><span class="nd">@yourdomain</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+<span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="k">global</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span> <span class="s2">&quot;Your Name Comes Here&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>If you don’t already have one, clone a copy of the
+<a class="reference external" href="https://github.com/statlab/permute">permute</a> repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">statlab</span><span class="o">/</span><span class="n">permute</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">permute</span>
+</pre></div>
+</div>
+</li>
+<li><p>Make a ‘feature branch’.  This will be where you work on
+your bug fix.  It’s nice and safe and leaves you with
+access to an unmodified copy of the code in the main
+branch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">branch</span> <span class="n">the</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="n">im</span><span class="o">-</span><span class="n">thinking</span><span class="o">-</span><span class="n">of</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">the</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="n">im</span><span class="o">-</span><span class="n">thinking</span><span class="o">-</span><span class="n">of</span>
+</pre></div>
+</div>
+</li>
+<li><p>Do some edits, and commit them as you go:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># hack, hack, hack</span>
+<span class="c1"># Tell git about any new files you&#39;ve made</span>
+<span class="n">git</span> <span class="n">add</span> <span class="n">somewhere</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_my_bug</span><span class="o">.</span><span class="n">py</span>
+<span class="c1"># commit work in progress as you go</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">am</span> <span class="s1">&#39;BF - added tests for Funny bug&#39;</span>
+<span class="c1"># hack hack, hack</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">am</span> <span class="s1">&#39;BF - added fix for Funny bug&#39;</span>
+</pre></div>
+</div>
+<p>Note the <code class="docutils literal notranslate"><span class="pre">-am</span></code> options to <code class="docutils literal notranslate"><span class="pre">commit</span></code>. The <code class="docutils literal notranslate"><span class="pre">m</span></code> flag just
+signals that you’re going to type a message on the command
+line.  The <code class="docutils literal notranslate"><span class="pre">a</span></code> flag — you can just take on faith —
+or see <a class="reference external" href="http://www.gitready.com/beginner/2009/01/18/the-staging-area.html">why the -a flag?</a>.</p>
+</li>
+<li><p>When you have finished, check you have committed all your
+changes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">status</span>
+</pre></div>
+</div>
+</li>
+<li><p>Finally, make your commits into patches.  You want all the
+commits since you branched from the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="nb">format</span><span class="o">-</span><span class="n">patch</span> <span class="o">-</span><span class="n">M</span> <span class="o">-</span><span class="n">C</span> <span class="n">master</span>
+</pre></div>
+</div>
+<p>You will now have several files named for the commits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0001</span><span class="o">-</span><span class="n">BF</span><span class="o">-</span><span class="n">added</span><span class="o">-</span><span class="n">tests</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">Funny</span><span class="o">-</span><span class="n">bug</span><span class="o">.</span><span class="n">patch</span>
+<span class="mi">0002</span><span class="o">-</span><span class="n">BF</span><span class="o">-</span><span class="n">added</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="n">Funny</span><span class="o">-</span><span class="n">bug</span><span class="o">.</span><span class="n">patch</span>
+</pre></div>
+</div>
+<p>Send these files to the <a class="reference external" href="http://groups.google.com/group/permute">permute mailing list</a>.</p>
+</li>
+</ol>
+<p>When you are done, to switch back to the main copy of the
+code, just return to the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="moving-from-patching-to-development">
+<h2>Moving from patching to development<a class="headerlink" href="#moving-from-patching-to-development" title="Permalink to this headline">¶</a></h2>
+<p>If you find you have done some patches, and you have one or
+more feature branches, you will probably want to switch to
+development mode.  You can do this with the repository you
+have.</p>
+<p>Fork the <a class="reference external" href="https://github.com/statlab/permute">permute</a> repository on github — <a class="reference internal" href="forking_hell.html#forking"><span class="std std-ref">Making your own copy (fork) of permute</span></a>.
+Then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># checkout and refresh master branch from main repo</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">master</span>
+<span class="c1"># rename pointer to main repository to &#39;upstream&#39;</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">rename</span> <span class="n">origin</span> <span class="n">upstream</span>
+<span class="c1"># point your repo to default read / write to your fork on github</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">origin</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">your</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">name</span><span class="o">/</span><span class="n">permute</span><span class="o">.</span><span class="n">git</span>
+<span class="c1"># push up any branches you&#39;ve made and want to keep</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">the</span><span class="o">-</span><span class="n">fix</span><span class="o">-</span><span class="n">im</span><span class="o">-</span><span class="n">thinking</span><span class="o">-</span><span class="n">of</span>
+</pre></div>
+</div>
+<p>Then you can, if you want, follow the
+<a class="reference internal" href="development_workflow.html#development-workflow"><span class="std std-ref">Development workflow</span></a>.</p>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

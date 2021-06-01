@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Stratified testing &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Nonparametric combination of tests" href="npc.html" />
+    <link rel="prev" title="Core functions" href="core.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Stratified testing</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="core.html" title="Previous Chapter: Core functions"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Core functions</span>
+    </a>
+  </li>
+  <li>
+    <a href="npc.html" title="Next Chapter: Nonparametric combination of tests"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Nonparametric... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="module-permute.stratified">
+<span id="stratified-testing"></span><h1>Stratified testing<a class="headerlink" href="#module-permute.stratified" title="Permalink to this headline">¶</a></h1>
+<p>Stratified permutation tests.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.stratified.corrcoef">
+<span class="sig-prename descclassname"><span class="pre">permute.stratified.</span></span><span class="sig-name descname"><span class="pre">corrcoef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#corrcoef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.stratified.corrcoef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates sum of Spearman correlations between x and y,
+computed separately in each group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Variable 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Variable 2, of the same length as x</p>
+</dd>
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>Group memberships, of the same length as x</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The sum of Spearman correlations</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.stratified.sim_corr">
+<span class="sig-prename descclassname"><span class="pre">permute.stratified.</span></span><span class="sig-name descname"><span class="pre">sim_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#sim_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.stratified.sim_corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate permutation p-value of stratified Spearman correlation test.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Variable 1</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Variable 2, of the same length as x</p>
+</dd>
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>Group memberships, of the same length as x</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>Number of repetitions</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator.</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the observed test statistic</p>
+</dd>
+<dt>list</dt><dd><p>the null distribution</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.stratified.stratified_permutationtest">
+<span class="sig-prename descclassname"><span class="pre">permute.stratified.</span></span><span class="sig-name descname"><span class="pre">stratified_permutationtest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testStatistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#stratified_permutationtest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.stratified.stratified_permutationtest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stratified permutation test based on differences in means.</p>
+<p>The test statistic is</p>
+<div class="math">
+<p><img src="../_images/math/db91f4d62c11a3d9589190647b60757cc268cd60.png" alt="\sum_{g \in \text{groups}} [
+f(mean(\text{response for cases in group $g$
+              assigned to each condition}))]."/></p>
+</div><p>The function f is the difference if there are two conditions, and
+the standard deviation if there are more than two conditions.</p>
+<p>There should be at least one group and at least two conditions.
+Under the null hypothesis, all assignments to the two conditions that
+preserve the number of cases assigned to the conditions are equally
+likely.</p>
+<p>Groups in which all cases are assigned to the same condition are
+skipped; they do not contribute to the p-value since all randomizations
+give the same contribution to the difference in means.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>Group memberships</p>
+</dd>
+<dt><strong>condition</strong><span class="classifier">array-like</span></dt><dd><p>Treatment conditions, of the same length as group</p>
+</dd>
+<dt><strong>response</strong><span class="classifier">array-like</span></dt><dd><p>Responses, of the same length as group</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>Number of repetitions</p>
+</dd>
+<dt><strong>testStatistic</strong><span class="classifier">function</span></dt><dd><p>Function to compute test statistic. By default,
+stratified_permutationtest_mean
+The test statistic. Either a string or function.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is
+stratified_permutationtest_mean (default).</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function.  The function should take a permutation of the
+data and compute the test function from it. For instance, if the
+test statistic is the maximum absolute value, <img class="math" src="../_images/math/342cb9cacf7f726c4654e3e4285edbdbc18ff76d.png" alt="\max_i |z_i|"/>,
+the test statistic could be written:</p>
+<p>f = lambda u: np.max(abs(u))</p>
+</li>
+</ol>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the observed test statistic</p>
+</dd>
+<dt>list</dt><dd><p>the null distribution</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.stratified.stratified_permutationtest_mean">
+<span class="sig-prename descclassname"><span class="pre">permute.stratified.</span></span><span class="sig-name descname"><span class="pre">stratified_permutationtest_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#stratified_permutationtest_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.stratified.stratified_permutationtest_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates variability in sample means between treatment conditions,
+within groups.</p>
+<p>If there are two treatment conditions, the test statistic is the
+difference in means, aggregated across groups.
+If there are more than two treatment conditions, the test statistic
+is the standard deviation of the means, aggregated across groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>Group memberships</p>
+</dd>
+<dt><strong>condition</strong><span class="classifier">array-like</span></dt><dd><p>Treatment conditions, of the same length as group</p>
+</dd>
+<dt><strong>response</strong><span class="classifier">array-like</span></dt><dd><p>Responses, of the same length as group</p>
+</dd>
+<dt><strong>groups</strong><span class="classifier">array-like</span></dt><dd><p>Group labels. By default, it is the unique values of group</p>
+</dd>
+<dt><strong>conditions</strong><span class="classifier">array-like</span></dt><dd><p>Condition labels. By default, it is the unique values of condition</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>tst</strong><span class="classifier">float</span></dt><dd><p>The observed test statistic</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.stratified.stratified_two_sample">
+<span class="sig-prename descclassname"><span class="pre">permute.stratified.</span></span><span class="sig-name descname"><span class="pre">stratified_two_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/stratified.html#stratified_two_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.stratified.stratified_two_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>One-sided or two-sided, two-sample permutation test for equality of
+two means, with p-value estimated by simulated random sampling with
+reps replications.</p>
+<p>Tests the hypothesis that x and y are a random partition of x,y
+against the alternative that x comes from a population with mean</p>
+<ol class="loweralpha simple">
+<li><p>greater than that of the population from which y comes,
+if side = ‘greater’</p></li>
+<li><p>less than that of the population from which y comes,
+if side = ‘less’</p></li>
+<li><p>different from that of the population from which y comes,
+if side = ‘two-sided’</p></li>
+</ol>
+<p>Permutations are carried out within the given groups.  Under the null
+hypothesis, observations within each group are exchangeable.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">keep_dist</span></code>, return the distribution of values of the test statistic;
+otherwise, return only the number of permutations for which the value of
+the test statistic and p-value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>Group memberships</p>
+</dd>
+<dt><strong>condition</strong><span class="classifier">array-like</span></dt><dd><p>Treatment conditions, of the same length as group</p>
+</dd>
+<dt><strong>response</strong><span class="classifier">array-like</span></dt><dd><p>Responses, of the same length as group</p>
+</dd>
+<dt><strong>stat</strong><span class="classifier">{‘mean’, ‘t’}</span></dt><dd><p>The test statistic.</p>
+<ol class="loweralpha">
+<li><p>If stat == ‘mean’, the test statistic is (mean(x) - mean(y))
+(equivalently, sum(x), since those are monotonically related),
+omitting NaNs, which therefore can be used to code non-responders</p></li>
+<li><p>If stat == ‘t’, the test statistic is the two-sample t-statistic–
+but the p-value is still estimated by the randomization,
+approximating the permutation distribution.
+The t-statistic is computed using scipy.stats.ttest_ind</p></li>
+<li><p>If stat == ‘mean_within_strata’, the test statistic is the
+difference in means within each stratum, added across strata.</p></li>
+<li><p>If stat is a function (a callable object), the test statistic is
+that function.  The function should take a permutation of the
+pooled data and compute the test function from it. For instance,
+if the test statistic is the Kolmogorov-Smirnov distance between
+the empirical distributions of the two samples,
+<img class="math" src="../_images/math/6c43fc1b975d040243af3d475e35235ce5ee4ef8.png" alt="max_t |F_x(t) - F_y(t)|"/>, the test statistic could be written:</p>
+<dl class="simple">
+<dt>f = lambda u: np.max( </dt><dd><p>[abs(sum(u[:len(x)]&lt;=v)/len(x)-sum(u[len(x):]&lt;=v)/len(y))
+for v in u])</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>The alternative hypothesis to test</p>
+</dd>
+<dt><strong>reps</strong><span class="classifier">int</span></dt><dd><p>Number of permutations</p>
+</dd>
+<dt><strong>keep_dist</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to store and return the array of values
+of the test statistic</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator.</p>
+</dd>
+<dt><strong>plus1</strong><span class="classifier">bool</span></dt><dd><p>flag for whether to add 1 to the numerator and denominator of the
+p-value based on the empirical permutation distribution. 
+Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>the estimated p-value</p>
+</dd>
+<dt>float</dt><dd><p>the test statistic</p>
+</dd>
+<dt>list</dt><dd><p>The distribution of test statistics.
+These values are only returned if <cite>keep_dist</cite> == True</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

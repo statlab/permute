@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>permute.data &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for permute.data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Standard test data.</span>
+
+<span class="sd">For more information, see</span>
+
+<span class="sd"> - http://www.wiley.com/legacy/wileychi/pesarin/material.html</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span> <span class="k">as</span> <span class="nn">_os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">data_dir</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;kenya&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../api/data.html#permute.data.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load a data file located in the data directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : string</span>
+<span class="sd">        File name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : array like</span>
+<span class="sd">        Data loaded from permute.data_dir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">recfromcsv</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">nsgk</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;NSGK test data for irr.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    Here is first 5 lines of `nsgk.csv`::</span>
+
+<span class="sd">        time_stamp,domain,video,rater</span>
+<span class="sd">        1,8,1,1</span>
+<span class="sd">        1,12,1,1</span>
+<span class="sd">        1,15,1,1</span>
+<span class="sd">        1,20,1,1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;nsgk.csv&quot;</span><span class="p">),</span>
+                    <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nz</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="n">nz</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">nz</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># given order: time_stamp,domain,video,rater</span>
+    <span class="c1"># desired order: domain,video,rater,time_stamp</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># hardcoding the number of timestamps per video</span>
+    <span class="n">time_stamps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">36</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="p">[[</span><span class="n">m</span><span class="p">[:,</span> <span class="p">:</span><span class="n">time_stamps</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="c1">## Alternatively, I could return a 2D object array with</span>
+    <span class="c1">##  rater x time_stamp(video) matrices as entries</span>
+    <span class="c1">## Not sure which is better, so I will wait to see how I use it.</span>
+    <span class="c1"># p1 = np.zeros(x.shape[:2], dtype=object)</span>
+    <span class="c1"># for i, n in enumerate(x):</span>
+    <span class="c1">#     for j, m in enumerate(n):</span>
+    <span class="c1">#        p1[i, j] = m</span>
+
+    <span class="k">return</span> <span class="n">p1</span>
+
+
+<span class="k">def</span> <span class="nf">macnell2014</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Data from MacNell et al. 2014</span>
+
+<span class="sd">    .. Lillian MacNell, Adam Driscoll, and Andrea N Hunt, &quot;What&#39;s</span>
+<span class="sd">       in a Name: Exposing Gender Bias in Student Ratings of Teaching,&quot;</span>
+<span class="sd">       Innovative Higher Education, pp. 1-13, 2014.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;MacNell2014.csv&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clinical_trial</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Data from Ottoboni et al. 2018</span>
+
+<span class="sd">    .. Kellie Ottoboni, Fraser Lewis, and Luigi Salmaso, &quot;An Empirical </span>
+<span class="sd">       Comparison of Parametric and Permutation Tests for Regression </span>
+<span class="sd">       Analysis of Randomized Experiments,&quot; Statistics in </span>
+<span class="sd">       Biopharmaceutical Research, 2018.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="s2">&quot;rb_clinical_trial.csv&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># def another_poss():</span>
+<span class="c1">#    nz = np.loadtxt(_os.path.join(data_dir, &quot;nsgk.csv&quot;),</span>
+<span class="c1">#                    delimiter=&#39;,&#39;, skiprows=1, dtype=np.int)</span>
+<span class="c1">#    _, nd, nv, nr = tuple(nz.max(axis=0))</span>
+<span class="c1">#    dv = np.zeros((nd, nv), dtype=object)</span>
+<span class="c1">#    time_stamps = [36, 32, 35, 37, 31, 35, 40, 32]</span>
+<span class="c1">#    for n in range(nd):</span>
+<span class="c1">#        for v in range(nv):</span>
+<span class="c1">#            dv[n, v] = np.zeros((nr, time_stamps[v]), dtype=np.int)</span>
+<span class="c1">#    nz -= 1</span>
+<span class="c1">#    for _ts, _d, _v, _r in nz:</span>
+<span class="c1">#        dv[_d, _v][_r, _ts] = 1 </span>
+<span class="c1">#</span>
+
+<span class="k">def</span> <span class="nf">botulinum</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;botulinum.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">chrom17m</span><span class="p">():</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;chrom17m.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">confocal</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;confocal.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">germina</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;germina.csv&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="kenya"><a class="viewcode-back" href="../../api/data.html#permute.data.kenya">[docs]</a><span class="k">def</span> <span class="nf">kenya</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The Kenya dataset contains 16 observations and two variables in total.</span>
+<span class="sd">    It concerns an anthropological study on the &quot;Ol Molo&quot; and &quot;Kamba&quot;</span>
+<span class="sd">    populations.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;kenya.csv&quot;</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">massaro_blair</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;massaro_blair.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">monachus</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;monachus.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">mult</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;mult.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">perch</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;perch.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">rats</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;rats.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">setig</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;setig.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">urology</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;urology.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">washing_test</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;washing_test.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">waterfalls</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;waterfalls.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">ipat</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The IPAT dataset from Pesarin and Salmaso Chapter 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;examples_chapters_1-4&quot;</span><span class="p">,</span> <span class="s2">&quot;ipat.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">job</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The job satisfaction dataset from Pesarin and Salmaso Chapter 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;examples_chapters_1-4&quot;</span><span class="p">,</span> <span class="s2">&quot;job.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">fly</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The fly dataset from Pesarin and Salmaso Chapter 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;examples_chapters_1-4&quot;</span><span class="p">,</span> <span class="s2">&quot;fly.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">testosterone</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The testosterone dataset from Pesarin and Salmaso Chapter 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;examples_chapters_1-4&quot;</span><span class="p">,</span> <span class="s2">&quot;testosterone.csv&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">worms</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The worms dataset from Pesarin and Salmaso Chapter 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;npc&quot;</span><span class="p">,</span> <span class="s2">&quot;examples_chapters_1-4&quot;</span><span class="p">,</span> <span class="s2">&quot;worms.csv&quot;</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

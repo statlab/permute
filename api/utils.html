@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Utility functions &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quality assurance" href="qa.html" />
+    <link rel="prev" title="Data sets" href="data.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Utility functions</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="data.html" title="Previous Chapter: Data sets"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Data sets</span>
+    </a>
+  </li>
+  <li>
+    <a href="qa.html" title="Next Chapter: Quality assurance"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Quality assurance &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="module-permute.utils">
+<span id="utility-functions"></span><h1>Utility functions<a class="headerlink" href="#module-permute.utils" title="Permalink to this headline">¶</a></h1>
+<p>Various utilities and helper functions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.binom_conf_interval">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">binom_conf_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.975</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'two-sided'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#binom_conf_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.binom_conf_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a confidence interval for a binomial p, the probability of success in each trial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>The number of Bernoulli trials.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">int</span></dt><dd><p>The number of successes.</p>
+</dd>
+<dt><strong>cl</strong><span class="classifier">float in (0, 1)</span></dt><dd><p>The desired confidence level.</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{“two-sided”, “lower”, “upper”}</span></dt><dd><p>Indicates the alternative hypothesis.</p>
+</dd>
+<dt><strong>p</strong><span class="classifier">float in (0, 1)</span></dt><dd><p>Starting point in search for confidence bounds for probability of success in each trial.</p>
+</dd>
+<dt><strong>kwargs</strong><span class="classifier">dict</span></dt><dd><p>Key word arguments</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>lower and upper confidence level with coverage (approximately)
+1-alpha.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>xtol<span class="classifier">float</span></dt><dd><p>Tolerance</p>
+</dd>
+<dt>rtol<span class="classifier">float</span></dt><dd><p>Tolerance</p>
+</dd>
+<dt>maxiter<span class="classifier">int</span></dt><dd><p>Maximum number of iterations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.binomial_p">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">binomial_p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#binomial_p"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.binomial_p" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>list of elements consisting of x in {0, 1} where 0 represents a failure and
+1 represents a seccuess</p>
+</dd>
+<dt><strong>p</strong><span class="classifier">int</span></dt><dd><p>hypothesized number of successes in n trials</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>number of trials</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>alternative hypothesis to test (default: ‘greater’)</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>float</strong></dt><dd><p>estimated p-value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.get_prng">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">get_prng</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#get_prng"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.get_prng" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn seed into a cryptorandom instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seed</strong><span class="classifier">{None, int, str, RandomState}</span></dt><dd><p>If seed is None, return generate a pseudo-random 63-bit seed using np.random
+and return a new SHA256 instance seeded with it.
+If seed is a number or str, return a new cryptorandom instance seeded with seed.
+If seed is already a numpy.random RandomState or SHA256 instance, return it.
+Otherwise raise ValueError.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>RandomState</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.hypergeom_conf_interval">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">hypergeom_conf_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.975</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'two-sided'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#hypergeom_conf_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.hypergeom_conf_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confidence interval for a hypergeometric distribution parameter G, the number of good
+objects in a population in size N, based on the number x of good objects in a simple
+random sample of size n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>The number of draws without replacement.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">int</span></dt><dd><p>The number of “good” objects in the sample.</p>
+</dd>
+<dt><strong>N</strong><span class="classifier">int</span></dt><dd><p>The number of objects in the population.</p>
+</dd>
+<dt><strong>cl</strong><span class="classifier">float in (0, 1)</span></dt><dd><p>The desired confidence level.</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{“two-sided”, “lower”, “upper”}</span></dt><dd><p>Indicates the alternative hypothesis.</p>
+</dd>
+<dt><strong>G</strong><span class="classifier">int in [0, N]</span></dt><dd><p>Starting point in search for confidence bounds for the hypergeometric parameter G.</p>
+</dd>
+<dt><strong>kwargs</strong><span class="classifier">dict</span></dt><dd><p>Key word arguments</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tuple</dt><dd><p>lower and upper confidence level with coverage (at least)
+1-alpha.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>xtol<span class="classifier">float</span></dt><dd><p>Tolerance</p>
+</dd>
+<dt>rtol<span class="classifier">float</span></dt><dd><p>Tolerance</p>
+</dd>
+<dt>maxiter<span class="classifier">int</span></dt><dd><p>Maximum number of iterations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.hypergeometric">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">hypergeometric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'greater'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#hypergeometric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.hypergeometric" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">int</span></dt><dd><p>number of <cite>good</cite> elements observed in the sample</p>
+</dd>
+<dt><strong>N</strong><span class="classifier">int</span></dt><dd><p>population size</p>
+</dd>
+<dt><strong>n</strong><span class="classifier">int</span></dt><dd><p>sample size</p>
+</dd>
+<dt><strong>G</strong><span class="classifier">int</span></dt><dd><p>hypothesized number of good elements in population</p>
+</dd>
+<dt><strong>alternative</strong><span class="classifier">{‘greater’, ‘less’, ‘two-sided’}</span></dt><dd><p>alternative hypothesis to test (default: ‘greater’)</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>float</strong></dt><dd><p>estimated p-value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.permute">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">permute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#permute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.permute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permute an array in-place</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>A 1-d array</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>None</dt><dd><p>Original array is permuted in-place, nothing is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.permute_incidence_fixed_sums">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">permute_incidence_fixed_sums</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#permute_incidence_fixed_sums"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.permute_incidence_fixed_sums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permute elements of a (binary) incidence matrix, keeping the
+row and column sums in-tact.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>incidence</strong><span class="classifier">2D ndarray</span></dt><dd><p>Incidence matrix to permute.</p>
+</dd>
+<dt><strong>k</strong><span class="classifier">int</span></dt><dd><p>The number of successful pairwise swaps to perform.</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>permuted</strong><span class="classifier">2D ndarray</span></dt><dd><p>The permuted incidence matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The row and column sums are kept fixed by always swapping elements
+two pairs at a time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.permute_rows">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">permute_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#permute_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.permute_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permute the rows of a matrix in-place</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>m</strong><span class="classifier">array-like</span></dt><dd><p>A 2-d array</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>None</dt><dd><p>Original matrix is permuted in-place, nothing is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.permute_within_groups">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">permute_within_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#permute_within_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.permute_within_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permutation of condition within each group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>A 1-d array indicating treatment.</p>
+</dd>
+<dt><strong>group</strong><span class="classifier">array-like</span></dt><dd><p>A 1-d array indicating group membership</p>
+</dd>
+<dt><strong>seed</strong><span class="classifier">RandomState instance or {None, int, RandomState instance}</span></dt><dd><p>If None, the pseudorandom number generator is the RandomState
+instance used by <cite>np.random</cite>;
+If int, seed is the seed used by the random number generator;
+If RandomState instance, seed is the pseudorandom number generator</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>permuted</strong><span class="classifier">array-like</span></dt><dd><p>The within group permutation of x.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="permute.utils.potential_outcomes">
+<span class="sig-prename descclassname"><span class="pre">permute.utils.</span></span><span class="sig-name descname"><span class="pre">potential_outcomes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finverse</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/permute/utils.html#potential_outcomes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#permute.utils.potential_outcomes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given observations <img class="math" src="../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> under treatment and <img class="math" src="../_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/> under control conditions,
+returns the potential outcomes for units under their unobserved condition
+under the hypothesis that <img class="math" src="../_images/math/9315c36f1a91ad29df47e01575fb93715ec50b18.png" alt="x_i = f(y_i)"/> for all units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>x</strong><span class="classifier">array-like</span></dt><dd><p>Outcomes under treatment</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like</span></dt><dd><p>Outcomes under control</p>
+</dd>
+<dt><strong>f</strong><span class="classifier">function</span></dt><dd><p>An invertible function</p>
+</dd>
+<dt><strong>finverse</strong><span class="classifier">function</span></dt><dd><p>The inverse function to f.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>potential_outcomes</strong><span class="classifier">2D array</span></dt><dd><p>The first column contains all potential outcomes under the treatment,
+the second column contains all potential outcomes under the control.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

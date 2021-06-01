@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Westfall-Wolfinger “mult” data &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="References" href="../references.html" />
+    <link rel="prev" title="Chapter 1-4 examples" href="chap1-4.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Westfall-Wolfinger “mult” data</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="chap1-4.html" title="Previous Chapter: Chapter 1-4 examples"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Chapter 1-4 examples</span>
+    </a>
+  </li>
+  <li>
+    <a href="../references.html" title="Next Chapter: References"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">References &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="westfall-wolfinger-mult-data">
+<h1>Westfall-Wolfinger “mult” data<a class="headerlink" href="#westfall-wolfinger-mult-data" title="Permalink to this headline">¶</a></h1>
+<p>This example comes from Chapter 5.5.</p>
+<p>When running the two sample test, use the same initial PRNG seed in order to keep permutations correlated for each test. This is crucial for NPC.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">permute.data</span> <span class="k">as</span> <span class="nn">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.core</span> <span class="kn">import</span> <span class="n">two_sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.npc</span> <span class="kn">import</span> <span class="n">fwer_minp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ww</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mult</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">ww</span><span class="o">.</span><span class="n">y1</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ww</span><span class="o">.</span><span class="n">y1</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">40929102</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p2</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">ww</span><span class="o">.</span><span class="n">y2</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ww</span><span class="o">.</span><span class="n">y2</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">40929102</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p3</span> <span class="o">=</span> <span class="n">two_sample</span><span class="p">(</span><span class="n">ww</span><span class="o">.</span><span class="n">y3</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ww</span><span class="o">.</span><span class="n">y3</span><span class="p">[</span><span class="n">ww</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alternative</span><span class="o">=</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">40929102</span><span class="p">,</span> <span class="n">keep_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p3</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pvalues_adj_fisher</span> <span class="o">=</span> <span class="n">fwer_minp</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;fisher&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pvalues_adj_liptak</span> <span class="o">=</span> <span class="n">fwer_minp</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;liptak&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pvalues_adj_tippett</span> <span class="o">=</span> <span class="n">fwer_minp</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">combine</span><span class="o">=</span><span class="s2">&quot;tippett&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adjusted p-values </span><span class="se">\n</span><span class="s2">Fisher:&quot;</span><span class="p">,</span> <span class="n">pvalues_adj_fisher</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Liptak:&quot;</span><span class="p">,</span> <span class="n">pvalues_adj_liptak</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Tippett:&quot;</span><span class="p">,</span> <span class="n">pvalues_adj_tippett</span><span class="p">)</span>
+<span class="n">Adjusted</span> <span class="n">p</span><span class="o">-</span><span class="n">values</span>
+<span class="n">Fisher</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08758248</span> <span class="mf">0.04819036</span> <span class="mf">0.0219956</span> <span class="p">]</span>
+<span class="n">Liptak</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08758248</span> <span class="mf">0.0459908</span>  <span class="mf">0.02339532</span><span class="p">]</span>
+<span class="n">Tippett</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.08758248</span> <span class="mf">0.06258748</span> <span class="mf">0.02359528</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

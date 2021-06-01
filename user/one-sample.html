@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Paired permutation tests &#8212; Permutation tests and confidence sets 0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Two sample permutation tests" href="two-sample.html" />
+    <link rel="prev" title="User Guide" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Permutation tests and confidence sets</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Reference</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Paired permutation tests</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: User Guide"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; User Guide</span>
+    </a>
+  </li>
+  <li>
+    <a href="two-sample.html" title="Next Chapter: Two sample permutation tests"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Two sample pe... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="paired-permutation-tests">
+<h1>Paired permutation tests<a class="headerlink" href="#paired-permutation-tests" title="Permalink to this headline">¶</a></h1>
+<p>To illustrate the paired two-sample permutation test, consider the following
+randomized, controlled experiment. You suspect a specific treatment will
+increase the growth rate of a certain type of cell. To test this hypothesis,
+you clone 100 cells. Now there are 200 cells composed of 100 pairs of identical
+clones. For each cloned pair you randomly assign one to treatment, with
+probability 1/2, independently across the 100 pairs. At the end of the
+treatment, you measure the growth rate for all the cells. The null hypothesis
+is that treatment has no effect. If that is true, then the assignment of a
+clone to treatment amounts to an arbitrary label that has nothing to do with
+the measured response. So, given the responses within each pair (but not the
+knowledge of which clone in each pair had which response), it would have been
+just as likely to observe the same <em>numbers</em> but with flipped labels within
+each pair. We could generate new hypothetical datasets from the observed data
+by assigning the treatment and control labels for all the cloned pairs
+independently.  This yields a total of <img class="math" src="../_images/math/209d6c5c1291cdad9ebd51000653cb5b77557f59.png" alt="2^{100}"/> total datasets
+(including the observed data and all the hypothetical datasets that you
+generated), all equally likely to have occurred under the null, conditioning on
+the observed data (but not the labeling).</p>
+<p>The standard parametric approach to this problem is the paired <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-test,
+since the cloned cells are presumably more similar to each other than to
+another randomly chosen cell (and thus more readily compared). The paired
+<img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-test assumes that, if the null hypothesis is true, the differences in
+response between each pair of clones are independently and identically (iid)
+normally distributed with mean zero and unknown variance. The test statistic is
+the mean of the differences between each cloned pair divided by the standard
+error of these differences. Under these assumptions, the test statistic is
+distributed as a <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-distribution with <img class="math" src="../_images/math/a44c09dc69d687fd66b7a1a12197c0299aa5db1c.png" alt="n-1"/> degrees of freedom.
+This means you can calculate the test statistic and then read off the from the
+<img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-distribution. If the is below some prespecified critical value
+<img class="math" src="../_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/>, then you reject the null. If the true generative model for the
+data is not iid normal, however, the probability of rejecting the null
+hypothesis can be quite different from <img class="math" src="../_images/math/2f5aa019312e1bbc969deab8dca8b00f76025404.png" alt="\alpha"/> even if treatment has no
+effect.</p>
+<p>A permutation version of the <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-test can avoid that vulnerability: one
+can use the <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-statistic as the test statistic, but instead of selecting
+the critical value on the basis of Student’s <img class="math" src="../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/>-distribution, one uses
+the distribution of the statistic under the permutation distribution. Of
+course, other test statistics could be used instead; the test statistic should
+be sensitive to the nature of the alternative hypothesis, to ensure that the
+test has power against the alternatives the science suggests are relevant.</p>
+<p>Regardless of which test statistic you choose for your permutation test, if the
+problem size is not too large then you enumerate all equally likely
+possibilities under the null given the observed data. If the problem is too
+large to feasibly enumerate, then you use a suitably large, iid random sample
+from the exact distribution just described, by selecting permutations uniformly
+at random and applying the test statistic to those permutations. As you
+increase the number of samples, you will get increasingly better (in
+probability) approximations of the exact distribution of the test statistic
+under the null. The null conditional probability of any event can be estimated
+as the proportion of random permutations for which the event occurs, and the
+sampling variability of that estimate can be characterized exactly, for
+instance, using binomial tests (since the distribution of the number of times
+the event occurs is Binomial with <img class="math" src="../_images/math/5a939c5280da7202ca4531f175a7780ad5e1f80a.png" alt="n"/> equal to the number of samples and
+<img class="math" src="../_images/math/141bbefb74014fc5e43499901bf78607ae335583.png" alt="p"/> the unknown probability to be estimated).</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>We’ll generate some fake data to demonstrate the paired two-sample problem.
+We’ll follow the cloned cells example above. The controls have a response that
+is distributed uniformly between 0 and 10. There is random variation among the
+cells, so the difference between responses in a pair is normally distributed
+with 0 mean. In the first case, suppose we give the treatment group an
+ineffective treatment, so there is no treatment effect. The treated cell is
+equally likely to have a response that is larger or smaller than it’s clone’s
+response.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">permute.core</span> <span class="kn">import</span> <span class="n">one_sample</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prng</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">control</span> <span class="o">=</span> <span class="n">prng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ineffective_treatment</span> <span class="o">=</span> <span class="n">control</span> <span class="o">+</span> <span class="n">prng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span> <span class="o">=</span> <span class="n">one_sample</span><span class="p">(</span><span class="n">ineffective_treatment</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="go">P-value:  0.50726</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Difference in means:&quot;</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span>
+<span class="go">Difference in means: -0.00108036016736</span>
+</pre></div>
+</div>
+<p>Now, suppose we give a new treatment that has a constant effect that increases
+the cell’s response by 1.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">good_treatment</span> <span class="o">=</span> <span class="n">control</span> <span class="o">+</span> <span class="n">prng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span> <span class="o">=</span> <span class="n">one_sample</span><span class="p">(</span><span class="n">good_treatment</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="go">P-value:  0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Difference in means:&quot;</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span>
+<span class="go">Difference in means: 1.08009705107</span>
+</pre></div>
+</div>
+<p><cite>one_sample</cite> is written to either take in two arguments and test the difference
+between pairs as we’ve done above, or to take in a single argument and test
+whether that variable is centered around 0. Below, we call <cite>one_sample</cite> in that
+manner, supplying the difference in response within pairs, and get the same
+results.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">paired_differences</span> <span class="o">=</span> <span class="n">good_treatment</span> <span class="o">-</span> <span class="n">control</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span> <span class="o">=</span> <span class="n">one_sample</span><span class="p">(</span><span class="n">paired_differences</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">prng</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P-value: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="go">P-value:  0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Difference in means:&quot;</span><span class="p">,</span> <span class="n">diff_means</span><span class="p">)</span>
+<span class="go">Difference in means: 1.08009705107</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015-2021, K. Jarrod Millman, Kellie Ottoboni, and Philip B. Stark.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
