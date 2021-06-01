@@ -64,7 +64,7 @@ import warnings as _warnings
 pkg_dir = _osp.abspath(_osp.dirname(__file__))
 data_dir = _osp.join(pkg_dir, 'data')
 
-__version__ = "0.2"
+__version__ = "0.3rc1.dev0"
 
 
 try:
