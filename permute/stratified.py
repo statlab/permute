@@ -58,7 +58,7 @@ def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=Tr
         If RandomState instance, seed is the pseudorandom number generator.
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -81,7 +81,7 @@ def sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=Tr
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
-        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1),
                                            1 - (p + plus1/(reps+plus1))])
     }
     return thePvalue[alternative](right_pv), tst, dist
@@ -199,7 +199,7 @@ def stratified_permutationtest(
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -229,7 +229,7 @@ def stratified_permutationtest(
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
-        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1),
                                            1 - (p + plus1/(reps+plus1))])
     }
 
@@ -322,7 +322,7 @@ def stratified_two_sample(
         If RandomState instance, seed is the pseudorandom number generator.
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -368,7 +368,7 @@ def stratified_two_sample(
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
-        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
+        'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1),
                                            1 - (p + plus1/(reps+plus1))])
     }
     observed_tst = tst_fun(response)

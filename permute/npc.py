@@ -2,6 +2,7 @@ import numpy as np
 import copy
 from scipy.stats import norm, rankdata, ttest_ind, ttest_1samp
 from cryptorandom.sample import random_sample
+
 from .utils import get_prng, permute
 
 
@@ -143,7 +144,7 @@ def npc(pvalues, distr, combine="fisher", plus1=True):
         monotonically decreasing in each p-value.
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -187,7 +188,7 @@ def npc(pvalues, distr, combine="fisher", plus1=True):
 
 
 def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=None):
-    r''' 
+    r'''
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
     $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
 
@@ -198,7 +199,7 @@ def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=
     .. math:: \cup_{i=1}^n H_{1i}
 
     using an omnibus test statistic.
-    
+
     Parameters
     ----------
     data : Experiment object
@@ -217,22 +218,22 @@ def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=
         instance used by `np.random`;
         If int, seed is the seed used by the random number generator;
         If RandomState instance, seed is the pseudorandom number generator
-    
+
     Returns
     -------
     array
-        A single p-value for the global test, 
+        A single p-value for the global test,
         test statistic values on the original data,
         partial p-values
     '''
     # check data is of type Experiment
     if not isinstance(data, Experiment):
         raise ValueError("data not of class Experiment")
-        
+
     # if seed not none, reset seed
     if seed is not None:
         data.randomizer.reset_seed(seed)
-    
+
     ts = {}
     tv = {}
     ps = {}
@@ -242,13 +243,13 @@ def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=
         # apply test statistic function to column
         ts[c] = test[c](data)
         tv[c] = []
-        
+
     # check if randomization in place
     if in_place:
         data_copy = data
     else:
         data_copy = copy.deepcopy(data)
-        
+
     # get test statistics for random samples
     for i in range(reps):
         # randomly permute group
@@ -272,12 +273,12 @@ def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=
 def fwer_minp(pvalues, distr, combine='fisher', plus1=True):
     """
     Adjust p-values using the permutation "minP" variant of Holm's step-up method.
-    
-    When considering a closed testing procedure, the adjusted p-value 
-    $p_i$ for a given hypothesis $H_i$ is the maximum of all p-values for tests 
-    including $H_i$ as a special case (including the p-value for the $H_i$ 
+
+    When considering a closed testing procedure, the adjusted p-value
+    $p_i$ for a given hypothesis $H_i$ is the maximum of all p-values for tests
+    including $H_i$ as a special case (including the p-value for the $H_i$
     test itself).
-    
+
     Parameters
     ----------
     pvalues : array_like
@@ -339,7 +340,7 @@ def randomize_group(data):
 
 def randomize_in_strata(data):
     r"""
-    Stratified randomization where first covariate is the stratum 
+    Stratified randomization where first covariate is the stratum
 
     Parameters
     ----------
@@ -354,8 +355,8 @@ def randomize_in_strata(data):
     strata = data.covariate[:, 0]
     unique_strata = np.unique(strata)
     for value in unique_strata:
-        data.group[strata == value] = random_sample(data.group[strata == value], 
-                                                    len(data.group[strata == value]), 
+        data.group[strata == value] = random_sample(data.group[strata == value],
+                                                    len(data.group[strata == value]),
                                                     prng=data.randomizer.prng)
     return data
 
@@ -380,7 +381,7 @@ class Experiment():
     """
     def __init__(self, group = None, response = None, covariate = None, randomizer = None):
         self.group = None if group is None else np.array(group, dtype = object)
-        self.response = None if response is None else np.array(response, dtype = object) 
+        self.response = None if response is None else np.array(response, dtype = object)
         self.covariate = None if covariate is None else np.array(covariate, dtype = object)
         if randomizer is None:
             self.randomizer = Experiment.Randomizer(randomize = randomize_group)
@@ -388,15 +389,15 @@ class Experiment():
             self.randomizer = randomizer
         else:
             raise ValueError("Not of class Randomizer")
-        
-        
+
+
     def __str__(self):
         return "This experiment has " + str(len(self.group)) + " subjects, " + str(len(self.response[0])) \
     + " response variables, and " \
     + (str(len(self.covariate[0])) if self.covariate is not None else str(0)) \
     + " covariates."
-    
-    
+
+
     def randomize(self, in_place = True, seed = None):
         # reset seed, if seed not None
         if seed is not None:
@@ -409,7 +410,7 @@ class Experiment():
             randomized_self.randomizer.randomize(randomized_self)
         return randomized_self
 
-    
+
     @classmethod
     def make_test_array(cls, func, indices):
         def create_func(index):
@@ -418,8 +419,8 @@ class Experiment():
             return new_func
         test = [create_func(index) for index in indices]
         return test
-    
-    
+
+
     class TestFunc:
         def mean_diff(self, index):
             # get unique groups
@@ -430,16 +431,16 @@ class Experiment():
             mx = np.mean(self.response[:, index][self.group == groups[0]])
             my = np.mean(self.response[:, index][self.group == groups[1]])
             return mx-my
-        
+
         def ttest(self, index):
             # get unique groups
             groups = np.unique(self.group)
             if len(groups) != 2:
                 raise ValueError("Number of groups must be two")
-            t = ttest_ind(self.response[:, index][self.group == groups[0]], 
+            t = ttest_ind(self.response[:, index][self.group == groups[0]],
                              self.response[:, index][self.group == groups[1]], equal_var=True)[0]
             return t
-        
+
         def one_way_anova(self, index):
             tst = 0
             overall_mean = np.mean(self.response[:, index])
@@ -449,13 +450,13 @@ class Experiment():
                 nk = len(group_k)
                 tst += (group_mean - overall_mean)**2 * nk
             return tst
-    
-    
+
+
     class Randomizer():
         def __init__(self, randomize = randomize_group, seed = None):
             self.randomize = randomize
-            self.prng = get_prng(seed) 
-            
+            self.prng = get_prng(seed)
+
         # reset seed
         def reset_seed(self, seed = None):
             self.prng = get_prng(seed)

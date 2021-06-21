@@ -135,7 +135,7 @@ def hypergeom_conf_interval(n, x, N, cl=0.975, alternative="two-sided", G=None,
 
 
 def hypergeometric(x, N, n, G, alternative='greater'):
-    
+
     """
     Parameters
     ----------
@@ -188,13 +188,13 @@ def binomial_p(x, n, p, alternative='greater'):
     p : int
        hypothesized number of successes in n trials
     n : int
-       number of trials 
+       number of trials
     alternative : {'greater', 'less', 'two-sided'}
        alternative hypothesis to test (default: 'greater')
     Returns
     -------
     float
-       estimated p-value 
+       estimated p-value
     """
 
     assert alternative in ("two-sided", "less", "greater")

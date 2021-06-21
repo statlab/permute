@@ -30,7 +30,7 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -70,7 +70,7 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -78,7 +78,7 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
     tuple
         Returns test statistic, p-value, simulated distribution
     """
-    
+
     xnew = np.argsort(x)+1
     ynew = np.argsort(y)+1
     return corr(xnew, ynew, alternative=alternative, reps=reps, seed=seed)
@@ -112,7 +112,7 @@ def two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -203,8 +203,8 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
             that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
-            For instance, if the test statistic is the Kolmogorov-Smirnov distance 
-            between the empirical distributions of the two samples, 
+            For instance, if the test statistic is the Kolmogorov-Smirnov distance
+            between the empirical distributions of the two samples,
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
@@ -223,7 +223,7 @@ def two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -305,14 +305,14 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
-            For instance, if the test statistic is the Kolmogorov-Smirnov distance 
-            between the empirical distributions of the two samples, 
+            For instance, if the test statistic is the Kolmogorov-Smirnov distance
+            between the empirical distributions of the two samples,
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
                 [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
-                
+
     alternative : {'greater', 'less', 'two-sided'}
         The alternative hypothesis to test
     keep_dist : bool
@@ -332,7 +332,7 @@ def two_sample_shift(x, y, reps=10**5, stat='mean', alternative="greater",
             $x_i = f(y_i)$ and $y_i = f^{-1}(x_i)$
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -421,14 +421,14 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             that function. The function should take two arguments:
             given a permutation of the pooled data, the first argument is the
             "new" x and the second argument is the "new" y.
-            For instance, if the test statistic is the Kolmogorov-Smirnov distance 
-            between the empirical distributions of the two samples, 
+            For instance, if the test statistic is the Kolmogorov-Smirnov distance
+            between the empirical distributions of the two samples,
             $\max_t |F_x(t) - F_y(t)|$, the test statistic could be written:
 
             f = lambda u, v: np.max( \
                 [abs(sum(u<=val)/len(u)-sum(v<=val)/len(v)) for val in np.concatenate([u, v])]\
                 )
-                
+
     shift : float
         The relationship between x and y under the null hypothesis.
 
@@ -437,7 +437,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
             $x_i = f(y_i, d)$ and $y_i = f^{-1}(x_i, d)$
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -456,7 +456,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
     """
     # print warning
     warnings.warn('This function is under construction and outputs may be unreliable.')
-    
+
     assert alternative in ("two-sided", "lower", "upper")
 
     if shift is None:
@@ -488,7 +488,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
                                                 shift=q, reps=reps, stat=stat, plus1=plus1)[0]
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="less", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
+                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)),
                                                 reps=reps, stat=stat, plus1=plus1)[0]
         ci_low = brentq(g, -2 * shift_limit, 2 * shift_limit)
 
@@ -498,7 +498,7 @@ def two_sample_conf_int(x, y, cl=0.95, alternative="two-sided", seed=None,
                                                 shift=q, reps=reps, stat=stat, plus1=plus1)[0]
         else:
             g = lambda q: cl - two_sample_shift(x, y, alternative="greater", seed=seed,
-                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)), 
+                                                shift=(lambda u: f(u, q), lambda u: finverse(u, q)),
                                                 reps=reps, stat=stat, plus1=plus1)[0]
         ci_upp = brentq(g, -2 * shift_limit, 2 * shift_limit)
 
@@ -566,7 +566,7 @@ def one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
