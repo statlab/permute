@@ -131,7 +131,7 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -171,10 +171,10 @@ def simulate_ts_dist(ratings, obs_ts=None, num_perm=10000,
         for i in range(num_perm):
             r = permute_rows(r, prng)
             geq += (compute_ts(r) >= obs_ts)
-    return {"obs_ts": obs_ts, 
-            "geq": geq, 
+    return {"obs_ts": obs_ts,
+            "geq": geq,
             "num_perm": num_perm,
-            "pvalue": (geq+plus1) / (num_perm+plus1), 
+            "pvalue": (geq+plus1) / (num_perm+plus1),
             "dist": dist}
 
 
@@ -216,7 +216,7 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
         If not input, obs_ts must be specified.
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -246,6 +246,6 @@ def simulate_npc_dist(perm_distr, size, obs_ts=None,
 
     obs_npc = combine_func(pvalues)
     res = npc(pvalues, perm_distr, combine_func)
-    return {"obs_npc": obs_npc, 
-            "pvalue": res, 
+    return {"obs_npc": obs_npc,
+            "pvalue": res,
             "num_perm": B}

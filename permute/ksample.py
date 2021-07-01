@@ -1,3 +1,4 @@
+
 """
 K-sample permutation tests.
 """
@@ -13,12 +14,12 @@ from .utils import get_prng, permute, permute_within_groups
 def k_sample(x, group, reps=10**5, stat='one-way anova',
                keep_dist=False, seed=None, plus1=True):
     r"""
-    k-sample permutation test for equality of more than 2 means, 
+    k-sample permutation test for equality of more than 2 means,
     with p-value estimated by simulated random sampling with
     reps replications.
 
     Tests the hypothesis that groupings are a random partition of x
-    against the alternative that at least one group comes from a 
+    against the alternative that at least one group comes from a
     population with mean different from the rest
 
     If ``keep_dist``, return the distribution of values of the test statistic;
@@ -36,7 +37,7 @@ def k_sample(x, group, reps=10**5, stat='one-way anova',
     stat : {'one-way anova'}
         The test statistic.
 
-        (a) If stat == 'one-way anova', use the sum of squared 
+        (a) If stat == 'one-way anova', use the sum of squared
                distances between the group means and the overall mean
                weighted by group size.
                $\sum_{k=1}^K n_k(\overline{X_k} - \overline{X})^2$
@@ -50,7 +51,7 @@ def k_sample(x, group, reps=10**5, stat='one-way anova',
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -76,7 +77,7 @@ def k_sample(x, group, reps=10**5, stat='one-way anova',
     else:
         tst_fun = stats[stat]
 
-    xbar = np.mean(x)    
+    xbar = np.mean(x)
     observed_tst = tst_fun(x, group, xbar)
 
     if keep_dist:
@@ -112,7 +113,7 @@ def one_way_anova(x, group, overall_mean):
     Returns
     -------
     float
-        the one-way ANOVA statistic 
+        the one-way ANOVA statistic
         $\sum_{k=1}^K n_k(\overline{X_k} - \overline{X})^2$
         where $k$ indexes the groups
     """
@@ -129,12 +130,12 @@ def one_way_anova(x, group, overall_mean):
 def bivariate_k_sample(x, group1, group2, reps=10**5, stat='two-way anova',
                keep_dist=False, seed=None, plus1=True):
     r"""
-    k-sample permutation test for equality of more than 2 means, 
+    k-sample permutation test for equality of more than 2 means,
     with p-value estimated by simulated random sampling with
     reps replications.
 
     Tests the hypothesis that within grouping 1, grouping 2 is
-     a random partition of x against the alternative that at 
+     a random partition of x against the alternative that at
     least one group 2 comes from a population with mean different from the rest
 
     If ``keep_dist``, return the distribution of values of the test statistic;
@@ -148,7 +149,7 @@ def bivariate_k_sample(x, group1, group2, reps=10**5, stat='two-way anova',
     group1 : array-like
         Fixed group labels for each observation
     group2 : array-like
-        Group labels that, under the null, are exchangeable for each 
+        Group labels that, under the null, are exchangeable for each
         level of group1
     reps : int
         number of repetitions
@@ -171,7 +172,7 @@ def bivariate_k_sample(x, group1, group2, reps=10**5, stat='two-way anova',
         If RandomState instance, seed is the pseudorandom number generator
     plus1 : bool
         flag for whether to add 1 to the numerator and denominator of the
-        p-value based on the empirical permutation distribution. 
+        p-value based on the empirical permutation distribution.
         Default is True.
 
     Returns
@@ -229,7 +230,7 @@ def two_way_anova(x, group1, group2, overall_mean):
     group1 : array-like
         Fixed group labels for each observation
     group2 : array-like
-        Group labels that, under the null, are exchangeable for each 
+        Group labels that, under the null, are exchangeable for each
         level of group1
     overall_mean : float
         mean of x
