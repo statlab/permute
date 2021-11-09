@@ -52,7 +52,7 @@ def corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
     return tst, pvalue, sims
 
 
-def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True):
+def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True, method='average'):
     r"""
     Simulate permutation p-value for Spearman correlation coefficient
 
@@ -72,6 +72,11 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
+    method : {‘average’, ‘min’, ‘max’, ‘dense’, ‘ordinal’}
+        passed to scipy.stats.rankdata. 'average' uses midranks.
+        'ordinal' uses distinct ranks, with ties broken by order
+        of appearance in the original list.
+        Default is 'average'.
 
     Returns
     -------
@@ -79,8 +84,8 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
         Returns test statistic, p-value, simulated distribution
     """
     
-    xnew = np.argsort(x)+1
-    ynew = np.argsort(y)+1
+    xnew = sp.stats.rankdata(x, method=method)
+    ynew = sp.stats.rankdata(y, method=method)
     return corr(xnew, ynew, alternative=alternative, reps=reps, seed=seed)
 
 
