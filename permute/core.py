@@ -6,7 +6,7 @@ Core functions.
 import numpy as np
 import warnings
 from scipy.optimize import brentq, fsolve
-from scipy.stats import ttest_ind, ttest_1samp
+from scipy.stats import ttest_ind, ttest_1samp, rankdata
 from fractions import Fraction
 
 from .utils import get_prng, potential_outcomes, permute
@@ -84,8 +84,8 @@ def spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, plus1=True
         Returns test statistic, p-value, simulated distribution
     """
     
-    xnew = sp.stats.rankdata(x, method=method)
-    ynew = sp.stats.rankdata(y, method=method)
+    xnew = rankdata(x, method=method)
+    ynew = rankdata(y, method=method)
     return corr(xnew, ynew, alternative=alternative, reps=reps, seed=seed)
 
 
