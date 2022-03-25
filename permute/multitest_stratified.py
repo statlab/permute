@@ -29,14 +29,20 @@ def multitest_stratified_corrcoef(x, y, group):
     float
         The sum of Spearman correlations
     """
+    # ensure x and y are the same shape (same number of observations and tests)
     if x.shape != y.shape:
         raise ValueError('x and y must have the same shape')
+    # get number of hypotheses tested
     num_tests = x.shape[1]
+    # create mask to grab correlations from corrcoeff we care about (don't care about all pairs)
     corr_mat_mask = np.zeros((2*num_tests,2*num_tests),dtype=bool)
     corr_mat_mask[x.shape[1]+np.arange(num_tests),np.arange(num_tests)] = True
+    # preallocate vector to store aggregate correlations for each test
     tst = np.zeros(num_tests)
     for g in np.unique(group):
+        # create mask for current group
         gg = group == g
+        # calculate and grab correlation coefficients for current group
         tst += np.corrcoef(x[gg,:], y[gg,:],rowvar=False)[corr_mat_mask]
     return tst
 
@@ -81,25 +87,37 @@ def multitest_stratified_sim_corr(x, y, group, reps=10**4, alternative='greater'
     list
       the null distribution
     """
+    # ensure x and y have the same shape (same number of observations and tests)
     if x.shape != y.shape:
         raise ValueError('x and y must have the same shape')
+    # get the number of hypotheses to test
     num_tests = x.shape[1]
     prng = get_prng(seed)
     x = x.astype(float)
     y = y.astype(float)
+    # calculate observed statistic
     tst = multitest_stratified_corrcoef(x, y, group)
+    # account for user wanting to perform max correction
     if max_correct:
+        # preallocate space to build null distribution 
+        # (1D since going to take extreme value across tests)
         dist = np.empty(reps)
         for i in range(reps):
+            # calculate statistic of current permutation
             curr_tst = multitest_stratified_corrcoef(permute_within_groups(x, group, prng), y, group)
+            # grab the most extreme value across tests
             dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
+        # calculate the percentile for each test
         right_pv = np.empty(num_tests)
         for i in range(num_tests):
             right_pv[i] = np.sum(dist >= tst[i]) / (reps+plus1)
     else:
+        # calculate statistic on each permutation to build null distribution
         dist = [multitest_stratified_corrcoef(permute_within_groups(x, group, prng), y, group)
             for i in range(reps)]
+        # calculate percentile for each test
         right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
+    # create dictionary to store p value calculations
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
@@ -139,24 +157,38 @@ def multitest_stratified_permutationtest_mean(group, condition, response,
     tst : float
       The observed test statistic
     """
+    # get number of hypotheses to test
     num_tests = response.shape[1]
+    # get the ID for each group
     if groups is None:
         groups = np.unique(group)
+    # get the ID for each condition
     if conditions is None:
         conditions = np.unique(condition)
+    # preallocate vector to store the aggregate statistic for each test
     tst = np.zeros(num_tests)
+    # check there are at least 2 groups
     if len(groups) < 2:
         raise ValueError('Number of groups must be at least 2.')
-    elif len(groups) == 2:
-        stat = lambda u: np.fabs(u[0] - u[1])
+    # if 2 conditions, calculate mean. If more than 2, calculate std of outcomes
+    # TODO ensure this is intended behavior, in stratified.py this is done 
+    # with the variable groups, but that doesn't seem right to me
+    elif len(conditions) == 2:
+        stat = lambda u: u[0] - u[1]
         for g in groups:
+            # create mask for current group
             gg = group == g
+            # create conjugate mask for group and condition
             x = [gg & (condition == c) for c in conditions]
+            # aggregate statistic for each group and condition
             tst += stat([response[x[j],:].mean(axis=0) for j in range(len(x))])
-    elif len(groups) > 2:
+    elif len(conditions) > 2:
         for g in groups:
+            # create mask for current group
             gg = group == g
+            # create conjugate mask for group and condition
             x = [gg & (condition == c) for c in conditions]
+            # aggregate statistic for each group and condition
             tst += np.std([response[x[j],:].mean(axis=0) for j in range(len(x))],0)
     return tst
 
@@ -242,9 +274,13 @@ def multitest_stratified_permutationtest(
       the null distribution
     """
     prng = get_prng(seed)
+    # get the number of hypotheses to test
     num_tests = response.shape[1]
+    # get the group IDs
     groups = np.unique(group)
+    # get the condition IDs
     conditions = np.unique(condition)
+    # create a dictionary to store common statistic calculation
     stats = {
         'mean': lambda u: multitest_stratified_permutationtest_mean(
             group,
@@ -256,31 +292,43 @@ def multitest_stratified_permutationtest(
         tst_fun = testStatistic
     else:
         tst_fun = stats[testStatistic]
+        # create dictionary to store p values calculatoins
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
         'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
                                            1 - (p + plus1/(reps+plus1))],axis=0)
     }
-    
+    #
     if len(conditions) < 2:
+        # TODO would it be more appropriate to raise error?
+        # raise ValueError('Number of conditions must be at least 2.')
         return 1.0, np.nan, None
     else:
+        # calculate observed statistic
         tst = tst_fun(condition)
         if max_correct:
+            # preallocate vector to store null distribution
+            # (1D because going to take most extreme value across all tests)
             dist = np.zeros(reps)
             for i in range(int(reps)):
+                # calculate statistic for current permutation
                 curr_tst = tst_fun(permute_within_groups(condition, group, prng))
+                # grab the most extreme value across tests
                 dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
+            # calculate percentile for each test
             right_pv = np.empty(num_tests)
             for i in range(num_tests):
                 right_pv[i] = np.sum(dist >= tst[i])/(reps+plus1)
             return thePvalue[alternative](right_pv), tst, dist
         else:
+            # preallocate vector to store null distribution
+            # (2D because each test will have its own distribution)
             dist = np.zeros((reps,num_tests))
             for i in range(int(reps)):
+                # calculate statistic for current permutation
                 dist[i,:] = tst_fun(permute_within_groups(condition, group, prng))
-            
+            # calculate percentile for each test
             right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
             return thePvalue[alternative](right_pv), tst, dist
 
@@ -382,17 +430,23 @@ def multitest_stratified_two_sample(
     """
     
     prng = get_prng(seed)
+    # get number of hypotheses to test
     num_tests = response.shape[1]
+    # get indexing to sort by condition (not sure why this is necessary)
     ordering = condition.argsort()
     response = response[ordering]
     condition = condition[ordering]
     group = group[ordering]
+    # get number of samples that received condition with lowest ID
+    # TODO should we ensure each condition has the same number of samples?
     ntreat = np.sum(condition == condition[0])
     
+    # get the IDs for each group and condition
     groups = np.unique(group)
     conditions = np.unique(condition)
     # If stat is callable, use it as the test function. Otherwise, look in the
     # dictionary
+    # TODO there is no x, not sure what desired behavior is here
     stats = {
         'mean': lambda u: np.nanmean(u[:ntreat],axis=0) - np.nanmean(u[ntreat:],axis=0),
         't': lambda u: ttest_ind(
@@ -409,42 +463,62 @@ def multitest_stratified_two_sample(
         tst_fun = stat
     else:
         tst_fun = stats[stat]
-        
+    # create dictionary to store p value calculations
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
         'less': lambda p: 1 - (p + plus1/(reps+plus1)),
         'two-sided': lambda p: 2 * np.min([p + plus1/(reps+plus1), 
                                            1 - (p + plus1/(reps+plus1))],axis=0)
     }
+    # get observed statistic
     observed_tst = tst_fun(response)
-    
+    # account for all combinations of keep_dist (keep distribution)
+    # and max_correct (create max distribution to correct for multiple 
+    # hypothesis testing)     
     if keep_dist:
         if max_correct:
+            # preallocate vector for null distribution
+            # (1D because going to take most extreme statistic across tests)
             dist = np.empty(reps)
             for i in range(reps):
+                # calculate statistic for current permutation
                 curr_tst = tst_fun(permute_within_groups(
                     response, group, seed=prng))
+                # grab most extreme statistic across tests
                 dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
+            # calculate percentile for each test
             hits = np.empty(num_tests)
             for i in range(num_tests):
                 hits[i] = np.sum(dist >= observed_tst[i])
-                return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
+            return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
         else:
+            # preallocate vector for null distribution
+            # (2D because build null distribution for each test)
             dist = np.empty((reps,num_tests))
             for i in range(reps):
+                # calculate statistic for current permutation
                 dist[i,:] = tst_fun(permute_within_groups(
                     response, group, seed=prng))
+            # calculate percentile for each test
             hits = np.sum(dist >= observed_tst,axis=0)
             return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
     else:
         if max_correct:
-            hits = np.sum([(tst_fun(permute_within_groups(
-            response, group, seed=prng)) >= observed_tst)
-                 for i in range(reps)],axis=0)
-            return thePvalue[alternative](hits / (reps+plus1)), observed_tst
-        else:
+            # create vector to store number of times each hypothesis is less
+            # than the most extreme value across all tests per permutation
             hits = np.zeros(num_tests)
             for i in range(reps):
+                # calculate statistic of current permutation
+                curr_tst = tst_fun(permute_within_groups(response, group, seed=prng))
+                # take most extreme value and compare with observed statistic
+                hits +=   max(curr_tst.min(), curr_tst.max(), key=abs) >= observed_tst
+            return thePvalue[alternative](hits / (reps+plus1)), observed_tst
+        else:
+            # create vector to store number of times each hypothesis is less
+            # than the corresponding statistic of the permuted values
+            hits = np.zeros(num_tests)
+            for i in range(reps):
+                # calculate current statistic
                 curr_tst = tst_fun(permute_within_groups(response, group, seed=prng))
                 hits += curr_tst >= observed_tst
             return thePvalue[alternative](hits / (reps+plus1)), observed_tst
