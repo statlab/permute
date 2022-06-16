@@ -4,7 +4,7 @@ import numpy as np
 from numpy.random import RandomState
 from scipy.stats import norm
 
-from .npc import (fisher,
+from ..npc import (fisher,
                    liptak,
                    tippett,
                    inverse_n_weight,
