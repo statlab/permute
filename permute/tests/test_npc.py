@@ -11,6 +11,8 @@ from ..npc import (fisher,
                    npc,
                    check_combfunc_monotonic,
                    sim_npc,
+                   westfall_young,
+                   adjust_p,
                    fwer_minp,
                    randomize_group,
                    Experiment)
