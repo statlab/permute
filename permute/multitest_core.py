@@ -12,7 +12,6 @@ from scipy.stats import ttest_ind, ttest_1samp
 from .utils import get_prng, permute
 
 
-
 """ TODO for multi testing core package
 
 two_sample_conf_int once it is finalized
@@ -104,7 +103,7 @@ def multitest_spearman_corr(x, y, alternative='greater', reps=10**4, seed=None, 
 
 
 def multitest_two_sample_core(potential_outcomes_all, nx, tst_stat, alternative='greater',
-                    reps=10**5, keep_dist=False, seed=None, plus1=True, max_correct=False):
+                    reps=10**5, keep_dist=False, seed=None, plus1=True):
     r"""
     Main workhorse function for two_sample and two_sample_shift
 
@@ -134,10 +133,6 @@ def multitest_two_sample_core(potential_outcomes_all, nx, tst_stat, alternative=
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-    max_correct : bool
-        flag for whether to perform max statistic multiple testing
-        correction. Builds the null distribution from the most extreme value
-        across tests for each iteration of the permutation. Default is False.
 
     Returns
     -------
@@ -163,81 +158,42 @@ def multitest_two_sample_core(potential_outcomes_all, nx, tst_stat, alternative=
                                     pUp+plus1/(reps+plus1), \
                                     pDn+plus1/(reps+plus1)],1),1)
     }
-    # account for all combinations of keep_dist (keep distribution)
-    # and max_correct (create max distribution to correct for multiple 
-    # hypothesis testing) 
+    # account for keep_dist (keep distribution)
     if keep_dist:
-        if max_correct:
-            dist = np.empty(reps)
-            for i in range(reps):
-                # permute indexing vector
-                prng.shuffle(rr)
-                # grab shuffled values
-                pp = np.take(potential_outcomes_all, rr, axis=0)
-                # calculate statistic
-                curr_tst = tst_stat(pp[:nx, :, 0], pp[nx:,: , 1])
-                # grab the most extreme statistic observed across all tests
-                dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
-            # calculate percentile 
-            pUp = np.empty(num_tests)
-            pDn = np.empty(num_tests)
-            for i in range(num_tests):
-                pUp[i] = np.sum(dist >= tst[i])/(reps+plus1)
-                pDn[i] = np.sum(dist <= tst[i])/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn), dist
-        else:
-            dist = np.empty((reps,num_tests))
-            for i in range(reps):
-                # permute indexing vector
-                prng.shuffle(rr)
-                # grab shuffled values
-                pp = np.take(potential_outcomes_all, rr, axis=0)
-                # calculate statistic
-                dist[i,:] = tst_stat(pp[:nx, :, 0], pp[nx:,: , 1])
-            # calculate percentile
-            pUp = np.sum(dist >= tst,axis=0)/(reps+plus1)
-            pDn = np.sum(dist <= tst,axis=0)/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn), dist
+        dist = np.empty((reps,num_tests))
+        for i in range(reps):
+            # permute indexing vector
+            prng.shuffle(rr)
+            # grab shuffled values
+            pp = np.take(potential_outcomes_all, rr, axis=0)
+            # calculate statistic
+            dist[i,:] = tst_stat(pp[:nx, :, 0], pp[nx:,: , 1])
+        # calculate percentile
+        pUp = np.sum(dist >= tst,axis=0)/(reps+plus1)
+        pDn = np.sum(dist <= tst,axis=0)/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), dist
     else:
         # preallocate vectors to store number of times our observed statistic
         # is greater than the permuted statistic(s). Keeps memory requirement low
         hitsUp = np.zeros(num_tests)
         hitsDn = np.zeros(num_tests)
-        if max_correct:
-            for i in range(reps):
-                # permute indexing vector
-                prng.shuffle(rr)
-                # grab shuffled values
-                pp = np.take(potential_outcomes_all, rr, axis=0)
-                # calculate statistic
-                curr_tst = tst_stat(pp[:nx, :, 0], pp[nx:, :, 1])
-                # grab the most extreme statistic observed across all tests
-                curr_max = max(curr_tst.min(), curr_tst.max(), key=abs)
-                # count if observed statistic is larger or smaller than permuted
-                hitsUp += curr_max >= tst
-                hitsDn += curr_max <= tst
-            # calculate percentile
-            pUp = hitsUp/(reps+plus1)
-            pDn = hitsDn/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn)
-        else:
-            for i in range(reps):
-                # permute indexing vector
-                prng.shuffle(rr)
-                # grab shuffled values
-                pp = np.take(potential_outcomes_all, rr, axis=0)
-                # count if observed statistic is larger or smaller than permuted
-                hitsUp += tst_stat(pp[:nx, :, 0], pp[nx:, :, 1]) >= tst
-                hitsDn += tst_stat(pp[:nx, :, 0], pp[nx:, :, 1]) <= tst
-            # calculate percentile
-            pUp = hitsUp/(reps+plus1)
-            pDn = hitsDn/(reps+plus1)
-        return thePvalue[alternative](pUp, pDn)
+        for i in range(reps):
+            # permute indexing vector
+            prng.shuffle(rr)
+            # grab shuffled values
+            pp = np.take(potential_outcomes_all, rr, axis=0)
+            # count if observed statistic is larger or smaller than permuted
+            hitsUp += tst_stat(pp[:nx, :, 0], pp[nx:, :, 1]) >= tst
+            hitsDn += tst_stat(pp[:nx, :, 0], pp[nx:, :, 1]) <= tst
+        # calculate percentile
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
+    return thePvalue[alternative](pUp, pDn)
 
 
 
 def multitest_one_sample(x, y=None, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None, plus1=True,max_correct=False):
+               keep_dist=False, seed=None, plus1=True):
     r"""
     One-sided or two-sided, one-sample permutation test for the mean,
     with p-value estimated by simulated random sampling with
@@ -342,70 +298,37 @@ def multitest_one_sample(x, y=None, reps=10**5, stat='mean', alternative="greate
         tst_fun = stats[stat]
     # calculate observed statistic
     tst = tst_fun(z)
-    # account for all combinations of keep_dist (keep distribution)
-    # and max_correct (create max distribution to correct for multiple 
-    # hypothesis testing) 
+    # account for keep_dist (keep distribution)
     if keep_dist:
-        if max_correct:
-            # preallocate space to build null distribution 
-            # (1D since only taking extreme values)
-            dist = np.empty(reps)
-            for i in range(reps):
-                # calculate statistic of current permutation
-                curr_tst = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
-                # grab the most extreme value across tests
-                dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
-            # calculate percentile for each test
-            pUp = np.empty(num_tests)
-            pDn = np.empty(num_tests)
-            for i in range(num_tests):
-                pUp[i] = np.sum(dist >= tst[i])/(reps+plus1)
-                pDn[i] = np.sum(dist <= tst[i])/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn), tst, dist
-        else:
-            # preallocate space to build null distribution 
-            # (2D since each test will have its own distribution)
-            dist = np.empty((reps,num_tests))
-            for i in range(reps):
-                 # calculate statistic of current permutation
-                dist[i,:] = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
-            # calculate percentile for each test
-            pUp = np.sum(dist >= tst,axis=0)/(reps+plus1)
-            pDn = np.sum(dist <= tst,axis=0)/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn), tst, dist
+        # preallocate space to build null distribution 
+        # (2D since each test will have its own distribution)
+        dist = np.empty((reps,num_tests))
+        for i in range(reps):
+             # calculate statistic of current permutation
+            dist[i,:] = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
+        # calculate percentile for each test
+        pUp = np.sum(dist >= tst,axis=0)/(reps+plus1)
+        pDn = np.sum(dist <= tst,axis=0)/(reps+plus1)
+        return thePvalue[alternative](pUp, pDn), tst, dist
     else:
         # preallocate vectors to store number of times our observed statistic
         # is greater than the permuted statistic(s). Keeps memory requirement low.
         hitsUp = np.zeros(num_tests)
         hitsDn = np.zeros(num_tests)
-        if max_correct:
-            for i in range(reps):
-                # calculate statistic for current permutation
-                curr_tst = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
-                # grab the most extreme statistic across all tests
-                curr_max = max(curr_tst.min(), curr_tst.max(), key=abs)
-                # iterate counters accordingly
-                hitsUp += curr_max >= tst
-                hitsDn += curr_max <= tst
-            # calculate percentiles
-            pUp = hitsUp/(reps+plus1)
-            pDn = hitsDn/(reps+plus1)
-            return thePvalue[alternative](pUp, pDn), tst
-        else:
-            for i in range(reps):
-                # calculate statistic for current permutation
-                curr_tst = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
-                # iterate counters accordingly
-                hitsUp += curr_tst >= tst
-                hitsDn += curr_tst <= tst
-            # calculate percentiles
-            pUp = hitsUp/(reps+plus1)
-            pDn = hitsDn/(reps+plus1)
+        for i in range(reps):
+            # calculate statistic for current permutation
+            curr_tst = tst_fun(z * (1 - 2 * prng.randint(0, 2, z.shape)))
+            # iterate counters accordingly
+            hitsUp += curr_tst >= tst
+            hitsDn += curr_tst <= tst
+        # calculate percentiles
+        pUp = hitsUp/(reps+plus1)
+        pDn = hitsDn/(reps+plus1)
         return thePvalue[alternative](pUp, pDn), tst
 
 
 def multitest_two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
-               keep_dist=False, seed=None, plus1=True, max_correct=False):
+               keep_dist=False, seed=None, plus1=True):
     r"""
     One-sided or two-sided, two-sample permutation multi-test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -505,7 +428,7 @@ def multitest_two_sample(x, y, reps=10**5, stat='mean', alternative="greater",
     observed_tst = tst_fun(pot_out_all[:nx, :, 0], pot_out_all[nx:, :, 1])
     # call main worker function
     res = multitest_two_sample_core(pot_out_all, nx, tst_fun, alternative=alternative,
-                          reps=reps, keep_dist=keep_dist, seed=seed, plus1=plus1, max_correct=max_correct)
+                          reps=reps, keep_dist=keep_dist, seed=seed, plus1=plus1)
     # accomadate user request for returning distribution 
     if keep_dist:
         return res[0], observed_tst, res[1]

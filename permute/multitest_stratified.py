@@ -48,7 +48,7 @@ def multitest_stratified_corrcoef(x, y, group):
 
 
 
-def multitest_stratified_sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=True, max_correct=False):
+def multitest_stratified_sim_corr(x, y, group, reps=10**4, alternative='greater', seed=None, plus1=True):
     r"""
     Simulate permutation p-value of stratified Spearman correlation test.
 
@@ -73,10 +73,6 @@ def multitest_stratified_sim_corr(x, y, group, reps=10**4, alternative='greater'
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-    max_correct : bool
-        flag for whether to perform max statistic multiple testing
-        correction. Builds the null distribution from the most extreme value
-        across tests for each iteration of the permutation. Default is False.
     
     Returns
     -------
@@ -90,33 +86,17 @@ def multitest_stratified_sim_corr(x, y, group, reps=10**4, alternative='greater'
     # ensure x and y have the same shape (same number of observations and tests)
     if x.shape != y.shape:
         raise ValueError('x and y must have the same shape')
-    # get the number of hypotheses to test
-    num_tests = x.shape[1]
     prng = get_prng(seed)
     x = x.astype(float)
     y = y.astype(float)
     # calculate observed statistic
     tst = multitest_stratified_corrcoef(x, y, group)
     # account for user wanting to perform max correction
-    if max_correct:
-        # preallocate space to build null distribution 
-        # (1D since going to take extreme value across tests)
-        dist = np.empty(reps)
-        for i in range(reps):
-            # calculate statistic of current permutation
-            curr_tst = multitest_stratified_corrcoef(permute_within_groups(x, group, prng), y, group)
-            # grab the most extreme value across tests
-            dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
-        # calculate the percentile for each test
-        right_pv = np.empty(num_tests)
-        for i in range(num_tests):
-            right_pv[i] = np.sum(dist >= tst[i]) / (reps+plus1)
-    else:
-        # calculate statistic on each permutation to build null distribution
-        dist = [multitest_stratified_corrcoef(permute_within_groups(x, group, prng), y, group)
-            for i in range(reps)]
-        # calculate percentile for each test
-        right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
+    # calculate statistic on each permutation to build null distribution
+    dist = [multitest_stratified_corrcoef(permute_within_groups(x, group, prng), y, group)
+        for i in range(reps)]
+    # calculate percentile for each test
+    right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
     # create dictionary to store p value calculations
     thePvalue = {
         'greater': lambda p: p + plus1/(reps+plus1),
@@ -172,7 +152,7 @@ def multitest_stratified_permutationtest_mean(group, condition, response,
         raise ValueError('Number of groups must be at least 2.')
     # if 2 conditions, calculate mean. If more than 2, calculate std of outcomes
     # TODO ensure this is intended behavior, in stratified.py this is done 
-    # with the variable groups, but that doesn't seem right to me
+    # with the variable "groups", but that doesn't seem right to me
     elif len(conditions) == 2:
         stat = lambda u: u[0] - u[1]
         for g in groups:
@@ -201,8 +181,7 @@ def multitest_stratified_permutationtest(
         reps=10**5,
         testStatistic='mean',
         seed=None,
-        plus1=True,
-        max_correct=False):
+        plus1=True):
     r"""
     Stratified permutation test based on differences in means.
 
@@ -259,10 +238,6 @@ def multitest_stratified_permutationtest(
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-    max_correct : bool
-        flag for whether to perform max statistic multiple testing
-        correction. Builds the null distribution from the most extreme value
-        across tests for each iteration of the permutation. Default is False.
     
     Returns
     -------
@@ -307,30 +282,15 @@ def multitest_stratified_permutationtest(
     else:
         # calculate observed statistic
         tst = tst_fun(condition)
-        if max_correct:
-            # preallocate vector to store null distribution
-            # (1D because going to take most extreme value across all tests)
-            dist = np.zeros(reps)
-            for i in range(int(reps)):
-                # calculate statistic for current permutation
-                curr_tst = tst_fun(permute_within_groups(condition, group, prng))
-                # grab the most extreme value across tests
-                dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
-            # calculate percentile for each test
-            right_pv = np.empty(num_tests)
-            for i in range(num_tests):
-                right_pv[i] = np.sum(dist >= tst[i])/(reps+plus1)
-            return thePvalue[alternative](right_pv), tst, dist
-        else:
-            # preallocate vector to store null distribution
-            # (2D because each test will have its own distribution)
-            dist = np.zeros((reps,num_tests))
-            for i in range(int(reps)):
-                # calculate statistic for current permutation
-                dist[i,:] = tst_fun(permute_within_groups(condition, group, prng))
-            # calculate percentile for each test
-            right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
-            return thePvalue[alternative](right_pv), tst, dist
+        # preallocate vector to store null distribution
+        # (2D because each test will have its own distribution)
+        dist = np.zeros((reps,num_tests))
+        for i in range(int(reps)):
+            # calculate statistic for current permutation
+            dist[i,:] = tst_fun(permute_within_groups(condition, group, prng))
+        # calculate percentile for each test
+        right_pv = np.sum(dist >= tst,axis=0) / (reps+plus1)
+        return thePvalue[alternative](right_pv), tst, dist
 
 
 def multitest_stratified_two_sample(
@@ -342,8 +302,7 @@ def multitest_stratified_two_sample(
         reps=10**5,
         keep_dist=False,
         seed=None,
-        plus1=True,
-        max_correct=False):
+        plus1=True):
     r"""
     One-sided or two-sided, two-sample permutation test for equality of
     two means, with p-value estimated by simulated random sampling with
@@ -413,10 +372,6 @@ def multitest_stratified_two_sample(
         flag for whether to add 1 to the numerator and denominator of the
         p-value based on the empirical permutation distribution. 
         Default is True.
-    max_correct : bool
-        flag for whether to perform max statistic multiple testing
-        correction. Builds the null distribution from the most extreme value
-        across tests for each iteration of the permutation. Default is False.
 
     Returns
     -------
@@ -472,53 +427,24 @@ def multitest_stratified_two_sample(
     }
     # get observed statistic
     observed_tst = tst_fun(response)
-    # account for all combinations of keep_dist (keep distribution)
-    # and max_correct (create max distribution to correct for multiple 
-    # hypothesis testing)     
+    # account for keep_dist (keep distribution) 
     if keep_dist:
-        if max_correct:
-            # preallocate vector for null distribution
-            # (1D because going to take most extreme statistic across tests)
-            dist = np.empty(reps)
-            for i in range(reps):
-                # calculate statistic for current permutation
-                curr_tst = tst_fun(permute_within_groups(
-                    response, group, seed=prng))
-                # grab most extreme statistic across tests
-                dist[i] = max(curr_tst.min(), curr_tst.max(), key=abs)
-            # calculate percentile for each test
-            hits = np.empty(num_tests)
-            for i in range(num_tests):
-                hits[i] = np.sum(dist >= observed_tst[i])
-            return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
-        else:
-            # preallocate vector for null distribution
-            # (2D because build null distribution for each test)
-            dist = np.empty((reps,num_tests))
-            for i in range(reps):
-                # calculate statistic for current permutation
-                dist[i,:] = tst_fun(permute_within_groups(
-                    response, group, seed=prng))
-            # calculate percentile for each test
-            hits = np.sum(dist >= observed_tst,axis=0)
-            return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
+        # preallocate vector for null distribution
+        # (2D because build null distribution for each test)
+        dist = np.empty((reps,num_tests))
+        for i in range(reps):
+            # calculate statistic for current permutation
+            dist[i,:] = tst_fun(permute_within_groups(
+                response, group, seed=prng))
+        # calculate percentile for each test
+        hits = np.sum(dist >= observed_tst,axis=0)
+        return thePvalue[alternative](hits / (reps+plus1)), observed_tst, dist
     else:
-        if max_correct:
-            # create vector to store number of times each hypothesis is less
-            # than the most extreme value across all tests per permutation
-            hits = np.zeros(num_tests)
-            for i in range(reps):
-                # calculate statistic of current permutation
-                curr_tst = tst_fun(permute_within_groups(response, group, seed=prng))
-                # take most extreme value and compare with observed statistic
-                hits +=   max(curr_tst.min(), curr_tst.max(), key=abs) >= observed_tst
-            return thePvalue[alternative](hits / (reps+plus1)), observed_tst
-        else:
-            # create vector to store number of times each hypothesis is less
-            # than the corresponding statistic of the permuted values
-            hits = np.zeros(num_tests)
-            for i in range(reps):
-                # calculate current statistic
-                curr_tst = tst_fun(permute_within_groups(response, group, seed=prng))
-                hits += curr_tst >= observed_tst
-            return thePvalue[alternative](hits / (reps+plus1)), observed_tst
+        # create vector to store number of times each hypothesis is less
+        # than the corresponding statistic of the permuted values
+        hits = np.zeros(num_tests)
+        for i in range(reps):
+            # calculate current statistic
+            curr_tst = tst_fun(permute_within_groups(response, group, seed=prng))
+            hits += curr_tst >= observed_tst
+        return thePvalue[alternative](hits / (reps+plus1)), observed_tst
