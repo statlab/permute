@@ -1,8 +1,8 @@
-Sphinx~=4.0
-ghp-import~=2.0
-matplotlib~=3.4
-sphinx-bootstrap-theme==0.7.1
-sphinxcontrib-bibtex~=2.3
-numpydoc>=1.1
-nb2plots>=0.6
-texext>=0.6.6
+Sphinx>=5.1
+ghp-import~=2.1
+matplotlib~=3.5
+sphinx-bootstrap-theme==0.8.1
+sphinxcontrib-bibtex~=2.5
+numpydoc>=1.4
+nb2plots>=0.6.1
+texext>=0.6.7
