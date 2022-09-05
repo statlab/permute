@@ -12,7 +12,6 @@ AUTHOR_EMAIL = "permute@googlegroups.com"
 URL = "http://statlab.github.io/permute/"
 LICENSE = "BSD License"
 DOWNLOAD_URL = "http://github.com/statlab/permute"
-VERSION = "0.2.alpha1"
 
 
 def parse_requirements_file(filename):
@@ -56,9 +55,9 @@ if __name__ == "__main__":
             "Intended Audience :: Science/Research",
             "License :: OSI Approved :: BSD License",
             "Programming Language :: Python",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
             "Topic :: Scientific/Engineering",
             "Operating System :: Microsoft :: Windows",
             "Operating System :: POSIX",
@@ -67,7 +66,7 @@ if __name__ == "__main__":
         ],
         install_requires=INSTALL_REQUIRES,
         tests_require=TESTS_REQUIRE,
-        python_requires=">=3.7",
+        python_requires=">=3.8",
         packages=["permute", "permute.tests", "permute.data", "permute.data.tests"],
         package_data={"permute.data": ["*.csv", "*/*.csv", "*/*/*.csv"]},
     )
