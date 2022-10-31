@@ -21,23 +21,23 @@ from ..utils import (binom_conf_interval,
 def test_binom_conf_interval():
     res = binom_conf_interval(10, 3)
     expected = (0.05154625578928545, 0.6915018049393984)
-    np.testing.assert_equal(res, expected)
+    np.testing.assert_almost_equal(res, expected)
 
     res2 = binom_conf_interval(10, 5, cl=0.95, alternative="upper")
     expected2 = (0.0, 0.7775588989918742)
-    np.testing.assert_equal(res2, expected2)
+    np.testing.assert_almost_equal(res2, expected2)
 
     res3 = binom_conf_interval(10, 5, cl=0.95, alternative="lower")
     expected3 = (0.22244110100812578, 1.0)
-    np.testing.assert_equal(res3, expected3)
+    np.testing.assert_almost_equal(res3, expected3)
 
     res4 = binom_conf_interval(10, 5, cl=0.95, alternative="upper", p=1)
     expected4 = (0.0, 0.7775588989918742)
-    np.testing.assert_equal(res4, expected4)
+    np.testing.assert_almost_equal(res4, expected4)
 
     res5 = binom_conf_interval(10, 5, cl=0.95, alternative="lower", p=0)
     expected5 = (0.22244110100812578, 1.0)
-    np.testing.assert_equal(res5, expected5)
+    np.testing.assert_almost_equal(res5, expected5)
 
 
 def test_hypergeom_conf_interval():
@@ -54,14 +54,14 @@ def test_hypergeom_conf_interval():
     np.testing.assert_equal(res3, expected3)
 
     res4 = hypergeom_conf_interval(2, 2, 5, cl=0.95, alternative="two-sided")
-    expected4 = (2.0, 5.0)
+    expected4 = (1.0, 5.0)
     np.testing.assert_equal(res4, expected4)
 
     cl = 0.95
     n = 10
     x = 5
     N = 20
-    [lot, hit] = [6, 14]
+    [lot, hit] = [1, 19]
     alternative = "two-sided"
     [lo, hi] = hypergeom_conf_interval(n, x, N, cl=cl, alternative=alternative)
     np.testing.assert_equal(lo, lot)
