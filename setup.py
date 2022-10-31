@@ -12,7 +12,6 @@ AUTHOR_EMAIL = "permute@googlegroups.com"
 URL = "http://statlab.github.io/permute/"
 LICENSE = "BSD License"
 DOWNLOAD_URL = "http://github.com/statlab/permute"
-VERSION = "0.2.alpha1"
 
 
 def parse_requirements_file(filename):
