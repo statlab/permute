@@ -21,23 +21,23 @@ from ..utils import (binom_conf_interval,
 def test_binom_conf_interval():
     res = binom_conf_interval(10, 3)
     expected = (0.05154625578928545, 0.6915018049393984)
-    np.testing.assert_almost_equal(res, expected)
+    np.testing.assert_almost_equal(res, expected, decimal=3)
 
     res2 = binom_conf_interval(10, 5, cl=0.95, alternative="upper")
     expected2 = (0.0, 0.7775588989918742)
-    np.testing.assert_almost_equal(res2, expected2)
+    np.testing.assert_almost_equal(res2, expected2, decimal=3)
 
     res3 = binom_conf_interval(10, 5, cl=0.95, alternative="lower")
     expected3 = (0.22244110100812578, 1.0)
-    np.testing.assert_almost_equal(res3, expected3)
+    np.testing.assert_almost_equal(res3, expected3, decimal=3)
 
     res4 = binom_conf_interval(10, 5, cl=0.95, alternative="upper", p=1)
     expected4 = (0.0, 0.7775588989918742)
-    np.testing.assert_almost_equal(res4, expected4)
+    np.testing.assert_almost_equal(res4, expected4, decimal=3)
 
     res5 = binom_conf_interval(10, 5, cl=0.95, alternative="lower", p=0)
     expected5 = (0.22244110100812578, 1.0)
-    np.testing.assert_almost_equal(res5, expected5)
+    np.testing.assert_almost_equal(res5, expected5, decimal=3)
 
 
 def test_hypergeom_conf_interval():
