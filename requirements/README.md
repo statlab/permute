@@ -2,12 +2,14 @@
 
 ## Index
 
-- [default.txt](default.txt)
+- [`default.txt`](default.txt)
   Default requirements
-- [doc.txt](doc.txt)
+- [`doc.txt`](doc.txt)
   Requirements for building website
-- [test.txt](test.txt)
+- [`test.txt`](test.txt)
   Requirements for running test suite
+- [`release.txt`](release.txt)
+  Requirements for making releases
 
 ## Examples
 

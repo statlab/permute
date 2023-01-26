@@ -10,42 +10,56 @@ How to make a new release of ``permute``
      - To show a list of merges and contributors, run
        ``doc/release/contribs.py <tag of prev release>``.
 
-  2. Rename to ``doc/release/release_X.txt``
+  2. Rename to ``doc/release/release_<version>.txt``
 
   3. Copy ``doc/release/release_template.txt`` to
      ``doc/release/release_dev.txt`` for the next release.
 
-- Update the version number in ``setup.py`` and commit
+  4. Make PR, review, and merge.
+
+- Update the version number in ``permute/__init__.py`` by removing the
+  ``.dev0`` suffix from ``__version__ =  <version>.dev0``, commit, and push::
+
+    git add permute/__init__.py
+    git commit -m "Designate <version> release"
 
 - Update the docs:
 
-  - Update ``version`` and ``release`` in ``doc/source/conf.py`` and commit
   - Build a clean version of the docs.  Run ``python setup.py install`` in the
     root dir, then ``make clean; make html; make pdflatex`` in the docs.
-  - Push upstream: ``make github``.
+  - Deploy: ``make github``.
 
 - Add the version number as a tag in git::
 
-   git tag -s v0.X.0
+   git tag -s permute-<version> -m 'signed <version> tag'
 
   (If you do not have a gpg key, use -m instead; it is important for
   Debian packaging that the tags are annotated)
 
 - Push the new meta-data to github::
 
-   git push --tags upstream master
+   git push --tags upstream main
+
+- Review GitHub release page::
+
+   https://github.com/statlab/cryptorandom/releases
 
 - Publish on PyPi::
 
+   git clean -fxd
    python setup.py sdist
    python setup.py bdist_wheel
    twine upload dist/*
 
-- Increase the version number
+- On the main branch, update the version number in ``permute/__init__.py``
+  to ``__version__ =  <newversion>.dev0``. For example, if
+  ``<version> == 0.1``, then ``<newversion> == 0.2rc1``.  Note that,
+  if ``<version> == 0.2rc1``, ``<newversion> == 0.2rc2``; but, if all goes well,
+  the next release may be ``0.2``.  Then add, commit, and push::
 
-  - In ``setup.py``, set to ``0.Xdev``.
-
-- Update the development docs for the new version ``0.Xdev`` just like above
+    git add permute/__init__.py
+    git commit -m 'Bump version'
+    git push <...>
 
 - Post release notes on mailing lists, blog, G+, etc.
 
