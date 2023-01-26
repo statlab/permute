@@ -54,14 +54,14 @@ def test_hypergeom_conf_interval():
     np.testing.assert_equal(res3, expected3)
 
     res4 = hypergeom_conf_interval(2, 2, 5, cl=0.95, alternative="two-sided")
-    expected4 = (2.0, 5.0)
+    expected4 = (1.0, 5.0)
     np.testing.assert_equal(res4, expected4)
 
     cl = 0.95
     n = 10
     x = 5
     N = 20
-    [lot, hit] = [6, 14]
+    [lot, hit] = [1, 19]
     alternative = "two-sided"
     [lo, hi] = hypergeom_conf_interval(n, x, N, cl=cl, alternative=alternative)
     np.testing.assert_equal(lo, lot)

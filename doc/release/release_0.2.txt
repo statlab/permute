@@ -1,7 +1,7 @@
-Announcement: permute 0.4.0
+Announcement: permute 0.2.0
 ===========================
 
-We're happy to announce the release of permute v0.4.0!
+We're happy to announce the release of permute v0.2.0!
 
 permute is permutation testing and confidence set toolbox for Python.
 
@@ -9,30 +9,16 @@ For more information, examples, and documentation, please visit our website:
 
 http://statlab.github.io/permute/
 
-
-New Features
-------------
-
-
-
-
 Improvements
 ------------
 
-
-
-
-API Changes
------------
-
-
-
-
-Deprecations
-------------
-
+- removed old Python 2 shims
+- switched from nose to pytest
 
 Contributors to this release
 ----------------------------
-(Listed alphabetically by last name)
 
+- Amanda Glazer
+- Jarrod Millman
+- Kellie Ottoboni
+- Philip Stark

@@ -5,12 +5,6 @@ from cryptorandom.sample import random_sample
 from .utils import get_prng, permute
 
 
-try:
-    basestring
-except NameError:
-    basestring = str
-
-
 # Combining functions
 
 def fisher(pvalues):
@@ -193,7 +187,7 @@ def npc(pvalues, distr, combine="fisher", plus1=True):
 
 
 def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=None):
-    ''' 
+    r''' 
     Combines p-values from individual partial test hypotheses $H_{0i}$ against
     $H_{1i}$, $i=1,\dots,n$ to test the global null hypothesis
 
@@ -635,8 +629,8 @@ class Experiment():
             groups = np.unique(self.group)
             if len(groups) != 2:
                 raise ValueError("Number of groups must be two")
-            t = ttest_ind(self.response[:, index][self.group == groups[0]], 
-                             self.response[:, index][self.group == groups[1]], equal_var=True)[0]
+            t = ttest_ind(list(self.response[:, index][self.group == groups[0]]), 
+                             list(self.response[:, index][self.group == groups[1]]), equal_var=True)[0]
             return t
         
         def one_way_anova(self, index):
