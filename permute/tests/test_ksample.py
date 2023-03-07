@@ -27,6 +27,23 @@ def test_one_way_anova():
     expected = 3*1**2 + 2*1.5**2
     assert one_way_anova(x, group, xbar) == expected
 
+def test_ksample_abs_mean_diff():
+    """Test whether two groups are the same, using the absolute difference between means of the groups
+    as the test statistic. The treatment group has a higher mean than the control group, and the given
+    group assignment should have the largest test statistic compared to any permutation of group labels.
+    """
+    x = np.array(range(10))
+    group_labels = np.zeros_like(x)
+    group_labels[-4:] = 1
+    def abs_diff_two_mean_stat(x, group, overall_mean):
+        x = np.array(x)
+        tst = 0
+        assert set(group) == set([0, 1])
+        return np.abs(np.mean(x[group == 0]) - np.mean(x[group == 1]))
+    pval, test_stat, dist = k_sample(x, group_labels, stat=abs_diff_two_mean_stat, keep_dist=True)
+    max_ts = abs_diff_two_mean_stat(x, group_labels, np.mean(x))
+    assert np.isclose(np.max(dist), max_ts)
+
 
 def test_two_way_anova():
     prng = get_prng(100)
