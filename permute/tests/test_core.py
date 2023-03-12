@@ -135,7 +135,82 @@ def test_two_sample():
     assert res[0] == 1
     assert res[1] == 0
     print("finished test 9 in test_two_sample()")
+
+
+def test_two_sample2():
+    """
+    Same as above but with a new dataset
+    The expected p value is calculated by iterating through all possible permuation
+    """
+
+    brain_wts = np.array([ [689, 656, 668, 660, 679, 663, 664, 647, 694, 633, 653], \
+              [657, 623, 652, 654, 658, 646, 600, 640, 605, 635, 642] ])
+    p, obs, sim = two_permute(brain_wts[0], brain_wts[1], "two-sided", plus1=False)
+    #print(p)
+    diff_in_mean = lambda x, y: np.mean(x) - np.mean(y)
+    res = two_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=diff_in_mean, \
+        alternative="two-sided", keep_dist=False, seed=12, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+
+    p, obs, sim = two_permute(brain_wts[0], brain_wts[1], "lower", plus1=False)
+    #print(p)
+    res = two_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=diff_in_mean, \
+        alternative="less", keep_dist=False, seed=12, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+
+    p, obs, sim = two_permute(brain_wts[0], brain_wts[1], "upper", plus1=False)
+    #print(p)
+    res = two_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=diff_in_mean, \
+        alternative="greater", keep_dist=False, seed=12, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+
+from itertools import combinations
+def two_permute(treatment: list, control: list, alternative: str="two-sided", plus1: bool=True):
+    ''' 
+    Return two sample permutation test p-value
+
+    Parameters
+    ----------
+    treatement : list, outcome of the treatment unit
+    control    : list outcome of the controled unit, this is paired with the treatment
+    alternative: str, alternative of the test
     
+    Returns
+    -------
+    p : p value of the test
+    observed : observed statistics
+    simulated: simulated statistics
+    '''
+    # Find the difference
+    assert alternative in ["lower", "upper", 'two-sided']
+    treatment = np.array(treatment)
+    control = np.array(control)
+    observed = np.mean(treatment) - np.mean(control)
+    
+    combineddat = np.append(treatment, control)
+    indecies = np.arange(len(combineddat))
+    simulated = []
+    
+    
+    # Iterates through all possible treatement assignment
+    for comb in combinations(indecies, len(treatment)):
+        treat = np.take(combineddat, comb)
+        cont = np.delete(combineddat, comb)
+        simulated += [np.mean(treat) - np.mean(cont)]
+    
+    simulated = np.array(simulated)
+    # Adjust according to different alternative
+    if alternative == 'two-sided':
+        return (np.sum(abs(simulated) >= abs(observed))+plus1)/(len(simulated)+plus1), observed, simulated
+
+    elif alternative == "lower":
+        return (np.sum(simulated >= observed)+plus1)/(len(simulated)+plus1), observed, simulated
+
+    else:
+        return (np.sum(simulated <= observed)+plus1)/(len(simulated)+plus1), observed, simulated
 
 
 @pytest.mark.slow
@@ -290,3 +365,76 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 2/32, decimal=2)
     np.testing.assert_almost_equal(res[1], 2.82842712, decimal=2)
     print("finished test 6 in test_one_sample()")
+
+
+def test_one_sample2():
+    """
+    Same as above but with a new dataset
+    The expected p value is calculated by iterating through all possible permuation
+    """
+
+    brain_wts = np.array([ [689, 656, 668, 660, 679, 663, 664, 647, 694, 633, 653], \
+              [657, 623, 652, 654, 658, 646, 600, 640, 605, 635, 642] ])
+    p, obs, sim = one_paired_sample_permute(brain_wts[0], brain_wts[1], "two-sided", plus1=False)
+    #print(p)
+    sum_of_diff = lambda z: np.sum(z)
+    res = one_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=sum_of_diff, \
+        alternative="two-sided", keep_dist=False, seed=42, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+
+    p, obs, sim = one_paired_sample_permute(brain_wts[0], brain_wts[1], "lower", plus1=False)
+    #print(p)
+    res = one_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=sum_of_diff, \
+        alternative="less", keep_dist=False, seed=42, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+
+    p, obs, sim = one_paired_sample_permute(brain_wts[0], brain_wts[1], "upper", plus1=False)
+    #print(p)
+    res = one_sample(brain_wts[1], brain_wts[0], reps=10**5, stat=sum_of_diff, \
+        alternative="greater", keep_dist=False, seed=42, plus1=False)
+    #print(res)
+    np.testing.assert_almost_equal(p, res[0], decimal=4)
+    
+
+from itertools import product
+import math
+def one_paired_sample_permute(treatment: list, control: list, alternative: str="two-sided", plus1: bool=True):
+    ''' 
+    Return one sample permutation test p-value, assume the units are paired
+    Test statistic is sum of differences
+
+    Parameters
+    ----------
+    treatement : list, outcome of the treatment unit
+    control    : list outcome of the controled unit, this is paired with the treatment
+    alternative: str, alternative of the test
+    
+    Returns
+    -------
+    p : p value of the test
+    observed : observed statistics
+    simulated: simulated statistics
+    '''
+    # Find the difference
+    assert alternative in ["lower", "upper", 'two-sided']
+    diff = np.array(treatment) - np.array(control)
+    observed = np.sum(diff)
+    simulated = []
+    
+    # Iterates through all possible treatement assignment
+    for signs in product([-1,1], repeat=len(diff)):
+        # Simulated difference is signs * diff
+        simulated += [sum(signs*diff)]
+    
+    simulated = np.array(simulated)
+    # Adjust according to different alternative
+    if alternative == 'two-sided':
+        return (np.sum(abs(simulated) >= abs(observed))+plus1)/(len(simulated)+plus1), observed, simulated
+
+    elif alternative == "lower":
+        return (np.sum(simulated >= observed)+plus1)/(len(simulated)+plus1), observed, simulated
+
+    else:
+        return (np.sum(simulated <= observed)+plus1)/(len(simulated)+plus1), observed, simulated

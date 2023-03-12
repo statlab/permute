@@ -3,6 +3,7 @@ import pytest
 import numpy as np
 from numpy.random import RandomState
 from scipy.stats import norm
+from scipy.stats import combine_pvalues
 
 from ..npc import (fisher,
                    liptak,
@@ -23,6 +24,9 @@ def test_fisher():
     np.testing.assert_almost_equal(fisher(pvalues), 11.11546, 5)
     np.testing.assert_equal(fisher(1), -0.0)
     np.testing.assert_array_less(fisher(10), 0)
+
+    # Compare with established library
+    np.testing.assert_almost_equal(fisher(pvalues), combine_pvalues(pvalues).statistic, 5)
 
 
 def test_liptak():

@@ -16,6 +16,16 @@ def test_worms_ksample():
     np.testing.assert_array_less(0.006, res[0])
     np.testing.assert_array_less(res[0], 0.02)
 
+    # Expect same result when distribution is set to true.
+    res2 = k_sample(worms.x, worms.y, stat='one-way anova', reps=1000, seed=1234, keep_dist=True)
+    np.testing.assert_almost_equal(res[0], res2[0])
+    np.testing.assert_almost_equal(res[1], res2[1])
+    np.testing.assert_equal(len(res2[2]), 1000)
+
+    # Making sure we can pass in custom test function
+    res3 = k_sample(worms.x, worms.y, stat=one_way_anova, reps=1000, seed=1234)
+    np.testing.assert_almost_equal(res[0], res3[0])
+    np.testing.assert_almost_equal(res[1], res3[1])
 
 def test_one_way_anova():
     group = np.ones(5)
@@ -41,7 +51,6 @@ def test_two_way_anova():
     xbar = 3
     assert two_way_anova(x, group1, group2, xbar) == 1
 
-
 def test_testosterone_ksample():
     testosterone = data.testosterone()
     x = np.hstack(testosterone.tolist())
@@ -52,3 +61,14 @@ def test_testosterone_ksample():
     assert len(x) == 55
     res = bivariate_k_sample(x, group1, group2, reps=5000, seed=5)
     np.testing.assert_array_less(res[0], 0.0002)
+
+    # Expect same result when distribution is set to true.
+    res2 = bivariate_k_sample(x, group1, group2, reps=5000, seed=5, keep_dist=True)
+    np.testing.assert_almost_equal(res[0], res2[0])
+    np.testing.assert_almost_equal(res[1], res2[1])
+    np.testing.assert_equal(len(res2[2]), 5000)
+
+    # Making sure we can pass in custom test function
+    res3 = bivariate_k_sample(x, group1, group2, stat=two_way_anova, reps=5000, seed=5)
+    np.testing.assert_almost_equal(res[0], res3[0])
+    np.testing.assert_almost_equal(res[1], res3[1])
