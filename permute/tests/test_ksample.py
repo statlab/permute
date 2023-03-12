@@ -52,3 +52,15 @@ def test_testosterone_ksample():
     assert len(x) == 55
     res = bivariate_k_sample(x, group1, group2, reps=5000, seed=5)
     np.testing.assert_array_less(res[0], 0.0002)
+
+def test_keep_dist():
+    res=0
+    for i in range(100):
+        p, ob,dist=k_sample(x=[1,2,3,4],group=[1,1,2,2],reps=100,stat=one_way_anova,keep_dist=True,plus1=False)
+        res+=(np.count_nonzero(dist==4)-np.count_nonzero(dist==1))<10
+    assert res>70
+    res=0
+    for i in range (100):
+        pvalue,ob,dist=bivariate_k_sample(x=np.array([1,2,3,4]),group1=np.array([1,1,1,2]),group2=np.array([1,1,2,3]),reps=100,stat=two_way_anova,keep_dist=True,plus1=False)
+        res+=(np.sum(dist==9)-33)**2+(np.sum(dist==11/9)-33)**2+(np.sum(dist==21/9)-33)**2<150
+    assert res>60

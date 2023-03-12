@@ -169,6 +169,16 @@ def test_westfall_young():
     np.testing.assert_almost_equal(result[1][0], 0.1, decimal = 1)
     np.testing.assert_almost_equal(result[1][1], 0.03, decimal = 2)
     np.testing.assert_almost_equal(result[1][2], 0.01, decimal = 2)
+    result = westfall_young(data, test, method = "maxT", alternatives = 'two-sided')
+    np.testing.assert_almost_equal(result[0][1], 0.05, decimal = 2)
+    np.testing.assert_almost_equal(result[0][2], 0.02, decimal = 2)
+    result  = westfall_young(data, test, method = "minP", alternatives = 'greater')
+    np.testing.assert_almost_equal(result[0][1], 0.03, decimal = 2)
+    np.testing.assert_almost_equal(result[1][2], 0.005, decimal = 3)
+    result  = westfall_young(data, test, method = "maxT", alternatives = 'greater')
+    np.testing.assert_almost_equal(result[0][0], 1.0, decimal = 1)
+    np.testing.assert_almost_equal(result[1][0], 0.95, decimal = 2)
+    
     
     
 def test_adjust_p():
