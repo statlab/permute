@@ -3,6 +3,8 @@ import pytest
 import numpy as np
 from numpy.random import RandomState
 from cryptorandom.cryptorandom import SHA256
+from numpy.testing import assert_almost_equal
+
 
 from ..core import (corr,
                     spearman_corr,
@@ -290,3 +292,42 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 2/32, decimal=2)
     np.testing.assert_almost_equal(res[1], 2.82842712, decimal=2)
     print("finished test 6 in test_one_sample()")
+
+
+class TestTwoSampleConfInt(TestCase):
+    def setUp(self):
+        self.x = np.array([1, 2, 3, 4, 5])
+        self.y = np.array([2, 3, 4, 5, 6])
+
+    def test_known_values(self):
+        # Test with known inputs and outputs
+        # Set the seed to ensure consistent results
+        np.random.seed(321)
+        # Test using the shift model with the mean test statistic
+        ci_low, ci_upp = two_sample_conf_int(self.x, self.y, cl=0.95, alternative="two-sided", seed=None,
+                                             reps=10 ** 4, stat="mean", shift=None, plus1=True)
+        # Expected result
+        expected = (-3.0, 1.0)
+        # Check that the result matches the expected result
+        assert_almost_equal(ci_low, expected[0], decimal=1)
+        assert_almost_equal(ci_upp, expected[1], decimal=1)
+
+        # Test using the shift model with the mean test statistic, alternative = 'upper'
+        ci_low, ci_upp = two_sample_conf_int(self.x, self.y, cl=0.95, alternative="upper", seed=None,
+                                             reps=10 ** 4, stat="mean", shift=None, plus1=True)
+        # Expected result
+        expected = (-5.0, 1.0)
+        # Check that the result matches the expected result
+        assert_almost_equal(ci_low, expected[0], decimal=1)
+        assert_almost_equal(ci_upp, expected[1], decimal=1)
+
+       # Test using the shift model with the mean test statistic, alternative = 'lower'
+        ci_low, ci_upp = two_sample_conf_int(self.x, self.y, cl=0.95, alternative="lower", seed=None,
+                                             reps=10 ** 4, stat="mean", shift=None, plus1=True)
+        # Expected result
+        expected = (-3.0, 5.0)
+        # Check that the result matches the expected result
+        assert_almost_equal(ci_low, expected[0], decimal=1)
+        assert_almost_equal(ci_upp, expected[1], decimal=1)
+  
+

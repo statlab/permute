@@ -52,3 +52,27 @@ def test_testosterone_ksample():
     assert len(x) == 55
     res = bivariate_k_sample(x, group1, group2, reps=5000, seed=5)
     np.testing.assert_array_less(res[0], 0.0002)
+
+
+import numpy as np
+from numpy.testing import assert_almost_equal
+from scipy.stats import f_oneway
+
+def test_bivariate_k_sample_keep_dist_true():
+    np.random.seed(123)
+    x = np.array([2, 3, 4, 5, 6, 7, 8, 9, 10])
+    group1 = np.array([1, 1, 1, 2, 2, 2, 3, 3, 3])
+    group2 = np.array([1, 2, 3, 1, 2, 3, 1, 2, 3])
+    reps = 1000
+    pval, tst, dist = bivariate_k_sample(x, group1, group2, reps=reps, stat='two-way anova', keep_dist=True)
+
+    # check that output has correct dimensions and types
+    assert isinstance(pval, float)
+    assert isinstance(tst, float)
+    assert isinstance(dist, np.ndarray)
+    assert pval >= 0 and pval <= 1
+    assert tst >= 0
+    assert dist.shape == (reps,)
+
+    # compare 
+    np.testing.assert_array_less(pval, 0.05)
