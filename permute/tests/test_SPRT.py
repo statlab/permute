@@ -23,3 +23,16 @@ def test_sprt():
     res = sprt(lambda x: bernoulli_lh_ratio(x, .5, .1), .05, .05, [0, 0], False)
     assert res[0] == [False, False]
     assert res[1] == 0.9**2/0.5**2
+
+# new tests
+def test_sprt_qw():
+    obs1 = sprt(lambda x: bernoulli_lh_ratio(x, .5, 0.9), .10, .01, [1, 1, 1, 1, 1, 1, 1], True)
+    assert obs1[0] == [True, False]
+    
+    obs2 = sprt(lambda x: bernoulli_lh_ratio(x, .1, 0.5), .01, .10, [0, 0, 0, 0, 0, 0, 0], True)
+    assert obs2[0] == [False, True]
+    
+def test_bernoulli_lh_ratio_qw():
+    assert bernoulli_lh_ratio([1,1,1,1,1], 1.0, 0.0)==0.0
+    
+    assert bernoulli_lh_ratio([0,0,0,0,0], 0.0, 1.0)==0.0

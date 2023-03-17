@@ -290,3 +290,53 @@ def test_one_sample():
     np.testing.assert_almost_equal(res[0], 2/32, decimal=2)
     np.testing.assert_almost_equal(res[1], 2.82842712, decimal=2)
     print("finished test 6 in test_one_sample()")
+
+# new tests
+
+def test_corr_qw():
+    obs = corr(np.array([1,2,3]),np.array([1,2,3]))
+    assert obs[0]==1.0
+    
+def test_spearman_corr_qw():
+    obs = spearman_corr(np.array([1,2,3]),np.array([1,2,3]))
+    assert obs[0]==1.0
+    
+def test_two_sample_qw():
+    obs1 = two_sample(np.array([1,2,3]),np.array([4,5,6]))
+    assert obs1[0]==1.0
+    assert obs1[1]==-3.0
+    
+    obs2 = two_sample(np.array([7,8,9]),np.array([1,2,3]),alternative='less')
+    assert obs2[0]==1.0
+    assert obs2[1]==6.0
+    
+    obs3 = two_sample(np.array([2,2,2]),np.array([2,2,2]),alternative='two-sided')
+    assert obs3[0]==1.0
+    assert obs3[1]==0.0
+    
+def test_two_sample_shift_qw():
+    obs1 = two_sample_shift(np.array([1,2,3]),np.array([4,5,6]),shift=1)
+    assert obs1[0]==1.0
+    assert obs1[1]==-3.0
+    
+    obs2 = two_sample_shift(np.array([7,8,9]),np.array([1,2,3]),alternative='less',shift=1)
+    assert obs2[0]==1.0
+    assert obs2[1]==6.0
+    
+    obs3 = two_sample_shift(np.array([2,2,2]),np.array([2,2,2]),alternative='two-sided',shift=0)
+    assert obs3[0]==1.0
+    assert obs3[1]==0.0
+    
+def test_one_sample_qw():
+    obs1 = one_sample(np.array([0,0,0,0,0]))
+    assert obs1[0]==1.0
+    assert obs1[1]==0.0
+    
+    obs2 = one_sample(np.array([10,10,10,10,10]),alternative='less')
+    assert obs2[0]==1.0
+    assert obs2[1]==10.0
+    
+    obs3 = one_sample(np.array([0,0,0,0,0]),alternative='two-sided')
+    assert obs3[0]==1.0
+    assert obs3[1]==0.0
+    

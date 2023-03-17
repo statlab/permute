@@ -120,3 +120,13 @@ def test_simulate_npc_perfect():
                         'pvalue': 0.0}
     np.testing.assert_almost_equal(overall1['obs_npc'], expected_overall['obs_npc'], 3)
     np.testing.assert_almost_equal(overall2['obs_npc'], expected_overall['obs_npc'], 3)
+
+# new tests
+
+def test_compute_ts_qw():
+    assert compute_ts(np.array([[1,1,1],[1,1,1]]))==1.0
+    
+def test_simulate_ts_dist_qw():
+    obs = simulate_ts_dist(np.array([[1,1,1],[1,1,1]]))
+    assert obs['obs_ts']==1.0
+    assert obs['pvalue']==1.0

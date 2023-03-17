@@ -52,3 +52,20 @@ def test_testosterone_ksample():
     assert len(x) == 55
     res = bivariate_k_sample(x, group1, group2, reps=5000, seed=5)
     np.testing.assert_array_less(res[0], 0.0002)
+
+# new tests
+def test_k_sample_qw():
+    obs = k_sample(np.array([1,1,1,2,2,2]),np.array([1,1,1,1,1,1]))
+    assert obs[0]==1.0
+    assert obs[1]==0.0
+    
+def test_one_way_anova_qw():
+    assert one_way_anova(np.array([1,1,1,2,2,2]),np.array([1,1,1,1,1,1]),np.mean(np.array([1,1,1,2,2,2])))==0.0
+    
+def test_bivariate_k_sample_qw():
+    obs = bivariate_k_sample(np.array([1,1,1,2,2,2]),np.array([1,1,1,1,1,1]),np.array([1,1,1,1,1,1]))
+    assert obs[0]==1.0
+    assert obs[1]==0.0
+    
+def test_two_way_anova_qw():
+    two_way_anova(np.array([1,1,1,2,2,2]),np.array([1,1,1,1,1,1]),np.array([1,1,1,1,1,1]),np.mean(np.array([1,1,1,2,2,2])))==0.0

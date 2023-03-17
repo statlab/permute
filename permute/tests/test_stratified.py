@@ -109,3 +109,11 @@ def test_stratified_two_sample():
                                 stat=stat_fun, seed=42)
     np.testing.assert_almost_equal(res[0], 0.8712, 3)
     assert res[1] == 0.30
+
+# new tests
+def test_corrcoef_qw():
+    assert corrcoef(np.array([1,2,3]),np.array([3,4,5]),np.array([1,1,1]))==1.0
+    assert corrcoef(np.array([3,2,1]),np.array([3,4,5]),np.array([1,1,1]))==-1.0
+    
+def test_sim_corr_qw():
+    assert sim_corr(np.array([1,2,3]),np.array([3,4,5]),np.array([1,1,1]))[1]==1.0
