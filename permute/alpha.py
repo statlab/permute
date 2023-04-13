@@ -18,7 +18,6 @@ def alpha_martingale(x: np.ndarray, mu_null: float, upper_bound: float, eta_j_fu
     for j in range(len(x)):
         x_j = x[:j+1]
         eta_j = eta_j_func(x_j[:-1])
-        print('eta_j', eta_j)
         assert eta_j >= mu_null and eta_j <= upper_bound, 'eta_j not in correct range'
         T_j *= (x_j[-1]/mu_null) * ((eta_j - mu_null)/(upper_bound - mu_null)) + ((upper_bound - eta_j)/(upper_bound - mu_null))
         anytime_pval = min(anytime_pval, 1/max(1.0,T_j))
