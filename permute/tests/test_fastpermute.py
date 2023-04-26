@@ -9,6 +9,6 @@ from ..fastpermute import fastcompuation
 
 
 def test_fastpermute():
-    assert (np.allclose(fastcompuation([2, 6, 8, 0]), (-14, -5)))
-    assert (np.allclose(fastcompuation([6, 4, 4, 6]), (-4, 10)))
-    assert (np.allclose(fastcompuation([8, 4, 5, 7]), (3, 13)))
+        self.assertTrue(np.allclose(find_interval(0.05, [2, 6, 8, 0])[1], [-14, -5]))
+        self.assertTrue(np.allclose(find_interval(0.05, [6, 4, 4, 6])[1], [-4, 8]))
+        self.assertTrue(np.allclose(find_interval(0.05, [8, 4, 5, 7])[1], [-3, 9]))

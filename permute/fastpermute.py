@@ -2,226 +2,198 @@
 This function implements Aronow et al "Fast computation of exact confidence intervals for randomized
 experiments with binary outcomes" algortihm 4.3
 """
-import numpy as np
-
-def Random_Sample(n: int, k: int, gen: callable=np.random) -> set: 
-    # from Cormen et al.
-    if k==0:
-        return set()
-    else:
-        S = Random_Sample(n-1, k-1)
-        i = gen.randint(1,n+1) 
-        if i in S:
-            S = S.union([n])
-        else:
-            S = S.union([i])
-    return S
-
-def simulate_obs_n(w: list, m: int, l: int = 1e4, gen: callable=np.random):
+def t(w: list):
     ''' 
-    Generate l tables given w, m, and prng
+    Find the average treatement effect
     
     Parameters
     ----------
-    w  : list of 4 ints
-        the table of counts of subjects with each combination of potential outcomes, in the order
+    w : list of 4 ints
+        the observed outcome
         [w11, w10, w01, w00]
         
-    m : int
-        number of subjects to be assigned to the active treatment
-    
-    l  : int
-        number of replication
-    
-    gen: RandomState
-        use to generare pseudo-random samples
-    
     Returns
     -------
-    tables : l lenghth list, where each list contains 4 ints of the simulated tables
-        [[n11, n10, n01, n00], ...]
+    average treatement effect
     '''
-    l = int(l)
-    units = np.sum(w)
-    tables= []
-    # Note this is the cumulative sum, different from how we usually define N's
-    w = w[::-1]
-    N00, N01, N10, N00 = np.cumsum(w)
-    
-    # repeat l times
-    for i in range(l):
-        # Generate random number
-        treat = np.array(list(Random_Sample(units, m, gen)))
-        # Count how many in each group is assignment to treatment
-        count = [np.sum(treat<=N00), np.sum((treat<=N01)&(treat>N00)), 
-                 np.sum((treat<=N10)&(treat>N01)), np.sum(treat>N10)]
-        # Find the simulated tables
-        tables += [count[::-1]]
-    return tables
 
-def permtest(v: list, n: list, l: int = 1e6, gen: callable=np.random) -> float:
-    '''
-    This function implements aronow et al "Fast computation of exact confidence intervals for randomized
-experiments with binary outcomes" algortihm 2.2.
-    
-    return a p value under permutation test
-    
-    Parameters:
-    ----------
-    v : list of four ints
-        the table of counts of subjects with each combination of potential outcomes, in the order
-        [N00, N01, N10, N11]
-       
-    n  : list of four ints
-        the table of observed outcome
-        [n00, n01, n10, n11]
-            
-    Returns:
-    --------
-    p-value : bool
-        p_value of the permuation test
-    '''
-    n11, n10, n01, n00 = n
-    v11, v10, v01, v00 = v
-    n = np.sum(v)
-    l = int(l)
-    
-    # Find test statistic of v, n
-    def t(w):
-        m = w[1] + w[0]
-        n = np.sum(w)
-        if m == 0:
-            return - w[2]/(w[3] + w[2])
-        elif m==n:
-            return w[0]/(w[1] + w[0]) 
-        else:
-            return w[0]/(w[1] + w[0]) - w[2]/(w[3] + w[2])
-            
-    tv = t(v)
-    tn = t([n11, n10, n01, n00])
-    # simulate l times
-    tables = simulate_obs_n([n11, n10, n01, n00], n10 + n11)
-    simulated_t = np.apply_along_axis(t, 1, tables)
-    
-    # Calculate p-value  
-    p = np.mean(np.abs(simulated_t - tv) >= np.abs(tn - tv))
-    return p
-    
+    m = w[0] + w[1]
+    n = np.sum(w)
+    if m == 0:
+        return - w[2]/(w[2] + w[3])
+    elif m==n:
+        return w[0]/(w[0] + w[1]) 
+    else:
+        return (w[0]/(w[0] + w[1])) - (w[2]/(w[2] + w[3]))
 
-def fastcompuation(n: list, alpha = 0.05):
+def findp(N, n, l=int(1e4), seed = 42):#, debug=False):
     ''' 
-    This function implements aronow et al "Fast computation of exact confidence intervals for randomized
-experiments with binary outcomes" algortihm 4.3
-
+    Find the p value of whether potential outcome table N is consistent with obersved table n
     
     Parameters
     ----------
-        
     n : list of 4 ints
         the observed outcome
         [n11, n10, n01, n00]
         
-    alpha: float
-        the significance level
-    
+    N : list of four ints
+        the table of counts of subjects with each combination of potential outcomes, in the order
+        [N11, N10, N01, N00]
+        as defined in Aronow et. al.
+        
     Returns
     -------
-    (lower, upper): the lower and upper bound of the confidence set
+    p value of whether potential outcome table N is consistent with obersved table n
     '''
-    n11, n10, n01, n00 = n
-    n = sum(n)
-    tn = n11/(n10 + n11) - n01/(n00 + n01)
-
-    def f(t0):
-        '''
-        Return if t0 is compatible with the observed outcome n 
-        '''
-        count = 0
-        j = max(n*t0+n01, n11)
-        while j <= min(n-n10, n11+n*t0+n10+n01):
-            maxv10 = min([j, n11+n00, n10+n01+n*t0, n+n*t0-j])
-            minv10 = max([0, n*t0, j-n11-n01, n11+n01+n*t0-j])
-            if (minv10 > maxv10):
-                j+=1
-                continue
-                
-            v10 = minv10
-            v00 = n - j - v10 + n*t0
-            v11 = j - v10
-            v01 = v10 - n*t0
-            
-            if (v11 == 0 and v10 == 0):
-                v11 = 1
-            v = [v11, v10, v01, v00]
-            if (any(np.array(v) < 0)):
-                j+=1
-                continue
-            p = permtest(v, [n11, n10, n01, n00])
-            count += 1
-            if p >= alpha:
-                return 0
-            j+=1
-        return 1
-                      
-
-    k1 = round(n*tn)+1
-    k2 = n
-
     
-    upper = -1
-    lower = 1
-    # binary search for upper bound
+    np.random.seed(seed)
+    obs = t(n)
+    tN = (N[1] - N[2])/sum(N)
+    N11, N10, N01, N00 = np.cumsum(N)
+    k = n[0]+n[1]
+    cnt = 0
+    for i in range(l):
+        treat = np.random.choice(N00, k, replace=False)
+        count = [np.sum(treat<N11), np.sum((treat<N10)&(treat>=N11)), 
+                 np.sum((treat<N01)&(treat>=N10)), np.sum(treat>=N01)]
+        n11 = count[0]*1 + count[1]*1 + count[2]*0 + count[3]*0
+        n10 = count[0]*0 + count[1]*0 + count[2]*1 + count[3]*1
+        n01 = (N[0] - count[0])*1 + (N[1]-count[1])*0 + (N[2]-count[2])*1 + (N[3]-count[3])*0
+        n00 = (N[0] - count[0])*0 + (N[1]-count[1])*1 + (N[2]-count[2])*0 + (N[3]-count[3])*1
+        tn = t([n11, n10, n01, n00])
+        if (abs(tn-tN) >= abs(obs - tN)):
+            cnt += 1
+    return (cnt+1)/(l+1) 
+
+def permutation_test(n, alpha, Tn):
+    ''' 
+    Conduct permutation test. 
+    
+    Parameters
+    ----------
+    n : list of 4 ints
+        the observed outcome
+        [n11, n10, n01, n00]
+        
+    alpha: significant level
+        
+    Returns
+    -------
+    0 if accept, 1 if reject
+    '''
+    N = sum(n)
+    n11, n10, n01, n00 = n
+    cnt = 0
+    for j in range(N+1):
+        if j >= int(N*Tn)+n01 and j >= n11 and N >= j+n10 and n11+int(N*Tn)+n10+n01 >= j:
+            lower_bound = max(0, int(N*Tn), j-n11-n01, n11+n01+int(N*Tn)-j)
+            upper_bound = min(j, n11+n00, n10+n01+int(N*Tn), N+int(N*Tn)-j)
+            for v10 in range(lower_bound, upper_bound+1):
+                v = (j-v10, v10, v10-int(N*Tn), N-j-v10+int(N*Tn))
+                p_value = findp(v, n)
+                cnt += 1
+                if p_value >= alpha:
+                    return 0
+                elif v[1] == 0 and v[2] == 0:
+                    p_value = findp([v[0]-1, v[1]+1, v[2], v[3]], n)
+
+                    cnt += 1
+                    if p_value >= alpha:
+                        return 0
+    return 1
+
+def binary_search(k1, k2, f):
+    ''' 
+    Binary search for the upper bound of confidence interval
+    
+    Parameters
+    ----------
+    k1: left end point
+    
+    k2: right end point
+    
+    f: function
+        
+    Returns
+    -------
+    int, the upper bound
+    '''
     a = k1
     b = k2
-    c = (a+b)//2
-    out = f(c)
-    while b > a+1:
-        out = f(c/n)
-        if out == 0:
+    while b > a + 1:
+        c = math.floor((a + b) / 2)
+        #print("binary bound:", a, b, c)
+        if f(c) == 0:
             a = c
         else:
             b = c
-        c = (a+b)//2
-    
-    if a > k1 and b < k2:
-        upper =  a
-    elif a == k1:
-        if f(k1/n) == 1:
-            upper =  k1-1
+    #print("binary bound:", a, b, c)
+    if a == k1:
+        if f(k1) == 0:
+            return k1
         else:
-            upper =  k1
+            return k1 - 1
     elif b == k2:
-        if f(k2/n) == 1:
-            upper =  k2-1
+        if f(k2) == 0:
+            return k2
         else:
-            upper =  k2
+            return k2 - 1
+    else:
+        return a
     
-    # binary search for lower bound
-    a = -k2
-    b = k1
-    c = (a+b)//2
-    k1 = -k2
-    k2 = b
+def binary_search_opp(k1, k2, f):
+    ''' 
+    Binary search for the lower bound of confidence interval
     
-    while b > a+1:
-        out = f(c/n)
-        if out == 0:
-            a = c
-        else:
+    Parameters
+    ----------
+    k1: left end point
+    
+    k2: right end point
+    
+    f: function
+        
+    Returns
+    -------
+    int, the lower bound
+    '''
+    a = k1
+    b = k2
+    while b > a + 1:
+        c = math.ceil((a + b) / 2)
+        #print("binary bound:", a, b, c)
+        if f(c) == 0:
             b = c
-        c = (a+b)//2
-    if a > k1 and b < k2:
-        lower =  a
+        else:
+            a = c
+    #print("binary bound:", a, b, c)
+    if b == k2:
+        if f(k2) == 0:
+            return k2
+        else:
+            return k2 + 1
     elif a == k1:
-        if f(k1/n) == 1:
-            lower =  k1+1
+        if f(k1) == 0:
+            return k1 
         else:
-            lower =  k1
-    elif b == k2:
-        if f(k2/n) == 1:
-            lower =  k2+1
-        else:
-            lower =  k2
-            
-    return (lower, upper)
+            return k1 + 1
+    else:
+        return b
 
+def find_interval(alpha, n):
+    N = sum(n)
+    n11, n10, n01, n00 = n
+    Tn = t(n)
+    def f(x):
+        return permutation_test(n, alpha, x/N)
+    
+    k2 = round(N*Tn)
+    k1 = n11+n00-N 
+    #print("k1", k1, "k2", k2)
+    L = binary_search_opp(k1, k2, lambda x: f(x))
+    
+    k1 = round(N*Tn)
+    k2 = n01 + n10#n00 + n11 #the original stuff is n01 + n10
+    #print("k1", k1, "k2", k2)
+    U = binary_search(k1, k2, lambda x: f(x))
+    return N*Tn, np.array([L, U])
