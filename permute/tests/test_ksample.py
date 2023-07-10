@@ -15,6 +15,10 @@ def test_worms_ksample():
     res = k_sample(worms.x, worms.y, stat='one-way anova', reps=1000, seed=1234)
     np.testing.assert_array_less(0.006, res[0])
     np.testing.assert_array_less(res[0], 0.02)
+    res2 = k_sample(worms.x, worms.y, stat=one_way_anova, reps=1000, keep_dist=True, seed=1234)
+    assert len(res2[2]) == 1000
+    np.testing.assert_array_equal([res[0], res[1]], [res2[0], res2[1]])
+    np.testing.assert_array_less([8, 2], [res2[2][0], res2[2][1]])
 
 
 def test_one_way_anova():
@@ -52,3 +56,7 @@ def test_testosterone_ksample():
     assert len(x) == 55
     res = bivariate_k_sample(x, group1, group2, reps=5000, seed=5)
     np.testing.assert_array_less(res[0], 0.0002)
+    res2 = bivariate_k_sample(x, group1, group2, reps=5000, stat=two_way_anova, keep_dist=True, seed=5)
+    assert len(res2[2]) == 5000
+    np.testing.assert_array_equal([res[0], res[1]], [res2[0], res2[1]])
+    np.testing.assert_array_less([0.002, 0.0001], [res2[2][0], res2[2][1]])
