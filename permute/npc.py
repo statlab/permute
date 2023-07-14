@@ -269,6 +269,199 @@ def sim_npc(data, test, combine="fisher", in_place=False, reps=int(10**4), seed=
     return p, ts, ps
 
 
+def westfall_young(data, test, method="minP", alternatives="greater",
+                   in_place=False, reps=int(10**4), seed=None):
+    ''' 
+    Adjusts p-values using Westfall and Young (1993) method.
+
+    Parameters
+    ----------
+    data : Experiment object
+    test : array_like
+        Array of functions to compute test statistic to apply to each column in cols
+    method : {'minP', 'maxT'} 
+        The Westfall and Young method. Default is "minP".
+    alternatives : str or list
+        Whether alternative hypothesis is one or two sided. If str, apply to all tests.
+    in_place : Boolean
+        whether randomize group in place, default False
+    reps : int
+        number of repetitions
+    seed : RandomState instance or {None, int, RandomState instance}
+        If None, the pseudorandom number generator is the RandomState
+        instance used by `np.random`;
+        If int, seed is the seed used by the random number generator;
+        If RandomState instance, seed is the pseudorandom number generator
+
+    Returns
+    -------
+    array
+        dictionary of adjusted permutation p-values, 
+        dictionary of unadjusted permutation p-values
+    '''
+    # check data is of type Experiment
+    if not isinstance(data, Experiment):
+        raise ValueError("data not of class Experiment")
+        
+    # if seed not none, reset seed
+    if seed is not None:
+        data.randomizer.reset_seed(seed)
+        
+    # check if alternatives right type / length
+    if isinstance(alternatives, str):
+        alternatives = [alternatives for i in range(len(test))]
+    elif isinstance(alternatives, list):
+        if len(alternatives) != len(test):
+            raise ValueError("alternatives parameter must be either a string or list of the same length as test")
+    else:
+        raise ValueError("alternatives parameter must be either a string or list of the same length as test")
+    
+    # initialize test statistic and p-value dicts
+    ts = {}
+    tv = {}
+    ps = {}
+    raw_p = {}
+    adj_p = {}
+
+    # get the test statistic for each column on the original data
+    for c in range(len(test)):
+        # apply test statistic function to column
+        ts[c] = test[c](data)
+        tv[c] = []
+        
+    # check if randomization in place
+    if in_place:
+        data_copy = data
+    else:
+        data_copy = copy.deepcopy(data)
+        
+    # get test statistics for random samples
+    for i in range(reps):
+        # randomly permute group
+        data_copy.randomize()
+        # calculate test statistics on permuted data
+        for c in range(len(test)):
+            # get test statistic for this permutation
+            tv[c].append(test[c](data_copy))
+            
+    # get raw p-values and p-values for each permutation
+    if method == "minP":
+        for c in range(len(test)):
+            # check alternative
+            if alternatives[c] == "greater":
+            # proportion test stats greater than or equal to perm stat, including original stat
+                ps[c] = ((len(tv[c]) - rankdata(tv[c], method='min') + 1) + (tv[c] >= ts[c])) / (reps + 1)
+                raw_p[c] = (np.sum(np.array(tv[c]) >= ts[c]) + 1) / (reps + 1)
+            elif alternatives[c] == "two-sided":
+                ps[c] = ((len(tv[c]) - rankdata(np.abs(tv[c]), method='min')) + (np.abs(tv[c]) >= np.abs(ts[c])) + 1) / (reps + 1)
+                raw_p[c] = (np.sum(np.array(np.abs(tv[c])) >= np.abs(ts[c])) + 1) / (reps + 1)
+            else:
+                raise ValueError("alternatives must be either 'greater' or 'two-sided'")
+
+        ## update successive minima
+        # sort raw_p values from largest to smallest
+        sorted_raw_p = {k: v for k, v in sorted(raw_p.items(), key=lambda item: item[1], reverse=True)}
+        # iterate over permutations
+        for b in range(reps):
+            # iterate over sorted raw p-values
+            prev_i = [*sorted_raw_p][0]
+            for i in [*sorted_raw_p]:
+                # replace p-values with successive minima
+                ps[i][b] = min(ps[i][b], ps[prev_i][b])
+                prev_i = i
+        # compute adjusted p-values
+        prev_i = [*sorted_raw_p][::-1][0]
+        for c in [*sorted_raw_p][::-1]: 
+            adj_p[c] = (np.sum(np.array(ps[c])<= raw_p[c]) + 1) / (reps + 1)
+            # ensure monotonicity
+            adj_p[c] = max(adj_p[c], adj_p[prev_i])
+            prev_i = c
+        # sort adj_p dict by key so hypotheses in order entered
+        adj_p = dict(sorted(adj_p.items()))
+        
+    # if maxT method
+    elif method == "maxT":
+        # get unadjusted p-values and sort test statistics from smallest to largest
+        for c in range(len(test)):
+            if alternatives[c] == "greater":
+                raw_p[c] = (np.sum(np.array(tv[c]) >= ts[c]) + 1) / (reps + 1)
+                sorted_t = {k: v for k, v in sorted(ts.items(), key=lambda item: item[1], reverse=False)}
+            elif alternatives[c] == "two-sided":
+                raw_p[c] = (np.sum(np.array(np.abs(tv[c])) >= np.abs(ts[c])) + 1) / (reps + 1)
+                sorted_t = {k: np.abs(v) for k, v in sorted(ts.items(), key=lambda item: np.abs(item[1]), reverse=False)}
+            else:
+                raise ValueError("alternatives must be either 'greater' or 'two-sided'")
+        # iterate over permutations
+        for b in range(reps):
+            # iterate over sorted test statistics
+            prev_i = [*sorted_t][0]
+            for i in [*sorted_t]:
+                # replace test stats with successive maxima
+                tv[i][b] = max(np.abs(tv[i][b]), np.abs(tv[prev_i][b]))
+                prev_i = i
+        # compute adjusted p-values
+        for c in range(len(test)): 
+            if alternatives[c] == "greater":
+                adj_p[c] = (np.sum(np.array(tv[c]) >= ts[c]) + 1) / (reps + 1)
+            else:
+                adj_p[c] = (np.sum(np.array(tv[c]) >= np.abs(ts[c])) + 1) / (reps + 1)
+        # ensure monotonicity
+        prev_i = [*sorted_t][::-1][0]
+        for c in [*sorted_t][::-1]: 
+            adj_p[c] = max(adj_p[c], adj_p[prev_i])
+            prev_i = c
+        # sort adj_p dict by key so hypotheses in order entered
+        adj_p = dict(sorted(adj_p.items()))
+    else:
+        raise ValueError("Method must be minP or maxT")
+        
+    # return adjusted p-values and raw p-values
+    return adj_p, raw_p
+
+
+def adjust_p(pvalues, adjustment='holm-bonferroni'):
+    """
+    Adjust p-values using FWER or FDR control.
+    Benjamini-Hochberg adjusted p-values described in Yekutieli & Benjamini (1999).
+    
+    Parameters
+    ----------
+    pvalues : array_like
+        Array of p-values to adjust
+    adjustment : {'bonferroni-holm', 'bonferroni', 'benjamini-hochberg'} 
+        The FWER or FDR adjustment to use.
+
+    Returns
+    -------
+    array of adjusted p-values
+    """
+    # get number of tests / p-values
+    n = len(pvalues)
+    # calculate adjusted p-values
+    if adjustment == 'holm-bonferroni':
+        order = rankdata(pvalues)
+        adj_pvalues = np.minimum(pvalues*(n - order + 1), np.ones(n))
+        p_order = np.argsort(pvalues)
+        prev_order = p_order[0]
+        for i in p_order:
+            adj_pvalues[i] = max(adj_pvalues[prev_order], adj_pvalues[i])
+            prev_order = i
+    elif adjustment == 'bonferroni':
+        adj_pvalues = np.minimum(pvalues*n, np.ones(n))
+    elif adjustment == 'benjamini-hochberg':
+        order = rankdata(pvalues)
+        adj_pvalues = np.minimum(pvalues*(n / (order)), np.ones(n))
+        # make sure non-decreasing
+        prev_order = np.argsort(pvalues)[::-1][0]
+        for i in np.argsort(pvalues)[::-1]:
+            adj_pvalues[i] = np.minimum(adj_pvalues[prev_order], adj_pvalues[i])
+            prev_order = i
+    else:
+        raise ValueError("Adjustment must be 'bonferonni', 'holm-bonferonni', or \
+                         'benjamini-hochberg'")
+    return adj_pvalues
+        
+    
 def fwer_minp(pvalues, distr, combine='fisher', plus1=True):
     """
     Adjust p-values using the permutation "minP" variant of Holm's step-up method.
@@ -436,8 +629,8 @@ class Experiment():
             groups = np.unique(self.group)
             if len(groups) != 2:
                 raise ValueError("Number of groups must be two")
-            t = ttest_ind(self.response[:, index][self.group == groups[0]], 
-                             self.response[:, index][self.group == groups[1]], equal_var=True)[0]
+            t = ttest_ind(list(self.response[:, index][self.group == groups[0]]), 
+                             list(self.response[:, index][self.group == groups[1]]), equal_var=True)[0]
             return t
         
         def one_way_anova(self, index):

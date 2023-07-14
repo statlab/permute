@@ -11,6 +11,8 @@ from ..npc import (fisher,
                    npc,
                    check_combfunc_monotonic,
                    sim_npc,
+                   westfall_young,
+                   adjust_p,
                    fwer_minp,
                    randomize_group,
                    Experiment)
@@ -165,6 +167,38 @@ def test_sim_npc():
     np.testing.assert_almost_equal(res[0], 0.0209, decimal=2)
 
 
+def test_westfall_young():
+    prng = RandomState(55)
+    # test from https://support.sas.com/kb/22/addl/fusion22950_1_multtest.pdf
+    group = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    responses = np.array([[14.4, 7.00, 4.30], [14.6, 7.09, 3.88 ], [13.8, 7.06, 5.34], [10.1, 4.26, 4.26], [11.1, 5.49, 4.52], [12.4, 6.13, 5.69], [12.7, 6.69, 4.45], [11.8, 5.44, 3.94], [18.3, 1.28, 0.67], [18.0, 1.50, 0.67], [20.8, 1.51, 0.72], [18.3, 1.14, 0.67], [14.8, 2.74, 0.67], [13.8, 7.08, 3.43], [11.5, 6.37, 5.64], [10.9, 6.26, 3.47]])
+    data = Experiment(group, responses)
+    test = Experiment.make_test_array(Experiment.TestFunc.ttest, [0, 1, 2])
+    result = westfall_young(data, test, method = "minP", alternatives = 'two-sided', seed = prng) 
+    np.testing.assert_almost_equal(result[0][0], 0.1, decimal = 1)
+    np.testing.assert_almost_equal(result[0][1], 0.05, decimal = 2)
+    np.testing.assert_almost_equal(result[0][2], 0.02, decimal = 2)
+    np.testing.assert_almost_equal(result[1][0], 0.1, decimal = 1)
+    np.testing.assert_almost_equal(result[1][1], 0.03, decimal = 2)
+    np.testing.assert_almost_equal(result[1][2], 0.01, decimal = 2)
+    
+    
+def test_adjust_p():
+    pvalues = np.array([0.1, 0.2, 0.3, 0.4])
+    # bonferroni
+    res = adjust_p(pvalues, adjustment = 'bonferroni')
+    np.testing.assert_almost_equal(res, np.array([0.4, 0.8, 1, 1]), decimal = 2)
+    # holm-bonferroni
+    pvalues = np.array([0.01, 0.04, 0.03, 0.005])                     
+    res = adjust_p(pvalues, adjustment = 'holm-bonferroni')
+    np.testing.assert_almost_equal(res, np.array([0.03, 0.06, 0.06, 0.02]), decimal = 2)
+    # benjamini hochberg
+    res = adjust_p(pvalues, adjustment = 'benjamini-hochberg')
+    np.testing.assert_almost_equal(res, np.array([0.02, 0.04, 0.04, 0.02]), decimal = 2)
+    # raises value error for nonsense correction
+    pytest.raises(ValueError, adjust_p, pvalues, 'nonsense')
+    
+                            
 def test_fwer_minp():
     prng = RandomState(55)
     pvalues = np.linspace(0.05, 0.9, num=5)
