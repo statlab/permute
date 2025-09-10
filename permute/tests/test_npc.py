@@ -120,7 +120,7 @@ def test_sim_npc():
     # test Y always greater than X so p-value should be 1 
     responses = np.array([[0, 1], [0, 1], [1, 2], [1, 2]])
     group = np.array([1, 1, 2, 2])
-    my_randomizer = Experiment.Randomizer(randomize = randomize_group, seed = prng)
+    my_randomizer = Experiment.Randomizer(randomize=randomize_group, seed=prng)
     data = Experiment(group, responses)
     
     # create median test statistic to apply to every column
@@ -137,22 +137,34 @@ def test_sim_npc():
     test_array = Experiment.make_test_array(med_diff, [0, 1])
     res = sim_npc(data, test_array, combine="fisher", seed=None, reps=int(1000))
     np.testing.assert_almost_equal(res[0], 1)
-    
+    res = sim_npc(data, test_array, combine="liptak", seed=1234, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 1)
+    res = sim_npc(data, test_array, combine=tippett, in_place=True, seed=None, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 1)
+
     # test X = Y so p-value should be 1
     responses = np.array([[0, 1], [0, 1], [0, 1], [0, 1]])
     group = np.array([1, 1, 2, 2])
-    data = Experiment(group, responses, randomizer = my_randomizer)
-    res = sim_npc(data, test = Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]), 
+    data = Experiment(group, responses, randomizer=my_randomizer)
+    res = sim_npc(data, test=Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]),
                   combine="fisher", seed=None, reps=int(1000))
     np.testing.assert_almost_equal(res[0], 1)
     
     # test stat for cat_1 is smaller if X all 0s which about 0.015 chance so pvalue should be about 0.985
     responses = np.array([[0, 1], [1, 1], [0, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1]])
     group = np.array([1, 1, 1, 1, 2, 2, 2, 2])
-    data = Experiment(group, responses, randomizer = my_randomizer)
-    res = sim_npc(data, test = Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]),
+    data = Experiment(group, responses, randomizer=my_randomizer)
+    res = sim_npc(data, test=Experiment.make_test_array(Experiment.TestFunc.mean_diff, [0, 1]),
                   combine="fisher", seed=None, reps=int(1000))
-    np.testing.assert_almost_equal(res[0], 0.985, decimal = 2)
+    np.testing.assert_almost_equal(res[0], 0.985, decimal=2)
+
+    # test stat for cat_1 is smaller if X all 0s which about 0.015 chance so pvalue should be about 0.0209
+    responses = np.array([[0, 1], [1, 1], [0, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1]])
+    group = np.array([1, 1, 1, 1, 2, 2, 2, 2])
+    data = Experiment(group, responses, randomizer=my_randomizer)
+    res = sim_npc(data, test=Experiment.make_test_array(Experiment.TestFunc.one_way_anova, [0, 1]),
+                  combine="fisher", seed=None, reps=int(1000))
+    np.testing.assert_almost_equal(res[0], 0.0209, decimal=2)
 
 
 def test_westfall_young():
